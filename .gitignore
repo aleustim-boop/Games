@@ -1,0 +1,51 @@
+# Зависимости
+node_modules/
+.pnp/
+.pnp.js
+
+# Секреты и локальные настройки (токен бота храним ТОЛЬКО здесь, в репозиторий не попадает)
+.env
+.env.*
+!.env.example
+*.local
+
+# Сборка и артефакты
+dist/
+build/
+out/
+.cache/
+.vite/
+.parcel-cache/
+
+# Логи
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Локальные данные разработки (туннели, временные файлы)
+.tmp/
+tmp/
+*.tmp
+.ngrok/
+*.sqlite
+*.sqlite3
+
+# Редакторы и IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Windows / macOS системный мусор
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Локальные настройки Claude Code (командные правила в .claude/ версионируем)
+.claude/settings.local.json
