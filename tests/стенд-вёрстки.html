@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Стенд вёрстки (проверка тестировщика)</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Полоска управления — только для стенда, к игре отношения не имеет */
+    #стенд {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 99;
+      display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+      padding: 4px; background: rgba(0,0,0,0.75);
+    }
+    #стенд button {
+      font: 600 11px system-ui, sans-serif; padding: 3px 7px;
+      border: 1px solid #888; border-radius: 6px; background: #eee; color: #111; cursor: pointer;
+    }
+    #стенд button.включена { background: #f0b32d; }
+    body.со-стендом #приложение { bottom: 30px; }
+  </style>
+</head>
+<body class="со-стендом">
+<!--
+  ЭТО НЕ ИГРА, А СТЕНД ДЛЯ ГЛАЗ. Файл тестировщика.
+
+  Зачем: некоторые перекосы вёрстки видно только в редких положениях —
+  когда в руке гора карт, когда на столе шесть пар, когда подсказка длинная
+  или когда Telegram прислал светлую тему. Ждать такого в живой партии долго,
+  поэтому здесь всё это включается кнопкой.
+
+  Как смотреть: откройте файл через локальный сервер
+      node tests/локальный-сервер.js 8123
+      http://localhost:8123/tests/стенд-вёрстки.html
+  и сузьте окно браузера до 280, 320 или 390 точек в ширину.
+
+  Игру этот файл не меняет: он берёт настоящие style.css и js/game.js
+  и только подставляет им нужное положение на столе.
+-->
+
+<div id="приложение">
+  <section id="экран-меню" class="экран">
+    <h1 class="заголовок">Подкидной<br>дурак</h1>
+    <p class="подпись">Вы против бота</p>
+    <button id="кнопка-играть" class="кнопка кнопка--главная">Играть</button>
+  </section>
+
+  <section id="экран-игры" class="экран экран--виден">
+    <div id="рука-бота" class="рука">
+      <div id="карты-бота" class="веер"></div>
+      <div id="счётчик-бота" class="счётчик"></div>
+    </div>
+    <div id="зона-стола">
+      <div id="колода">
+        <div id="козырная-карта"></div>
+        <div id="верх-колоды"></div>
+        <div id="счётчик-колоды" class="счётчик"></div>
+      </div>
+      <div id="метка-козыря"></div>
+      <div id="стол"></div>
+    </div>
+    <div id="подсказка"></div>
+    <div id="рука-человека" class="рука">
+      <div id="карты-человека" class="веер"></div>
+    </div>
+    <div id="панель-кнопок">
+      <button id="кнопка-в-меню" class="кнопка кнопка--мелкая">В меню</button>
+      <button id="кнопка-завершить" class="кнопка">Бито</button>
+      <button id="кнопка-беру" class="кнопка скрыт">Беру</button>
+    </div>
+  </section>
+
+  <section id="экран-результата" class="экран">
+    <h2 id="текст-результата" class="заголовок">Вы выиграли!</h2>
+    <p id="пояснение-результата" class="подпись">Соперник остался с картами — он и есть дурак.</p>
+    <button id="кнопка-ещё" class="кнопка кнопка--главная">Играть ещё</button>
+    <button id="кнопка-в-меню-итог" class="кнопка кнопка--мелкая">В меню</button>
+  </section>
+</div>
+
+<div id="стенд"></div>
+
+<script src="../js/telegram.js"></script>
+<script src="../js/game.js"></script>
+<script>
+'use strict';
+
+// Что сейчас показываем
+var состояние = { карт: 18, пар: 6, тема: 'своя', подсказкаДлинная: false, итог: false };
+
+var ТЕМЫ = {
+  'своя': null,
+  'тёмная': { 'bg-color': '#17212b', 'text-color': '#f5f5f5', 'hint-color': '#708499',
+              'button-color': '#5288c1', 'button-text-color': '#ffffff', 'secondary-bg-color': '#232e3c' },
+  'светлая': { 'bg-color': '#ffffff', 'text-color': '#000000', 'hint-color': '#999999',
+               'button-color': '#2481cc', 'button-text-color': '#ffffff', 'secondary-bg-color': '#f1f1f1' }
+};
+
+/** Собрать положение на столе: столько-то карт в руке и столько-то пар. */
+function собратьПоложение() {
+  var колода = собратьКолоду();
+  партия = {
+    колода: колода.slice(0, 8),
+    козырь: '♦',
+    козырнаяКарта: колода[20],
+    руки: { человек: колода.slice(0, состояние.карт), бот: колода.slice(состояние.карт, состояние.карт + 6) },
+    стол: [],
+    отбой: [],
+    атакует: 'человек',
+    берёт: false,
+    завершена: false,
+    результат: null
+  };
+  for (var i = 0; i < состояние.пар; i++) {
+    партия.стол.push({ атака: колода[24 + i], защита: колода[30 + i] });
+  }
+  подобратьРазмерКарты();
+  перерисовать();
+
+  if (состояние.подсказкаДлинная) {
+    // Самое длинное сообщение, которое игра может показать по-настоящему
+    document.getElementById('подсказка').textContent =
+      'Нужна карта того же достоинства · Соперник берёт — подкинуть нечем, жмите «Готово»';
+    document.getElementById('подсказка').classList.add('подсказка--ваш-ход');
+  }
+
+  document.getElementById('экран-результата').classList.toggle('экран--виден', состояние.итог);
+  document.getElementById('экран-результата').classList.toggle('экран--поверх', состояние.итог);
+}
+
+function применитьТему() {
+  var набор = ТЕМЫ[состояние.тема];
+  var поля = ['bg-color','text-color','hint-color','button-color','button-text-color','secondary-bg-color'];
+  for (var i = 0; i < поля.length; i++) {
+    if (набор) document.documentElement.style.setProperty('--tg-theme-' + поля[i], набор[поля[i]]);
+    else document.documentElement.style.removeProperty('--tg-theme-' + поля[i]);
+  }
+}
+
+function кнопка(подпись, включена, действие) {
+  var б = document.createElement('button');
+  б.textContent = подпись;
+  if (включена) б.className = 'включена';
+  б.addEventListener('click', function () { действие(); нарисоватьСтенд(); });
+  return б;
+}
+
+function нарисоватьСтенд() {
+  применитьТему();
+  собратьПоложение();
+  var полоса = document.getElementById('стенд');
+  полоса.innerHTML = '';
+  [6, 12, 18, 22, 26].forEach(function (n) {
+    полоса.appendChild(кнопка(n + ' карт', состояние.карт === n, function () { состояние.карт = n; }));
+  });
+  [0, 3, 6].forEach(function (n) {
+    полоса.appendChild(кнопка(n + ' пар', состояние.пар === n, function () { состояние.пар = n; }));
+  });
+  ['своя', 'тёмная', 'светлая'].forEach(function (т) {
+    полоса.appendChild(кнопка(т, состояние.тема === т, function () { состояние.тема = т; }));
+  });
+  полоса.appendChild(кнопка('длинная подсказка', состояние.подсказкаДлинная, function () { состояние.подсказкаДлинная = !состояние.подсказкаДлинная; }));
+  полоса.appendChild(кнопка('плашка итога', состояние.итог, function () { состояние.итог = !состояние.итог; }));
+  полоса.appendChild(кнопка('размер окна: ' + window.innerWidth + '×' + window.innerHeight, false, function () {}));
+}
+
+window.addEventListener('resize', function () { setTimeout(нарисоватьСтенд, 60); });
+нарисоватьСтенд();
+</script>
+</body>
+</html>
