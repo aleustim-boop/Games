@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <!-- Экран телефона: запрещаем масштабирование пальцами, чтобы стол не «уезжал» -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Подкидной дурак</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="приложение">
+
+  <!-- Экран 1. Меню -->
+  <section id="экран-меню" class="экран экран--виден">
+    <h1 class="заголовок">Подкидной<br>дурак</h1>
+    <p class="подпись">Вы против бота</p>
+    <button id="кнопка-играть" class="кнопка кнопка--главная">Играть</button>
+  </section>
+
+  <!-- Экран 2. Игровой стол -->
+  <section id="экран-игры" class="экран">
+
+    <!-- Карты бота: только рубашки и счётчик -->
+    <div id="рука-бота" class="рука">
+      <div id="карты-бота" class="веер"></div>
+      <div id="счётчик-бота" class="счётчик"></div>
+    </div>
+
+    <!-- Середина стола: слева колода с козырем, справа выложенные карты -->
+    <div id="зона-стола">
+      <div id="колода">
+        <div id="козырная-карта"></div>
+        <div id="верх-колоды"></div>
+        <div id="счётчик-колоды" class="счётчик"></div>
+      </div>
+      <div id="метка-козыря"></div>
+      <div id="стол"></div>
+    </div>
+
+    <!-- Строка подсказки: что сейчас нужно сделать -->
+    <div id="подсказка"></div>
+
+    <!-- Карты человека -->
+    <div id="рука-человека" class="рука">
+      <div id="карты-человека" class="веер"></div>
+    </div>
+
+    <div id="панель-кнопок">
+      <button id="кнопка-завершить" class="кнопка скрыт">Бито</button>
+      <button id="кнопка-беру" class="кнопка скрыт">Беру</button>
+    </div>
+
+  </section>
+
+  <!-- Экран 3. Результат партии -->
+  <section id="экран-результата" class="экран">
+    <h2 id="текст-результата" class="заголовок"></h2>
+    <p id="пояснение-результата" class="подпись"></p>
+    <button id="кнопка-ещё" class="кнопка кнопка--главная">Играть ещё</button>
+  </section>
+
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>

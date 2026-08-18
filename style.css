@@ -1,0 +1,301 @@
+/* ================================================================
+   Подкидной дурак — оформление.
+   Верстка рассчитана на вертикальный экран телефона:
+   всё держится в высоте окна, горизонтальной прокрутки нет.
+   Размер карты задаёт JS (переменные ниже) — тогда он же может
+   точно посчитать, с каким сдвигом раскладывать карты веером.
+   ================================================================ */
+
+:root {
+  --ширина-карты: 48px;
+  --высота-карты: 70px;
+  --сукно: #14532d;
+  --сукно-светлее: #1c6b3c;
+  --светлый-текст: #eaf5ec;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* без серой вспышки при тапе */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;            /* стол никуда не прокручивается */
+  overscroll-behavior: none;   /* и не «оттягивается» пальцем */
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--светлый-текст);
+  background: radial-gradient(circle at 50% 35%, var(--сукно-светлее), var(--сукно) 70%);
+  touch-action: manipulation;  /* тап срабатывает сразу, без ожидания двойного */
+  user-select: none;
+}
+
+#приложение {
+  position: fixed;
+  inset: 0;
+}
+
+/* ---------- Экраны ---------- */
+
+.экран {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+.экран--виден { display: flex; }
+
+/* Меню и результат — по центру */
+#экран-меню,
+#экран-результата {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.заголовок {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.подпись {
+  margin: 0 0 14px;
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+/* ---------- Кнопки ---------- */
+
+.кнопка {
+  min-height: 46px;
+  min-width: 116px;
+  padding: 10px 22px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  color: #12351f;
+  background: linear-gradient(#fdfdfd, #e2e6e2);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 #9aa79c, 0 4px 10px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.кнопка:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #9aa79c, 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.кнопка--главная {
+  font-size: 20px;
+  min-width: 180px;
+  background: linear-gradient(#ffd66b, #f0ac2d);
+}
+
+.скрыт { display: none !important; }
+
+/* ---------- Раскладка игрового экрана ---------- */
+
+#экран-игры {
+  gap: 4px;
+}
+
+.рука {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+#рука-бота  { height: calc(var(--высота-карты) + 4px); }
+
+.веер {
+  position: absolute;
+  inset: 0;
+}
+
+/* Сколько карт у бота — чтобы не пересчитывать рубашки глазами */
+.счётчик {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  min-width: 26px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+}
+
+#зона-стола {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;   /* без этого длинный стол растягивает экран */
+}
+
+/* ---------- Колода и козырь ---------- */
+
+/* Ширина блока = высота карты + 16px: козырная карта лежит поперёк
+   и торчит из-под колоды вправо, поэтому места нужно больше. */
+#колода {
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: calc(var(--высота-карты) + 16px);
+  height: var(--высота-карты);
+}
+
+#верх-колоды .карта {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Козырь лежит поперёк: поворот на 90°, из-под колоды виден его правый край
+   с обозначением масти и достоинства. */
+#козырная-карта .карта {
+  position: absolute;
+  left: calc(var(--высота-карты) / 2 + 16px - var(--ширина-карты) / 2);
+  top: 0;
+  transform: rotate(90deg);
+}
+
+#счётчик-колоды {
+  right: auto;
+  left: 2px;
+  top: auto;
+  bottom: -4px;
+}
+
+#метка-козыря {
+  position: absolute;
+  left: 2px;
+  top: calc(var(--высота-карты) + 20px);
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* ---------- Карты на столе ---------- */
+
+#стол {
+  position: absolute;
+  left: calc(var(--высота-карты) + 22px);
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.пара {
+  position: relative;
+  width: calc(var(--ширина-карты) + 14px);
+  height: calc(var(--высота-карты) + 12px);
+}
+
+.пара .карта--атака  { position: absolute; left: 0;    top: 0; }
+.пара .карта--защита { position: absolute; left: 14px; top: 12px; }
+
+/* Куда можно положить свою карту при защите — подсвечиваем */
+.пара--цель .карта--атака {
+  outline: 3px solid #ffd66b;
+  outline-offset: 1px;
+}
+
+/* ---------- Сама карта ---------- */
+
+.карта {
+  position: relative;
+  width: var(--ширина-карты);
+  height: var(--высота-карты);
+  background: #fdfdfd;
+  border: 1px solid #aeb4bd;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  color: #1c1c1c;
+}
+
+.карта--красная { color: #c62828; }
+
+.карта__угол {
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  font-size: calc(var(--ширина-карты) * 0.30);
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.карта__масть {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--ширина-карты) * 0.48);
+}
+
+.карта--рубашка {
+  background:
+    repeating-linear-gradient(45deg, #1e3a8a 0 6px, #33529e 6px 12px);
+  border-color: #16265c;
+}
+
+/* Карты в руке лежат внахлёст, поэтому позиции считает JS */
+.веер .карта {
+  position: absolute;
+  transition: transform 0.12s ease;
+}
+
+/* Карта, которой человек собрался отбиваться, приподнята */
+.карта--выбрана {
+  transform: translateY(-14px);
+  outline: 3px solid #ffd66b;
+  outline-offset: 1px;
+  z-index: 50;
+}
+
+/* ---------- Подсказка и кнопки хода ---------- */
+
+#подсказка {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 2px 6px;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#панель-кнопок {
+  flex: 0 0 auto;
+  height: 56px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Совсем узкие экраны: подписи чуть мельче */
+@media (max-height: 600px) {
+  .заголовок { font-size: 26px; }
+  #подсказка { min-height: 26px; font-size: 12px; }
+  #панель-кнопок { height: 48px; }
+}
