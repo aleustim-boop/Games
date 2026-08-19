@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Мост к игроку 2</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    iframe { width: 100%; height: 100%; border: 0; display: block; }
+  </style>
+</head>
+<body>
+  <!-- Эта страничка нужна только тестировщику.
+       Она открыта по адресу localhost, и игра внутри неё — тоже по localhost,
+       поэтому страничка может нажимать в игре кнопки за второго игрока.
+       Стенд (он открыт по адресу 127.0.0.1) командует ей письмами postMessage. -->
+  <iframe id="игра" src="http://localhost:8130/index.html?сервер=http://127.0.0.1:8790"></iframe>
+  <script>
+    const рамка = document.getElementById('игра');
+
+    function кратко(эл) { return эл ? эл.textContent.replace(/\s+/g, '') : '—'; }
+
+    function собратьСостояние() {
+      const д = рамка.contentDocument;
+      return {
+        подсказка: д.querySelector('#подсказка') ? д.querySelector('#подсказка').textContent.trim() : null,
+        связь: (д.querySelector('#строка-связи') && д.querySelector('#строка-связи').offsetParent)
+          ? д.querySelector('#строка-связи').textContent.trim() : '(скрыта)',
+        стол: [...д.querySelectorAll('#стол > *')].map(кратко),
+        рука: [...д.querySelectorAll('#карты-человека > *')].map((к, i) => i + ':' + кратко(к) + (к.className.indexOf('нельзя') >= 0 ? '(х)' : '')),
+        кнопки: [...д.querySelectorAll('#панель-кнопок button')].filter(b => b.offsetParent !== null).map(b => b.textContent.trim()),
+        друг: д.querySelector('#счётчик-бота') ? д.querySelector('#счётчик-бота').textContent.trim() : null,
+        колода: д.querySelector('#счётчик-колоды') ? д.querySelector('#счётчик-колоды').textContent.trim() : null,
+        экран: [...д.querySelectorAll('[id^="экран-"]')].filter(э => э.offsetParent !== null).map(э => э.id),
+        итог: д.querySelector('#текст-результата') ? д.querySelector('#текст-результата').textContent.trim() : null,
+        пояснение: д.querySelector('#пояснение-результата') ? д.querySelector('#пояснение-результата').textContent.trim() : null,
+        серия: д.querySelector('#серия-итога') ? д.querySelector('#серия-итога').textContent.trim() : null,
+        кнопкиИтога: [...д.querySelectorAll('#экран-результата button')]
+          .map(b => b.textContent.trim() + (b.offsetParent !== null ? ' [видна]' : ' [скрыта]')),
+        кодКомнаты: д.querySelector('#код-комнаты') ? д.querySelector('#код-комнаты').textContent.trim() : null,
+        сообщениеДруга: д.querySelector('#сообщение-друга') ? д.querySelector('#сообщение-друга').textContent.trim() : null,
+        сообщениеВхода: д.querySelector('#сообщение-входа') ? д.querySelector('#сообщение-входа').textContent.trim() : null
+      };
+    }
+
+    window.addEventListener('message', async (событие) => {
+      const письмо = событие.data || {};
+      if (!письмо.тест) return;
+      const д = рамка.contentDocument;
+      let ответ = null;
+      try {
+        if (письмо.действие === 'состояние') {
+          ответ = собратьСостояние();
+        } else if (письмо.действие === 'клик') {
+          const эл = (typeof письмо.что === 'number')
+            ? д.querySelectorAll('#карты-человека > *')[письмо.что]
+            : д.querySelector(письмо.что);
+          if (!эл) ответ = { ошибка: 'нет элемента ' + письмо.что };
+          else {
+            эл.click();
+            await new Promise(r => setTimeout(r, письмо.пауза || 1200));
+            ответ = собратьСостояние();
+          }
+        } else if (письмо.действие === 'набрать') {
+          const поле = д.querySelector('#поле-кода');
+          poleSet(поле, письмо.текст);
+          ответ = собратьСостояние();
+        } else if (письмо.действие === 'перезагрузить') {
+          рамка.contentWindow.location.reload();
+          await new Promise(r => setTimeout(r, письмо.пауза || 2000));
+          ответ = собратьСостояние();
+        } else if (письмо.действие === 'забыть-память-страницы') {
+          рамка.contentWindow.sessionStorage.clear();
+          ответ = { сделано: true };
+        } else if (письмо.действие === 'шаг') {
+          const что = сделатьРазумныйХод(д, рамка.contentWindow);
+          await new Promise(r => setTimeout(r, письмо.пауза || 900));
+          ответ = Object.assign({ сделал: что }, собратьСостояние());
+        }
+      } catch (сбой) {
+        ответ = { ошибка: String(сбой) };
+      }
+      событие.source.postMessage({ тест: true, номер: письмо.номер, ответ: ответ }, '*');
+    });
+
+    /* Один разумный ход за игрока: кладём первую карту, которой можно ходить,
+       а если ходить нечем — нажимаем «Бито» или «Беру». */
+    function сделатьРазумныйХод(д, окно) {
+      const экраны = [...д.querySelectorAll('[id^="экран-"]')].filter(э => э.offsetParent !== null).map(э => э.id);
+      if (экраны.indexOf('экран-результата') >= 0) return 'партия окончена';
+      if (экраны.indexOf('экран-игры') < 0) return 'не за столом';
+      const карты = [...д.querySelectorAll('#карты-человека > *')];
+      const можно = карты.filter(к => окно.getComputedStyle(к).cursor === 'pointer');
+      const бито = д.querySelector('#кнопка-завершить');
+      const беру = д.querySelector('#кнопка-беру');
+      if (можно.length) { можно[0].click(); return 'положил ' + можно[0].textContent.replace(/\s+/g, ''); }
+      if (бито && бито.offsetParent !== null) { бито.click(); return 'бито'; }
+      if (беру && беру.offsetParent !== null) { беру.click(); return 'беру'; }
+      return 'жду хода соперника';
+    }
+
+    // Вписать код в поле так, чтобы игра заметила ввод
+    function poleSet(поле, текст) {
+      if (!поле) return;
+      поле.focus();
+      поле.value = текст;
+      поле.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  </script>
+</body>
+</html>

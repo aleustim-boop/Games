@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Стенд тестировщика: два игрока рядом</title>
+  <style>
+    /* Простая подставка: две копии игры бок о бок.
+       Левая открыта по адресу 127.0.0.1, правая — по localhost.
+       Для браузера это два РАЗНЫХ сайта, поэтому память у них раздельная —
+       получается честная имитация двух телефонов. */
+    body { margin: 0; font-family: sans-serif; background: #222; color: #eee; }
+    .ряд { display: flex; gap: 10px; padding: 6px; }
+    .колонка { display: flex; flex-direction: column; }
+    .подпись { font-size: 13px; padding: 2px 6px; }
+    iframe { width: 390px; height: 800px; border: 2px solid #666; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="ряд">
+    <div class="колонка">
+      <div class="подпись">ИГРОК 1 (127.0.0.1)</div>
+      <!-- Адрес сервера можно подменить в строке браузера: ?сервер1=http://127.0.0.1:8792
+           (это медленный посредник — им проверяем поведение на слабой связи) -->
+      <iframe id="игрок1" src="http://127.0.0.1:8130/index.html?сервер=http://127.0.0.1:8790"></iframe>
+    </div>
+    <div class="колонка">
+      <div class="подпись">ИГРОК 2 (localhost)</div>
+      <!-- Внутри — переходник, который умеет нажимать кнопки за второго игрока -->
+      <iframe id="мост2" src="http://localhost:8130/tests/мост-игрока2.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    /* Если в адресе стенда указан ?сервер1=… — первый игрок ходит через него.
+       Так можно посадить одного игрока на медленную связь, а второго оставить
+       на быстрой, и посмотреть, что видит каждый. */
+    (function () {
+      const свой = new URLSearchParams(location.search).get('сервер1');
+      if (свой) {
+        document.getElementById('игрок1').src =
+          'http://127.0.0.1:8130/index.html?сервер=' + свой;
+      }
+    })();
+
+    /* Разговор со вторым игроком: посылаем письмо переходнику и ждём ответ. */
+    let номерПисьма = 0;
+    const ожидания = new Map();
+    window.addEventListener('message', (событие) => {
+      const п = событие.data || {};
+      if (!п.тест || !ожидания.has(п.номер)) return;
+      ожидания.get(п.номер)(п.ответ);
+      ожидания.delete(п.номер);
+    });
+    /* Один разумный ход за первого игрока — тот же простой расчёт,
+       что и у второго: кладём первую карту, которой можно ходить,
+       иначе жмём «Бито» или «Беру». */
+    window.шагИгрока1 = function () {
+      const рамка = document.getElementById('игрок1');
+      const д = рамка.contentDocument;
+      const окно = рамка.contentWindow;
+      const экраны = [...д.querySelectorAll('[id^="экран-"]')].filter(э => э.offsetParent !== null).map(э => э.id);
+      if (экраны.indexOf('экран-результата') >= 0) return 'партия окончена';
+      if (экраны.indexOf('экран-игры') < 0) return 'не за столом';
+      const карты = [...д.querySelectorAll('#карты-человека > *')];
+      const можно = карты.filter(к => окно.getComputedStyle(к).cursor === 'pointer');
+      const бито = д.querySelector('#кнопка-завершить');
+      const беру = д.querySelector('#кнопка-беру');
+      if (можно.length) { можно[0].click(); return 'положил ' + можно[0].textContent.replace(/\s+/g, ''); }
+      if (бито && бито.offsetParent !== null) { бито.click(); return 'бито'; }
+      if (беру && беру.offsetParent !== null) { беру.click(); return 'беру'; }
+      return 'жду хода соперника';
+    };
+
+    window.игрок2 = function (действие, доп) {
+      const номер = ++номерПисьма;
+      const письмо = Object.assign({ тест: true, номер: номер, действие: действие }, доп || {});
+      document.getElementById('мост2').contentWindow.postMessage(письмо, '*');
+      return new Promise((готово) => {
+        ожидания.set(номер, готово);
+        setTimeout(() => { if (ожидания.has(номер)) { ожидания.delete(номер); готово({ ошибка: 'переходник молчит' }); } }, 15000);
+      });
+    };
+  </script>
+</body>
+</html>
