@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(tee /tmp/пид-сервера.txt)",
-      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process -Filter \"Name='\\\\''node.exe'\\\\''\" | Where-Object { $_.CommandLine -like '\\\\''*61114*'\\\\'' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force; '\\\\''погасил свой '\\\\'' + $_.ProcessId }')"
-    ]
-  }
-}
