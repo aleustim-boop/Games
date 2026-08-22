@@ -37,6 +37,12 @@
         кнопкиИтога: [...д.querySelectorAll('#экран-результата button')]
           .map(b => b.textContent.trim() + (b.offsetParent !== null ? ' [видна]' : ' [скрыта]')),
         кодКомнаты: д.querySelector('#код-комнаты') ? д.querySelector('#код-комнаты').textContent.trim() : null,
+        // Прихожая: кто уже сидит за столом и видит ли этот игрок кнопки хозяина
+        местаПрихожей: [...д.querySelectorAll('#список-мест > *')].map(м => м.textContent.replace(/\s+/g, ' ').trim()),
+        правилаПрихожей: д.querySelector('#прихожая-правила') ? д.querySelector('#прихожая-правила').textContent.trim() : null,
+        кнопкиХозяинаВидны: !!(д.querySelector('#кнопки-хозяина') && д.querySelector('#кнопки-хозяина').offsetParent !== null),
+        сообщениеПрихожей: д.querySelector('#сообщение-прихожей') ? д.querySelector('#сообщение-прихожей').textContent.trim() : null,
+        соперники: [...д.querySelectorAll('.соперники > *')].map(с => с.textContent.replace(/\s+/g, ' ').trim()),
         сообщениеДруга: д.querySelector('#сообщение-друга') ? д.querySelector('#сообщение-друга').textContent.trim() : null,
         сообщениеВхода: д.querySelector('#сообщение-входа') ? д.querySelector('#сообщение-входа').textContent.trim() : null
       };
