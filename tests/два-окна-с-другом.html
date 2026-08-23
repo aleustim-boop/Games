@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Стенд тестировщика: два игрока с другом</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%2314532d'/%3E%3Ctext%20x='16'%20y='24'%20font-size='22'%20text-anchor='middle'%20fill='%23ffffff'%3E%E2%99%A0%3C/text%3E%3C/svg%3E">
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #1b1f24; color: #e8eef4; }
+  .ряд { display: flex; gap: 12px; padding: 8px; align-items: flex-start; }
+  .колонка { display: flex; flex-direction: column; }
+  .подпись { font: 600 13px system-ui; padding: 3px 6px; color: #9fb0c0; }
+  iframe { width: 390px; height: 800px; border: 2px solid #4c6076; border-radius: 6px; background: #fff; }
+  .узкое iframe { width: 320px; }
+</style>
+</head>
+<body>
+<!--
+  ЗАЧЕМ ЭТОТ ФАЙЛ. Игру с другом руками не проверить в одном окне: нужны два
+  «телефона» с раздельной памятью. Здесь они рядом — две копии настоящей игры.
+
+  Память раздельная потому, что адреса разные: слева 127.0.0.1, справа
+  localhost. Для браузера это два РАЗНЫХ сайта, у каждого своя память
+  (localStorage) и своя метка вкладки (sessionStorage) — то же самое, что
+  обычное окно и приватное, только видно оба сразу.
+
+  Адрес сервера комнат передаётся игре хвостиком «?сервер=…» — так же, как
+  его подставляет бот-лаунчер.
+
+  Как открыть:
+      node server/сервер.js 8845
+      http://127.0.0.1:8130/tests/два-окна-с-другом.html
+
+  Хвостики самого стенда:
+      ?сервер=http://127.0.0.1:8845   какой сервер комнат дать обеим копиям
+      ?узко=да                        сузить окна до 320 точек (проверка тесноты)
+-->
+<div class="ряд" id="ряд">
+  <div class="колонка">
+    <div class="подпись">ОКНО А — 127.0.0.1 (хозяин стола)</div>
+    <iframe id="окноА"></iframe>
+  </div>
+  <div class="колонка">
+    <div class="подпись">ОКНО Б — localhost (гость, память своя)</div>
+    <iframe id="окноБ"></iframe>
+  </div>
+</div>
+
+<script>
+'use strict';
+var хвост = new URLSearchParams(location.search);
+var сервер = хвост.get('сервер') || 'http://127.0.0.1:8845';
+if (хвост.get('узко') === 'да') document.getElementById('ряд').className = 'ряд узкое';
+document.getElementById('окноА').src =
+  'http://127.0.0.1:8130/index.html?сервер=' + encodeURIComponent(сервер);
+document.getElementById('окноБ').src =
+  'http://localhost:8130/index.html?сервер=' + encodeURIComponent(сервер);
+</script>
+</body>
+</html>
