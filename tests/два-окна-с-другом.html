@@ -49,11 +49,16 @@
 'use strict';
 var хвост = new URLSearchParams(location.search);
 var сервер = хвост.get('сервер') || 'http://127.0.0.1:8845';
+/* Порт игры больше не вписан в стенд намертво: берём тот, на котором открыт
+   сам стенд. Раньше здесь стояло 8130, и стоило штабу поднять игру на другом
+   порту (8123), как обе половинки открывали пустоту — а выглядело это как
+   «игра с другом сломалась». */
+var порт = хвост.get('порт') || location.port || '8130';
 if (хвост.get('узко') === 'да') document.getElementById('ряд').className = 'ряд узкое';
 document.getElementById('окноА').src =
-  'http://127.0.0.1:8130/index.html?сервер=' + encodeURIComponent(сервер);
+  'http://127.0.0.1:' + порт + '/index.html?сервер=' + encodeURIComponent(сервер);
 document.getElementById('окноБ').src =
-  'http://localhost:8130/index.html?сервер=' + encodeURIComponent(сервер);
+  'http://localhost:' + порт + '/index.html?сервер=' + encodeURIComponent(сервер);
 </script>
 </body>
 </html>
