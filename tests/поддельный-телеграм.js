@@ -130,6 +130,27 @@ function текстПодделки() {
     '    disableVerticalSwipes: function () {}, enableVerticalSwipes: function () {}\n' +
     '  };\n' +
     '  window.Telegram = { WebApp: WebApp };\n' +
+    '  /* Сторож звука: браузеры разрешают звук только после касания, поэтому\n' +
+    '     настоящий AudioContext страница обязана создавать не раньше первого\n' +
+    '     нажатия. Считаем, сколько раз его создали и было ли до этого касание. */\n' +
+    '  window.__звук = { создано: 0, касанийДоПервого: null, касаний: 0, запусков: 0, журнал: [] };\n' +
+    '  var НастоящийКонтекст = window.AudioContext || window.webkitAudioContext;\n' +
+    '  if (НастоящийКонтекст) {\n' +
+    '    var Сторож = function () {\n' +
+    '      window.__звук.создано++;\n' +
+    '      if (window.__звук.касанийДоПервого === null) window.__звук.касанийДоПервого = window.__звук.касаний;\n' +
+    '      window.__звук.журнал.push("создан AudioContext, касаний было " + window.__звук.касаний + ", страница " + document.readyState);\n' +
+    '      var к = new НастоящийКонтекст();\n' +
+    '      var создатьОсциллятор = к.createOscillator.bind(к);\n' +
+    '      к.createOscillator = function () { var о = создатьОсциллятор(); var старт = о.start.bind(о); о.start = function () { window.__звук.запусков++; return старт.apply(о, arguments); }; return о; };\n' +
+    '      return к;\n' +
+    '    };\n' +
+    '    Сторож.prototype = НастоящийКонтекст.prototype;\n' +
+    '    window.AudioContext = Сторож;\n' +
+    '    window.webkitAudioContext = Сторож;\n' +
+    '  }\n' +
+    '  window.addEventListener("pointerdown", function () { window.__звук.касаний++; }, true);\n' +
+    '  window.addEventListener("click", function () { window.__звук.касаний++; }, true);\n' +
     '  window.ПоддельныйТелеграм = {\n' +
     '    версия: ВЕРСИЯ,\n' +
     '    журнал: журнал,\n' +
