@@ -1,0 +1,228 @@
+/* =====================================================================
+   Звук в шашках — живой прогон с поддельным звуковым движком.
+
+   Настоящий динамик из стенда не слышно, поэтому AudioContext подменён:
+   он записывает каждую ноту (частота, время) и считает, сколько раз его
+   создавали. Проверяем:
+     1) до первого касания движок не создаётся вовсе;
+     2) ход — щелчок 262, бой — 196+147, дамка — 440+880, итог — свои ноты;
+     3) кнопка «Звук»: выключает (ни одной ноты), запоминает выбор
+        через перезагрузку, при включении сразу отвечает щелчком;
+     4) кнопка влезает в ряд на 320/360/390, доска не уменьшилась.
+   ===================================================================== */
+
+const { chromium } = require('./браузер-робот.js');
+const ПОРТ = Number(process.argv[2]) || 8080;    // страничный сервер уже поднят
+const АДРЕС = 'http://127.0.0.1:' + ПОРТ + '/шашки.html';
+const ПАПКА = require('path').join(__dirname, 'скриншоты') + '/';
+
+let провалов = 0;
+function проверить(условие, слова) {
+  console.log((условие ? '  ок   — ' : '  ПЛОХО— ') + слова);
+  if (!условие) провалов++;
+}
+
+/* Поддельный движок — кладётся до скриптов страницы. */
+const поддельныйЗвук = () => {
+  window.__ноты = [];
+  window.__движков = 0;
+  function Движок() {
+    window.__движков++;
+    this.state = 'running';
+    this.currentTime = 0;
+    this.destination = {};
+  }
+  Движок.prototype.resume = function () { this.state = 'running'; return Promise.resolve(); };
+  Движок.prototype.createOscillator = function () {
+    const о = { type: '', частота: 0, frequency: { setValueAtTime(f) { о.частота = f; } },
+      connect() {}, start(t) { window.__ноты.push({ f: о.частота, t: Math.round(t * 100) / 100 }); }, stop() {} };
+    return о;
+  };
+  Движок.prototype.createGain = function () {
+    return { gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {} };
+  };
+  window.AudioContext = Движок;
+  window.webkitAudioContext = undefined;
+};
+
+const ноты = (страница) => страница.evaluate(() => window.__ноты.map((н) => н.f));
+const сброс = (страница) => страница.evaluate(() => { window.__ноты.length = 0; });
+
+async function тап(страница) {
+  return страница.evaluate(() => {
+    const случайный = (с) => с[Math.floor(Math.random() * с.length)];
+    const куда = Array.from(document.querySelectorAll('.поле--можно, .поле--можно-бой'));
+    if (куда.length) { случайный(куда).click(); return 'ход'; }
+    const свои = Array.from(document.querySelectorAll('.фишка--может-ходить'));
+    if (свои.length) { случайный(свои).parentElement.click(); return 'поднял'; }
+    return 'нечего';
+  });
+}
+
+(async () => {
+  const браузер = await chromium.launch();
+
+  console.log('\n=== 1. Ноты по событиям доски ===');
+  {
+    const окно = await браузер.newContext({ viewport: { width: 360, height: 640 } });
+    const страница = await окно.newPage();
+    const ошибки = [];
+    страница.on('pageerror', (о) => ошибки.push(о.message));
+    страница.on('console', (с) => { if (с.type() === 'error') ошибки.push(с.text()); });
+    await страница.addInitScript(поддельныйЗвук);
+    await страница.goto(АДРЕС);
+    await страница.waitForTimeout(300);
+
+    проверить(await страница.evaluate(() => window.__движков) === 0, 'до первого касания движок не создан');
+    проверить(await страница.evaluate(() => document.getElementById('кнопка-звук').textContent) === 'Звук',
+      'кнопка подписана «Звук»');
+
+    // Первый тихий ход белых (вдвоём): поднять, пойти
+    await тап(страница); await страница.waitForTimeout(30);
+    await тап(страница); await страница.waitForTimeout(60);
+    let было = await ноты(страница);
+    проверить(await страница.evaluate(() => window.__движков) === 1, 'движок создан внутри первого хода');
+    проверить(было.length === 1 && было[0] === 262, 'тихий ход — одна нота 262: ' + было.join(','));
+
+    // Играем вдвоём, пока не случится бой, дамка и итог
+    const события = { бой: false, дамка: false, итог: null };
+    let дамокБыло = 0;
+    for (let i = 0; i < 700; i++) {
+      const кончено = await страница.evaluate(() =>
+        document.getElementById('экран-итога').classList.contains('экран--виден'));
+      if (кончено) break;
+      await сброс(страница);
+      const что = await тап(страница);
+      await страница.waitForTimeout(что === 'нечего' ? 100 : 20);
+      const свежие = await ноты(страница);
+      const дамок = await страница.evaluate(() => document.querySelectorAll('.фишка--дамка').length);
+      if (свежие.length === 2 && свежие[0] === 196 && свежие[1] === 147) события.бой = true;
+      if (дамок > дамокБыло && свежие.indexOf(440) >= 0 && свежие.indexOf(880) >= 0) события.дамка = true;
+      дамокБыло = дамок;
+      if (свежие.indexOf(523) >= 0 && свежие.indexOf(784) >= 0) события.итог = 'победа';
+      if (свежие.indexOf(392) >= 0) события.итог = 'ничья';
+    }
+    const итог = await страница.evaluate(() => document.getElementById('заголовок-итога').textContent);
+    console.log('  партия кончилась: «' + итог + '», дамок на доске в конце: ' + дамокБыло);
+    проверить(события.бой, 'бой звучал двумя нотами 196+147');
+    проверить(события.дамка || дамокБыло === 0 && true,
+      'превращение в дамку звучало 440+880' + (события.дамка ? '' : ' (дамок в этой партии не было — не проверено)'));
+    проверить(события.итог !== null, 'итог партии озвучен: ' + события.итог);
+
+    // Против робота: поражение — две ноты вниз. Робот сильный, случайный игрок проиграет почти наверняка.
+    await страница.click('#кнопка-ещё');
+    await страница.click('#уровень-сложный');
+    await страница.click('#кнопка-с-ботом');
+    await страница.waitForTimeout(100);
+    let ботовыеНоты = 0;
+    for (let i = 0; i < 900; i++) {
+      const кончено = await страница.evaluate(() =>
+        document.getElementById('экран-итога').classList.contains('экран--виден'));
+      if (кончено) break;
+      await сброс(страница);
+      const что = await тап(страница);
+      await страница.waitForTimeout(что === 'нечего' ? 120 : 20);
+      if (что === 'нечего') ботовыеНоты += (await ноты(страница)).length;   // ноты, пришедшие без нашего тапа — ход робота
+    }
+    await страница.waitForTimeout(200);
+    const концовка = await ноты(страница);
+    const заголовок = await страница.evaluate(() => document.getElementById('заголовок-итога').textContent);
+    console.log('  с роботом: «' + заголовок + '», последние ноты: ' + концовка.join(','));
+    проверить(ботовыеНоты > 0, 'ходы робота тоже звучат (нот без тапа: ' + ботовыеНоты + ')');
+    if (/Соперник выиграл/.test(заголовок)) {
+      проверить(концовка.indexOf(300) >= 0 && концовка.indexOf(160) >= 0, 'поражение — две ноты вниз 300+160');
+    } else {
+      console.log('  (случайный игрок не проиграл — звук поражения проверен вызовом напрямую)');
+      await сброс(страница);
+      await страница.evaluate(() => window.ШашкиЗвук.поражение());
+      const п = await ноты(страница);
+      проверить(п.indexOf(300) >= 0 && п.indexOf(160) >= 0, 'поражение — две ноты вниз 300+160');
+    }
+    проверить(ошибки.length === 0, 'красных ошибок нет' + (ошибки.length ? ': ' + ошибки.join(' | ') : ''));
+    await окно.close();
+  }
+
+  console.log('\n=== 2. Кнопка «Звук»: выключение, память, включение ===');
+  {
+    const окно = await браузер.newContext({ viewport: { width: 360, height: 640 } });
+    const страница = await окно.newPage();
+    await страница.addInitScript(поддельныйЗвук);
+    await страница.goto(АДРЕС);
+    await страница.waitForTimeout(200);
+
+    await страница.click('#кнопка-звук');
+    let вид = await страница.evaluate(() => ({
+      выкл: document.getElementById('кнопка-звук').classList.contains('кнопка--выключено'),
+      память: localStorage.getItem('шашки:звук'),
+      нот: window.__ноты.length,
+      подпись: document.getElementById('кнопка-звук').getAttribute('aria-label')
+    }));
+    проверить(вид.выкл && вид.память === 'выключен', 'выключили: класс «выключено», в памяти «выключен»');
+    проверить(вид.нот === 0, 'при выключении ни одной ноты');
+    проверить(вид.подпись === 'Звук выключен', 'для читалки экрана подпись «Звук выключен»');
+
+    await тап(страница); await страница.waitForTimeout(30);
+    await тап(страница); await страница.waitForTimeout(60);
+    проверить(await страница.evaluate(() => window.__ноты.length) === 0, 'ход при выключенном звуке молчит');
+
+    await страница.reload();
+    await страница.waitForTimeout(200);
+    проверить(await страница.evaluate(() =>
+      document.getElementById('кнопка-звук').classList.contains('кнопка--выключено')),
+      'после перезагрузки звук по-прежнему выключен');
+
+    await страница.click('#кнопка-звук');
+    вид = await страница.evaluate(() => ({
+      выкл: document.getElementById('кнопка-звук').classList.contains('кнопка--выключено'),
+      память: localStorage.getItem('шашки:звук'),
+      ноты: window.__ноты.map((н) => н.f)
+    }));
+    проверить(!вид.выкл && вид.память === 'включен', 'включили обратно, в памяти «включен»');
+    проверить(вид.ноты.length === 1 && вид.ноты[0] === 262, 'при включении сразу щёлкнуло: ' + вид.ноты.join(','));
+    await окно.close();
+  }
+
+  console.log('\n=== 3. Кнопка влезает в ряд, доска не пострадала ===');
+  for (const р of [{ w: 320, h: 568 }, { w: 360, h: 640 }, { w: 390, h: 844 }]) {
+    const окно = await браузер.newContext({ viewport: { width: р.w, height: р.h }, deviceScaleFactor: 2 });
+    const страница = await окно.newPage();
+    await страница.goto(АДРЕС);
+    await страница.waitForTimeout(250);
+    const мера = await страница.evaluate(() => {
+      const имена = ['кнопка-с-ботом', 'кнопка-вдвоём', 'кнопка-звук', 'кнопка-как-играть', 'кнопка-рекорды', 'кнопка-назад'];
+      const ряды = new Set();
+      const кнопки = имена.map((имя) => {
+        const у = document.getElementById(имя).getBoundingClientRect();
+        ряды.add(Math.round(у.top));
+        return { имя, ш: Math.round(у.width), в: Math.round(у.height),
+          внутри: у.right <= window.innerWidth + 0.5 && у.bottom <= window.innerHeight + 0.5 };
+      });
+      const звук = document.getElementById('кнопка-звук').getBoundingClientRect();
+      const вдвоём = document.getElementById('кнопка-вдвоём').getBoundingClientRect();
+      const доска = () => document.getElementById('доска').getBoundingClientRect().width;
+      const сКнопкой = доска();
+      document.getElementById('кнопка-звук').style.display = 'none';
+      const безКнопки = доска();
+      document.getElementById('кнопка-звук').style.display = '';
+      return {
+        кнопки, рядов: ряды.size,
+        звукВПервомРяду: Math.round(звук.top) === Math.round(вдвоём.top),
+        доска: Math.round(сКнопкой), безКнопки: Math.round(безКнопки),
+        прокрутка: document.documentElement.scrollHeight, окно: window.innerHeight
+      };
+    });
+    console.log('  ' + р.w + '×' + р.h + ': рядов кнопок ' + мера.рядов + ', доска ' + мера.доска + ', ' +
+      мера.кнопки.map((к) => к.имя.replace('кнопка-', '') + ' ' + к.ш + '×' + к.в).join(', '));
+    проверить(мера.рядов <= 2, 'кнопок не больше двух рядов');
+    проверить(мера.звукВПервомРяду, '«Звук» стоит в первом ряду, рядом с «Играть вдвоём»');
+    проверить(мера.кнопки.every((к) => к.внутри && к.в >= 44), 'все кнопки в окне и не ниже 44 точек');
+    проверить(мера.доска >= мера.безКнопки, 'доска от кнопки звука не уменьшилась: ' + мера.доска + ' против ' + мера.безКнопки + ' без неё');
+    проверить(мера.прокрутка <= мера.окно + 1, 'страница не прокручивается');
+    if (р.w === 320) await страница.screenshot({ path: ПАПКА + 'доска-со-звуком-320.png' });
+    await окно.close();
+  }
+
+  await браузер.close();
+  console.log('\n' + (провалов === 0 ? 'ВСЁ ЗЕЛЁНОЕ' : 'ПРОВАЛОВ: ' + провалов));
+  process.exit(провалов === 0 ? 0 : 1);
+})().catch((о) => { console.error('проверка сломалась:', о); process.exit(2); });

@@ -1,0 +1,92 @@
+'use strict';
+
+/* =====================================================================
+   БРАУЗЕР-РОБОТ ДЛЯ ПОСТОЯННЫХ СТЕНДОВ.
+
+   Стенды в tests/ гоняют настоящий Chromium через playwright: это ловцы
+   того, чего глазами не видно (плашка поверх рекордов, карты под правилами,
+   обрезка на 320). Проект живёт без npm-пакетов, и playwright в нём не
+   лежит — он стоит на машине один раз, для всех. Раньше каждый стенд
+   тащил его по абсолютному пути глобальной установки одного компьютера;
+   теперь путь ищется здесь и только здесь.
+
+   Что отдаётся наружу:
+     chromium               — тот самый, из playwright;
+     подготовитьПодделку(страница, настройки) — положить в страницу
+                              поддельный Telegram (общий, из
+                              tests/поддельный-телеграм.js) и не пустить
+                              настоящий скрипт telegram.org, который
+                              затёр бы подделку;
+     общееОблако()          — облако в памяти процесса проверки: одно
+                              на несколько страниц (дурак и шашки в одном
+                              хранилище), подключается настройкой
+                              { общееОблако: облако };
+     безTelegram(страница)  — только не пускать настоящий скрипт.
+
+   Настройки подделки: { версия: '7.10', стрелка: true, тема: {...},
+   общееОблако: объект } — см. текстПодделки в tests/поддельный-телеграм.js.
+   ===================================================================== */
+
+const path = require('path');
+const { текстПодделки } = require('./поддельный-телеграм.js');
+
+function найтиPlaywright() {
+  const кандидаты = ['playwright'];
+  if (process.env.APPDATA) кандидаты.push(path.join(process.env.APPDATA, 'npm', 'node_modules', 'playwright'));
+  if (process.env.HOME) кандидаты.push(path.join(process.env.HOME, '.npm-global', 'lib', 'node_modules', 'playwright'));
+  кандидаты.push('/usr/local/lib/node_modules/playwright', '/usr/lib/node_modules/playwright');
+  for (const где of кандидаты) {
+    try {
+      return require(где);
+    } catch (ошибка) {
+      if (ошибка.code !== 'MODULE_NOT_FOUND') throw ошибка;
+    }
+  }
+  console.error('Браузер-робот (playwright) не найден. Стенды из tests/ его не устанавливают — ' +
+    'проект живёт без npm-пакетов. Поставьте один раз для всей машины:\n' +
+    '    npm install -g playwright\n    npx playwright install chromium\n' +
+    'Искали здесь: ' + кандидаты.join(', '));
+  process.exit(2);
+}
+
+const playwright = найтиPlaywright();
+
+/** Облако в памяти процесса проверки — одно на все страницы, которым его дали. */
+function общееОблако() {
+  return Object.create(null);
+}
+
+/** Не пускать настоящий скрипт Telegram: он подключён с defer и затёр бы подделку. */
+async function безTelegram(страница) {
+  await страница.route('**/telegram-web-app.js', function (путь) { путь.abort(); });
+}
+
+/**
+ * Положить в страницу поддельный Telegram до её скриптов.
+ * С общим облаком пробрасываем в страницу четыре функции — мостик
+ * в память процесса: так дурак и шашки пишут в одно и то же облако.
+ */
+async function подготовитьПодделку(страница, настройки) {
+  const н = Object.assign({}, настройки || {});
+  if (н.общееОблако) {
+    const облако = н.общееОблако;
+    await страница.exposeFunction('__облакоПрочитать', function (ключ) {
+      return Object.prototype.hasOwnProperty.call(облако, ключ) ? облако[ключ] : '';
+    });
+    await страница.exposeFunction('__облакоЗаписать', function (ключ, значение) { облако[ключ] = String(значение); return true; });
+    await страница.exposeFunction('__облакоУдалить', function (ключ) { delete облако[ключ]; return true; });
+    await страница.exposeFunction('__облакоКлючи', function () { return Object.keys(облако); });
+    н.облако = 'мост';
+  } else if (!н.облако) {
+    н.облако = 'память';
+  }
+  await страница.addInitScript({ content: текстПодделки(н) });
+  await безTelegram(страница);
+}
+
+module.exports = {
+  chromium: playwright.chromium,
+  подготовитьПодделку: подготовитьПодделку,
+  общееОблако: общееОблако,
+  безTelegram: безTelegram
+};
