@@ -248,6 +248,12 @@ const ОФОРМЛЕНИЕ = `
   .вопрос-сам { font-size: 17px; font-weight: 700; color: var(--ink); font-family: "Alegreya Sans", sans-serif; }
   .вопрос-зачем { font-size: 14.5px; color: var(--ink-soft); }
 
+  .разбор-ссылка {
+    display: block; margin-top: 8px; padding: 10px 12px; text-align: center;
+    background: var(--surface); border: 1.5px solid var(--yantar); border-radius: 8px;
+    color: var(--yantar); font-weight: 700; font-size: 14.5px; text-decoration: none;
+  }
+
   .проверьте { display: block; font-style: normal; font-size: 13.5px; color: var(--yantar); margin-top: 4px; }
 
   .лента { list-style: none; margin: 0; padding: 0; }
@@ -483,10 +489,18 @@ function блокВопросы(данные) {
 
   let строки = '';
   for (const в of вопросы) {
+    // У вопроса про путь до партии есть отдельная страница с разбором:
+    // одной строкой в списке этот вопрос уже задавали, и владелец его
+    // справедливо не понял.
+    const проПуть = /витрин|касан|путь до партии|с ботом/i.test(в.что + ' ' + в.вопрос);
+    const ссылка = проПуть
+      ? '<a class="разбор-ссылка" href="/путь-до-партии">Открыть разбор: как сейчас, четыре варианта и что советую →</a>'
+      : '';
     строки += '<li>'
       + '<span class="вопрос-о">' + э(в.что) + '</span>'
       + '<span class="вопрос-сам">' + э(в.вопрос) + '</span>'
       + (в.заметка ? '<span class="вопрос-зачем">' + э(в.заметка) + '</span>' : '')
+      + ссылка
       + '</li>';
   }
 
@@ -697,5 +711,8 @@ function целаяСтраница(данные) {
 
 module.exports = {
   целаяСтраница: целаяСтраница,
-  внутренности: внутренности
+  внутренности: внутренности,
+  // Оформление берёт и страница разбора (штаб/разбор-пути.js): вид у штаба
+  // один, и заводить ему вторую таблицу цветов незачем.
+  ОФОРМЛЕНИЕ: ОФОРМЛЕНИЕ
 };
