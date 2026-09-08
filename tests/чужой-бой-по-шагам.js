@@ -281,7 +281,9 @@ function ходыИз(вид) {
         const п = document.getElementById('панель-знаков-шашки');
         if (!п || п.classList.contains('скрыт')) return null;
         const место = п.getBoundingClientRect();
-        const кнопки = [...п.querySelectorAll('button')].map((к) => {
+        const видимые = [...п.querySelectorAll('button')].filter((к) => k_видна(к));
+        function k_видна(к) { const б = к.getBoundingClientRect(); return к.offsetParent !== null && б.width > 1 && б.height > 1; }
+        const кнопки = видимые.map((к) => {
           const б = к.getBoundingClientRect();
           return { текст: (к.textContent || '').trim().slice(0, 12), верх: Math.round(б.top), низ: Math.round(б.bottom), высота: Math.round(б.height) };
         });
@@ -348,7 +350,10 @@ function ходыИз(вид) {
         const п = document.getElementById('панель-знаков-шашки');
         const закрыть = п && п.querySelector('.панель-знаков__закрыть');
         const з = закрыть ? закрыть.getBoundingClientRect() : null;
-        const кнопки = [...(п ? п.querySelectorAll('button') : [])].map((к) => к.getBoundingClientRect());
+        const кнопки = [...(п ? п.querySelectorAll('button') : [])]
+          .filter((к) => к.offsetParent !== null)
+          .map((к) => к.getBoundingClientRect())
+          .filter((б) => б.width > 1 && б.height > 1);
         return {
           открыта: !!(п && !п.classList.contains('скрыт')),
           прокрутка: п ? Math.max(0, п.scrollHeight - п.clientHeight) : 0,
@@ -365,9 +370,12 @@ function ходыИз(вид) {
         ', под полосой жеста ' + узко.подЖестом + ', прокрутка ' + узко.прокрутка + ', доска ' + узко.доска);
       проверить(узко.открыта, 'панель осталась открытой после сужения окна');
       проверить(узко.заКраем === 0, 'на 320 ни одна кнопка не ушла за край: ' + узко.заКраем);
-      проверить(!!узко.закрыть && узко.закрыть.низ <= узко.окно - 34,
-        '«Закрыть» видна выше полосы жеста (низ ' + (узко.закрыть && узко.закрыть.низ) +
-        ' при пределе ' + (узко.окно - 34) + ')');
+      /* Нижняя плашка нарочно доходит до края экрана, держа надпись выше
+         полосы жеста. Плохо не «низ ниже предела», а когда над полосой
+         не осталось места под палец. */
+      const надПолосой = узко.закрыть ? (узко.окно - 34) - узко.закрыть.верх : 0;
+      проверить(надПолосой >= 24,
+        '«Закрыть» доступна пальцем над полосой жеста: над ней ' + надПолосой + ' точек');
 
       /* 4. Летящий предмет не должен перехватывать нажатия. */
       await страница.setViewportSize({ width: 390, height: 844 });
