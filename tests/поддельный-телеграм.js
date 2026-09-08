@@ -28,9 +28,29 @@
      ready, expand, close, isVersionAtLeast, onEvent/offEvent, themeParams,
      initDataUnsafe, BackButton (show/hide/onClick — если «стрелка» не
      выключена настройкой), CloudStorage (setItem/getItem/getItems/
-     removeItem/removeItems/getKeys), MainButton и HapticFeedback пустышками.
+     removeItem/removeItems/getKeys), MainButton и HapticFeedback пустышками,
+     полный экран (requestFullscreen/exitFullscreen, isFullscreen, отступы
+     safeAreaInset и contentSafeAreaInset) — как в Bot API 8.0.
    Облако придирчиво к имени записи так же, как настоящее: только латинские
    буквы, цифры, «_» и «-».
+
+   ПОЛНЫЙ ЭКРАН — настройка «полныйЭкран» (Bot API 8.0):
+     'дают'       — просьбу выполняем: isFullscreen становится true и
+                    приходит событие fullscreenChanged (по умолчанию);
+     'отказ'      — на просьбу приходит fullscreenFailed с доводом
+                    { error: 'UNSUPPORTED' } — так отвечает устройство,
+                    которое полного экрана не умеет;
+     'нет метода' — методов requestFullscreen/exitFullscreen нет вовсе,
+                    как в Telegram старше 8.0 (в паре с версией '7.10').
+   Важно: и просьба, и ответ ходят не мгновенно, как у настоящего
+   Telegram, — события приходят следующим тактом. Поэтому проверять
+   «стал ли экран полным» надо после короткого ожидания, а не сразу.
+
+   Отступы поверх страницы — два слоя, как у настоящего:
+     safeAreaInset        — системный (вырез камеры, часы, полоса жеста);
+     contentSafeAreaInset — слой Telegram (его кнопки в углу).
+   Начальные значения — нули; менять их из проверки ручкой
+   ПоддельныйТелеграм.поменятьОтступы (см. ниже).
 
    ГДЕ ЖИВЁТ ОБЛАКО — настройка «облако»:
      'сервер' — запросами к этому серверу (/поддельное-облако/…);
@@ -41,8 +61,19 @@
    ЧТО ВИДНО ИЗ СТРАНИЦЫ:
      window.ПоддельныйТелеграм.журнал      — всё, что просили, по порядку;
      window.ПоддельныйТелеграм.нажатьНазад() — нажать стрелку «Назад»;
+     window.ПоддельныйТелеграм.датьПолныйЭкран() — выдать полный экран
+                        руками (как будто Telegram согласился);
+     window.ПоддельныйТелеграм.отказатьВПолномЭкране('UNSUPPORTED')
+                      — прислать отказ; довода по документации ровно два:
+                        'UNSUPPORTED' и 'ALREADY_FULLSCREEN';
+     window.ПоддельныйТелеграм.поменятьОтступы({ системные: { top: 44 },
+                        содержимого: { top: 12 } }) — подвинуть края экрана
+                        и позвать события safeAreaChanged /
+                        contentSafeAreaChanged (каждое — только если этот
+                        слой в просьбе назвали);
      window.__дневник — счётчики { ready, expand, стрелкаПоказана, стрелка,
-                        события: { имя: [слушатели] } };
+                        полныйЭкран (сколько раз просили), цветШапки,
+                        цветФона, события: { имя: [слушатели] } };
      window.__облако  — записи облака (в режиме 'память');
      window.__звук    — сторож звука: когда создали AudioContext и было ли
                         до этого касание (браузер даёт звук только после).
@@ -55,6 +86,8 @@
    Запуск сервера:
        node tests/поддельный-телеграм.js            порт 8131, Telegram 7.10
        node tests/поддельный-телеграм.js 8131 6.0   другой порт и версия
+       node tests/поддельный-телеграм.js 8131 8.0 отказ   ещё и поведение
+                                                   полного экрана
 
    ПРО БЕЗОПАСНОСТЬ — те же два правила, что и у tests/локальный-сервер.js:
    слушаем только 127.0.0.1, папку bot и файлы с точкой не отдаём никогда.
@@ -73,22 +106,30 @@ const ТЕМА_ПО_УМОЛЧАНИЮ = {
    Подделка — исходник, который уезжает в страницу
    --------------------------------------------------------------------- */
 
+const ПУСТЫЕ_ОТСТУПЫ = { top: 0, bottom: 0, left: 0, right: 0 };
+const РЕЖИМЫ_ПОЛНОГО_ЭКРАНА = ['дают', 'отказ', 'нет метода'];
+
 function текстПодделки(настройки) {
   const н = настройки || {};
   const версия = String(н.версия || '7.10');
   const стрелка = н.стрелка !== false;
   const облако = н.облако === 'сервер' || н.облако === 'мост' ? н.облако : 'память';
   const тема = Object.assign({}, ТЕМА_ПО_УМОЛЧАНИЮ, н.тема || {});
+  const полныйЭкран = РЕЖИМЫ_ПОЛНОГО_ЭКРАНА.indexOf(н.полныйЭкран) !== -1 ? н.полныйЭкран : 'дают';
+  // Начальные края экрана можно задать сразу — например, «телефон с вырезом»
+  const отступыСистемы = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.системные) || {});
+  const отступыСодержимого = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.содержимого) || {});
 
   return '/* Поддельный Telegram — из tests/поддельный-телеграм.js */\n' +
     '(function () {\n' +
     '  var ВЕРСИЯ = ' + JSON.stringify(версия) + ';\n' +
     '  var ЕСТЬ_СТРЕЛКА = ' + JSON.stringify(стрелка) + ';\n' +
     '  var ОБЛАКО = ' + JSON.stringify(облако) + ';\n' +
+    '  var ПОЛНЫЙ_ЭКРАН = ' + JSON.stringify(полныйЭкран) + ';\n' +
     '  var ПРАВИЛО_КЛЮЧА = /^[A-Za-z0-9_-]{1,128}$/;\n' +
     '  var журнал = [];\n' +
     '  var слушатели = {};\n' +
-    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, события: слушатели };\n' +
+    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, полныйЭкран: 0, цветШапки: "", цветФона: "", события: слушатели };\n' +
     '  var память = {};\n' +
     '  window.__дневник = дневник;\n' +
     '  window.__облако = память;\n' +
@@ -102,6 +143,13 @@ function текстПодделки(настройки) {
     '    return 0;\n' +
     '  }\n' +
     '  function потом(дело) { setTimeout(дело, 0); }\n' +
+    '  /* Позвать слушателей события. Ошибку внутри чужого обработчика не глушим:\n' +
+    '     пусть падает в консоль — проверяющему нужна красная строка, а не тишина. */\n' +
+    '  function сообщить(имя, довод) {\n' +
+    '    записать("событие " + имя);\n' +
+    '    (слушатели[имя] || []).slice().forEach(function (cb) { cb(довод); });\n' +
+    '  }\n' +
+    '  function сообщитьПотом(имя, довод) { потом(function () { сообщить(имя, довод); }); }\n' +
     '  /* Три дороги в облако — ответ всегда приходит позже, как у настоящего. */\n' +
     '  function вОблако(дверь, тело, ответить) {\n' +
     '    ответить = typeof ответить === "function" ? ответить : function () {};\n' +
@@ -139,6 +187,9 @@ function текстПодделки(настройки) {
     '    version: ВЕРСИЯ, platform: "android", colorScheme: "dark",\n' +
     '    themeParams: ' + JSON.stringify(тема) + ',\n' +
     '    isExpanded: false, viewportHeight: 560, viewportStableHeight: 560,\n' +
+    '    isFullscreen: false, isOrientationLocked: false,\n' +
+    '    safeAreaInset: ' + JSON.stringify(отступыСистемы) + ',\n' +
+    '    contentSafeAreaInset: ' + JSON.stringify(отступыСодержимого) + ',\n' +
     '    initData: "", initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" } },\n' +
     '    ready: function () { дневник.ready++; записать("ready"); },\n' +
     '    expand: function () { this.isExpanded = true; this.viewportHeight = 844; this.viewportStableHeight = 844; дневник.expand++; записать("expand"); },\n' +
@@ -159,7 +210,8 @@ function текстПодделки(настройки) {
     '    openLink: function () { записать("openLink"); }, openTelegramLink: function () { записать("openTelegramLink"); },\n' +
     '    showAlert: function (т, cb) { записать("showAlert: " + т); if (cb) cb(); },\n' +
     '    showPopup: function (п, cb) { записать("showPopup"); if (cb) cb(); },\n' +
-    '    setHeaderColor: function () {}, setBackgroundColor: function () {},\n' +
+    '    setHeaderColor: function (цвет) { дневник.цветШапки = String(цвет); записать("setHeaderColor " + цвет); },\n' +
+    '    setBackgroundColor: function (цвет) { дневник.цветФона = String(цвет); записать("setBackgroundColor " + цвет); },\n' +
     '    enableClosingConfirmation: function () {}, disableClosingConfirmation: function () {},\n' +
     '    disableVerticalSwipes: function () {}, enableVerticalSwipes: function () {}\n' +
     '  };\n' +
@@ -171,6 +223,23 @@ function текстПодделки(настройки) {
     '      hide: function () { this.isVisible = false; записать("BackButton.hide"); return this; },\n' +
     '      onClick: function (cb) { WebApp.onEvent("backButtonClicked", cb); return this; },\n' +
     '      offClick: function (cb) { WebApp.offEvent("backButtonClicked", cb); return this; }\n' +
+    '    };\n' +
+    '  }\n' +
+    '  /* Полный экран появился в Bot API 8.0. В режиме «нет метода» этих двух\n' +
+    '     функций у WebApp нет вовсе — ровно как в Telegram постарше, где игра\n' +
+    '     обязана обойтись expand() и не упасть. */\n' +
+    '  if (ПОЛНЫЙ_ЭКРАН !== "нет метода") {\n' +
+    '    WebApp.requestFullscreen = function () {\n' +
+    '      дневник.полныйЭкран++;\n' +
+    '      записать("requestFullscreen");\n' +
+    '      if (ПОЛНЫЙ_ЭКРАН === "отказ") { сообщитьПотом("fullscreenFailed", { error: "UNSUPPORTED" }); return; }\n' +
+    '      if (WebApp.isFullscreen === true) { сообщитьПотом("fullscreenFailed", { error: "ALREADY_FULLSCREEN" }); return; }\n' +
+    '      потом(function () { WebApp.isFullscreen = true; сообщить("fullscreenChanged"); });\n' +
+    '    };\n' +
+    '    WebApp.exitFullscreen = function () {\n' +
+    '      записать("exitFullscreen");\n' +
+    '      if (WebApp.isFullscreen !== true) return;   /* выходить неоткуда — настоящий тоже молчит */\n' +
+    '      потом(function () { WebApp.isFullscreen = false; сообщить("fullscreenChanged"); });\n' +
     '    };\n' +
     '  }\n' +
     '  window.Telegram = { WebApp: WebApp };\n' +
@@ -201,7 +270,35 @@ function текстПодделки(настройки) {
     '    нажатьНазад: function () {\n' +
     '      записать("нажата стрелка Назад (слушателей: " + (слушатели.backButtonClicked || []).length + ")");\n' +
     '      (слушатели.backButtonClicked || []).slice().forEach(function (cb) { cb(); });\n' +
-    '    }\n' +
+    '    },\n' +
+    '    /* Выдать полный экран руками — как будто Telegram согласился. */\n' +
+    '    датьПолныйЭкран: function () {\n' +
+    '      WebApp.isFullscreen = true;\n' +
+    '      сообщить("fullscreenChanged");\n' +
+    '    },\n' +
+    '    /* Вернуть обычный экран руками. */\n' +
+    '    вернутьОбычныйЭкран: function () {\n' +
+    '      WebApp.isFullscreen = false;\n' +
+    '      сообщить("fullscreenChanged");\n' +
+    '    },\n' +
+    '    /* Прислать отказ. Доводов по документации ровно два. */\n' +
+    '    отказатьВПолномЭкране: function (довод) {\n' +
+    '      сообщить("fullscreenFailed", { error: довод === "ALREADY_FULLSCREEN" ? "ALREADY_FULLSCREEN" : "UNSUPPORTED" });\n' +
+    '    },\n' +
+    '    /* Подвинуть края экрана. Оба слоя необязательны: зовём только то\n' +
+    '       событие, чей слой в просьбе назвали. */\n' +
+    '    поменятьОтступы: function (края) {\n' +
+    '      края = края || {};\n' +
+    '      if (края.системные) {\n' +
+    '        WebApp.safeAreaInset = Object.assign({ top: 0, bottom: 0, left: 0, right: 0 }, WebApp.safeAreaInset, края.системные);\n' +
+    '        сообщить("safeAreaChanged");\n' +
+    '      }\n' +
+    '      if (края.содержимого) {\n' +
+    '        WebApp.contentSafeAreaInset = Object.assign({ top: 0, bottom: 0, left: 0, right: 0 }, WebApp.contentSafeAreaInset, края.содержимого);\n' +
+    '        сообщить("contentSafeAreaChanged");\n' +
+    '      }\n' +
+    '    },\n' +
+    '    WebApp: WebApp\n' +
     '  };\n' +
     '})();\n';
 }
@@ -216,6 +313,8 @@ if (require.main === module) {
   const КОРЕНЬ = path.resolve(path.join(__dirname, '..'));
   const ПОРТ = Number(process.argv[2]) || 8131;
   const ВЕРСИЯ_TELEGRAM = process.argv[3] || '7.10';
+  // Четвёртым словом можно задать поведение полного экрана: дают | отказ | «нет метода»
+  const ПОЛНЫЙ_ЭКРАН = process.argv[4] || 'дают';
   const АДРЕС = '127.0.0.1';   // только свой компьютер — см. шапку
 
   const ТИПЫ = {
@@ -231,7 +330,7 @@ if (require.main === module) {
 
   /* Вырезать настоящий скрипт Telegram и вписать подделку (облако — на сервере). */
   function подменитьTelegram(html) {
-    const скрипт = '<script>\n' + текстПодделки({ версия: ВЕРСИЯ_TELEGRAM, облако: 'сервер' }) + '</script>\n';
+    const скрипт = '<script>\n' + текстПодделки({ версия: ВЕРСИЯ_TELEGRAM, облако: 'сервер', полныйЭкран: ПОЛНЫЙ_ЭКРАН }) + '</script>\n';
     const безНастоящего = html.replace(/<script[^>]*telegram-web-app\.js[^>]*>\s*<\/script>/gi,
       '<!-- настоящий скрипт Telegram вырезан сервером tests/поддельный-телеграм.js -->');
     if (безНастоящего.indexOf('</head>') === -1) return скрипт + безНастоящего;
@@ -348,6 +447,7 @@ if (require.main === module) {
     });
   }).listen(ПОРТ, АДРЕС, function () {
     console.log('поддельный Telegram ' + ВЕРСИЯ_TELEGRAM + ' поднят: http://' + АДРЕС + ':' + ПОРТ + '/шашки.html');
+    console.log('полный экран: ' + ПОЛНЫЙ_ЭКРАН + ' (менять четвёртым словом: дают | отказ | «нет метода»)');
     console.log('облако живёт в памяти этого сервера; слушаем только этот компьютер');
   });
 }
