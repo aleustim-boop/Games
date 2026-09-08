@@ -144,7 +144,7 @@ function текстПодделки(настройки) {
     '  var ПРАВИЛО_КЛЮЧА = /^[A-Za-z0-9_-]{1,128}$/;\n' +
     '  var журнал = [];\n' +
     '  var слушатели = {};\n' +
-    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, полныйЭкран: 0, замковПоворота: 0, отпираний: 0, цветШапки: "", цветФона: "", события: слушатели };\n' +
+    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, полныйЭкран: 0, замковПоворота: 0, отпираний: 0, вибраций: 0, цветШапки: "", цветФона: "", события: слушатели };\n' +
     '  var память = {};\n' +
     '  window.__дневник = дневник;\n' +
     '  window.__облако = память;\n' +
@@ -213,7 +213,15 @@ function текстПодделки(настройки) {
     '    onEvent: function (имя, cb) { (слушатели[имя] = слушатели[имя] || []).push(cb); записать("onEvent:" + имя); },\n' +
     '    offEvent: function (имя, cb) { слушатели[имя] = (слушатели[имя] || []).filter(function (х) { return х !== cb; }); },\n' +
     '    MainButton: { isVisible: false, show: function () { return this; }, hide: function () { return this; }, setText: function () { return this; }, setParams: function () { return this; }, onClick: function () { return this; }, offClick: function () { return this; } },\n' +
-    '    HapticFeedback: { impactOccurred: function () {}, notificationOccurred: function () {}, selectionChanged: function () {} },\n' +
+    /* Вибрация. Настоящий Telegram её просто выполняет, а нам важно другое:
+       сколько раз игра о ней попросила. По этому счётчику видно, слушается
+       ли выключатель вибрации: выключили, а игра всё равно просит — значит
+       выключатель не работает, и заметить это иначе нечем. */
+    '    HapticFeedback: {\n' +
+    '      impactOccurred: function (сила) { дневник.вибраций++; записать("вибрация:" + сила); return this; },\n' +
+    '      notificationOccurred: function (какая) { дневник.вибраций++; записать("вибрация-весть:" + какая); return this; },\n' +
+    '      selectionChanged: function () { дневник.вибраций++; записать("вибрация-выбор"); return this; }\n' +
+    '    },\n' +
     '    CloudStorage: {\n' +
     '      setItem: function (ключ, значение, cb) { записать("CloudStorage.setItem " + ключ); вОблако("записать", { ключ: String(ключ), значение: String(значение) }, cb); return this; },\n' +
     '      getItem: function (ключ, cb) { записать("CloudStorage.getItem " + ключ); вОблако("прочитать", { ключ: String(ключ) }, cb); return this; },\n' +
