@@ -236,23 +236,64 @@ const ОФОРМЛЕНИЕ = `
   .метка--потом { background: var(--surface-2); color: var(--muted); }
   .метка--задел { background: transparent; color: var(--muted); border: 1px solid var(--line); }
 
-  /* Вопросы владельцу. Нарочно не похожи на задачи: это не наш долг,
-     а ожидание его слова. */
-  .вопросы { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .вопросы li {
-    background: var(--yantar-soft); border: 1px solid var(--yantar);
-    border-radius: var(--radius); padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 4px;
+  /* Раздел «Важное»: заголовки на главной и страницы записей.
+     Оформление живёт здесь, а не рядом с самим разделом, потому что нужно
+     сразу в двух местах — на главной и на странице записи. */
+  .важное { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .важное li {
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 4px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow);
   }
-  .вопрос-о { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--yantar); font-weight: 700; }
-  .вопрос-сам { font-size: 17px; font-weight: 700; color: var(--ink); font-family: "Alegreya Sans", sans-serif; }
-  .вопрос-зачем { font-size: 14.5px; color: var(--ink-soft); }
+  .важное a.запись { display: block; padding: 14px 16px; text-decoration: none; color: inherit; }
+  .важное--ответ { border-left-color: var(--yantar); }
+  .важное--сведение { border-left-color: var(--sukno); }
+  .важное--решено { border-left-color: var(--line); opacity: .75; }
 
-  .разбор-ссылка {
-    display: block; margin-top: 8px; padding: 10px 12px; text-align: center;
-    background: var(--surface); border: 1.5px solid var(--yantar); border-radius: 8px;
-    color: var(--yantar); font-weight: 700; font-size: 14.5px; text-decoration: none;
+  .важное-верх { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .важное-вид {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em;
+    font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    background: var(--surface-2); color: var(--muted);
   }
+  .важное--ответ .важное-вид { background: var(--yantar-soft); color: var(--yantar); }
+  .важное--сведение .важное-вид { background: var(--sukno-soft); color: var(--sukno); }
+  .важное-новое {
+    font-size: 11.5px; font-weight: 700; color: #fff; background: var(--chervi);
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .важное-когда { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); margin-left: auto; }
+  .важное-заголовок { font-family: "Alegreya Sans", sans-serif; font-size: 17.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .важное-суть { font-size: 15px; color: var(--ink-soft); margin-top: 5px; line-height: 1.5; }
+  .важное-ответ-дан { display: inline-block; margin-top: 7px; font-size: 13.5px; font-weight: 700; color: var(--sukno); }
+  .важное-ещё {
+    display: block; text-align: center; padding: 12px; margin-top: 4px;
+    border: 1px dashed var(--line); border-radius: var(--radius);
+    color: var(--muted); font-size: 14.5px; text-decoration: none;
+  }
+
+  /* Страница одной записи */
+  .запись-лист { max-width: 720px; margin: 0 auto; padding: 0 4px; }
+  .запись-лист h1 { font-size: 26px; line-height: 1.2; margin: 6px 0 10px; }
+  .запись-лист h2 { font-size: 19px; margin: 26px 0 10px; }
+  .запись-лист p { font-size: 16.5px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 12px; }
+  .запись-лист ul { margin: 0 0 14px; padding-left: 22px; }
+  .запись-лист li { font-size: 16px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 6px; }
+  .запись-суть {
+    background: var(--surface-2); border-radius: var(--radius);
+    padding: 14px 16px; margin: 0 0 20px; font-size: 16.5px; line-height: 1.5; color: var(--ink);
+  }
+  .назад { display: inline-block; margin-bottom: 10px; font-size: 15px; color: var(--sukno); text-decoration: none; }
+
+  .кнопки-ответа { display: grid; gap: 10px; margin: 18px 0 10px; }
+  .кнопка-ответа {
+    display: block; text-align: center; text-decoration: none;
+    background: var(--surface); border: 1.5px solid var(--sukno); color: var(--sukno);
+    border-radius: var(--radius); padding: 15px 12px; font-size: 16.5px; font-weight: 700;
+  }
+  .кнопка-ответа span { display: block; font-size: 13.5px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+  .принято { background: var(--sukno); color: #fff; border-radius: var(--radius); padding: 15px 17px; margin: 0 0 14px; }
+  .принято p { color: #fff; margin: 0; font-size: 16px; }
 
   .проверьте { display: block; font-style: normal; font-size: 13.5px; color: var(--yantar); margin-top: 4px; }
 
@@ -478,38 +519,12 @@ function блокВРаботе(данные) {
 }
 
 /**
- * Вопросы к владельцу — отдельно от очереди и нарочно заметно.
- * Владелец видел «девять задач висят», а три из них были не задачами, а
- * вопросами к нему самому. Они не двигались не потому, что мы ленимся, —
- * и выглядеть долгом команды не должны.
+ * Раздел «Важное» на главной. Саму разметку собирает штаб/важное-страница.js
+ * и кладёт в данные сервер (штаб/дашборд.js). Сделано так нарочно: иначе этот
+ * файл и файл «Важного» ссылались бы друг на друга по кругу.
  */
-function блокВопросы(данные) {
-  const вопросы = (данные.задачи && данные.задачи.вопросы) || [];
-  if (!вопросы.length) return '';
-
-  let строки = '';
-  for (const в of вопросы) {
-    // У вопроса про путь до партии есть отдельная страница с разбором:
-    // одной строкой в списке этот вопрос уже задавали, и владелец его
-    // справедливо не понял.
-    const проПуть = /витрин|касан|путь до партии|с ботом/i.test(в.что + ' ' + в.вопрос);
-    const ссылка = проПуть
-      ? '<a class="разбор-ссылка" href="/путь-до-партии">Открыть разбор: как сейчас, четыре варианта и что советую →</a>'
-      : '';
-    строки += '<li>'
-      + '<span class="вопрос-о">' + э(в.что) + '</span>'
-      + '<span class="вопрос-сам">' + э(в.вопрос) + '</span>'
-      + (в.заметка ? '<span class="вопрос-зачем">' + э(в.заметка) + '</span>' : '')
-      + ссылка
-      + '</li>';
-  }
-
-  return `
-  <section>
-    <h2>Ждём вашего слова <span class="счёт">${счётСловом(вопросы.length, 'вопрос', 'вопроса', 'вопросов')}</span></h2>
-    <p class="пояснение">Это не наши задачи и не долг команды: работы тут на несколько строк, но решать должны вы — игра ваша. Пока ответа нет, они стоят, и стоят не по нашей лени. Ответите одним словом — уедут в работу.</p>
-    <ul class="вопросы">${строки}</ul>
-  </section>`;
+function блокВажное(данные) {
+  return данные.важноеРазметка || '';
 }
 
 function блокОчередь(данные) {
@@ -661,7 +676,7 @@ function внутренности(данные) {
     + сводка(данные)
     + блокНеОпубликовано(данные)
     + блокВРаботе(данные)
-    + блокВопросы(данные)
+    + блокВажное(данные)
     + блокОчередь(данные)
     + блокСегодня(данные)
     + блокСлужбы(данные)
