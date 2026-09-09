@@ -74,8 +74,9 @@
         <!-- Прямой вход в партию для того, кто уже играл: два касания вместо
              трёх. Новичку она не показывается — его нельзя ронять сразу
              за стол, не дав понять, во что он играет (класс «скрыт» снимает
-             js/game.js). Это не <button>: кнопка внутри кнопки в разметке
-             запрещена, поэтому здесь span, который ведёт себя как кнопка. -->
+             js/game.js). Это намеренно не кнопка: кнопка внутри кнопки
+             в разметке запрещена, поэтому здесь span, который ведёт себя
+             как кнопка. -->
         <span id="кнопка-играть-дурак" class="плитка-игры__играть скрыт"
               role="button" tabindex="0">Играть</span>
       </button>
@@ -98,6 +99,64 @@
         </svg></span>
         <span class="плитка-игры__название">Шахматы</span>
         <span id="пометка-шахматы" class="плитка-игры__пометка"></span>
+      </button>
+
+      <!-- Игры, которых ещё нет. Плитки нарочно нажать нельзя («disabled»)
+           и они тише цветом (класс «плитка-игры--скоро») — ровно так же,
+           как выглядели шахматы, пока к ним не написали бота. Обещание
+           игры, а не кнопка, которая молчит в ответ на нажатие.
+           Порядок — очередь работы: нарды, домино, морской бой, деберц. -->
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="нарды">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <!-- Доска с «ёлочкой» пунктов и фишка поверх -->
+          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M14 12l6 16 6-16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M30 12l6 16 6-16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M22 52l6-16 6 16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="45" cy="42" r="7" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+        </svg></span>
+        <span class="плитка-игры__название">Нарды</span>
+        <span class="плитка-игры__пометка">скоро</span>
+      </button>
+
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="домино">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <!-- Костяшка стоймя: черта посередине, сверху три точки, снизу две -->
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+          <path d="M18 32h28" stroke="currentColor" stroke-width="3"/>
+          <circle cx="26" cy="16" r="3" fill="currentColor"/>
+          <circle cx="38" cy="16" r="3" fill="currentColor"/>
+          <circle cx="32" cy="24" r="3" fill="currentColor"/>
+          <circle cx="26" cy="42" r="3" fill="currentColor"/>
+          <circle cx="38" cy="48" r="3" fill="currentColor"/>
+        </svg></span>
+        <span class="плитка-игры__название">Домино</span>
+        <span class="плитка-игры__пометка">скоро</span>
+      </button>
+
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="морской-бой">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <!-- Клетчатое поле и корабль на нём: клетка говорит, что это за игра,
+               корабль не даёт спутать её с крестиками-ноликами -->
+          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M24 10v44M40 10v44M8 32h48" stroke="currentColor" stroke-width="2" opacity="0.45"/>
+          <path d="M16 40h32l-6 9H22z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M32 40V22M32 22l12 5-12 5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        </svg></span>
+        <span class="плитка-игры__название">Морской бой</span>
+        <span class="плитка-игры__пометка">скоро</span>
+      </button>
+
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="деберц">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <!-- Тоже карты, но нарочно НЕ веером, как у «Дурака»: ровная стопка
+               со сдвигом и корона — знак короля с дамой, главной пары деберца -->
+          <rect x="10" y="16" width="24" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="26" y="12" width="26" height="38" rx="4" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+          <path d="M31 40l-2-16 6 6 4-9 4 9 6-6-2 16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        </svg></span>
+        <span class="плитка-игры__название">Деберц</span>
+        <span class="плитка-игры__пометка">скоро</span>
       </button>
     </div>
   </section>

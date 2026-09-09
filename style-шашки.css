@@ -925,6 +925,122 @@
   transform: scale(0.94);
 }
 
+/* ---------- Ничья: предложить, согласиться, играть дальше ----------
+
+   Кнопка «Ничья» стоит РЯДОМ с кнопкой знаков, левее её, а не поверх:
+   обе живут в правом нижнем углу доски, и накрыть одну другой значило бы
+   отобрать у человека одно из двух действий. Вид у неё такой же
+   стеклянный, только не круглая, а пилюлей — по форме сразу видно,
+   что это разные кнопки, а не две одинаковые. */
+.кнопка-ничьей {
+  position: absolute;
+  right: 54px;                /* 44 точки кнопки знаков плюс просвет */
+  bottom: 4px;
+  z-index: 3;
+  min-height: 44px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--текст);
+  background: rgba(8, 26, 18, 0.55);
+  border: none;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 2px 6px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.кнопка-ничьей:active { transform: translateY(1px); }
+
+/* ---------- Просьба о ничьей ----------
+   Плашка поверх доски, посередине: на неё нужно ответить, поэтому она
+   не прячется в углу. Заметная — но не тревожная: это предложение
+   закончить миром, а не беда. */
+.предложение-ничьей {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: min(86%, 320px);
+  padding: 14px;
+  color: var(--текст);
+  background: var(--панель);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1.5px var(--подсветка),
+    0 10px 30px rgba(0, 0, 0, 0.42);
+}
+
+.предложение-ничьей__слова {
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* «Согласиться» — главная: залита цветом темы. */
+.предложение-ничьей__да.предложение-ничьей__да {
+  width: 100%;
+  min-height: 46px;
+  font-size: 16px;
+}
+
+/* «Играть дальше» — тихая: обводка вместо заливки. Отказ не должен
+   выглядеть громче согласия, но и прятать его нельзя — это равный
+   по праву ответ. */
+.предложение-ничьей__нет.предложение-ничьей__нет {
+  width: 100%;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--текст);
+  background: transparent;
+  border: 1px solid var(--край);
+  box-shadow: none;
+}
+
+/* ---------- Короткий ответ про ничью ----------
+   «Соперник хочет играть дальше» — живёт три секунды и гаснет.
+   Тон спокойный нарочно: это не отказ в дурном смысле, а «давай
+   доиграем». Поэтому обычная плашка в тон доски, без красного
+   и без восклицаний. */
+.ответ-про-ничью {
+  position: absolute;
+  left: 50%;
+  bottom: 56px;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  color: #ffffff;
+  background: rgba(8, 26, 18, 0.62);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.30);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;       /* по доске можно ходить, пока строка висит */
+}
+
 /* ---------- Сама панель ----------
 
    Лежит поверх доски и прижата к её низу: так до кнопок ближе всего
