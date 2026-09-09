@@ -311,8 +311,14 @@ async function новая(браузер, ш, в) {
       const что = await с4.evaluate(() => {
         const можно = document.querySelectorAll('.поле--можно');
         if (можно.length) { можно[Math.floor(Math.random() * можно.length)].click(); return 'пошли'; }
+        /* Пометка «может ходить» есть не всегда — берём и просто свои
+           фигуры, как это делает палец: тапнул и посмотрел, что подсветилось.
+           Без этого запаса стенд писал «моих ходов 0» и молчал о том,
+           что игра-то работает. */
         const свои = document.querySelectorAll('.фигура--может-ходить');
         if (свои.length) { свои[Math.floor(Math.random() * свои.length)].click(); return 'подняли'; }
+        const мои = document.querySelectorAll('.фигура--белая');
+        if (мои.length) { мои[Math.floor(Math.random() * мои.length)].click(); return 'подняли'; }
         return 'нечего';
       });
       if (что === 'пошли') моих++;
