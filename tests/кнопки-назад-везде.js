@@ -33,6 +33,21 @@ function проверить(условие, слова) {
 }
 const спать = (мс) => new Promise((ф) => setTimeout(ф, мс));
 
+/** Нажать, если кнопка есть и видна. Нужно там, где путь стал короче:
+    «Играть с ботом» теперь ведёт сразу за стол, и отдельной кнопки
+    «Играть» на дороге может не быть вовсе. */
+async function нажатьЕслиЕсть(страница, примета) {
+  try {
+    const видна = await страница.evaluate((п) => {
+      const к = document.querySelector(п);
+      return !!(к && к.offsetParent !== null);
+    }, примета);
+    if (!видна) return false;
+    await страница.click(примета, { timeout: 4000 });
+    return true;
+  } catch (сбой) { return false; }
+}
+
 /** Что сейчас видно и что лежит под пальцем в точке кнопки. */
 async function осмотретьКнопку(страница, примета) {
   return страница.evaluate((п) => {
@@ -287,7 +302,7 @@ async function новаяСтраница(браузер, размер) {
       await страница.click('#кнопка-режим-бот').catch(() => {});
       await спать(300);
     }
-    await страница.click('#кнопка-играть'); await спать(900);
+    await нажатьЕслиЕсть(страница, '#кнопка-играть'); await спать(900);
     await страница.addScriptTag({ path: require('path').join(__dirname, 'автоигрок-в-браузере.js') });
     await страница.evaluate(() => window.Автоигрок.начать(0.6, false, 0));
     const срок = Date.now() + 120000;

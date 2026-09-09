@@ -33,6 +33,21 @@ function декодировать(адрес) {
 }
 
 let провалов = 0;
+
+/** Нажать, если кнопка есть и видна. Нужно там, где путь стал короче:
+    «Играть с ботом» теперь ведёт сразу за стол, и отдельной кнопки
+    «Играть» на дороге может не быть вовсе. */
+async function нажатьЕслиЕсть(страница, примета) {
+  try {
+    const видна = await страница.evaluate((п) => {
+      const к = document.querySelector(п);
+      return !!(к && к.offsetParent !== null);
+    }, примета);
+    if (!видна) return false;
+    await страница.click(примета, { timeout: 4000 });
+    return true;
+  } catch (сбой) { return false; }
+}
 function проверить(условие, слова) {
   console.log((условие ? '  ок    — ' : '  ПЛОХО — ') + слова);
   if (!условие) провалов++;
@@ -59,7 +74,7 @@ async function сестьЗаСтол(страница) {
   await страница.waitForTimeout(250);
   await страница.click('#кнопка-режим-бот');
   await страница.waitForTimeout(250);
-  await страница.click('#кнопка-играть');
+  await нажатьЕслиЕсть(страница, '#кнопка-играть');
   await страница.waitForTimeout(900);
 }
 
