@@ -130,6 +130,12 @@ function текстПодделки(настройки) {
   const тема = Object.assign({}, ТЕМА_ПО_УМОЛЧАНИЮ, н.тема || {});
   const полныйЭкран = РЕЖИМЫ_ПОЛНОГО_ЭКРАНА.indexOf(н.полныйЭкран) !== -1 ? н.полныйЭкран : 'дают';
   const поворот = РЕЖИМЫ_ПОВОРОТА.indexOf(н.поворот) !== -1 ? н.поворот : 'умеет';
+  /* «подпись» — строка initData. Настоящий Telegram кладёт туда подписанные
+     данные игрока, и некоторые экраны (список знакомых, рейтинг) по её
+     наличию решают, спрашивать ли сервер вообще. Пустая — как будто игру
+     открыли не из Telegram. Подделывать подпись для СЕРВЕРА мы не умеем и
+     не пробуем: она нужна только странице. */
+  const подпись = typeof н.подпись === 'string' ? н.подпись : '';
   // Начальные края экрана можно задать сразу — например, «телефон с вырезом»
   const отступыСистемы = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.системные) || {});
   const отступыСодержимого = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.содержимого) || {});
@@ -205,7 +211,7 @@ function текстПодделки(настройки) {
     '    isFullscreen: false, isOrientationLocked: false,\n' +
     '    safeAreaInset: ' + JSON.stringify(отступыСистемы) + ',\n' +
     '    contentSafeAreaInset: ' + JSON.stringify(отступыСодержимого) + ',\n' +
-    '    initData: "", initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" } },\n' +
+    '    initData: ' + JSON.stringify(подпись) + ', initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" } },\n' +
     '    ready: function () { дневник.ready++; записать("ready"); },\n' +
     '    expand: function () { this.isExpanded = true; this.viewportHeight = 844; this.viewportStableHeight = 844; дневник.expand++; записать("expand"); },\n' +
     '    close: function () { записать("close"); },\n' +
