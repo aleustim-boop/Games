@@ -52,7 +52,10 @@ const МЁРТВЫЙ = 'http://127.0.0.1:9';
 
     console.log('1. У человека в памяти вчерашний адрес, в ссылке — сегодняшний');
     await с.goto('http://127.0.0.1:' + портСтраниц + '/index.html');
-    await с.evaluate(а => window.localStorage.setItem('подкидной-дурак:адрес-сервера', а), МЁРТВЫЙ);
+    await с.evaluate(а => {
+      window.localStorage.setItem('подкидной-дурак:адрес-сервера', а);
+      window.localStorage.setItem('server_address', а);
+    }, МЁРТВЫЙ);
     await с.goto('http://127.0.0.1:' + портСтраниц + '/index.html?сервер=' + encodeURIComponent(живой));
     await спать(900);
     const уДурака = await с.evaluate(() => window.Сеть.адрес());
@@ -99,13 +102,19 @@ const МЁРТВЫЙ = 'http://127.0.0.1:9';
     const с2 = await окно();
     await робот.безTelegram(с2);
     await с2.goto('http://127.0.0.1:' + портСтраниц + '/index.html');
-    await с2.evaluate(а => window.localStorage.setItem('подкидной-дурак:адрес-сервера', а), живой);
+    /* Имя ключа переехало на латиницу. Кладём под ОБОИМИ именами:
+       под старым — как в телефоне игрока, пришедшего с прошлой версии
+       (заодно проверяется перенос), под новым — куда игра пишет теперь. */
+    await с2.evaluate(а => {
+      window.localStorage.setItem('подкидной-дурак:адрес-сервера', а);
+      window.localStorage.setItem('server_address', а);
+    }, живой);
     const чужой = живой.replace('127.0.0.1', 'localhost');   // тоже живой, но другой
     await с2.goto('http://127.0.0.1:' + портСтраниц + '/index.html?сервер=' + encodeURIComponent(чужой));
     await спать(900);
     await с2.evaluate(() => window.Сеть.проверитьАдрес && window.Сеть.проверитьАдрес());
     await спать(2500);
-    const вПамяти = await с2.evaluate(() => window.localStorage.getItem('подкидной-дурак:адрес-сервера'));
+    const вПамяти = await с2.evaluate(() => window.localStorage.getItem('server_address'));
     console.log('   в памяти осталось: ' + вПамяти);
     проверить(вПамяти === живой, 'свой живой сервер остался в памяти — чужая ссылка его не отобрала');
   } catch (е) { сбой = е; }
