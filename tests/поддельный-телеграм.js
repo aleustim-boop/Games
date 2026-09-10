@@ -136,6 +136,12 @@ function текстПодделки(настройки) {
      открыли не из Telegram. Подделывать подпись для СЕРВЕРА мы не умеем и
      не пробуем: она нужна только странице. */
   const подпись = typeof н.подпись === 'string' ? н.подпись : '';
+  /* «стартовыйПараметр» — то, что настоящий Telegram кладёт в
+     initDataUnsafe.start_param, когда мини-приложение открыли по ссылке
+     с параметром запуска. Через него приезжает приглашение за стол:
+     «shashki_КОД-адресбуквами». Без него проверить вход по приглашению
+     нечем: в решётке адреса этот параметр бывает только вне Telegram. */
+  const стартовыйПараметр = typeof н.стартовыйПараметр === 'string' ? н.стартовыйПараметр : '';
   // Начальные края экрана можно задать сразу — например, «телефон с вырезом»
   const отступыСистемы = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.системные) || {});
   const отступыСодержимого = Object.assign({}, ПУСТЫЕ_ОТСТУПЫ, (н.отступы && н.отступы.содержимого) || {});
@@ -211,7 +217,8 @@ function текстПодделки(настройки) {
     '    isFullscreen: false, isOrientationLocked: false,\n' +
     '    safeAreaInset: ' + JSON.stringify(отступыСистемы) + ',\n' +
     '    contentSafeAreaInset: ' + JSON.stringify(отступыСодержимого) + ',\n' +
-    '    initData: ' + JSON.stringify(подпись) + ', initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" } },\n' +
+    '    initData: ' + JSON.stringify(подпись) + ', initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" }' +
+      (стартовыйПараметр ? ', start_param: ' + JSON.stringify(стартовыйПараметр) : '') + ' },\n' +
     '    ready: function () { дневник.ready++; записать("ready"); },\n' +
     '    expand: function () { this.isExpanded = true; this.viewportHeight = 844; this.viewportStableHeight = 844; дневник.expand++; записать("expand"); },\n' +
     '    close: function () { записать("close"); },\n' +
