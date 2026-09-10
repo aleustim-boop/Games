@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <!-- Экран телефона: запрещаем масштабирование пальцами, чтобы стол не «уезжал» -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Подкидной дурак</title>
+  <title>Игры с друзьями</title>
   <!-- Значок вкладки нарисован прямо здесь (зелёная карта с пикой). Картинкой его
        не кладём: файлов в проекте нет, а без этой строки браузер сам просит
        /favicon.ico и пишет в консоль красную ошибку 404. -->
@@ -15,7 +15,7 @@
        игрокам старую версию: правку видно только после полной очистки кэша.
        Добавка ?v= к адресу самой страницы файлы НЕ обновляет — версия
        должна стоять именно здесь, в строках подключения. -->
-  <link rel="stylesheet" href="style.css?v=42">
+  <link rel="stylesheet" href="style.css?v=43">
   <!-- Официальный скрипт Telegram: даёт тему, кнопки и данные игрока.
        В обычном браузере он просто ничего не находит и не мешает. -->
   <!-- defer обязателен: без него браузер не рисует ни одной карты, пока
@@ -50,189 +50,119 @@
        и «вас ждёт партия с другом». Витрина не пропускается никогда —
        владелец просил именно страницу выбора. Приглашение по ссылке
        проходит мимо неё само: js/сеть.js открывает экран входа через мост. -->
-  <!-- Разметка витрины — плитки сеткой, под 4–8 игр; имена классов заданы
-       штабом, оформитель рисует по ним. Значки — встроенный SVG (картинок
-       в проекте нет), контуры простые, цвет через currentColor: красит
-       оформление. id кнопок и пометок прежние — на них завязаны js/game.js
-       и проверки. Все три плитки живые: у шахмат есть и правила,
-       и соперник-робот на три уровня, поэтому пометка «скоро» снята. -->
+  <!-- Разметка витрины по эталону владельца (эталон/0-витрина-итог.png):
+       одна сетка на все семь игр, картинки игр — полные карточки из
+       img/витрина/, их ставит оформитель фоном кнопок. Название, стрелка
+       и затемнение уже запечены в карточке, поэтому второй раз их здесь
+       не рисуем. Название игры в кнопке остаётся текстом: это имя кнопки
+       для читалки экрана, оформитель прячет его только с глаз.
+       id кнопок и пометок прежние — на них завязаны js/game.js и проверки. -->
   <section id="экран-витрины" class="экран экран--виден витрина">
-    <!-- Верхняя строка по эталону владельца (10 сентября): слева действие,
-         по центру имя приложения, справа «ещё». Заголовок экрана НЕ здесь,
-         а ниже и крупно — так на присланном образце. Обработчиков у кнопок
-         пока нет, это работа разработчика. -->
+    <!-- Верхняя строка «Игры с друзьями · ⋯». На эталоне это шапка самого
+         Telegram: внутри него он рисует её сам, и наша была бы второй.
+         Поэтому js/telegram.js ставит на <html> класс «в-телеграме», и по нему
+         оформление прячет эту строку. Там лист «Ещё» открывается пунктом
+         «Настройки» в меню Telegram. Своего ✕ нет: в Telegram закрывает его
+         собственный, а вкладку браузера скриптом не закрыть. -->
     <div class="витрина__панель">
-      <button id="кнопка-витрина-закрыть" type="button" class="витрина__панель-кнопка" aria-label="Закрыть">✕</button>
       <span class="витрина__панель-заголовок">Игры с друзьями</span>
-      <button id="кнопка-витрина-ещё" type="button" class="витрина__панель-кнопка" aria-label="Ещё">⋯</button>
+      <button id="кнопка-витрина-ещё" type="button" class="витрина__панель-кнопка" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-ещё" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
     <header class="витрина__шапка">
       <h1 class="витрина__заголовок">Во что сыграем?</h1>
       <p class="витрина__подзаголовок">Собирай друзей. Играй в любимое.</p>
-      <!-- Серия дней подряд — одна на весь сборник, считает js/telegram.js.
-           Пишет сюда js/game.js: «3 дня подряд», а если вчера играли, а сегодня
-           ещё нет — тихое «сыграйте сегодня, чтобы не прервать серию» (класс
-           «серия-дней--вчера»). Один день — не серия, строка спрятана. -->
-      <p id="серия-дней" class="серия-дней скрыт"></p>
-      <!-- Своё место в рейтинге одной строкой: полную таблицу сюда тащить
-           нельзя, плитки и так занимают весь экран. Строка появляется
-           только когда есть что сказать: витрина рисуется сразу и сервера
-           не ждёт (см. js/game.js, «освежитьСтрокуРейтинга»). Нажатие
-           открывает полный экран рейтинга. -->
-      <p id="строка-рейтинга" class="витрина__рейтинг скрыт" role="button" tabindex="0"></p>
     </header>
-    <!-- Фишки-фильтры с эталона. Пока декоративные: сама фильтрация плиток —
-         работа разработчика, и заводить её раньше, чем владелец посмотрит на
-         вид, незачем. -->
+    <!-- Фишки-фильтры. «data-фильтр» сверяется с «data-вид» у плиток: чужие
+         плитки прячет js/game.js классом «скрыт». Выбранная фишка отмечена
+         и для читалки экрана (aria-pressed), и для оформления (класс
+         «витрина__фильтр--активен»). -->
     <div class="витрина__фильтры" role="group" aria-label="Фильтр по типу игр">
-      <button type="button" class="витрина__фильтр витрина__фильтр--активен" aria-pressed="true">Все</button>
-      <button type="button" class="витрина__фильтр" aria-pressed="false">Настольные</button>
-      <button type="button" class="витрина__фильтр" aria-pressed="false">Карточные</button>
+      <button type="button" class="витрина__фильтр витрина__фильтр--активен" data-фильтр="все" aria-pressed="true">Все</button>
+      <button type="button" class="витрина__фильтр" data-фильтр="настольные" aria-pressed="false">Настольные</button>
+      <button type="button" class="витрина__фильтр" data-фильтр="карточные" aria-pressed="false">Карточные</button>
     </div>
+    <!-- Все семь игр в одной сетке, в порядке эталона: нарды, шахматы /
+         дурак, шашки / домино, морской бой, внизу широкий деберц.
+         «data-вид» — для фильтров: «настольные» или «карточные».
+
+         Признак живой плитки — её «id»: на нём висит нажатие в js/game.js.
+         Без него кнопка мёртвая, даже если убрать «disabled» — ровно на этом
+         нарды однажды простояли сутки готовыми и недоступными.
+         Игры, которых ещё нет, нажать нельзя («disabled») и помечены «скоро»:
+         обещание игры, а не кнопка, которая молчит в ответ на нажатие. -->
     <div class="витрина__плитки">
-      <button id="кнопка-игра-дурак" class="плитка-игры" data-игра="дурак">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Веер из двух карт: задняя контуром, передняя с лёгкой заливкой и пикой -->
-          <rect x="10" y="14" width="26" height="36" rx="4" transform="rotate(-14 23 32)" fill="none" stroke="currentColor" stroke-width="3"/>
-          <rect x="28" y="14" width="26" height="36" rx="4" transform="rotate(12 41 32)" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-          <path d="M41 22c-4 5-8 8-8 12a4 4 0 0 0 7 2c0 3-1 4-2 5h6c-1-1-2-2-2-5a4 4 0 0 0 7-2c0-4-4-7-8-12z" fill="currentColor"/>
-        </svg></span>
-        <span class="плитка-игры__название">Дурак</span>
-        <span id="пометка-дурак" class="плитка-игры__пометка"></span>
-        <!-- Прямой вход в партию для того, кто уже играл: два касания вместо
-             трёх. Новичку она не показывается — его нельзя ронять сразу
-             за стол, не дав понять, во что он играет (класс «скрыт» снимает
-             js/game.js). Это намеренно не кнопка: кнопка внутри кнопки
-             в разметке запрещена, поэтому здесь span, который ведёт себя
-             как кнопка. -->
-        <span id="кнопка-играть-дурак" class="плитка-игры__играть скрыт"
-              role="button" tabindex="0">Играть</span>
+      <button id="кнопка-игра-нарды" class="плитка-игры" data-игра="нарды" data-вид="настольные">
+        <span class="плитка-игры__название">Нарды</span>
+        <span id="пометка-нарды" class="плитка-игры__пометка"></span>
       </button>
-      <button id="кнопка-игра-шашки" class="плитка-игры" data-игра="шашки">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Две шашки: простая и дамка (с ободком внутри) -->
-          <circle cx="22" cy="41" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
-          <circle cx="42" cy="25" r="13" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-          <circle cx="42" cy="25" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
-        </svg></span>
-        <span class="плитка-игры__название">Шашки</span>
-        <span id="пометка-шашки" class="плитка-игры__пометка"></span>
-      </button>
-      <button id="кнопка-игра-шахматы" class="плитка-игры" data-игра="шахматы">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Конь: подставка и силуэт головы одним контуром -->
-          <path d="M18 54h28v-6H18z" fill="currentColor"/>
-          <path d="M24 48c-3-9-1-16 6-21 2-2 3-5 4-9l4 3 5-2c3 5 0 10-4 14l-2 15z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <circle cx="34" cy="26" r="1.8" fill="currentColor"/>
-        </svg></span>
+      <button id="кнопка-игра-шахматы" class="плитка-игры" data-игра="шахматы" data-вид="настольные">
         <span class="плитка-игры__название">Шахматы</span>
         <span id="пометка-шахматы" class="плитка-игры__пометка"></span>
       </button>
-      <!-- Нарды переехали сюда из «Скоро» 10 сентября. Игра была готова сутки,
-           а плитка стояла выключенной — попасть в нарды было нельзя вовсе.
-           Признак живой плитки: у неё есть «id». Без него кнопка мёртвая,
-           даже если убрать «disabled», — ровно на этом нарды и стояли. -->
-      <button id="кнопка-игра-нарды" class="плитка-игры" data-игра="нарды">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Доска с «ёлочкой» пунктов и фишка поверх -->
-          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M14 12l6 16 6-16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M30 12l6 16 6-16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M22 52l6-16 6 16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <circle cx="45" cy="42" r="7" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-        </svg></span>
-        <span class="плитка-игры__название">Нарды</span>
-        <span id="пометка-нарды" class="плитка-игры__пометка"></span>
-        <span id="кнопка-играть-нарды" class="плитка-игры__играть скрыт"
-              role="button" tabindex="0">Играть</span>
+      <button id="кнопка-игра-дурак" class="плитка-игры" data-игра="дурак" data-вид="карточные">
+        <span class="плитка-игры__название">Дурак</span>
+        <span id="пометка-дурак" class="плитка-игры__пометка"></span>
       </button>
-
-    </div>
-
-    <!-- Одна строка вместо черты. Она объясняет серый цвет плиток ниже:
-         без неё шесть тихих плиток подряд читаются как «сборник наполовину
-         сломан», а с ней — как «будет ещё». Черта делила бы экран пополам
-         и не говорила ничего. -->
-    <p class="подпись витрина__скоро">Скоро</p>
-
-    <div class="витрина__плитки">
-      <!-- Игры, которых ещё нет. Плитки нарочно нажать нельзя («disabled»)
-           и они тише цветом (класс «плитка-игры--скоро») — ровно так же,
-           как выглядели шахматы, пока к ним не написали бота. Обещание
-           игры, а не кнопка, которая молчит в ответ на нажатие.
-           Порядок — очередь работы: домино, морской бой, деберц. -->
-      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="домино">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Костяшка стоймя: черта посередине, сверху три точки, снизу две -->
-          <rect x="18" y="8" width="28" height="48" rx="5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-          <path d="M18 32h28" stroke="currentColor" stroke-width="3"/>
-          <circle cx="26" cy="16" r="3" fill="currentColor"/>
-          <circle cx="38" cy="16" r="3" fill="currentColor"/>
-          <circle cx="32" cy="24" r="3" fill="currentColor"/>
-          <circle cx="26" cy="42" r="3" fill="currentColor"/>
-          <circle cx="38" cy="48" r="3" fill="currentColor"/>
-        </svg></span>
+      <button id="кнопка-игра-шашки" class="плитка-игры" data-игра="шашки" data-вид="настольные">
+        <span class="плитка-игры__название">Шашки</span>
+        <span id="пометка-шашки" class="плитка-игры__пометка"></span>
+      </button>
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="домино" data-вид="настольные">
         <span class="плитка-игры__название">Домино</span>
         <span class="плитка-игры__пометка">скоро</span>
       </button>
-
-      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="морской-бой">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Клетчатое поле и корабль на нём: клетка говорит, что это за игра,
-               корабль не даёт спутать её с крестиками-ноликами -->
-          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M24 10v44M40 10v44M8 32h48" stroke="currentColor" stroke-width="2" opacity="0.45"/>
-          <path d="M16 40h32l-6 9H22z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M32 40V22M32 22l12 5-12 5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-        </svg></span>
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="морской-бой" data-вид="настольные">
         <span class="плитка-игры__название">Морской бой</span>
         <span class="плитка-игры__пометка">скоро</span>
       </button>
-
-      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="деберц">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Тоже карты, но нарочно НЕ веером, как у «Дурака»: ровная стопка
-               со сдвигом и корона — знак короля с дамой, главной пары деберца -->
-          <rect x="10" y="16" width="24" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <rect x="26" y="12" width="26" height="38" rx="4" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-          <path d="M31 40l-2-16 6 6 4-9 4 9 6-6-2 16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-        </svg></span>
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="деберц" data-вид="карточные">
         <span class="плитка-игры__название">Деберц</span>
         <span class="плитка-игры__описание">Карточная классика</span>
         <span class="плитка-игры__пометка">скоро</span>
       </button>
     </div>
-    <!-- Нижняя панель вкладок с эталона. Живая пока одна — «Игры»; «Друзья» и
-         «Профиль» выключены нарочно: таких экранов у нас нет, и рисовать
-         работающую вкладку в никуда хуже, чем честно выключенную.
-         Значки нарисованы своим почерком, а не взяты из чужого набора. -->
+    <!-- Нижняя панель вкладок с эталона. Значки — из набора владельца
+         (img/витрина/значки/), вписаны прямо сюда: цвет берут у кнопки через
+         currentColor, а у картинки по ссылке он не наследуется.
+         «Профиль» открывает экран «Рейтинг игроков» (js/game.js). «Друзья»
+         выключена нарочно: такого экрана нет, а вкладка в никуда хуже
+         честно выключенной. -->
     <nav class="нижние-вкладки" aria-label="Разделы">
       <button type="button" class="нижняя-вкладка нижняя-вкладка--активна" aria-current="page">
-        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <rect x="2" y="8" width="20" height="10" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M7 11v4M5 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="16" cy="12" r="1.1" fill="currentColor"/>
-          <circle cx="18.5" cy="14.5" r="1.1" fill="currentColor"/>
-        </svg></span>
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 5h8c2 0 3 1 3.5 3l2 10c.4 2-1.7 3-3 1l-3-3h-7l-3 3c-1.3 2-3.4 1-3-1l2-10C5 6 6 5 8 5Z"/><path d="M6.5 10h5M9 7.5v5"/><circle cx="16" cy="10" r=".9" fill="currentColor" stroke="none"/></svg></span>
         <span class="нижняя-вкладка__подпись">Игры</span>
       </button>
       <button type="button" class="нижняя-вкладка" disabled>
-        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="16.5" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M14.8 19c.3-2.2 2-4 4-4 1.7 0 3.2 1 3.9 2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg></span>
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="7" r="3.5"/><circle cx="18" cy="8" r="2.5"/><path d="M2 21v-3c0-3 3-5 7-5s7 2 7 5v3ZM17 14c3 0 5 2 5 4v3h-3"/></svg></span>
         <span class="нижняя-вкладка__подпись">Друзья</span>
       </button>
-      <button type="button" class="нижняя-вкладка" disabled>
-        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M4.5 19.5c0-3.6 3.1-6.2 7.5-6.2s7.5 2.6 7.5 6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg></span>
+      <button id="кнопка-вкладка-профиль" type="button" class="нижняя-вкладка">
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3.5"/><path d="M5 19c1-6 13-6 14 0"/></svg></span>
         <span class="нижняя-вкладка__подпись">Профиль</span>
       </button>
     </nav>
+
+    <!-- Лист «Ещё» снизу: то, что нужно на весь сборник. Открывается «⋯»
+         в верхней строке, а внутри Telegram — пунктом «Настройки» в его
+         собственном меню. Закрывается нажатием мимо листа, кнопкой
+         «Закрыть» и клавишей Esc. Показывает и прячет js/game.js классом
+         «скрыт»; вид — целиком в style.css. -->
+    <div id="лист-ещё" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-ещё-заголовок">
+      <div id="лист-ещё-фон" class="лист-ещё__фон"></div>
+      <div class="лист-ещё__лист">
+        <h2 id="лист-ещё-заголовок" class="лист-ещё__заголовок">Ещё</h2>
+        <!-- Переключатель на ту же настройку звука, что и кнопки «Звук» на
+             экранах игры: состояние одно на всю игру. -->
+        <button id="кнопка-лист-звук" type="button" class="лист-ещё__строка" role="switch" aria-checked="true">
+          <span class="лист-ещё__подпись">Звук</span>
+          <span id="лист-звук-состояние" class="лист-ещё__значение">вкл</span>
+        </button>
+        <button id="кнопка-лист-рейтинг" type="button" class="лист-ещё__строка">
+          <span class="лист-ещё__подпись">Рейтинг</span>
+        </button>
+        <button id="кнопка-лист-закрыть" type="button" class="лист-ещё__закрыть">Закрыть</button>
+      </div>
+    </div>
   </section>
 
   <section id="экран-меню" class="экран">
@@ -611,6 +541,13 @@
        попадают только как текст, никогда как разметка. -->
   <section id="экран-рейтинга-игроков" class="экран">
     <h2 class="заголовок">Рейтинг игроков</h2>
+    <!-- Серия дней подряд — одна на весь сборник, считает js/telegram.js.
+         Раньше стояла на витрине; по эталону витрины там только выбор игры,
+         поэтому серия переехала сюда — в «Профиль», куда ведёт нижняя вкладка.
+         Пишет сюда js/game.js: «3 дня подряд», а если вчера играли, а сегодня
+         ещё нет — тихое «сыграйте сегодня, чтобы не прервать серию» (класс
+         «серия-дней--вчера»). Один день — не серия, строка спрятана. -->
+    <p id="серия-дней" class="серия-дней скрыт"></p>
     <!-- Переключатель: таблицы у дурака и у шашек раздельные. -->
     <div id="рейтинг-выбор-игры" class="рейтинг-выбор">
       <button id="кнопка-рейтинг-дурак" class="кнопка кнопка--выбор">Дурак</button>
@@ -918,10 +855,10 @@
 
 <!-- Обвязка Telegram идёт первой: к старту игры её функции уже должны быть готовы.
      Номера ?v= поднимаем при каждой правке этих файлов — см. пояснение в <head>. -->
-<script src="js/telegram.js?v=19"></script>
+<script src="js/telegram.js?v=20"></script>
 <script src="js/колода-рисунок.js?v=4"></script>
 <script src="js/движение-карт.js?v=1"></script>
-<script src="js/game.js?v=69"></script>
+<script src="js/game.js?v=70"></script>
 <!-- Игра вдвоём. Подключается последней и только добавляет второй режим:
      без этого файла игра против бота работает как прежде. -->
 <script src="js/сеть.js?v=32"></script>
