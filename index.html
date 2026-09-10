@@ -15,7 +15,7 @@
        игрокам старую версию: правку видно только после полной очистки кэша.
        Добавка ?v= к адресу самой страницы файлы НЕ обновляет — версия
        должна стоять именно здесь, в строках подключения. -->
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=42">
   <!-- Официальный скрипт Telegram: даёт тему, кнопки и данные игрока.
        В обычном браузере он просто ничего не находит и не мешает. -->
   <!-- defer обязателен: без него браузер не рисует ни одной карты, пока
@@ -57,8 +57,18 @@
        и проверки. Все три плитки живые: у шахмат есть и правила,
        и соперник-робот на три уровня, поэтому пометка «скоро» снята. -->
   <section id="экран-витрины" class="экран экран--виден витрина">
+    <!-- Верхняя строка по эталону владельца (10 сентября): слева действие,
+         по центру имя приложения, справа «ещё». Заголовок экрана НЕ здесь,
+         а ниже и крупно — так на присланном образце. Обработчиков у кнопок
+         пока нет, это работа разработчика. -->
+    <div class="витрина__панель">
+      <button id="кнопка-витрина-закрыть" type="button" class="витрина__панель-кнопка" aria-label="Закрыть">✕</button>
+      <span class="витрина__панель-заголовок">Игры с друзьями</span>
+      <button id="кнопка-витрина-ещё" type="button" class="витрина__панель-кнопка" aria-label="Ещё">⋯</button>
+    </div>
     <header class="витрина__шапка">
-      <h1 class="витрина__заголовок">Настольные игры</h1>
+      <h1 class="витрина__заголовок">Во что сыграем?</h1>
+      <p class="витрина__подзаголовок">Собирай друзей. Играй в любимое.</p>
       <!-- Серия дней подряд — одна на весь сборник, считает js/telegram.js.
            Пишет сюда js/game.js: «3 дня подряд», а если вчера играли, а сегодня
            ещё нет — тихое «сыграйте сегодня, чтобы не прервать серию» (класс
@@ -71,6 +81,14 @@
            открывает полный экран рейтинга. -->
       <p id="строка-рейтинга" class="витрина__рейтинг скрыт" role="button" tabindex="0"></p>
     </header>
+    <!-- Фишки-фильтры с эталона. Пока декоративные: сама фильтрация плиток —
+         работа разработчика, и заводить её раньше, чем владелец посмотрит на
+         вид, незачем. -->
+    <div class="витрина__фильтры" role="group" aria-label="Фильтр по типу игр">
+      <button type="button" class="витрина__фильтр витрина__фильтр--активен" aria-pressed="true">Все</button>
+      <button type="button" class="витрина__фильтр" aria-pressed="false">Настольные</button>
+      <button type="button" class="витрина__фильтр" aria-pressed="false">Карточные</button>
+    </div>
     <div class="витрина__плитки">
       <button id="кнопка-игра-дурак" class="плитка-игры" data-игра="дурак">
         <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
@@ -180,9 +198,41 @@
           <path d="M31 40l-2-16 6 6 4-9 4 9 6-6-2 16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
         </svg></span>
         <span class="плитка-игры__название">Деберц</span>
+        <span class="плитка-игры__описание">Карточная классика</span>
         <span class="плитка-игры__пометка">скоро</span>
       </button>
     </div>
+    <!-- Нижняя панель вкладок с эталона. Живая пока одна — «Игры»; «Друзья» и
+         «Профиль» выключены нарочно: таких экранов у нас нет, и рисовать
+         работающую вкладку в никуда хуже, чем честно выключенную.
+         Значки нарисованы своим почерком, а не взяты из чужого набора. -->
+    <nav class="нижние-вкладки" aria-label="Разделы">
+      <button type="button" class="нижняя-вкладка нижняя-вкладка--активна" aria-current="page">
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="2" y="8" width="20" height="10" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M7 11v4M5 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="16" cy="12" r="1.1" fill="currentColor"/>
+          <circle cx="18.5" cy="14.5" r="1.1" fill="currentColor"/>
+        </svg></span>
+        <span class="нижняя-вкладка__подпись">Игры</span>
+      </button>
+      <button type="button" class="нижняя-вкладка" disabled>
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="16.5" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M14.8 19c.3-2.2 2-4 4-4 1.7 0 3.2 1 3.9 2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg></span>
+        <span class="нижняя-вкладка__подпись">Друзья</span>
+      </button>
+      <button type="button" class="нижняя-вкладка" disabled>
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M4.5 19.5c0-3.6 3.1-6.2 7.5-6.2s7.5 2.6 7.5 6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg></span>
+        <span class="нижняя-вкладка__подпись">Профиль</span>
+      </button>
+    </nav>
   </section>
 
   <section id="экран-меню" class="экран">

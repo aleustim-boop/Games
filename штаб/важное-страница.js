@@ -144,8 +144,27 @@ function разметить(текст) {
   const строки = String(текст || '').split(/\r?\n/);
   let куски = '';
   let вСписке = false;
+  let вКопии = false;      // внутри блока ``` … ``` — текст «как есть» + кнопка «Скопировать»
+  let копия = [];
 
   for (const строка of строки) {
+    // Блок для копирования: строка ``` открывает, следующая ``` закрывает. Внутри ничего не трогаем —
+    // владелец нажимает «Скопировать» и вставляет целиком (например, задание для ChatGPT).
+    if (строка.trim() === '```') {
+      if (вСписке) { куски += '</ul>'; вСписке = false; }
+      if (!вКопии) { вКопии = true; копия = []; continue; }
+      вКопии = false;
+      куски += '<div class="копия" style="position:relative;margin:12px 0">'
+        + '<button type="button" class="копия-кнопка" onclick="скопировать(this)" '
+        + 'style="position:absolute;top:8px;right:8px;padding:6px 12px;border-radius:8px;border:0;'
+        + 'background:#c9f53f;color:#111;font-weight:700;cursor:pointer">Скопировать</button>'
+        + '<pre style="white-space:pre-wrap;word-break:break-word;padding:40px 12px 12px;margin:0;'
+        + 'border-radius:12px;background:#15181c;color:#e8e8e8;font-size:13.5px;line-height:1.45">'
+        + э(копия.join('\n')) + '</pre></div>';
+      continue;
+    }
+    if (вКопии) { копия.push(строка); continue; }
+
     const обрезок = строка.trim();
 
     if (!обрезок) {
@@ -170,8 +189,23 @@ function разметить(текст) {
   }
 
   if (вСписке) куски += '</ul>';
+  if (вКопии) куски += '<pre>' + э(копия.join('\n')) + '</pre>';   // незакрытый блок — показать как есть
   return куски;
 }
+
+/** Скрипт кнопки «Скопировать»: буфер обмена, а если страница не по https — старый способ через выделение. */
+const СКРИПТ_КОПИИ = `<script>
+function скопировать(кнопка) {
+  var текст = кнопка.parentNode.querySelector('pre').textContent;
+  function готово() { кнопка.textContent = 'Скопировано ✓'; setTimeout(function () { кнопка.textContent = 'Скопировать'; }, 2500); }
+  function поСтаринке() {
+    var поле = document.createElement('textarea'); поле.value = текст; document.body.appendChild(поле);
+    поле.select(); try { document.execCommand('copy'); готово(); } catch (e) { кнопка.textContent = 'Выделите и скопируйте вручную'; }
+    document.body.removeChild(поле);
+  }
+  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(текст).then(готово, поСтаринке); } else { поСтаринке(); }
+}
+</script>`;
 
 /** **Так** становится жирным. Текст при этом обезврежен. */
 function жирный(текст) {
@@ -329,6 +363,7 @@ function обёртка(заголовок, нутро, класс) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>${страница.ОФОРМЛЕНИЕ}</style>
 <div class="лист запись-лист ${класс || ''}">${нутро}</div>
+${СКРИПТ_КОПИИ}
 </html>`;
 }
 
