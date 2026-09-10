@@ -61,7 +61,7 @@ const ПУСТЫЕ_СЛОВА = new Set([
 /** Заголовки записей: ключ, время и текст. Не вышло — честный null. */
 function записиGit(сколько) {
   const итог = spawnSync('git', ['log', '-n', String(сколько || 300), '--pretty=format:%h%aI%s'],
-    { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 4 * 1024 * 1024 });
+    { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
   if (итог.error || итог.status !== 0) return null;
 
   const записи = [];
@@ -88,7 +88,7 @@ function записиGit(сколько) {
  */
 function опубликованныйФайл(имя) {
   const итог = spawnSync('git', ['show', 'origin/main:' + имя],
-    { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 8 * 1024 * 1024 });
+    { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
   if (итог.error || итог.status !== 0) return null;
   return итог.stdout.toString('utf8');
 }
@@ -96,14 +96,14 @@ function опубликованныйФайл(имя) {
 /** Знает ли этот компьютер, что такое origin/main. */
 function публикацияВидна() {
   const итог = spawnSync('git', ['rev-parse', '--verify', 'origin/main'],
-    { cwd: КОРЕНЬ, timeout: 8000 });
+    { cwd: КОРЕНЬ, timeout: 8000, windowsHide: true });
   return !итог.error && итог.status === 0;
 }
 
 /** Когда этот файл в последний раз менялся в опубликованном. */
 function когдаОпубликован(имя) {
   const итог = spawnSync('git', ['log', '-1', '--format=%aI', 'origin/main', '--', имя],
-    { cwd: КОРЕНЬ, timeout: 8000 });
+    { cwd: КОРЕНЬ, timeout: 8000, windowsHide: true });
   if (итог.error || итог.status !== 0) return null;
   const строка = итог.stdout.toString('utf8').trim();
   if (!строка) return null;
