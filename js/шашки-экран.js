@@ -1627,10 +1627,10 @@
     стиль.id = 'опора-образцов-доски';
     стиль.textContent =
       '.образец-доски{display:grid;grid-template-columns:repeat(2,1fr);' +
-      'width:44px;height:44px;border:3px solid var(--кайма-доски,#333);' +
+      'width:44px;height:44px;border:3px solid var(--рамка-доски,#333);' +
       'border-radius:6px;overflow:hidden}' +
-      '.образец-доски__клетка--светлая{background:var(--клетка-светлая,#eee)}' +
-      '.образец-доски__клетка--тёмная{background:var(--клетка-тёмная,#555)}' +
+      '.образец-доски__клетка--светлая{background:var(--поле-светлое,#eee)}' +
+      '.образец-доски__клетка--тёмная{background:var(--поле-тёмное,#555)}' +
       '.оформление__выбор{display:flex;flex-direction:column;align-items:center;gap:6px}';
     const шапка = document.head;
     if (шапка.firstChild) шапка.insertBefore(стиль, шапка.firstChild);
