@@ -15,7 +15,7 @@
        игрокам старую версию: правку видно только после полной очистки кэша.
        Добавка ?v= к адресу самой страницы файлы НЕ обновляет — версия
        должна стоять именно здесь, в строках подключения. -->
-  <link rel="stylesheet" href="style.css?v=38">
+  <link rel="stylesheet" href="style.css?v=39">
   <!-- Официальный скрипт Telegram: даёт тему, кнопки и данные игрока.
        В обычном браузере он просто ничего не находит и не мешает. -->
   <!-- defer обязателен: без него браузер не рисует ни одной карты, пока
@@ -110,6 +110,24 @@
         <span class="плитка-игры__название">Шахматы</span>
         <span id="пометка-шахматы" class="плитка-игры__пометка"></span>
       </button>
+      <!-- Нарды переехали сюда из «Скоро» 10 сентября. Игра была готова сутки,
+           а плитка стояла выключенной — попасть в нарды было нельзя вовсе.
+           Признак живой плитки: у неё есть «id». Без него кнопка мёртвая,
+           даже если убрать «disabled», — ровно на этом нарды и стояли. -->
+      <button id="кнопка-игра-нарды" class="плитка-игры" data-игра="нарды">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <!-- Доска с «ёлочкой» пунктов и фишка поверх -->
+          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M14 12l6 16 6-16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M30 12l6 16 6-16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M22 52l6-16 6 16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="45" cy="42" r="7" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+        </svg></span>
+        <span class="плитка-игры__название">Нарды</span>
+        <span id="пометка-нарды" class="плитка-игры__пометка"></span>
+        <span id="кнопка-играть-нарды" class="плитка-игры__играть скрыт"
+              role="button" tabindex="0">Играть</span>
+      </button>
 
     </div>
 
@@ -124,20 +142,7 @@
            и они тише цветом (класс «плитка-игры--скоро») — ровно так же,
            как выглядели шахматы, пока к ним не написали бота. Обещание
            игры, а не кнопка, которая молчит в ответ на нажатие.
-           Порядок — очередь работы: нарды, домино, морской бой, деберц. -->
-      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="нарды">
-        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <!-- Доска с «ёлочкой» пунктов и фишка поверх -->
-          <rect x="8" y="10" width="48" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M14 12l6 16 6-16z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M30 12l6 16 6-16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M22 52l6-16 6 16z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-          <circle cx="45" cy="42" r="7" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
-        </svg></span>
-        <span class="плитка-игры__название">Нарды</span>
-        <span class="плитка-игры__пометка">скоро</span>
-      </button>
-
+           Порядок — очередь работы: домино, морской бой, деберц. -->
       <button class="плитка-игры плитка-игры--скоро" disabled data-игра="домино">
         <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
           <!-- Костяшка стоймя: черта посередине, сверху три точки, снизу две -->
@@ -866,7 +871,7 @@
 <script src="js/telegram.js?v=17"></script>
 <script src="js/колода-рисунок.js?v=4"></script>
 <script src="js/движение-карт.js?v=1"></script>
-<script src="js/game.js?v=65"></script>
+<script src="js/game.js?v=66"></script>
 <!-- Игра вдвоём. Подключается последней и только добавляет второй режим:
      без этого файла игра против бота работает как прежде. -->
 <script src="js/сеть.js?v=31"></script>
