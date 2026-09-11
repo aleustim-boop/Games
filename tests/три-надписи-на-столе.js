@@ -30,6 +30,7 @@
    ===================================================================== */
 const path = require('path');
 const { chromium, подготовитьПодделку } = require(path.join(__dirname, 'браузер-робот.js'));
+const { сестьЗаСтол } = require(path.join(__dirname, 'сесть-за-стол.js'));
 const АДРЕС = 'http://127.0.0.1:' + (process.argv[2] && /^\d+$/.test(process.argv[2]) ? process.argv[2] : '8080') + '/';
 const СЛОМАТЬ = process.argv.indexOf('сломать') !== -1;
 
@@ -129,16 +130,12 @@ async function ход(страница) {
       await страница.goto(АДРЕС);
       await страница.waitForFunction(() => typeof настройкиИгрыСБотами !== 'undefined');
       await страница.waitForTimeout(400);
-      await страница.click('#кнопка-игра-дурак');
-      await страница.waitForTimeout(250);
-      await страница.evaluate((с) => {
-        настройкиИгрыСБотами.игроков = с.игроков;
-        настройкиИгрыСБотами.парами = с.парами === true;
-      }, стол);
       if (СЛОМАТЬ) {
         await страница.evaluate(() => { window.текстДействия = function () { return статусХода(); }; });
       }
-      await страница.click('#кнопка-режим-бот');
+      /* За стол — дорогой человека: лобби и три шага (tests/сесть-за-стол.js).
+         Число мест и «2 на 2» выбираются на шаге 2 настоящими нажатиями. */
+      await сестьЗаСтол(страница, { игроков: стол.игроков, парами: стол.парами === true });
       await страница.waitForTimeout(1300);
       for (let шаг = 0; шаг < 260; шаг++) {
         const с = await страница.evaluate(снимокТрёхНадписей);

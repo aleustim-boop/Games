@@ -114,6 +114,7 @@ function достатьСтаруюИгру() {
   /* ---------------- ЧАСТЬ 2 ---------------- */
   console.log('\n=== 2. В браузере: панель, картинки, цель, полёт ===');
   const { chromium, подготовитьПодделку } = require(path.join(__dirname, 'браузер-робот.js'));
+  const { сестьЗаСтол } = require(path.join(__dirname, 'сесть-за-стол.js'));
   if (!fs.existsSync(ПАПКА_СНИМКОВ)) fs.mkdirSync(ПАПКА_СНИМКОВ);
   const браузер = await chromium.launch();
   const окно = await браузер.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
@@ -132,10 +133,9 @@ function достатьСтаруюИгру() {
   await страница.goto(АДРЕС);
   await страница.waitForFunction(() => typeof настройкиИгрыСБотами !== 'undefined');
   await страница.waitForTimeout(500);
-  await страница.click('#кнопка-игра-дурак');
-  await страница.waitForTimeout(250);
-  await страница.evaluate(() => { настройкиИгрыСБотами.игроков = 3; });
-  await страница.click('#кнопка-режим-бот');
+  /* За стол — дорогой человека: витрина → лобби → три шага (с 11 сентября
+     вместо прежнего «Играть с ботом» в меню). Трое, каждый за себя. */
+  await сестьЗаСтол(страница, { игроков: 3, парами: false });
   await страница.waitForTimeout(1300);
   /* Панель «Сказать» открываем настоящим нажатием, вкладку «Кинуть» —
      тем же делом, что вешает на неё игра. */
@@ -260,10 +260,7 @@ function достатьСтаруюИгру() {
   await стр3.goto(АДРЕС);
   await стр3.waitForFunction(() => typeof настройкиИгрыСБотами !== 'undefined');
   await стр3.waitForTimeout(500);
-  await стр3.click('#кнопка-игра-дурак');
-  await стр3.waitForTimeout(250);
-  await стр3.evaluate(() => { настройкиИгрыСБотами.игроков = 3; });
-  await стр3.click('#кнопка-режим-бот');
+  await сестьЗаСтол(стр3, { игроков: 3, парами: false });
   await стр3.waitForTimeout(1300);
   await стр3.click('#кнопка-эмоции');
   await стр3.waitForTimeout(300);

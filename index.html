@@ -15,7 +15,7 @@
        игрокам старую версию: правку видно только после полной очистки кэша.
        Добавка ?v= к адресу самой страницы файлы НЕ обновляет — версия
        должна стоять именно здесь, в строках подключения. -->
-  <link rel="stylesheet" href="style.css?v=44">
+  <link rel="stylesheet" href="style.css?v=45">
   <!-- Официальный скрипт Telegram: даёт тему, кнопки и данные игрока.
        В обычном браузере он просто ничего не находит и не мешает. -->
   <!-- defer обязателен: без него браузер не рисует ни одной карты, пока
@@ -165,142 +165,218 @@
     </div>
   </section>
 
-  <section id="экран-меню" class="экран">
-    <h1 class="заголовок">Подкидной<br>дурак</h1>
-    <!-- Подписи «Выберите, с кем играть» здесь больше нет: две кнопки ниже
-         говорят то же самое сами, а лишний текст владелец просил убрать. -->
-
-    <!-- Обе кнопки различаются одним последним словом, и взгляд читает подпись
-         целиком. Поэтому различающееся слово вынесено отдельным узлом —
-         чтобы оформление могло его выделить и выбор был виден без чтения.
-         Правило для этого узла («кнопка__кого») в style.css есть — слово
-         подсвечено, и выбор читается с одного взгляда.
-
-         Начало фразы тоже отдельным узлом, и это не украшательство:
-         js/сеть.js меняет подпись этой пары кнопок («Вернуться к игре с…»),
-         а переписать кнопку целиком значило бы стереть выделенное слово
-         навсегда. Теперь он меняет только начало. -->
-    <button id="кнопка-режим-бот" class="кнопка кнопка--главная"><span class="кнопка__начало">Играть с</span> <span class="кнопка__кого">ботом</span></button>
-    <!-- «Изменить» — вход в настройки игры с ботом, а заодно к правилам,
-         рекордам и раздаче дня. Стоит сразу под своей кнопкой нарочно:
-         партия теперь начинается с «Играть с ботом» сразу, и человек,
-         который захочет поменять соперника или стол, не должен гадать,
-         куда делись настройки. -->
-    <button id="кнопка-настройки-бота" class="кнопка кнопка--мелкая">Изменить</button>
-    <!-- Подпись этой кнопки меняет js/сеть.js: если партия с другом осталась
-         недоигранной, она читается «Вернуться к игре с другом». Так первый
-         экран остаётся с двумя кнопками, а брошенная партия не теряется —
-         раньше ради неё была отдельная третья кнопка. -->
-    <button id="кнопка-с-другом" class="кнопка кнопка--главная"><span class="кнопка__начало">Играть с</span> <span class="кнопка__кого">другом</span></button>
-    <!-- Правила и рекорды стоят здесь, а не за «Изменить»: за «Изменить»
-         лежат настройки стола, а это два других вопроса — «во что играем»
-         и «как я играю». Мимо них проходит каждый, кто идёт к столу,
-         и новичок в том числе. -->
-    <div class="кнопки-низа">
-      <button id="кнопка-как-играть" class="кнопка кнопка--мелкая">Как играть</button>
-      <button id="кнопка-рекорды" class="кнопка кнопка--мелкая">Рекорды</button>
+  <!-- Экран 1. Лобби дурака — по эталону владельца (эталон/дурак-01-лобби.png).
+       Отсюда три дороги: с ботами (через три шага — к партии), с друзьями
+       и онлайн («скоро»: подбора соперников у нас нет). Слова и выбор ведёт
+       js/дурак-путь.js, вид — целиком style.css. Значки из набора владельца
+       (img/дурак/значки) вписаны прямо сюда, как на витрине: цвет они берут
+       у кнопки через currentColor, а у картинки по ссылке он не наследуется. -->
+  <section id="экран-лобби" class="экран лобби">
+    <!-- Верхняя строка «‹ · ⋯» — только в браузере; внутри Telegram такую
+         строку рисует он сам, и оформление её прячет (как на столе). -->
+    <div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
-    <!-- Обратно к выбору игры. Мелкая: главные здесь — два входа выше. -->
-    <button id="кнопка-меню-назад" class="кнопка кнопка--мелкая">К выбору игры</button>
+
+    <!-- Недоигранная партия с другом. Узел прежний, «кнопка-вернуться-в-игру»:
+         показывает и прячет его js/сеть.js, он же по нажатию возвращает за стол.
+         Стоит первым: после обрыва связи человек ищет свою партию, а не новую. -->
+    <button id="кнопка-вернуться-в-игру" type="button" class="плашка-возврата скрыт">Вас ждёт партия с другом — вернуться</button>
+
+    <h1 class="лобби__заголовок">Дурак</h1>
+
+    <!-- Карточка профиля: имя из Telegram и место в рейтинге. Места нет —
+         строка без числа (класс «карточка-профиля__рейтинг--нет»). Пишет
+         js/дурак-путь.js; имена пишут живые люди — только текстом. -->
+    <button id="лобби-профиль" type="button" class="карточка-профиля">
+      <span class="аватар" aria-hidden="true"></span>
+      <span class="карточка-профиля__текст">
+        <span id="лобби-имя" class="карточка-профиля__имя">Вы</span>
+        <span id="лобби-рейтинг" class="карточка-профиля__рейтинг карточка-профиля__рейтинг--нет"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2h12v7c0 8-12 8-12 0ZM6 4H2v3c0 4 3 5 5 5M18 4h4v3c0 4-3 5-5 5M12 15v5M7 22h10M9 20h6"/></svg><span id="лобби-место" class="карточка-профиля__место"></span></span>
+      </span>
+      <span class="карточка-профиля__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+    </button>
+
+    <!-- Картинка без рамы (раму рисует оформление), подпись — живым текстом. -->
+    <figure class="лобби__картинка">
+      <img class="лобби__рисунок" src="img/дурак/лобби.jpg" alt="" width="1200" height="800" decoding="async">
+      <figcaption class="лобби__подпись">Классика, которая объединяет</figcaption>
+    </figure>
+
+    <div class="лобби__входы">
+      <!-- Онлайн: подбора соперников нет — честно выключено и помечено. -->
+      <button id="лобби-онлайн" type="button" class="карточка-входа карточка-входа--онлайн" disabled>
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M3 7h18M2 12h20M3 17h18"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Играть онлайн</span>
+          <span class="карточка-входа__подпись">Соперники со всего мира</span>
+        </span>
+        <span class="пометка-скоро">скоро</span>
+      </button>
+      <button id="лобби-боты" type="button" class="карточка-входа карточка-входа--боты">
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V3M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="2" r="1"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Играть с ботами</span>
+          <span class="карточка-входа__подпись">Тренировка в своём темпе</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button>
+      <!-- Раздача дня: одна и та же раздача всем игрокам в этот день — обычный
+           бот, вдвоём, обычные правила, колода перемешана по зерну из даты.
+           Сыграть её можно один раз в день; сыграл — кнопка до полуночи
+           показывает результат. Подпись и доступность ставит js/game.js. -->
+      <button id="кнопка-раздача-дня" type="button" class="кнопка кнопка--мелкая кнопка--раздача-дня">Раздача дня</button>
+      <button id="лобби-друзья" type="button" class="карточка-входа карточка-входа--друзья">
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="6" r="3"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><path d="M6 21v-5c0-6 12-6 12 0v5ZM1 20v-5c0-2 1-3 3-3M23 20v-5c0-2-1-3-3-3"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Пригласить друзей</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button>
+      <!-- Тихая строка для того, кому друг продиктовал код. -->
+      <button id="лобби-код" type="button" class="лобби__код">Есть код? Войти</button>
+    </div>
+
+    <!-- Вкладки лобби — те же классы, что на витрине. -->
+    <nav class="нижние-вкладки" aria-label="Разделы дурака">
+      <button type="button" class="нижняя-вкладка нижняя-вкладка--активна" aria-current="page">
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m2 10 10-9 10 9v12h-7v-8H9v8H2Z" fill="currentColor" stroke="none"/></svg></span>
+        <span class="нижняя-вкладка__подпись">Лобби</span>
+      </button>
+      <button id="лобби-вкладка-рейтинг" type="button" class="нижняя-вкладка">
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="13" width="5" height="10" rx="1" fill="currentColor" stroke="none"/><rect x="10" y="7" width="5" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="18" y="1" width="5" height="22" rx="1" fill="currentColor" stroke="none"/></svg></span>
+        <span class="нижняя-вкладка__подпись">Рейтинг</span>
+      </button>
+      <button id="лобби-вкладка-профиль" type="button" class="нижняя-вкладка">
+        <span class="нижняя-вкладка__значок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="6" r="4" fill="currentColor" stroke="none"/><path d="M4 22v-3c0-9 16-9 16 0v3Z" fill="currentColor" stroke="none"/></svg></span>
+        <span class="нижняя-вкладка__подпись">Профиль</span>
+      </button>
+    </nav>
+
+    <!-- ДВЕРИ ДЛЯ ОБЩЕГО js/сеть.js — спрятаны и в руки не даются. Этот файл
+         один на дурака и шашки и ищет свои узлы по прежним именам (так же
+         устроено в шашки.html):
+           «кнопка-с-другом» — вход в игру с другом: лобби нажимает её за
+             человека («Пригласить друзей»), а сеть.js по ней открывает свой
+             экран. Узлы «кнопка__начало» внутри — ради его подписи;
+           «кнопка-играть» — «Играть с ботом», когда сервер не отвечает:
+             сеть.js нажимает её сам, и партия с ботами начинается сразу,
+             с выбором прошлого раза. -->
+    <button id="кнопка-с-другом" type="button" class="скрыт" aria-hidden="true" tabindex="-1"><span class="кнопка__начало">Играть с</span> <span class="кнопка__кого">другом</span></button>
+    <button id="кнопка-играть" type="button" class="скрыт" aria-hidden="true" tabindex="-1">Играть с ботом</button>
   </section>
 
-  <!-- Экран 1а. Игра с ботом: с кем играем и каким будет стол.
-
-       Отдельным экраном — чтобы первый остался пустым и понятным. Здесь же
-       живут «Как играть», «Рекорды» и «Звук»: в игре с ботом человек проводит
-       больше всего времени, и заглядывать за ними удобнее отсюда. Все id
-       кнопок и рядов оставлены прежними — на них завязаны js/game.js
-       и десяток проверок, а переезд между экранами поиску по id не мешает. -->
-  <section id="экран-бота" class="экран">
-    <h2 class="заголовок">Игра с ботом</h2>
-
-    <!-- Выбор соперника. Кнопка нажата — значит этот уровень и выбран. -->
-    <div id="выбор-сложности" class="выбор">
-      <span id="подпись-сложности" class="выбор__подпись">Соперник</span>
-      <div class="выбор__кнопки">
-        <button class="кнопка кнопка--выбор" value="лёгкий">Лёгкий</button>
-        <button class="кнопка кнопка--выбор" value="обычный">Обычный</button>
-        <button class="кнопка кнопка--выбор" value="сложный">Сложный</button>
-      </div>
+  <!-- Экраны 2–4. Три шага до партии — «Правила», «Игроки», «Настройки»
+       (эталон/дурак-02…04). Одна модель выбора на все шаги: «Далее» и «Назад»
+       ничего не сбрасывают. Всё внутри рисует js/дурак-путь.js по своей
+       модели: варианты, числа, рассадку, сводку и надписи. Здесь только
+       каркас: шапка, полоса шагов, места под выбор и кнопка «Далее».
+       Кнопки с «data-путь» — назад, ещё, далее, подробнее о правилах —
+       тоже слушает js/дурак-путь.js. -->
+  <section id="экран-путь-правила" class="экран путь" data-шаг="правила">
+    <div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
-
-    <!-- Каким будет стол с ботами. Те же три выбора, что и в игре с другом
-         (экран «Игра с другом» ниже), и нарочно теми же кнопками: человек
-         должен узнать знакомое, а не разбираться заново.
-
-         Ничего не трогать можно: по умолчанию здесь двое и обычные правила —
-         ровно та игра, что была до появления этих кнопок.
-
-         Имена у блоков свои, с приставкой «меню-»: на экране игры с другом
-         стоят такие же ряды, их обслуживает js/сеть.js, и одинаковые имена
-         на одной странице свели бы два разных стола в один. -->
-    <!-- Подробности стола свёрнуты: на экране остаётся то, чем ВЫБИРАЮТ
-         (соперник и «Играть»), а слова, которые надо понимать про саму игру
-         («переводной», «парами»), лежат за одной кнопкой. Тому, кто уже
-         менял стол, блок раскрывается сразу — иначе он решит, что его
-         настройки пропали (это делает js/game.js). -->
-    <button id="кнопка-ещё-настройки" class="кнопка кнопка--мелкая">Ещё настройки</button>
-    <div id="настройка-стола-с-ботами" class="настройка-стола скрыт">
-      <div class="выбор">
-        <span class="выбор__подпись">Сколько игроков за столом</span>
-        <div id="меню-выбор-мест" class="выбор__кнопки">
-          <button class="кнопка кнопка--выбор кнопка--активная" value="2">2</button>
-          <button class="кнопка кнопка--выбор" value="3">3</button>
-          <button class="кнопка кнопка--выбор" value="4">4</button>
-          <button class="кнопка кнопка--выбор" value="5">5</button>
-          <button class="кнопка кнопка--выбор" value="6">6</button>
-        </div>
+    <header class="путь__шапка">
+      <h1 class="путь__заголовок">Новая игра</h1>
+      <span class="путь__режим"></span>
+      <p class="путь__шаг"></p>
+    </header>
+    <ol class="шаги" aria-label="Шаги до партии">
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">1</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Правила</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">2</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Игроки</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">3</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Настройки</span></li>
+    </ol>
+    <h2 class="путь__вопрос">Как играем?</h2>
+    <div id="путь-правила-варианты" class="варианты" role="radiogroup" aria-label="Правила"></div>
+    <!-- Пример перевода: две карты новой колоды и стрелка между ними.
+         Только у переводного — у подкидного подпись о переводе была бы неправдой. -->
+    <div id="путь-пример-перевода" class="пример-перевода скрыт">
+      <div id="путь-пример-карты" class="пример-перевода__карты">
+        <span class="пример-перевода__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2 18C5 7 14 7 20 12M17 5l5 9-10 1"/></svg></span>
       </div>
-
-      <!-- «Без перевода», а не «Обычный»: слово «Обычный» на этом же экране
-           уже занято уровнем соперника, и живой новичок, нажав его в правилах,
-           решил, что промахнулся кнопкой. Переименовали правила, а не уровень:
-           уровень тем же словом записан в сохранённых рекордах. -->
-      <div class="выбор">
-        <span class="выбор__подпись">Правила</span>
-        <div id="меню-выбор-правил" class="выбор__кнопки">
-          <button class="кнопка кнопка--выбор кнопка--активная" value="обычный">Без перевода</button>
-          <button class="кнопка кнопка--выбор" value="переводной">Переводной</button>
-        </div>
-      </div>
-
-      <div class="выбор">
-        <span class="выбор__подпись">Кто против кого</span>
-        <div id="меню-выбор-пар" class="выбор__кнопки">
-          <button class="кнопка кнопка--выбор кнопка--активная" value="каждый">Каждый сам</button>
-          <button class="кнопка кнопка--выбор" value="парами">Парами, 2 на 2</button>
-        </div>
-      </div>
-
-      <!-- Одной строкой объясняем выбранное человеческими словами: сколько
-           играет, что такое переводной и почему «парами» само поставило
-           четверых. Текст пишет js/game.js. -->
-      <p id="меню-пояснение-стола" class="подпись"></p>
+      <p class="пример-перевода__подпись">Перевод картой того же достоинства</p>
     </div>
+    <!-- «Как играть» доступна ДО партии (правило проекта). -->
+    <button type="button" class="путь__ссылка" data-путь="правила-подробнее">Подробнее о правилах</button>
+    <button type="button" class="кнопка кнопка--главная путь__далее" data-путь="далее">Далее</button>
+  </section>
 
-    <button id="кнопка-играть" class="кнопка кнопка--главная">Играть</button>
-    <!-- Раздача дня: одна и та же раздача всем игрокам в этот день — обычный
-         бот, вдвоём, обычные правила, колода перемешана по зерну из даты.
-         Сыграть её можно один раз в день; сыграл — кнопка до полуночи
-         показывает результат («Сегодня: победа за 14 ходов»). Подпись
-         и доступность ставит js/game.js. -->
-    <button id="кнопка-раздача-дня" class="кнопка кнопка--раздача-дня">Раздача дня</button>
-
-    <!-- «Как играть» и «Рекорды» переехали на экран меню: рекорды — не
-         настройка стола, а правила нужны как раз новичку, который до этого
-         экрана может и не дойти. Здесь остались только настройки. -->
-    <!-- Обёртка — под правила оформителя, как на экране комнаты: две мелкие
-         кнопки столбиком отъедали 53 точки высоты, а в ряд они влезают.
-         Высота здесь на вес золота: в полном экране Telegram нижняя кнопка
-         иначе уходит под полосу жеста. -->
-    <div class="кнопки-низа">
-      <button id="кнопка-звук" class="кнопка кнопка--мелкая">Звук включён</button>
-      <!-- «Оформление» стоит перед «Назад» — так же, как на таком же экране
-           в шашках: человек, научившийся менять вид в одной игре, находит
-           то же место в другой, не глядя. -->
-      <button id="кнопка-оформление" class="кнопка кнопка--мелкая">Оформление</button>
-      <button id="кнопка-бот-назад" class="кнопка кнопка--мелкая">Назад</button>
+  <section id="экран-путь-игроки" class="экран путь" data-шаг="игроки">
+    <div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
+    <header class="путь__шапка">
+      <h1 class="путь__заголовок">Состав игроков</h1>
+      <span class="путь__режим"></span>
+      <p class="путь__шаг"></p>
+    </header>
+    <ol class="шаги" aria-label="Шаги до партии">
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">1</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Правила</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">2</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Игроки</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">3</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Настройки</span></li>
+    </ol>
+    <h2 class="путь__раздел">Формат игры</h2>
+    <div id="путь-форматы" class="переключатель" role="radiogroup" aria-label="Формат игры"></div>
+    <h2 class="путь__раздел">Всего игроков</h2>
+    <div id="путь-числа" class="числа" role="radiogroup" aria-label="Всего игроков"></div>
+    <p class="путь__подпись">Включая вас</p>
+    <!-- Почему остальные числа выключены — только при «2 на 2». -->
+    <p id="путь-почему-число" class="путь__подсказка скрыт"></p>
+    <!-- Схема рассадки: места ставит js/дурак-путь.js по числу игроков
+         (у схемы — «--мест», у места — «--номер-места»). -->
+    <div id="путь-рассадка" class="рассадка"></div>
+    <p id="путь-подсказка-игроков" class="путь__подсказка скрыт"></p>
+    <button type="button" class="кнопка кнопка--главная путь__далее" data-путь="далее">Далее</button>
+  </section>
+
+  <section id="экран-путь-настройки" class="экран путь" data-шаг="настройки">
+    <div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+    </div>
+    <header class="путь__шапка">
+      <h1 class="путь__заголовок">Настройки</h1>
+      <span class="путь__режим"></span>
+      <p class="путь__шаг"></p>
+    </header>
+    <ol class="шаги" aria-label="Шаги до партии">
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">1</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Правила</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">2</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Игроки</span></li>
+      <li class="шаги__шаг"><span class="шаги__номер"><span class="шаги__цифра">3</span><svg class="шаги__галочка" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 5 5L20 6"/></svg></span><span class="шаги__имя">Настройки</span></li>
+    </ol>
+    <!-- Сводка выбранного: «Переводной · 6 игроков», «Вы и 5 ботов». -->
+    <div class="сводка">
+      <span class="сводка__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="6" r="3"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><path d="M6 21v-5c0-6 12-6 12 0v5ZM1 20v-5c0-2 1-3 3-3M23 20v-5c0-2-1-3-3-3"/></svg></span>
+      <span class="сводка__текст">
+        <span id="путь-сводка-главное" class="сводка__главное"></span>
+        <span id="путь-сводка-подпись" class="сводка__подпись"></span>
+      </span>
+    </div>
+    <h2 class="путь__раздел">Колода</h2>
+    <!-- С ботами — выбор; с друзьями — сведение (колоду выбирает сама игра). -->
+    <div id="путь-колоды" class="переключатель" role="radiogroup" aria-label="Колода"></div>
+    <p id="путь-колода-почему" class="путь__подсказка скрыт"></p>
+    <p id="путь-колода-сведение" class="путь__подпись скрыт"></p>
+    <h2 class="путь__раздел">Время на ход</h2>
+    <div id="путь-время" class="переключатель" role="radiogroup" aria-label="Время на ход"></div>
+    <!-- Сложность — только у ботов. -->
+    <div id="путь-блок-сложности">
+      <h2 class="путь__раздел">Сложность ботов</h2>
+      <div id="путь-сложность" class="переключатель" role="radiogroup" aria-label="Сложность ботов"></div>
+    </div>
+    <!-- Карточка для ботов: честно, без «рейтинга» (решение штаба). -->
+    <div id="путь-карточка-ботов" class="карточка-тренировки">
+      <span class="карточка-тренировки__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V3M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="2" r="1"/></svg></span>
+      <span class="карточка-тренировки__текст">
+        <span class="карточка-тренировки__название">Тренировка с ботами</span>
+        <span id="путь-карточка-подпись" class="карточка-тренировки__подпись"></span>
+      </span>
+    </div>
+    <button id="путь-начать" type="button" class="кнопка кнопка--главная путь__далее" data-путь="далее">Начать игру</button>
   </section>
 
   <!-- Экран 2. Игровой стол — по эталону владельца (эталон/9-дурак-стол-итог.png).
@@ -397,36 +473,8 @@
       <button id="кнопка-бросить" type="button" class="кнопка кнопка--бросок скрыт" data-действие="бросить">Бросить</button>
     </div>
 
-    <!-- Лист «Ещё» стола — тот же лист, что на витрине, со своим набором:
-         служебные кнопки ушли сюда из-под стола. Открывается «⋯» в верхней
-         строке, а внутри Telegram — пунктом «Настройки» в его меню.
-         Закрывается нажатием мимо листа, «Закрыть» и клавишей Esc.
-         Показывает и прячет js/game.js классом «скрыт». -->
-    <div id="лист-игры" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-игры-заголовок">
-      <div id="лист-игры-фон" class="лист-ещё__фон"></div>
-      <div class="лист-ещё__лист">
-        <h2 id="лист-игры-заголовок" class="лист-ещё__заголовок">Ещё</h2>
-        <button id="кнопка-лист-игры-меню" type="button" class="лист-ещё__строка">
-          <span class="лист-ещё__подпись">В меню</span>
-        </button>
-        <button id="кнопка-лист-игры-правила" type="button" class="лист-ещё__строка">
-          <span class="лист-ещё__подпись">Как играть</span>
-        </button>
-        <!-- Звук этой игры — та же настройка, что у кнопок «Звук» на экранах
-             дурака. Общий на весь сборник переключатель живёт на витрине. -->
-        <button id="кнопка-лист-игры-звук" type="button" class="лист-ещё__строка" role="switch" aria-checked="true">
-          <span class="лист-ещё__подпись">Звук</span>
-          <span id="лист-игры-звук-состояние" class="лист-ещё__значение">вкл</span>
-        </button>
-        <button id="кнопка-лист-игры-оформление" type="button" class="лист-ещё__строка">
-          <span class="лист-ещё__подпись">Оформление</span>
-        </button>
-        <button id="кнопка-лист-игры-рекорды" type="button" class="лист-ещё__строка">
-          <span class="лист-ещё__подпись">Рекорды</span>
-        </button>
-        <button id="кнопка-лист-игры-закрыть" type="button" class="лист-ещё__закрыть">Закрыть</button>
-      </div>
-    </div>
+    <!-- Лист «Ещё» переехал в конец страницы: им пользуются и стол, и лобби
+         с шагами (см. «лист-игры» ниже). -->
 
   </section>
 
@@ -741,15 +789,9 @@
   <!-- Экран 5. Игра с другом: создать свою игру или войти в чужую -->
   <section id="экран-друга" class="экран">
     <h2 class="заголовок">Игра с другом</h2>
-    <!-- Видна только тогда, когда есть недоигранная партия с другом; показывает
-         и прячет её js/сеть.js. Стоит первой нарочно: человек после обрыва
-         связи ищет свою партию, а не новую.
-
-         Второй дорогой к ней служит сама кнопка «Играть с другом» на первом
-         экране — при недоигранной партии она так и читается, «Вернуться
-         к игре с другом». Так вход в брошенную партию остаётся в одно
-         нажатие, как было до перестройки меню. -->
-    <button id="кнопка-вернуться-в-игру" class="кнопка кнопка--возврат скрыт">Вернуться к игре с другом</button>
+    <!-- Кнопка «Вернуться к игре с другом» переехала в лобби — салатовой
+         плашкой наверху («кнопка-вернуться-в-игру», её ведёт js/сеть.js):
+         человек после обрыва связи ищет свою партию там, откуда входит. -->
     <!-- Про домашний компьютер сказано здесь, а не после нажатия: новичок
          жал «Создать игру», ждал код для друга и вместо кода получал отказ.
          Правду лучше сказать до нажатия — этот экран прокручивается,
@@ -935,14 +977,56 @@
     <button id="кнопка-вход-назад" class="кнопка кнопка--мелкая">Назад</button>
   </section>
 
+  <!-- Лист «Ещё» дурака — тот же лист, что на витрине (те же классы), со своим
+       набором служебных кнопок. Один на стол, лобби и шаги, поэтому лежит
+       вне экранов. Открывается «⋯» в верхней строке, а внутри Telegram —
+       пунктом «Настройки» в его меню. Закрывается нажатием мимо листа,
+       «Закрыть» и клавишей Esc. Показывает и прячет js/game.js классом
+       «скрыт»; он же прячет «В меню» вне стола и «Вибрацию», где её нет. -->
+  <div id="лист-игры" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-игры-заголовок">
+    <div id="лист-игры-фон" class="лист-ещё__фон"></div>
+    <div class="лист-ещё__лист">
+      <h2 id="лист-игры-заголовок" class="лист-ещё__заголовок">Ещё</h2>
+      <button id="кнопка-лист-игры-меню" type="button" class="лист-ещё__строка">
+        <span class="лист-ещё__подпись">В меню</span>
+      </button>
+      <button id="кнопка-лист-игры-правила" type="button" class="лист-ещё__строка">
+        <span class="лист-ещё__подпись">Как играть</span>
+      </button>
+      <!-- Звук этой игры. Общий на весь сборник переключатель живёт на витрине. -->
+      <button id="кнопка-лист-игры-звук" type="button" class="лист-ещё__строка" role="switch" aria-checked="true">
+        <span class="лист-ещё__подпись">Звук</span>
+        <span id="лист-игры-звук-состояние" class="лист-ещё__значение">вкл</span>
+      </button>
+      <!-- Вибрация — там же, где раньше вставала её кнопка: если есть дверь
+           вибрации в js/telegram.js (иначе строка спрятана). Выключатель стоял
+           рядом со звуком на экранах меню, которых больше нет, а владелец
+           просил: «звук нужен, вибрация нужна». -->
+      <button id="кнопка-лист-игры-вибрация" type="button" class="лист-ещё__строка скрыт" role="switch" aria-checked="true">
+        <span class="лист-ещё__подпись">Вибрация</span>
+        <span id="лист-игры-вибрация-состояние" class="лист-ещё__значение">вкл</span>
+      </button>
+      <button id="кнопка-лист-игры-оформление" type="button" class="лист-ещё__строка">
+        <span class="лист-ещё__подпись">Оформление</span>
+      </button>
+      <button id="кнопка-лист-игры-рекорды" type="button" class="лист-ещё__строка">
+        <span class="лист-ещё__подпись">Рекорды</span>
+      </button>
+      <button id="кнопка-лист-игры-закрыть" type="button" class="лист-ещё__закрыть">Закрыть</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- Обвязка Telegram идёт первой: к старту игры её функции уже должны быть готовы.
      Номера ?v= поднимаем при каждой правке этих файлов — см. пояснение в <head>. -->
 <script src="js/telegram.js?v=21"></script>
 <script src="js/колода-рисунок.js?v=5"></script>
-<script src="js/движение-карт.js?v=1"></script>
-<script src="js/game.js?v=72"></script>
+<script src="js/движение-карт.js?v=2"></script>
+<!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
+     подключает его к странице и отдаёт ему свои двери. -->
+<script src="js/дурак-путь.js?v=2"></script>
+<script src="js/game.js?v=73"></script>
 <!-- Игра вдвоём. Подключается последней и только добавляет второй режим:
      без этого файла игра против бота работает как прежде. -->
 <script src="js/сеть.js?v=32"></script>
@@ -953,7 +1037,7 @@
 <!-- Рейтинг игроков: общая таблица с сервера. Подключается после js/сеть.js,
      потому что адрес сервера спрашивает у него (window.Сеть.адрес). Если
      сеть.js не доехал, экран не падает — он честно скажет, что адреса нет. -->
-<script src="js/рейтинг-экран.js?v=5"></script>
+<script src="js/рейтинг-экран.js?v=6"></script>
 <!-- Страховка на случай, когда js/сеть.js не доехал или сломался на полпути:
      кнопку «Играть с другом» обслуживает только он, и без него она молчит.
      Молчащая кнопка хуже сломанной — человек жмёт её снова и снова и решает,
