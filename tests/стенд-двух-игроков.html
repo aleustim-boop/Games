@@ -66,8 +66,10 @@
       const бито = д.querySelector('#кнопка-завершить');
       const беру = д.querySelector('#кнопка-беру');
       if (можно.length) { можно[0].click(); return 'положил ' + можно[0].textContent.replace(/\s+/g, ''); }
-      if (бито && бито.offsetParent !== null) { бито.click(); return 'бито'; }
-      if (беру && беру.offsetParent !== null) { беру.click(); return 'беру'; }
+      /* С 11 сентября «Взять» и «Бито» видны всегда, а когда нельзя —
+         выключены (disabled). Жмём только видимую И невыключенную. */
+      if (бито && бито.offsetParent !== null && !бито.disabled) { бито.click(); return 'бито'; }
+      if (беру && беру.offsetParent !== null && !беру.disabled) { беру.click(); return 'беру'; }
       return 'жду хода соперника';
     };
 

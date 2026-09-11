@@ -127,6 +127,10 @@ function пустойУзел() {
     appendChild() {}, removeChild() {}, insertBefore() {}, remove() {},
     addEventListener() {}, removeEventListener() {}, focus() {}, blur() {},
     querySelector() { return null; }, querySelectorAll() { return []; },
+    /* С 11 сентября игра ставит кнопкам атрибуты (disabled, data-действие,
+       aria-…): без этих дверей поддельный узел ронял прогон при запуске. */
+    setAttribute() {}, getAttribute() { return null; }, removeAttribute() {},
+    hasAttribute() { return false; }, toggleAttribute() {}, closest() { return null; }, contains() { return false; },
     getBoundingClientRect() { return { width: 360, height: 40, top: 0, left: 0, right: 360, bottom: 40 }; }
   };
   return узел;

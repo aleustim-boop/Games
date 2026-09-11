@@ -27,7 +27,10 @@
           ? д.querySelector('#строка-связи').textContent.trim() : '(скрыта)',
         стол: [...д.querySelectorAll('#стол > *')].map(кратко),
         рука: [...д.querySelectorAll('#карты-человека > *')].map((к, i) => i + ':' + кратко(к) + (к.className.indexOf('нельзя') >= 0 ? '(х)' : '')),
-        кнопки: [...д.querySelectorAll('#панель-кнопок button')].filter(b => b.offsetParent !== null).map(b => b.textContent.trim()),
+        /* Кнопки, которые игрок может нажать. С 11 сентября «Взять» и «Бито»
+           видны всегда и выключаются (disabled), а не прячутся — поэтому
+           одной видимости мало, иначе в списке висела бы и выключенная. */
+        кнопки: [...д.querySelectorAll('#панель-кнопок button')].filter(b => b.offsetParent !== null && !b.disabled).map(b => b.textContent.trim()),
         друг: д.querySelector('#счётчик-бота') ? д.querySelector('#счётчик-бота').textContent.trim() : null,
         колода: д.querySelector('#счётчик-колоды') ? д.querySelector('#счётчик-колоды').textContent.trim() : null,
         экран: [...д.querySelectorAll('[id^="экран-"]')].filter(э => э.offsetParent !== null).map(э => э.id),
@@ -99,8 +102,9 @@
       const бито = д.querySelector('#кнопка-завершить');
       const беру = д.querySelector('#кнопка-беру');
       if (можно.length) { можно[0].click(); return 'положил ' + можно[0].textContent.replace(/\s+/g, ''); }
-      if (бито && бито.offsetParent !== null) { бито.click(); return 'бито'; }
-      if (беру && беру.offsetParent !== null) { беру.click(); return 'беру'; }
+      // Видна И не выключена: выключенную «Взять» жать бессмысленно.
+      if (бито && бито.offsetParent !== null && !бито.disabled) { бито.click(); return 'бито'; }
+      if (беру && беру.offsetParent !== null && !беру.disabled) { беру.click(); return 'беру'; }
       return 'жду хода соперника';
     }
 

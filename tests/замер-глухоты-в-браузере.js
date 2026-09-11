@@ -43,6 +43,10 @@
   const кнопкаКонца = () => document.getElementById('кнопка-завершить');
   const виденИтог = () => document.getElementById('экран-результата').classList.contains('экран--виден');
   const видна = (у) => у && у.offsetParent !== null && у.getBoundingClientRect().height > 0;
+  /* С 11 сентября кнопки стола не прячутся, а выключаются (disabled):
+     «видна» больше не значит «можно нажать». Кнопку конца подхода считаем
+     доступной, только если она видна И не выключена. */
+  const можноНажать = (у) => видна(у) && !у.disabled;
   const рамка = (у) => {
     const р = у.getBoundingClientRect();
     return { верх: Math.round(р.top), низ: Math.round(р.bottom), высота: Math.round(р.height) };
@@ -65,7 +69,7 @@
     const годные = [];
     рука.forEach((к, i) => { if (картаСейчасХодит(к) === true) годные.push(i); });
     if (годные.length) veer_click(годные[0]);
-    else if (видна(кнопкаКонца())) кнопкаКонца().click();
+    else if (можноНажать(кнопкаКонца())) кнопкаКонца().click();
   }
   function veer_click(индекс) {
     const узел = веер().children[индекс];
@@ -76,7 +80,7 @@
   async function дойтиДоКнопки(нужноБерёт) {
     for (let шаг = 0; шаг < 900; шаг++) {
       if (виденИтог()) { document.getElementById('кнопка-ещё').click(); await пауза(500); continue; }
-      const готово = партия && !партия.завершена && сейчасМойХод() && видна(кнопкаКонца()) &&
+      const готово = партия && !партия.завершена && сейчасМойХод() && можноНажать(кнопкаКонца()) &&
         (!нужноБерёт || партия.берёт);
       if (готово) return true;
       сходитьЗаконно();

@@ -27,7 +27,9 @@
    ЧТО УМЕЕТ ПОДДЕЛКА (ровно то, что просят у Telegram наши страницы):
      ready, expand, close, isVersionAtLeast, onEvent/offEvent, themeParams,
      initDataUnsafe, BackButton (show/hide/onClick — если «стрелка» не
-     выключена настройкой), CloudStorage (setItem/getItem/getItems/
+     выключена настройкой), SettingsButton — пункт «Настройки» в меню
+     Telegram (show/hide/onClick/offClick, isVisible; только с версии 7.0,
+     у 6.x его нет, как у настоящего), CloudStorage (setItem/getItem/getItems/
      removeItem/removeItems/getKeys), MainButton и HapticFeedback пустышками,
      полный экран (requestFullscreen/exitFullscreen, isFullscreen, отступы
      safeAreaInset и contentSafeAreaInset) — как в Bot API 8.0.
@@ -73,6 +75,8 @@
    ЧТО ВИДНО ИЗ СТРАНИЦЫ:
      window.ПоддельныйТелеграм.журнал      — всё, что просили, по порядку;
      window.ПоддельныйТелеграм.нажатьНазад() — нажать стрелку «Назад»;
+     window.ПоддельныйТелеграм.нажатьНастройки() — нажать пункт «Настройки»
+                        в меню Telegram (с версии 7.0);
      window.ПоддельныйТелеграм.датьПолныйЭкран() — выдать полный экран
                         руками (как будто Telegram согласился);
      window.ПоддельныйТелеграм.отказатьВПолномЭкране('UNSUPPORTED')
@@ -156,7 +160,7 @@ function текстПодделки(настройки) {
     '  var ПРАВИЛО_КЛЮЧА = /^[A-Za-z0-9_-]{1,128}$/;\n' +
     '  var журнал = [];\n' +
     '  var слушатели = {};\n' +
-    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, полныйЭкран: 0, замковПоворота: 0, отпираний: 0, вибраций: 0, цветШапки: "", цветФона: "", события: слушатели };\n' +
+    '  var дневник = { ready: 0, expand: 0, стрелкаПоказана: 0, стрелка: 0, настройкиПоказаны: 0, полныйЭкран: 0, замковПоворота: 0, отпираний: 0, вибраций: 0, цветШапки: "", цветФона: "", события: слушатели };\n' +
     '  var память = {};\n' +
     '  window.__дневник = дневник;\n' +
     '  window.__облако = память;\n' +
@@ -261,6 +265,22 @@ function текстПодделки(настройки) {
     '      offClick: function (cb) { WebApp.offEvent("backButtonClicked", cb); return this; }\n' +
     '    };\n' +
     '  }\n' +
+    '  /* Пункт «Настройки» в меню ⋯ самого Telegram (SettingsButton) появился\n' +
+    '     в Bot API 7.0. С 11 сентября игра по нему решает, прятать ли свою «⋯»:\n' +
+    '     Telegram есть, а пункта нет — на <html> ставится класс «без-настроек»,\n' +
+    '     и оформление показывает нашу «⋯». Без пункта в подделке этот класс\n' +
+    '     вставал бы даже у 7.10 и 8.0, и проверки ловили бы видимую «⋯» там,\n' +
+    '     где у настоящего Telegram её нет. Поэтому: 7.0 и выше — пункт есть,\n' +
+    '     6.x — нет вовсе, ровно как у настоящего. */\n' +
+    '  if (сравнитьВерсии(ВЕРСИЯ, "7.0") >= 0) {\n' +
+    '    WebApp.SettingsButton = {\n' +
+    '      isVisible: false,\n' +
+    '      show: function () { this.isVisible = true; дневник.настройкиПоказаны++; записать("SettingsButton.show"); return this; },\n' +
+    '      hide: function () { this.isVisible = false; записать("SettingsButton.hide"); return this; },\n' +
+    '      onClick: function (cb) { WebApp.onEvent("settingsButtonClicked", cb); return this; },\n' +
+    '      offClick: function (cb) { WebApp.offEvent("settingsButtonClicked", cb); return this; }\n' +
+    '    };\n' +
+    '  }\n' +
     '  /* Полный экран появился в Bot API 8.0. В режиме «нет метода» этих двух\n' +
     '     функций у WebApp нет вовсе — ровно как в Telegram постарше, где игра\n' +
     '     обязана обойтись expand() и не упасть. */\n' +
@@ -323,6 +343,11 @@ function текстПодделки(настройки) {
     '    нажатьНазад: function () {\n' +
     '      записать("нажата стрелка Назад (слушателей: " + (слушатели.backButtonClicked || []).length + ")");\n' +
     '      (слушатели.backButtonClicked || []).slice().forEach(function (cb) { cb(); });\n' +
+    '    },\n' +
+    '    /* Нажать пункт «Настройки» в меню Telegram (есть с 7.0). */\n' +
+    '    нажатьНастройки: function () {\n' +
+    '      записать("нажат пункт Настройки (слушателей: " + (слушатели.settingsButtonClicked || []).length + ")");\n' +
+    '      (слушатели.settingsButtonClicked || []).slice().forEach(function (cb) { cb(); });\n' +
     '    },\n' +
     '    /* Выдать полный экран руками — как будто Telegram согласился. */\n' +
     '    датьПолныйЭкран: function () {\n' +
