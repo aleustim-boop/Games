@@ -254,14 +254,37 @@ const ОФОРМЛЕНИЕ = `
 
   .очередь { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
   .очередь li {
-    display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: baseline;
-    padding: 13px 4px 13px 10px; border-bottom: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line-soft);
     border-left: 3px solid transparent;
   }
   .очередь li:first-child { border-top: 1px solid var(--line-soft); }
   .очередь li.горит { border-left-color: var(--chervi); }
   .очередь li.скоро { border-left-color: var(--yantar); }
   .очередь li.потом { border-left-color: var(--line); }
+  /* Пункт очереди — строка-оглавление (summary), подробности раскрываются
+     по нажатию. Не ниже 44 точек: по этой строке попадают пальцем. */
+  .очередь-пункт > summary {
+    display: grid; grid-template-columns: 16px 34px 1fr auto; gap: 14px; align-items: center;
+    min-height: 44px; padding: 10px 4px 10px 10px; cursor: pointer; list-style: none;
+  }
+  .очередь-пункт > summary::-webkit-details-marker { display: none; }
+  .очередь-пункт > summary::before {
+    content: '▸'; display: inline-block; color: var(--muted);
+    transition: transform .15s ease; justify-self: center;
+  }
+  .очередь-пункт[open] > summary::before { transform: rotate(90deg); }
+  .очередь-подробно { padding: 0 4px 14px 40px; }
+  .очередь-подробно em { display: block; font-style: normal; font-size: 14px; color: var(--muted); margin-top: 3px; }
+  /* Свёрнутое пояснение про уровни — компактной строкой над списком. */
+  .очередь-легенда { margin-bottom: 10px; }
+  .очередь-легенда > summary {
+    cursor: pointer; list-style: none; min-height: 44px; display: flex; align-items: center;
+    font-size: 14px; color: var(--muted); gap: 6px;
+  }
+  .очередь-легенда > summary::-webkit-details-marker { display: none; }
+  .очередь-легенда > summary::before { content: '▸'; display: inline-block; transition: transform .15s ease; }
+  .очередь-легенда[open] > summary::before { transform: rotate(90deg); }
+  .очередь-легенда .пояснение { margin: 6px 0 0; }
   .номер {
     font-family: "JetBrains Mono", monospace; font-size: 13px;
     color: var(--muted); font-variant-numeric: tabular-nums;
@@ -314,6 +337,14 @@ const ОФОРМЛЕНИЕ = `
     margin: 18px 0 8px; font-size: 13px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
   }
+  /* «Решено за сутки» свёрнуто по умолчанию: строка-заголовок нажимается,
+     список решённого раскрывается под ней. */
+  .важное-решено-блок > summary.важное-подзаголовок {
+    cursor: pointer; list-style: none; min-height: 44px; display: flex; align-items: center; gap: 6px;
+  }
+  .важное-решено-блок > summary::-webkit-details-marker { display: none; }
+  .важное-решено-блок > summary::before { content: '▸'; display: inline-block; transition: transform .15s ease; }
+  .важное-решено-блок[open] > summary::before { transform: rotate(90deg); }
   .важное li.важное--строкой { box-shadow: none; opacity: .72; }
   .важное--строкой a.запись { padding: 9px 14px; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
   .важное--строкой .важное-строка-текст {
@@ -395,8 +426,8 @@ const ОФОРМЛЕНИЕ = `
     .шапка { padding-top: 26px; }
     .отметка-времени { text-align: left; }
     .лента li { grid-template-columns: 1fr; gap: 2px; }
-    .очередь li { grid-template-columns: 26px 1fr; }
-    .очередь .метка { grid-column: 2; justify-self: start; margin-top: 4px; }
+    .очередь-пункт > summary { grid-template-columns: 16px 26px 1fr; }
+    .очередь-пункт > summary .метка { grid-column: 1 / -1; justify-self: start; margin-top: 4px; }
     .работы { grid-template-columns: 1fr; }
   }
 `;
@@ -695,10 +726,19 @@ function блокОчередь(данные) {
       сПодсказкой += 1;
       подсказка = '<em class="проверьте">' + э(з.подсказка) + '</em>';
     }
+    const подробно = (заметка || подсказка)
+      ? '<div class="очередь-подробно">' + заметка + подсказка + '</div>' : '';
+    // Ключ для памяти о раскрытом пункте — заголовок задачи: он меняется,
+    // только когда задача действительно другая, а не при каждой пересборке.
     строки += '<li' + классСтроки + '>'
+      + '<details class="очередь-пункт" data-ключ="' + э(з.что) + '">'
+      + '<summary>'
       + '<span class="номер">' + String(номер + 1).padStart(2, '0') + '</span>'
-      + '<span class="задача">' + э(з.что) + заметка + подсказка + '</span>'
+      + '<span class="задача">' + э(з.что) + '</span>'
       + '<span class="метка метка--' + з.уровень + '">' + э(з.уровень) + '</span>'
+      + '</summary>'
+      + подробно
+      + '</details>'
       + '</li>';
   });
 
@@ -726,7 +766,10 @@ function блокОчередь(данные) {
   return `
   <section>
     <h2>Очередь <span class="счёт">${э(счёт)}</span></h2>
-    <p class="пояснение">Четыре уровня. <b>Горит</b> — игрок видит поломку, берём немедленно. <b>Скоро</b> — вы ждёте, спросите на днях. <b>Потом</b> — нужное, но никто не ждёт. <b>Задел</b> — пригодится, когда вырастем. Сделанное вычёркивается программой по следу в коде, а не по памяти штаба.</p>
+    <details class="очередь-легенда" data-ключ="уровни-легенда">
+      <summary>Что значат уровни</summary>
+      <p class="пояснение"><b>Горит</b> — игрок видит поломку, берём немедленно. <b>Скоро</b> — вы ждёте, спросите на днях. <b>Потом</b> — нужное, но никто не ждёт. <b>Задел</b> — пригодится, когда вырастем. Сделанное вычёркивается программой по следу в коде, а не по памяти штаба.</p>
+    </details>
     ${тревога}${проПодсказки}${пусто}
     <ol class="очередь">${строки}</ol>
   </section>`;
@@ -865,17 +908,63 @@ function целаяСтраница(данные) {
   // прыгал бы в начало.
   var ШАГ_МС = 15000;
 
+  // Какие пункты («Очередь», «Решено за сутки») зритель раскрыл сам —
+  // помним в его браузере. Без этого подмена куска каждые 15 секунд
+  // захлопывала бы то, что он только что открыл пальцем.
+  var КЛЮЧ_ХРАНЕНИЯ = 'штабРаскрытыеПункты';
+
+  function прочитатьРаскрытые() {
+    try {
+      var сырое = localStorage.getItem(КЛЮЧ_ХРАНЕНИЯ);
+      return сырое ? JSON.parse(сырое) : {};
+    } catch (ошибка) {
+      return {};
+    }
+  }
+
+  function записатьРаскрытые(раскрытые) {
+    try {
+      localStorage.setItem(КЛЮЧ_ХРАНЕНИЯ, JSON.stringify(раскрытые));
+    } catch (ошибка) {
+      // Приватный режим или хранилище отключено владельцем — просто не помним.
+    }
+  }
+
+  // Пункт, которого в новой разметке больше нет, сам не мешает: при
+  // подмене куска мы просто не найдём для него <details>, и запись
+  // рано или поздно перезапишется без него.
+  document.addEventListener('toggle', function (событие) {
+    var подробности = событие.target;
+    if (!подробности || !подробности.hasAttribute || !подробности.hasAttribute('data-ключ')) return;
+    var ключ = подробности.getAttribute('data-ключ');
+    var раскрытые = прочитатьРаскрытые();
+    if (подробности.open) раскрытые[ключ] = true;
+    else delete раскрытые[ключ];
+    записатьРаскрытые(раскрытые);
+  }, true); // на погружении: событие toggle не везде всплывает
+
+  function восстановитьРаскрытые() {
+    var раскрытые = прочитатьРаскрытые();
+    var лист = document.querySelector('.лист');
+    if (!лист) return;
+    Array.prototype.forEach.call(лист.querySelectorAll('details[data-ключ]'), function (подробности) {
+      if (раскрытые[подробности.getAttribute('data-ключ')]) подробности.open = true;
+    });
+  }
+
   async function обновить() {
     try {
       var ответ = await fetch('/кусок', { cache: 'no-store' });
       if (!ответ.ok) return;
       var разметка = await ответ.text();
       document.querySelector('.лист').innerHTML = разметка;
+      восстановитьРаскрытые();
     } catch (ошибка) {
       // Сервер моргнул или его перезапускают — молча ждём следующей попытки.
     }
   }
 
+  восстановитьРаскрытые(); // сразу при загрузке страницы
   setInterval(обновить, ШАГ_МС);
   // Вернулись к вкладке — не ждём своей очереди, обновляемся сразу.
   document.addEventListener('visibilitychange', function () {

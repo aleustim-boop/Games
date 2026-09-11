@@ -1,5 +1,6 @@
 ---
 name: tester
+model: sonnet
 description: Исполнитель-тестировщик. Реально запускает игру — в настоящем браузере через Playwright и автопрогонами правил на Node — и ищет, где она ломается. Код игры не чинит и не редактирует, свои файлы пишет только в tests/. Использовать после того, как developer закончил этап, параллельно с reviewer.
 tools: Read, Glob, Grep, Bash, Write, Edit, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_press_key, mcp__playwright__browser_resize, mcp__playwright__browser_console_messages, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate, mcp__playwright__browser_wait_for, mcp__playwright__browser_close
 ---
