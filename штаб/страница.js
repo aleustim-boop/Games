@@ -384,6 +384,31 @@ const ОФОРМЛЕНИЕ = `
   .принято { background: var(--sukno); color: #fff; border-radius: var(--radius); padding: 15px 17px; margin: 0 0 14px; }
   .принято p { color: #fff; margin: 0; font-size: 16px; }
 
+  /* Форма «Написать штабу» / «Написать замечание»: свободный текст владельца
+     рядом с кнопками-ответами. Поле большое — палец точно попадает, и на
+     телефоне видно несколько строк без прокрутки к самому низу. */
+  .форма-письма { margin: 18px 0; display: flex; flex-direction: column; gap: 8px; }
+  .форма-письма__подпись { font-size: 14.5px; font-weight: 700; color: var(--ink-soft); }
+  .форма-письма__поле {
+    width: 100%; min-height: 130px; padding: 12px 14px; font-size: 16.5px;
+    font-family: inherit; line-height: 1.45; color: var(--ink);
+    background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius);
+    resize: vertical;
+  }
+  .форма-письма__поле:focus { outline: none; border-color: var(--sukno); }
+  .форма-письма__кнопка {
+    align-self: flex-start; min-height: 44px; padding: 11px 22px; font-size: 16px; font-weight: 700;
+    color: #fff; background: var(--sukno); border: 0; border-radius: var(--radius); cursor: pointer;
+  }
+
+  /* Прежде отправленные письма по записи — чтобы было видно, что дошло. */
+  .письма-список { margin: 18px 0; }
+  .письма-список h2 { font-size: 17px; margin: 0 0 8px; }
+  .письма { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .письмо { background: var(--surface-2); border-radius: var(--radius); padding: 12px 14px; }
+  .письмо-когда { display: block; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .письмо-текст { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--ink); white-space: pre-wrap; }
+
   .проверьте { display: block; font-style: normal; font-size: 13.5px; color: var(--yantar); margin-top: 4px; }
 
   .лента { list-style: none; margin: 0; padding: 0; }
