@@ -31,10 +31,32 @@ const ПОРТ = Number(process.argv[2]) || 8130;
 // Только свой компьютер. Менять на 0.0.0.0 или '' нельзя — см. пояснение выше.
 const АДРЕС = '127.0.0.1';
 
+// Тип файла браузер узнаёт по заголовку Content-Type, а не по расширению
+// в адресе. Раньше в списке ниже не было .svg, и на запасной вариант
+// 'application/octet-stream' браузер получал картинки нард (кубики, кольцо
+// выбора, значки допустимых пунктов) как «непонятный файл» и вместо них
+// рисовал битую картинку. Игра при этом была целая: у GitHub Pages тип
+// для .svg верный, ошибка сидела только в этом стенде — нашёл её оформитель.
+// Поэтому здесь перечислены все расширения, какие есть в проекте, плюс
+// типы для звука — звука в игре пока нет, но он в плане (см. CLAUDE.md,
+// пункт 6 готовности), и без записи заранее ошибку опять найдут не там.
 const ТИПЫ = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8'
+  '.js': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
+  '.txt': 'text/plain; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8',
+  '.csv': 'text/csv; charset=utf-8'
 };
 
 /** Убираем из адреса всё, чем можно вылезти за пределы папки проекта. */
