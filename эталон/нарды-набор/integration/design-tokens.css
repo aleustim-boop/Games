@@ -1,0 +1,29 @@
+/* Approximate values derived from 941x1672 raster mockups. */
+:root {
+  --bg: #0d1519;
+  --surface: #10191d;
+  --text: #f5f6f5;
+  --muted: #81909e;
+  --line: #53626d;
+  --accent: #d7ff56;
+  --accent-dark: #0d1506;
+  --accent-gradient: linear-gradient(110deg, #ddff64, #d0fb53);
+  --active-surface: linear-gradient(110deg, #29351a, #1d2919);
+  --font: Arial, Helvetica, system-ui, sans-serif;
+}
+.bg-screen { background: radial-gradient(ellipse at 45% 45%, #142026 0%, var(--bg) 80%); color: var(--text); font-family: var(--font); }
+.board { position: relative; width: 100%; aspect-ratio: 913 / 793; isolation: isolate; }
+.board__background { display: block; width: 100%; height: 100%; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.board__checker { position: absolute; width: 6.572%; aspect-ratio: 1; transform: translate(-50%, -50%); z-index: 4; padding: 0; border: 0; background: none; cursor: pointer; }
+.board__checker img { display: block; width: 100%; height: 100%; filter: drop-shadow(0 2px 2px #0009); pointer-events: none; }
+.board__target { position: absolute; width: 5.6955%; transform: translate(-50%, -50%); z-index: 2; pointer-events: none; }
+.board__selection { position: absolute; width: 8.7623%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; }
+.board__die { position: absolute; width: 6.79%; transform: translate(-50%, -50%) rotate(5deg); z-index: 5; filter: drop-shadow(1px 4px 3px #0008); pointer-events: none; }
+.icon-mask { display: inline-block; background: currentColor; mask: var(--icon-url) center / contain no-repeat; -webkit-mask: var(--icon-url) center / contain no-repeat; }
+/* Example: style="--icon-url:url('/assets/backgammon/shared/icons/bot.png')" */
+.primary-button { background: var(--accent-gradient); color: var(--accent-dark); border: 0; font-weight: 700; }
+.outline-button { background: transparent; border: 1px solid var(--line); color: var(--text); }
+.selected-option { background: var(--active-surface); border: 1.5px solid var(--accent); color: var(--accent); }
+button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+button:disabled { opacity: .45; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .board * { transition: none !important; animation: none !important; } }

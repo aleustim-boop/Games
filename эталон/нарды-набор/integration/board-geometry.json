@@ -1,0 +1,227 @@
+{
+  "boardSize": [
+    913,
+    793
+  ],
+  "sourceBoardRect": [
+    14,
+    365,
+    927,
+    1158
+  ],
+  "checkerSize": [
+    60,
+    60
+  ],
+  "positionsAre": "center, relative to board image, not screen",
+  "points": [
+    {
+      "point": 1,
+      "x": 849,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 92.9901,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 2,
+      "x": 785,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 85.9803,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 3,
+      "x": 720,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 78.8609,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 4,
+      "x": 655,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 71.7415,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 5,
+      "x": 590,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 64.6221,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 6,
+      "x": 525,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 57.5027,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 7,
+      "x": 389,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 42.6068,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 8,
+      "x": 324,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 35.4874,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 9,
+      "x": 259,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 28.368,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 10,
+      "x": 194,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 21.2486,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 11,
+      "x": 130,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 14.2388,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 12,
+      "x": 65,
+      "y": 715,
+      "stackDy": -55,
+      "xPercent": 7.1194,
+      "yPercent": 90.1639
+    },
+    {
+      "point": 13,
+      "x": 65,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 7.1194,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 14,
+      "x": 130,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 14.2388,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 15,
+      "x": 194,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 21.2486,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 16,
+      "x": 259,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 28.368,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 17,
+      "x": 324,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 35.4874,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 18,
+      "x": 389,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 42.6068,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 19,
+      "x": 525,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 57.5027,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 20,
+      "x": 590,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 64.6221,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 21,
+      "x": 655,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 71.7415,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 22,
+      "x": 720,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 78.8609,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 23,
+      "x": 785,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 85.9803,
+      "yPercent": 8.4489
+    },
+    {
+      "point": 24,
+      "x": 849,
+      "y": 67,
+      "stackDy": 55,
+      "xPercent": 92.9901,
+      "yPercent": 8.4489
+    }
+  ],
+  "diceCenters": [
+    [
+      591,
+      400
+    ],
+    [
+      698,
+      407
+    ]
+  ],
+  "bar": {
+    "x": 456,
+    "y": 396
+  },
+  "bearOff": "Render separate UI tray outside board; no dedicated tray in screenshot.",
+  "warning": "Visual guide only. Screenshot does not define legal initial positions or rules. Point numbering is documented convention; reverse for opponent view."
+}

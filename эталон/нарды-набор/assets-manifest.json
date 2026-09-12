@@ -1,0 +1,1165 @@
+{
+  "sourceSize": [
+    941,
+    1672
+  ],
+  "assets": [
+    {
+      "file": "references/lobby-original.png",
+      "description": "Полный исходный макет; эталон дизайна, не фон приложения",
+      "screen": "lobby",
+      "sourceRect": null,
+      "size": [
+        941,
+        1672
+      ],
+      "zIndex": 0,
+      "method": "original",
+      "usage": "reference"
+    },
+    {
+      "file": "references/gameplay-original.png",
+      "description": "Полный исходный макет; эталон дизайна, не фон приложения",
+      "screen": "gameplay",
+      "sourceRect": null,
+      "size": [
+        941,
+        1672
+      ],
+      "zIndex": 0,
+      "method": "original",
+      "usage": "reference"
+    },
+    {
+      "file": "lobby/hero-board-scene.png",
+      "description": "Фото доски справа в баннере рейтинга. Фрагмент с фоном и обрезанным нижним краем как в макете; ставить справа, не растягивать.",
+      "screen": "lobby",
+      "sourceRect": [
+        381,
+        239,
+        909,
+        445
+      ],
+      "size": [
+        528,
+        206
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "runtime"
+    },
+    {
+      "file": "lobby/trophy-large.png",
+      "description": "Кубок слева от личного рейтинга. Отделён от тёмного фона.",
+      "screen": "lobby",
+      "sourceRect": [
+        64,
+        300,
+        144,
+        383
+      ],
+      "size": [
+        80,
+        83
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "lobby/trophy-small.png",
+      "description": "Кубок перед заголовком «Рейтинг игроков».",
+      "screen": "lobby",
+      "sourceRect": [
+        64,
+        1144,
+        107,
+        1188
+      ],
+      "size": [
+        43,
+        44
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "lobby/medal-1.png",
+      "description": "Медаль 1-го места. Цифра уже внутри; только для этого места.",
+      "screen": "lobby",
+      "sourceRect": [
+        63,
+        1219,
+        109,
+        1265
+      ],
+      "size": [
+        46,
+        46
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "lobby/medal-2.png",
+      "description": "Медаль 2-го места. Цифра уже внутри; только для этого места.",
+      "screen": "lobby",
+      "sourceRect": [
+        63,
+        1285,
+        109,
+        1331
+      ],
+      "size": [
+        46,
+        46
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "lobby/medal-3.png",
+      "description": "Медаль 3-го места. Цифра уже внутри; только для этого места.",
+      "screen": "lobby",
+      "sourceRect": [
+        63,
+        1353,
+        109,
+        1399
+      ],
+      "size": [
+        46,
+        46
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/checker-black.png",
+      "description": "Чёрная фишка сверху. Повторять для каждой фишки; тень добавлять CSS.",
+      "screen": "gameplay",
+      "sourceRect": [
+        52,
+        404,
+        112,
+        464
+      ],
+      "size": [
+        60,
+        60
+      ],
+      "zIndex": 4,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/checker-ivory.png",
+      "description": "Светлая фишка сверху. Повторять для каждой фишки; тень добавлять CSS.",
+      "screen": "gameplay",
+      "sourceRect": [
+        375,
+        403,
+        434,
+        462
+      ],
+      "size": [
+        59,
+        59
+      ],
+      "zIndex": 4,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/die-photo-3.png",
+      "description": "Точный фотосрез кубика 3; для сверки стиля. В игре применять единый набор SVG из shared/dice.",
+      "screen": "gameplay",
+      "sourceRect": [
+        575,
+        731,
+        639,
+        797
+      ],
+      "size": [
+        64,
+        66
+      ],
+      "zIndex": 5,
+      "method": "crop-with-alpha-mask",
+      "usage": "reference"
+    },
+    {
+      "file": "gameplay/die-photo-2.png",
+      "description": "Точный фотосрез кубика 2; для сверки стиля. В игре применять единый набор SVG из shared/dice.",
+      "screen": "gameplay",
+      "sourceRect": [
+        680,
+        738,
+        745,
+        805
+      ],
+      "size": [
+        65,
+        67
+      ],
+      "zIndex": 5,
+      "method": "crop-with-alpha-mask",
+      "usage": "reference"
+    },
+    {
+      "file": "shared/icons/back.png",
+      "description": "Назад",
+      "screen": "lobby",
+      "sourceRect": [
+        41,
+        30,
+        66,
+        65
+      ],
+      "size": [
+        25,
+        35
+      ],
+      "zIndex": 4,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/more.png",
+      "description": "Меню, три точки",
+      "screen": "lobby",
+      "sourceRect": [
+        855,
+        37,
+        905,
+        57
+      ],
+      "size": [
+        50,
+        20
+      ],
+      "zIndex": 4,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/book.png",
+      "description": "Правила",
+      "screen": "lobby",
+      "sourceRect": [
+        712,
+        128,
+        754,
+        167
+      ],
+      "size": [
+        42,
+        39
+      ],
+      "zIndex": 4,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/bot.png",
+      "description": "Режим с ботом",
+      "screen": "lobby",
+      "sourceRect": [
+        80,
+        540,
+        163,
+        620
+      ],
+      "size": [
+        83,
+        80
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/online.png",
+      "description": "Режим онлайн",
+      "screen": "lobby",
+      "sourceRect": [
+        521,
+        538,
+        606,
+        621
+      ],
+      "size": [
+        85,
+        83
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/nav-games.png",
+      "description": "Навигация: игры",
+      "screen": "lobby",
+      "sourceRect": [
+        119,
+        1547,
+        191,
+        1601
+      ],
+      "size": [
+        72,
+        54
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/nav-friends.png",
+      "description": "Навигация: друзья",
+      "screen": "lobby",
+      "sourceRect": [
+        442,
+        1547,
+        501,
+        1601
+      ],
+      "size": [
+        59,
+        54
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/nav-profile.png",
+      "description": "Навигация: профиль",
+      "screen": "lobby",
+      "sourceRect": [
+        760,
+        1546,
+        813,
+        1601
+      ],
+      "size": [
+        53,
+        55
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/undo.png",
+      "description": "Отмена хода",
+      "screen": "gameplay",
+      "sourceRect": [
+        86,
+        1483,
+        134,
+        1528
+      ],
+      "size": [
+        48,
+        45
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/chat.png",
+      "description": "Чат",
+      "screen": "gameplay",
+      "sourceRect": [
+        823,
+        1467,
+        875,
+        1510
+      ],
+      "size": [
+        52,
+        43
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/avatar-neutral.png",
+      "description": "Силуэт соперника, поверх круглого фона",
+      "screen": "gameplay",
+      "sourceRect": [
+        62,
+        280,
+        107,
+        332
+      ],
+      "size": [
+        45,
+        52
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/avatar-active.png",
+      "description": "Силуэт своего игрока, поверх круглого фона",
+      "screen": "gameplay",
+      "sourceRect": [
+        62,
+        1197,
+        107,
+        1248
+      ],
+      "size": [
+        45,
+        51
+      ],
+      "zIndex": 3,
+      "method": "crop-with-alpha-mask",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/board-empty.png",
+      "description": "Пустая доска: рамка оригинальная, поле собрано из чистых полос исходного макета. 24 пункта. Текстура местами повторяется; не извлечённый скрытый слой.",
+      "screen": "gameplay",
+      "sourceRect": [
+        14,
+        365,
+        927,
+        1158
+      ],
+      "size": [
+        913,
+        793
+      ],
+      "zIndex": 1,
+      "method": "reconstructed-from-source-crops",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/board-with-pieces-reference.png",
+      "description": "Исходная доска с фишками, кубиками и подсветкой. Только эталон композиции.",
+      "screen": "gameplay",
+      "sourceRect": [
+        14,
+        365,
+        927,
+        1158
+      ],
+      "size": [
+        913,
+        793
+      ],
+      "zIndex": 1,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "shared/wood-texture.png",
+      "description": "Чистый фрагмент дерева из середины поля; небольшой образец, не HD-текстура.",
+      "screen": "gameplay",
+      "sourceRect": [
+        247,
+        721,
+        313,
+        810
+      ],
+      "size": [
+        66,
+        89
+      ],
+      "zIndex": 0,
+      "method": "exact-crop",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dark-texture.png",
+      "description": "Чистый фрагмент тёмного фона; использовать с CSS-градиентом, при повторении возможны швы.",
+      "screen": "gameplay",
+      "sourceRect": [
+        245,
+        1579,
+        697,
+        1672
+      ],
+      "size": [
+        452,
+        93
+      ],
+      "zIndex": 0,
+      "method": "exact-crop",
+      "usage": "runtime"
+    },
+    {
+      "file": "references/crops/lobby-header.png",
+      "description": "Верхняя панель — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        24,
+        912,
+        81
+      ],
+      "size": [
+        880,
+        57
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-title.png",
+      "description": "Название и подзаголовок — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        31,
+        107,
+        619,
+        219
+      ],
+      "size": [
+        588,
+        112
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-rules.png",
+      "description": "Кнопка правил — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        677,
+        110,
+        912,
+        186
+      ],
+      "size": [
+        235,
+        76
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-rating-banner.png",
+      "description": "Баннер личного рейтинга — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        238,
+        911,
+        446
+      ],
+      "size": [
+        879,
+        208
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-mode-bot.png",
+      "description": "Выбранный режим: бот — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        31,
+        513,
+        466,
+        650
+      ],
+      "size": [
+        435,
+        137
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-mode-online.png",
+      "description": "Режим: онлайн — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        476,
+        513,
+        912,
+        650
+      ],
+      "size": [
+        436,
+        137
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-variant-tabs.png",
+      "description": "Переключатель варианта нард — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        717,
+        912,
+        795
+      ],
+      "size": [
+        880,
+        78
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-difficulty-easy.png",
+      "description": "Лёгкая сложность — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        857,
+        321,
+        941
+      ],
+      "size": [
+        289,
+        84
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-difficulty-medium.png",
+      "description": "Средняя сложность — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        330,
+        857,
+        612,
+        941
+      ],
+      "size": [
+        282,
+        84
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-difficulty-hard.png",
+      "description": "Сложная сложность — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        622,
+        857,
+        912,
+        941
+      ],
+      "size": [
+        290,
+        84
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-play-button.png",
+      "description": "Главная кнопка — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        961,
+        912,
+        1062
+      ],
+      "size": [
+        880,
+        101
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-leaderboard.png",
+      "description": "Таблица рейтинга — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        32,
+        1123,
+        912,
+        1502
+      ],
+      "size": [
+        880,
+        379
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/lobby-bottom-navigation.png",
+      "description": "Нижняя навигация — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "lobby",
+      "sourceRect": [
+        0,
+        1524,
+        941,
+        1672
+      ],
+      "size": [
+        941,
+        148
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-header.png",
+      "description": "Верхняя панель — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        32,
+        24,
+        912,
+        81
+      ],
+      "size": [
+        880,
+        57
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-title.png",
+      "description": "Название и тип партии — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        31,
+        110,
+        574,
+        230
+      ],
+      "size": [
+        543,
+        120
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-opponent.png",
+      "description": "Панель соперника — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        33,
+        252,
+        912,
+        356
+      ],
+      "size": [
+        879,
+        104
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-opponent-timer.png",
+      "description": "Таймер соперника — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        690,
+        267,
+        911,
+        348
+      ],
+      "size": [
+        221,
+        81
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-player.png",
+      "description": "Панель игрока — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        33,
+        1174,
+        912,
+        1279
+      ],
+      "size": [
+        879,
+        105
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-player-timer.png",
+      "description": "Таймер игрока — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        690,
+        1183,
+        911,
+        1264
+      ],
+      "size": [
+        221,
+        81
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-turn-badge.png",
+      "description": "Плашка: ваш ход — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        338,
+        1295,
+        604,
+        1369
+      ],
+      "size": [
+        266,
+        74
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-turn-hint.png",
+      "description": "Подсказка выбора фишки — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        349,
+        1381,
+        601,
+        1419
+      ],
+      "size": [
+        252,
+        38
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-undo-button.png",
+      "description": "Отменить ход — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        32,
+        1444,
+        408,
+        1569
+      ],
+      "size": [
+        376,
+        125
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-confirm-button.png",
+      "description": "Подтвердить — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        419,
+        1444,
+        771,
+        1569
+      ],
+      "size": [
+        352,
+        125
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-chat-button.png",
+      "description": "Чат — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        785,
+        1444,
+        911,
+        1569
+      ],
+      "size": [
+        126,
+        125
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-selected-checker.png",
+      "description": "Подсвеченная фишка — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        501,
+        1041,
+        579,
+        1118
+      ],
+      "size": [
+        78,
+        77
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "references/crops/gameplay-target-marker.png",
+      "description": "Маркер допустимого хода — образец для вёрстки; текст и состояния реализовать кодом.",
+      "screen": "gameplay",
+      "sourceRect": [
+        643,
+        1054,
+        695,
+        1108
+      ],
+      "size": [
+        52,
+        54
+      ],
+      "zIndex": 2,
+      "method": "exact-crop",
+      "usage": "reference"
+    },
+    {
+      "file": "shared/icons/play.svg",
+      "description": "Векторная кнопка play без потери качества при масштабировании",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/check.svg",
+      "description": "Галочка кнопки подтверждения",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/lightning.svg",
+      "description": "Молния статуса хода",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/arrow-right.svg",
+      "description": "Стрелка «Все»",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/difficulty-easy.svg",
+      "description": "Индикатор сложности easy; подпись отдельно текстом",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/difficulty-medium.svg",
+      "description": "Индикатор сложности medium; подпись отдельно текстом",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/icons/difficulty-hard.svg",
+      "description": "Индикатор сложности hard; подпись отдельно текстом",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 3,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/target-ring.svg",
+      "description": "Кольцо допустимого хода",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        64,
+        64
+      ],
+      "zIndex": 2,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "gameplay/selection-ring.svg",
+      "description": "Кольцо выбранной фишки",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        80,
+        80
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-1.svg",
+      "description": "Кубик 1; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-2.svg",
+      "description": "Кубик 2; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-3.svg",
+      "description": "Кубик 3; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-4.svg",
+      "description": "Кубик 4; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-5.svg",
+      "description": "Кубик 5; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    },
+    {
+      "file": "shared/dice/die-6.svg",
+      "description": "Кубик 6; геометрически правильные точки. Воссозданный вектор в цветах макета, не фотосрез.",
+      "screen": "shared",
+      "sourceRect": null,
+      "size": [
+        100,
+        100
+      ],
+      "zIndex": 5,
+      "method": "recreated-vector",
+      "usage": "runtime"
+    }
+  ]
+}
