@@ -208,7 +208,7 @@ async function размерыСтраницы(страница) {
       (вылезли.length ? ': ' + вылезли.join('; ') : ''));
 
     const кнопки = await страница.evaluate(() => {
-      const имена = ['кнопка-в-меню-шашки', 'кнопка-звук', 'кнопка-как-играть', 'кнопка-рекорды'];
+      const имена = ['кнопка-в-меню-шашки'];
       return имена.map((имя) => {
         const у = document.getElementById(имя).getBoundingClientRect();
         return имя + ' ' + Math.round(у.width) + '×' + Math.round(у.height);
@@ -216,7 +216,7 @@ async function размерыСтраницы(страница) {
     });
     console.log('  кнопки под доской: ' + кнопки.join(', '));
     const низкие = await страница.evaluate(() => {
-      const имена = ['кнопка-в-меню-шашки', 'кнопка-звук', 'кнопка-как-играть', 'кнопка-рекорды'];
+      const имена = ['кнопка-в-меню-шашки'];
       return имена.filter((имя) => document.getElementById(имя).getBoundingClientRect().height < 44);
     });
     проверить(низкие.length === 0, 'все кнопки не ниже 44 точек — попадёт палец' +

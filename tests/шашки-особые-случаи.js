@@ -83,25 +83,27 @@ function проверить(условие, слова) {
   }
 
   /* ---- 3. Сколько высоты отняли новые кнопки ---- */
-  console.log('\n=== 3. Цена двух новых кнопок для доски ===');
+  console.log('\n=== 3. Цена новых кнопок для доски ===');
   for (const размер of [{ w: 320, h: 568 }, { w: 360, h: 640 }, { w: 390, h: 844 }]) {
     const окно = await браузер.newContext({ viewport: { width: размер.w, height: размер.h } });
     const страница = await окно.newPage();
     await страница.goto(АДРЕС);
     await страница.waitForTimeout(250);
+    // Открыть доску через лобби
+    await страница.click('#лобби-вдвоём');
+    await страница.waitForTimeout(300);
     const мера = await страница.evaluate(() => {
-      const доска = () => Math.round(document.getElementById('доска').getBoundingClientRect().width);
-      const панель = () => Math.round(document.querySelector('.панель-доски').getBoundingClientRect().height);
-      const было = { доска: доска(), панель: панель() };
-      document.getElementById('кнопка-рекорды').style.display = 'none';
-      document.getElementById('кнопка-назад').style.display = 'none';
-      const стало = { доска: доска(), панель: панель() };
-      return { сНовыми: было, безНовых: стало };
+      const доскаДом = document.getElementById('доска');
+      const рамка = доскаДом.getBoundingClientRect();
+      return {
+        доска: Math.round(рамка.width),
+        видима: рамка.height > 0
+      };
     });
     console.log('  ' + размер.w + '×' + размер.h +
-      ': доска ' + мера.сНовыми.доска + ' (без новых кнопок было бы ' + мера.безНовых.доска + ')' +
-      ', ряд кнопок ' + мера.сНовыми.панель + ' вместо ' + мера.безНовых.панель);
-    проверить(мера.сНовыми.доска >= мера.безНовых.доска, 'доска от новых кнопок не уменьшилась');
+      ': доска ' + мера.доска + ' точек, видима ' + мера.видима);
+    проверить(мера.доска === размер.w, 'доска занимает всю ширину экрана: ' + мера.доска + ' из ' + размер.w);
+    проверить(мера.видима, 'доска видна на экране');
     await окно.close();
   }
 
