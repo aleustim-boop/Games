@@ -1,0 +1,54 @@
+{
+  "sourceCanvas": {
+    "width": 941,
+    "height": 1672
+  },
+  "colors": {
+    "appBackground": "#0A1013",
+    "panel": "#11191D",
+    "panelBorder": "#52606A",
+    "textPrimary": "#F7F8F8",
+    "textSecondary": "#8E9AA7",
+    "accent": "#CDFF43",
+    "boardLight": "#D6A971",
+    "boardDark": "#754524"
+  },
+  "boardGeometryInReference": {
+    "outerCrop": {
+      "left": 34,
+      "top": 352,
+      "width": 875,
+      "height": 875
+    },
+    "gridAbsolute": {
+      "left": 66,
+      "top": 381,
+      "width": 810,
+      "height": 808
+    },
+    "xEdges": [
+      66,
+      167,
+      268,
+      369,
+      470,
+      572,
+      673,
+      774,
+      876
+    ],
+    "yEdges": [
+      381,
+      482,
+      583,
+      684,
+      785,
+      886,
+      987,
+      1088,
+      1189
+    ],
+    "orientation": "white_at_bottom; a1 is dark; coordinates rendered by code or frame overlay"
+  },
+  "scaling": "Use proportional scaling from the 941x1672 reference. Do not upscale source crops and call it added detail."
+}
