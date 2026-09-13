@@ -95,7 +95,14 @@ async function сЗаданнойПозицией(браузер, ш, в) {
   for (const выбор of ВЫБОРЫ) {
     console.log('\n=== Выбираем: ' + выбор.имя + ' (экран 320×568) ===');
     const { окно, страница, красные } = await сЗаданнойПозицией(браузер, 320, 568);
-    await страница.click('#кнопка-вдвоём');
+    // Пытаемся нажать сначала на кнопку лобби, затем на старую кнопку доски
+    await страница.evaluate(() => {
+      let кнопка = document.getElementById('лобби-вдвоём');
+      if (!кнопка || кнопка.offsetParent === null) {
+        кнопка = document.getElementById('кнопка-вдвоём');
+      }
+      if (кнопка) кнопка.click();
+    });
     await спать(700);
 
     const наДоске = await страница.evaluate(() => document.querySelectorAll('.фигура').length);
