@@ -1,0 +1,53 @@
+{
+  "referenceScreens": {
+    "lobby": { "width": 941, "height": 1672 },
+    "gameplay": { "width": 941, "height": 1671 }
+  },
+  "colors": {
+    "background": "#081115",
+    "surface": "#111A1F",
+    "surfaceElevated": "#162126",
+    "border": "#53616A",
+    "textPrimary": "#F7F7F3",
+    "textMuted": "#8E9AAA",
+    "accent": "#D4FF4F",
+    "accentDark": "#25321B",
+    "woodLight": "#D8A66D",
+    "woodDark": "#4A2A18",
+    "checkerBlack": "#101112",
+    "checkerIvory": "#F2D7A7"
+  },
+  "radiiPxAtReference": {
+    "card": 22,
+    "button": 24,
+    "pill": 44,
+    "boardFrame": 18
+  },
+  "spacingPxAtReference": {
+    "screenHorizontal": 32,
+    "sectionGap": 22,
+    "controlGap": 12
+  },
+  "lobby": {
+    "hero": { "x": 32, "y": 239, "width": 876, "height": 205 },
+    "bottomNavTop": 1526
+  },
+  "gameplay": {
+    "opponentPanel": { "x": 34, "y": 230, "width": 874, "height": 87 },
+    "boardReference": { "x": 34, "y": 330, "width": 874, "height": 853 },
+    "playerPanel": { "x": 34, "y": 1200, "width": 874, "height": 88 },
+    "statusTop": 1301,
+    "lastMoveTop": 1377,
+    "actionsTop": 1510
+  },
+  "boardLayers": {
+    "cells": 0,
+    "lastMove": 10,
+    "pieces": 20,
+    "kingMarker": 25,
+    "interaction": 30,
+    "frame": 40,
+    "dragPreview": 50
+  }
+}
+

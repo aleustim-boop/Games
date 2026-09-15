@@ -1,0 +1,28 @@
+file,description,placement,width,height,alpha,layer,production
+lobby/lobby_full_reference_941x1672.png,Полный экран лобби,Визуальная сверка,941,1672,no,reference,no
+lobby/checkers_hero_banner_876x205.png,Hero без текста,Фон RatingHero,876,205,yes,0,yes
+lobby/hero_board_art_native_562x205.png,Нативный фрагмент доски,Резервный art,562,205,no,0,optional
+gameplay/gameplay_full_reference_941x1671.png,Полный игровой экран,Визуальная сверка,941,1671,no,reference,no
+gameplay/board_reference_with_position_874x853.png,Доска с позицией c3-d4,Визуальная сверка,874,853,no,reference,no
+gameplay/board_empty_preview_874x853.png,Пустая доска,Статичное превью,874,853,yes,0,optional
+gameplay/board_frame_overlay_874x853.png,Рамка с прозрачным центром,Над сеткой,874,853,yes,40,optional
+gameplay/board_grid_preview_792x784.png,Сетка 8x8,QA,792,784,no,reference,no
+gameplay/square_light_99x98.png,Светлая деревянная клетка,CSS-grid,99,98,no,0,yes
+gameplay/square_dark_99x98.png,Тёмная деревянная клетка,CSS-grid,99,98,no,0,yes
+gameplay/pieces/checker_black_384x384.png,Объёмная чёрная шашка,Игровая клетка,384,384,yes,20,yes
+gameplay/pieces/checker_ivory_384x384.png,Объёмная светлая шашка,Игровая клетка,384,384,yes,20,yes
+gameplay/highlight_last_move_99x98.png,Подсветка последнего хода,Над клеткой,99,98,yes,10,yes
+gameplay/highlight_selected_99x98.png,Рамка выбранной клетки,Над клеткой,99,98,yes,30,yes
+gameplay/move_dot_99x98.png,Точка допустимого хода,Над клеткой,99,98,yes,30,yes
+gameplay/capture_ring_99x98.png,Кольцо обязательного взятия,Над клеткой,99,98,yes,30,yes
+shared/dark_background_tile_256x256.png,Тёмный общий фон,Фон экрана,256,256,yes,-10,yes
+shared/layout_tokens.json,Цвета и геометрия,Theme constants,,,,,yes
+references/original_checkers_lobby_941x1672.png,Неизменённый исходник lobby,References,941,1672,no,reference,no
+references/original_checkers_gameplay_941x1671.png,Неизменённый исходник gameplay,References,941,1671,no,reference,no
+references/piece_sources/checker_black_source_1254x1254.png,Полноразмерный источник чёрной шашки,References,1254,1254,yes,reference,no
+references/piece_sources/checker_ivory_source_1254x1254.png,Полноразмерный источник светлой шашки,References,1254,1254,yes,reference,no
+references/qa_start_position_preview_874x853.png,Стартовая позиция из PNG,QA,874,853,yes,reference,no
+references/qa_piece_contact_sheet_720x360.png,Две шашки рядом,QA,720,360,yes,reference,no
+references/source_checksums.sha256,Контрольные суммы,QA,,,,reference,no
+references/qa_validation.json,Машинный QA,QA,,,,reference,no
+
