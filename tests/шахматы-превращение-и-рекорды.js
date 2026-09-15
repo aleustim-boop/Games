@@ -101,7 +101,10 @@ async function новая(браузер, ш, в, фен) {
     await спать(700);
 
     const пошли = await страница.evaluate(() => {
-      const пешка = [...document.querySelectorAll('.фигура')].find((ф) => ф.classList.contains('фигура--белая'));
+      // Строго «#доска .фигура»: без этого сужения первым мог попасться
+      // значок цвета в панели игрока (#цвет-сверху/#цвет-снизу — у него
+      // те же классы «фигура фигура--белая»), а не настоящая пешка.
+      const пешка = [...document.querySelectorAll('#доска .фигура')].find((ф) => ф.classList.contains('фигура--белая'));
       if (!пешка) return 'фигур нет';
       пешка.click();
       const куда = document.querySelector('.поле--можно');
