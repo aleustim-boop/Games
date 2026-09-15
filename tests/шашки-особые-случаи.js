@@ -93,8 +93,12 @@ function проверить(условие, слова) {
     await страница.click('#лобби-вдвоём');
     await страница.waitForTimeout(300);
     const мера = await страница.evaluate(() => {
-      const доскаДом = document.getElementById('доска');
-      const рамка = доскаДом.getBoundingClientRect();
+      // Видимая глазом ширина доски — это деревянная РАМКА (набор владельца),
+      // а не внутренняя сетка #доска: рамка занимает всю колонку, сетка
+      // внутри нарочно уже неё на padding «--толщина-рамки» с каждой стороны.
+      // Раньше #доска и была рамкой, и мерить её было верно; теперь мерить надо родителя.
+      const узелШириныДоски = document.querySelector('.доска-шашек-рамка') || document.getElementById('доска');
+      const рамка = узелШириныДоски.getBoundingClientRect();
       return {
         доска: Math.round(рамка.width),
         видима: рамка.height > 0

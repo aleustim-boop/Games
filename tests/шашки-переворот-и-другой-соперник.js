@@ -35,28 +35,32 @@ function проверить(условие, слова) {
   if (!условие) провалов++;
 }
 
-/** Снимок доски: повёрнута ли, где подписи, что над доской. */
+/** Снимок доски: повёрнута ли, где подписи, что над доской.
+ *  Подписи полей (.метка-буква/.метка-цифра) больше не сидят внутри
+ *  клеток — они переехали в .доска-шашек-рамка, родителя #доска (набор
+ *  владельца, тот же приём, что у шахмат). Ищем их там же, где рисует
+ *  js/шашки-экран.js, а координаты меряем от самой рамки — метки её дети. */
 async function осмотретьДоску(страница) {
   return страница.evaluate(() => {
     const доска = document.getElementById('доска');
+    const узелРамки = доска.parentElement;   // .доска-шашек-рамка
     const клетки = Array.from(доска.children);
-    const рамка = доска.getBoundingClientRect();
+    const рамка = узелРамки.getBoundingClientRect();
     const где = (узел) => {
       const у = узел.getBoundingClientRect();
       return { x: у.left - рамка.left, y: у.top - рамка.top };
     };
-    const цифра1 = клетки.find((к) => к.querySelector('.метка-цифра') &&
-      к.querySelector('.метка-цифра').textContent === '1');
-    const букваA = клетки.find((к) => к.querySelector('.метка-буква') &&
-      к.querySelector('.метка-буква').textContent === 'a');
+    const метки = Array.from(узелРамки.querySelectorAll('.метка-буква, .метка-цифра'));
+    const цифра1 = метки.find((м) => м.classList.contains('метка-цифра') && м.textContent === '1');
+    const букваA = метки.find((м) => м.classList.contains('метка-буква') && м.textContent === 'a');
     return {
       перевёрнута: доска.classList.contains('доска-шашек--перевёрнута'),
       клеток: клетки.length,
       первая: клетки[0].getAttribute('data-поле') || клетки[1].getAttribute('data-поле'),
-      цифра1: где(цифра1),
-      букваA: где(букваA),
-      цифрСлева: клетки.filter((к) => к.querySelector('.метка-цифра')).length,
-      буквСнизу: клетки.filter((к) => к.querySelector('.метка-буква')).length,
+      цифра1: цифра1 ? где(цифра1) : null,
+      букваA: букваA ? где(букваA) : null,
+      цифрСлева: метки.filter((м) => м.classList.contains('метка-цифра')).length,
+      буквСнизу: метки.filter((м) => м.classList.contains('метка-буква')).length,
       строкаХода: document.getElementById('строка-хода').textContent,
       размер: Math.round(рамка.width)
     };
