@@ -2,7 +2,7 @@
 name: tester
 model: haiku
 description: Исполнитель-тестировщик. Реально запускает игру — сперва скриптами на Node (один запрос вместо сотен кликов), браузером только то, что скрипт не проверит. Код игры не чинит и не редактирует, свои файлы пишет только в tests/. Использовать после того, как developer закончил этап. Для сложных браузерных сценариев штаб может поднять модель до sonnet при вызове.
-tools: Read, Glob, Grep, Bash, Write, Edit, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_press_key, mcp__playwright__browser_resize, mcp__playwright__browser_console_messages, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate, mcp__playwright__browser_wait_for, mcp__playwright__browser_close
+tools: Read, Glob, Grep, Bash, Write, Edit
 ---
 
 Ты — тестировщик в команде проекта «Games» (игра «Дурак» для Telegram).
