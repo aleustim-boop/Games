@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Стенд витрины плитками</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="приложение">
+  <section id="экран-витрины" class="экран экран--виден витрина">
+    <div class="витрина__шапка">
+      <h1 class="витрина__заголовок">Настольные<br>игры</h1>
+      <p id="серия-дней" class="подпись серия-дней">3 дня подряд</p>
+    </div>
+    <div class="витрина__плитки" id="плитки"></div>
+  </section>
+</div>
+<script>
+/* Стенд оформителя: витрина плитками по именам штаба. Значки временные,
+   нарисованы здесь. ?плиток=8 — восемь плиток; ?ждут=1 — на дураке
+   «вас ждёт партия с другом» с пометкой «плитка-игры--ждут»; ?серия=вчера.
+   Живёт в tmp/, в git не идёт. */
+var парам = new URLSearchParams(location.search);
+var тема = парам.get('тема') || 'своя';
+var темы = {
+  'светлая': { '--tg-theme-bg-color': '#ffffff', '--tg-theme-secondary-bg-color': '#f1f1f1', '--tg-theme-text-color': '#000000', '--tg-theme-button-color': '#2481cc', '--tg-theme-button-text-color': '#ffffff' },
+  'тёмная': { '--tg-theme-bg-color': '#17212b', '--tg-theme-secondary-bg-color': '#232e3c', '--tg-theme-text-color': '#ffffff', '--tg-theme-button-color': '#2ea6ff', '--tg-theme-button-text-color': '#ffffff' }
+};
+if (темы[тема]) for (var имя in темы[тема]) document.documentElement.style.setProperty(имя, темы[тема][имя]);
+
+if (парам.get('серия') === 'вчера') {
+  var с = document.getElementById('серия-дней');
+  с.textContent = 'Вчера играли — сыграйте сегодня, чтобы не прервать серию из 5';
+  с.classList.add('серия-дней--вчера');
+}
+
+/* Временные значки: карта с пикой, две шашки стопкой, пешка, кубик, домино. */
+var ЗНАЧКИ = {
+  'дурак': '<svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M20 8h24a6 6 0 0 1 6 6v36a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6zm0 4a2 2 0 0 0-2 2v36a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V14a2 2 0 0 0-2-2H20z"/><path d="M32 20c-4 6-11 9-11 15a6 6 0 0 0 9 5c-1 3-2 5-4 6h12c-2-1-3-3-4-6a6 6 0 0 0 9-5c0-6-7-9-11-15z"/></svg>',
+  'шашки': '<svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><ellipse cx="32" cy="40" rx="22" ry="9" opacity=".55"/><path d="M10 33v7c0 5 10 9 22 9s22-4 22-9v-7c0 5-10 9-22 9s-22-4-22-9z" opacity=".55"/><ellipse cx="32" cy="27" rx="22" ry="9"/><path d="M10 20v7c0 5 10 9 22 9s22-4 22-9v-7c0 5-10 9-22 9s-22-4-22-9z"/><ellipse cx="32" cy="20" rx="22" ry="9"/><ellipse cx="32" cy="19" rx="9" ry="3.5" opacity=".35"/></svg>',
+  'шахматы': '<svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="15" r="8"/><path d="M26 22h12l3 10h-4l4 14H23l4-14h-4z"/><path d="M16 48h32l3 8H13z"/></svg>',
+  'кости': '<svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><rect x="10" y="10" width="44" height="44" rx="10"/><g fill="#fff" opacity=".9"><circle cx="21" cy="21" r="4"/><circle cx="43" cy="21" r="4"/><circle cx="32" cy="32" r="4"/><circle cx="21" cy="43" r="4"/><circle cx="43" cy="43" r="4"/></g></svg>',
+  'домино': '<svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><rect x="20" y="6" width="24" height="52" rx="6"/><rect x="22" y="31" width="20" height="2" fill="#fff" opacity=".8"/><g fill="#fff" opacity=".9"><circle cx="27" cy="14" r="2.5"/><circle cx="37" cy="24" r="2.5"/><circle cx="27" cy="40" r="2.5"/><circle cx="37" cy="40" r="2.5"/><circle cx="27" cy="50" r="2.5"/><circle cx="37" cy="50" r="2.5"/></g></svg>'
+};
+
+function плитка(игра, название, пометка, скоро, ждут) {
+  var узел = document.createElement('button');
+  узел.type = 'button';
+  узел.className = 'плитка-игры' + (скоро ? ' плитка-игры--скоро' : '') + (ждут ? ' плитка-игры--ждут' : '');
+  узел.setAttribute('data-игра', игра);
+  if (скоро) узел.disabled = true;
+  var значок = document.createElement('span');
+  значок.className = 'плитка-игры__значок';
+  значок.innerHTML = ЗНАЧКИ[игра] || ЗНАЧКИ['кости'];
+  var имя = document.createElement('span');
+  имя.className = 'плитка-игры__название';
+  имя.textContent = название;
+  var п = document.createElement('span');
+  п.className = 'плитка-игры__пометка';
+  п.textContent = пометка;
+  узел.appendChild(значок); узел.appendChild(имя); узел.appendChild(п);
+  document.getElementById('плитки').appendChild(узел);
+}
+
+var ждут = парам.get('ждут') === '1';
+плитка('дурак', 'Дурак', ждут ? 'вас ждёт партия с другом' : 'вы играли в прошлый раз', false, ждут);
+плитка('шашки', 'Шашки', '', false, false);
+плитка('шахматы', 'Шахматы', 'скоро', true, false);
+if (парам.get('плиток') === '8') {
+  плитка('кости', 'Кости', 'скоро', true, false);
+  плитка('домино', 'Домино', 'скоро', true, false);
+  плитка('кости', 'Нарды', 'скоро', true, false);
+  плитка('домино', 'Тысяча', 'скоро', true, false);
+  плитка('кости', 'Преферанс', 'скоро', true, false);
+}
+</script>
+</body>
+</html>

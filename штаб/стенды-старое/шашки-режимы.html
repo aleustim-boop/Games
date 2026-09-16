@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Шашки — экран «С кем играть»</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../style-шашки.css">
+  <!-- Пробная страница оформителя. Разметка списана с шашки.html,
+       вместе с временным блоком стилей из её шапки — нарочно: проверяем,
+       что центрирование чинится ещё до того, как разработчик тот блок
+       сотрёт. В игру файл не входит, папка tmp/ вне git. -->
+  <style>
+    #экран-режимов,
+    #экран-бота-шашек {
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    #экран-режимов > *,
+    #экран-бота-шашек > * { flex-shrink: 0; }
+
+    #экран-режимов > .кнопка,
+    #экран-бота-шашек > .кнопка { width: min(100%, 260px); }
+
+    #экран-режимов > .кнопка.кнопка--главная,
+    #экран-бота-шашек > .кнопка.кнопка--главная {
+      width: min(100%, 280px);
+      min-height: 58px;
+      font-size: 21px;
+      line-height: 1.2;
+      border-radius: 14px;
+    }
+
+    #экран-режимов > .кнопка.кнопка--главная + .кнопка.кнопка--главная { margin-top: 8px; }
+
+    #экран-режимов > :first-child { margin-top: auto; }
+    #экран-режимов > :last-child { margin-bottom: auto; }
+  </style>
+</head>
+<body>
+<div id="приложение">
+  <section id="экран-режимов" class="экран экран--виден">
+    <h1 class="заголовок">Русские<br>шашки</h1>
+    <p class="подпись">Выберите, с кем играть</p>
+    <button id="кнопка-режим-бот" type="button" class="кнопка кнопка--главная"><span class="кнопка__начало">Играть</span> <span class="кнопка__кого">с ботом</span></button>
+    <button id="кнопка-вдвоём" type="button" class="кнопка кнопка--главная"><span class="кнопка__начало">Играть вдвоём</span> <span class="кнопка__кого">на этом устройстве</span></button>
+    <button id="кнопка-с-другом" type="button" class="кнопка кнопка--главная"><span class="кнопка__начало">Играть с другом</span> <span class="кнопка__кого">онлайн</span></button>
+    <button id="кнопка-назад" type="button" class="кнопка кнопка--мелкая">К выбору игры</button>
+    <button id="кнопка-играть" type="button" class="кнопка скрыт" aria-hidden="true" tabindex="-1">Играть с ботом</button>
+  </section>
+</div>
+</body>
+</html>

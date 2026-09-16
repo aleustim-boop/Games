@@ -40,6 +40,40 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+
+/*
+  Страховка от мигающих окон консоли.
+  Дашборд запущен без своей консоли (перезапуск-дашборда.js поднимает его
+  detached), поэтому любой дочерний консольный процесс — git, powershell,
+  netstat — без windowsHide открывает на экране новое окно, и оно мигает
+  у владельца. Так уже было дважды (сбор.js 10.09, важное-страница.js 16.09).
+  Поэтому правило одно на всех: на Windows каждому дочернему процессу
+  windowsHide: true, даже если вызывающий код про него забыл.
+  Стоит до require остальных модулей штаба: они берут функции child_process
+  себе при загрузке.
+*/
+if (process.platform === 'win32') {
+  const процессы = require('child_process');
+  ['spawn', 'spawnSync', 'execFile', 'execFileSync', 'exec', 'execSync'].forEach(function (имя) {
+    const исходная = процессы[имя];
+    процессы[имя] = function () {
+      const доводы = Array.prototype.slice.call(arguments);
+      let настройки = -1;
+      for (let i = 1; i < доводы.length; i++) {
+        const д = доводы[i];
+        if (д && typeof д === 'object' && !Array.isArray(д)) { настройки = i; break; }
+      }
+      if (настройки === -1) {
+        // Настроек нет — вставляем перед хвостовым callback, если он есть.
+        const хвост = typeof доводы[доводы.length - 1] === 'function' ? 1 : 0;
+        доводы.splice(доводы.length - хвост, 0, { windowsHide: true });
+      } else if (доводы[настройки].windowsHide === undefined) {
+        доводы[настройки] = Object.assign({}, доводы[настройки], { windowsHide: true });
+      }
+      return исходная.apply(this, доводы);
+    };
+  });
+}
 const { execFile } = require('child_process');
 const сбор = require('./сбор.js');
 const страница = require('./страница.js');

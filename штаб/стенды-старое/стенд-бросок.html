@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Стенд броска</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="приложение">
+  <section id="экран-игры" class="экран экран--виден">
+    <div id="соперники" class="соперники">
+      <div class="соперник"><span class="соперник__имя">Бот 2</span><span class="соперник__карт"><span class="соперник__число">6</span> <span class="соперник__слово">карт</span></span></div>
+      <div class="соперник соперник--ходит"><span class="соперник__имя">Константин</span><span class="соперник__карт"><span class="соперник__число">4</span> <span class="соперник__слово">карты</span></span><span class="соперник__метка">ходит</span></div>
+      <div class="соперник"><span class="соперник__имя">Бот 3</span><span class="соперник__карт"><span class="соперник__число">5</span> <span class="соперник__слово">карт</span></span></div>
+    </div>
+    <div id="зона-стола">
+      <div id="колода"></div>
+      <div id="стол"></div>
+    </div>
+    <div id="подсказка"><span id="подсказка-текст" class="подсказка__текст">Ходит Константин</span></div>
+    <div id="рука-человека" class="рука">
+      <div id="карты-человека" class="веер"></div>
+    </div>
+    <div id="панель-кнопок">
+      <button id="кнопка-в-меню" class="кнопка кнопка--мелкая">В меню</button>
+    </div>
+    <div id="знаки-внимания" class="знаки-внимания"></div>
+  </section>
+</div>
+<script>
+/* Стенд оформителя: полёт предмета по именам штаба.
+   ?пауза=350 — остановить полёт на 350-й миллисекунде;
+   ?попал=1 — состояние шлепка и тряски плашки (пауза на 120 мс шлепка);
+   ?живой=1 — облачко с живым смайликом; ?предмет=🍅 — какой символ.
+   Живёт в tmp/, в git не идёт. */
+var парам = new URLSearchParams(location.search);
+var тема = парам.get('тема') || 'своя';
+var темы = {
+  'светлая': { '--tg-theme-bg-color': '#ffffff', '--tg-theme-secondary-bg-color': '#f1f1f1', '--tg-theme-text-color': '#000000', '--tg-theme-button-color': '#2481cc', '--tg-theme-button-text-color': '#ffffff' },
+  'тёмная': { '--tg-theme-bg-color': '#17212b', '--tg-theme-secondary-bg-color': '#232e3c', '--tg-theme-text-color': '#ffffff', '--tg-theme-button-color': '#2ea6ff', '--tg-theme-button-text-color': '#ffffff' }
+};
+if (темы[тема]) for (var имя in темы[тема]) document.documentElement.style.setProperty(имя, темы[тема][имя]);
+
+/* Рука: четыре карты, чтобы было что не закрывать. */
+var МАСТИ = { '♠': 'карта--пики', '♥': 'карта--черви', '♦': 'карта--бубны', '♣': 'карта--трефы' };
+function карта(номинал, масть) {
+  var узел = document.createElement('div');
+  узел.className = 'карта ' + МАСТИ[масть] + (масть === '♥' || масть === '♦' ? ' карта--красная' : '') + ' карта--нельзя';
+  var угол = document.createElement('div'); угол.className = 'карта__угол';
+  var н = document.createElement('span'); н.className = 'карта__номинал'; н.textContent = номинал;
+  var м = document.createElement('span'); м.className = 'карта__масть-угла'; м.textContent = масть;
+  угол.appendChild(н); угол.appendChild(м);
+  var большая = document.createElement('div'); большая.className = 'карта__масть'; большая.textContent = масть;
+  узел.appendChild(угол); узел.appendChild(большая);
+  return узел;
+}
+var рука = document.getElementById('карты-человека');
+[['В','♠'],['10','♦'],['6','♣'],['Т','♥']].forEach(function (к, i) {
+  var узел = карта(к[0], к[1]);
+  узел.style.left = (70 + i * 56) + 'px';
+  узел.style.top = '18px';
+  рука.appendChild(узел);
+});
+рука.style.setProperty('--шаг-карт', '56px');
+
+/* Цель — вторая плашка. Точки считаем от игрового экрана. */
+var экран = document.getElementById('экран-игры');
+var цель = document.querySelectorAll('.соперник')[1];
+var рЭ = экран.getBoundingClientRect();
+var рЦ = цель.getBoundingClientRect();
+var доX = (рЦ.left + рЦ.width / 2 - рЭ.left);
+var доY = (рЦ.top + рЦ.height / 2 - рЭ.top);
+var отX = рЭ.width / 2;
+var отY = рЭ.height - 90;
+
+var предмет = document.createElement('div');
+предмет.className = 'летящий-предмет';
+предмет.textContent = парам.get('предмет') || '💩';
+предмет.style.setProperty('--от-x', отX + 'px');
+предмет.style.setProperty('--от-y', отY + 'px');
+предмет.style.setProperty('--до-x', доX + 'px');
+предмет.style.setProperty('--до-y', доY + 'px');
+экран.appendChild(предмет);
+
+var пауза = парам.get('пауза');
+if (пауза) {
+  предмет.style.animationDelay = '-' + пауза + 'ms';
+  предмет.style.animationPlayState = 'paused';
+}
+if (парам.get('попал') === '1') {
+  предмет.classList.add('летящий-предмет--попал');
+  цель.classList.add('плашка--попали');
+  предмет.style.animationDelay = '-120ms';
+  предмет.style.animationPlayState = 'paused';
+  цель.style.animationDelay = '-170ms';
+  цель.style.animationPlayState = 'paused';
+}
+
+if (парам.get('живой') === '1') {
+  var облачко = document.createElement('div');
+  облачко.className = 'знак-внимания знак-внимания--смайлик знак-внимания--живой';
+  var кто = document.createElement('div'); кто.className = 'знак-внимания__кто'; кто.textContent = 'Константин';
+  var что = document.createElement('div'); что.className = 'знак-внимания__что'; что.textContent = '😂';
+  облачко.appendChild(кто); облачко.appendChild(что);
+  document.getElementById('знаки-внимания').appendChild(облачко);
+}
+</script>
+</body>
+</html>

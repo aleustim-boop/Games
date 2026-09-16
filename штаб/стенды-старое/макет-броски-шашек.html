@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Макет: слово вместо рисунка в кнопках броска (временный, для проверки оформителя)</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style-шашки.css">
+</head>
+<body>
+<!-- Временная страница оформителя (11 сентября): ряд кнопок «Кинуть»
+     шашек, где у трёх кнопок рисунок «не доехал» и стоит слово. Разметка
+     повторяет ту, что строит js/шашки-экран.js. Папка tmp/ в git не
+     попадает. Кружки — заместители рисунков 32×32. -->
+<div class="панель-знаков" style="position:static;inset:auto;transform:none;translate:none;display:block;width:340px;max-width:340px;margin:10px;padding:12px">
+  <div class="панель-знаков__середина">
+    <div class="панель-знаков__ряд панель-знаков__кнопки">
+      <button type="button" class="панель-знаков__знак панель-знаков__знак--бросок"><span class="название-предмета">Шарик с водой</span></button>
+      <button type="button" class="панель-знаков__знак панель-знаков__знак--бросок"><span class="название-предмета">Перчатка</span></button>
+      <button type="button" class="панель-знаков__знак панель-знаков__знак--бросок"><span class="название-предмета">Помидор</span></button>
+      <button type="button" class="панель-знаков__знак панель-знаков__знак--бросок"><span style="display:inline-block;width:32px;height:32px;background:#c44;border-radius:50%"></span></button>
+      <button type="button" class="панель-знаков__знак панель-знаков__знак--бросок"><span style="display:inline-block;width:32px;height:32px;background:#4a4;border-radius:50%"></span></button>
+      <button type="button" class="панель-знаков__знак">😀</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

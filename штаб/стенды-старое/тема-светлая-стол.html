@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Стол в светлой теме Telegram</title>
+<style>
+  html, body { margin: 0; background: #888; }
+  iframe { width: 390px; height: 844px; border: 0; display: block; }
+</style>
+</head>
+<body>
+<!-- Пробная страница оформителя: показывает настоящую игру в рамке и
+     подставляет ей цвета светлой темы Telegram. Нужна только для проверки
+     глазами, в игру не входит, папка tmp/ вне git. -->
+<iframe id="окно" src="../index.html"></iframe>
+<script>
+  var окно = document.getElementById('окно');
+  окно.addEventListener('load', function () {
+    var док = окно.contentDocument;
+    var корень = док.documentElement;
+    корень.style.setProperty('--tg-theme-bg-color', '#ffffff');
+    корень.style.setProperty('--tg-theme-secondary-bg-color', '#f1f1f1');
+    корень.style.setProperty('--tg-theme-text-color', '#000000');
+    корень.style.setProperty('--tg-theme-button-color', '#3390ec');
+    корень.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+
+    // Проходим до стола: «Дурак» → «Играть с ботом» → «Играть»
+    function нажать(имя, через) {
+      setTimeout(function () {
+        var кнопка = док.querySelector(имя);
+        if (кнопка) кнопка.click();
+      }, через);
+    }
+    нажать('#кнопка-игра-дурак', 300);
+    нажать('#кнопка-играть-с-ботом', 700);
+    нажать('#кнопка-играть', 1100);
+  });
+</script>
+</body>
+</html>

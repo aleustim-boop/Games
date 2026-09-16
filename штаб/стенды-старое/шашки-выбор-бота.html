@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Шашки — экран «Игра с ботом»</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../style-шашки.css">
+  <!-- Пробная страница оформителя: второй экран выбора, с тем же временным
+       блоком из шапки шашки.html. В игру не входит, папка tmp/ вне git. -->
+  <style>
+    #экран-режимов,
+    #экран-бота-шашек {
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    #экран-режимов > *,
+    #экран-бота-шашек > * { flex-shrink: 0; }
+
+    #экран-режимов > .кнопка,
+    #экран-бота-шашек > .кнопка { width: min(100%, 260px); }
+
+    #экран-режимов > .кнопка.кнопка--главная,
+    #экран-бота-шашек > .кнопка.кнопка--главная {
+      width: min(100%, 280px);
+      min-height: 58px;
+      font-size: 21px;
+      line-height: 1.2;
+      border-radius: 14px;
+    }
+
+    #экран-режимов > .кнопка.кнопка--главная + .кнопка.кнопка--главная { margin-top: 8px; }
+
+    #экран-режимов > :first-child { margin-top: auto; }
+    #экран-режимов > :last-child { margin-bottom: auto; }
+  </style>
+</head>
+<body>
+<div id="приложение">
+  <section id="экран-бота-шашек" class="экран экран--виден">
+    <h2 class="заголовок">Игра с ботом</h2>
+    <div class="выбор">
+      <span class="выбор__подпись">Соперник</span>
+      <div class="выбор-соперника выбор__кнопки">
+        <button id="уровень-лёгкий" type="button" class="кнопка кнопка--выбор">Лёгкий</button>
+        <button id="уровень-обычный" type="button" class="кнопка кнопка--выбор кнопка--активная">Обычный</button>
+        <button id="уровень-сложный" type="button" class="кнопка кнопка--выбор">Сложный</button>
+      </div>
+    </div>
+    <button id="кнопка-с-ботом" type="button" class="кнопка кнопка--главная">Играть</button>
+    <button id="кнопка-бота-назад" type="button" class="кнопка кнопка--мелкая">Назад</button>
+  </section>
+</div>
+</body>
+</html>

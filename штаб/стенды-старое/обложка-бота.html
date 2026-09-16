@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Обложка бота «Настольные игры»</title>
+<!-- ============================================================
+     ОБЛОЖКА ДЛЯ БОТА — макет, с которого снимают картинку.
+
+     Зачем. Это первое, что человек видит в переписке с ботом,
+     и за секунду оно должно сказать: «здесь несколько настольных игр».
+     Поэтому на ней ровно три вещи — название, три значка игр и по
+     слову под каждым. Ничего больше: в чате картинку показывают
+     мелко, и любой лишний текст там превращается в грязь.
+
+     Как устроено. Ни одной картинки-файла: фон — заливка со свечением,
+     значки — тот же встроенный SVG, что на витрине игры, цвета игр —
+     те же самые (зелень сукна, тёплое дерево, сине-фиолетовый).
+     Человек, увидевший обложку, узнает витрину, когда откроет игру.
+
+     КАК ПОМЕНЯТЬ РАЗМЕР. Две строки ниже — ширина и высота. Всё
+     остальное считается от ширины (кегль задан долей от неё), поэтому
+     достаточно поменять числа, и обложка соберётся заново в любых
+     пропорциях. Сейчас стоит 1280×720 — это обычные 16 к 9.
+     ============================================================ -->
+<style>
+  :root {
+    --ширина: 1280px;
+    --высота: 720px;
+
+    /* Цвета игр — те же, что на витрине игры. */
+    --дурак:   #17864a;
+    --шашки:   #a06a17;
+    --шахматы: #4a5bd0;
+
+    --сукно: #14532d;
+    --текст: #f4faf5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #0c1a12;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  /* Кегль привязан к ширине: поменяли размер обложки — всё внутри
+     пересчиталось само, ничего руками править не нужно. */
+  .обложка {
+    position: relative;
+    width: var(--ширина);
+    height: var(--высота);
+    font-size: calc(var(--ширина) / 64);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.9em;
+    overflow: hidden;
+    color: var(--текст);
+    background-color: var(--сукно);
+    background-image:
+      radial-gradient(90% 70% at 12% -10%, rgba(47, 158, 95, 0.55), rgba(47, 158, 95, 0) 62%),
+      radial-gradient(80% 70% at 100% 108%, rgba(74, 91, 208, 0.38), rgba(74, 91, 208, 0) 66%);
+  }
+
+  /* Мягкое затемнение по краям: середина светлее, углы глубже —
+     взгляд сам сходится к значкам. */
+  .обложка::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 100% at 50% 45%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.42) 100%);
+    pointer-events: none;
+  }
+
+  .шапка { position: relative; z-index: 1; text-align: center; }
+
+  .название {
+    font-size: 4em;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0.08em 0.3em rgba(0, 0, 0, 0.45);
+  }
+
+  /* Трёхцветная черта — тот же знак сборника, что на витрине. */
+  .черта {
+    width: 13.5em;
+    height: 0.42em;
+    margin: 0.8em auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+                var(--дурак) 0 33.34%, var(--шашки) 33.34% 66.67%, var(--шахматы) 66.67% 100%);
+  }
+
+  .игры {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2.6em;
+  }
+
+  .игра {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9em;
+  }
+
+  /* Крайние значки чуть развёрнуты веером — как карты в руке. Это
+     единственное «движение» на обложке: ровный ряд из трёх квадратов
+     выглядит таблицей, а развёрнутый — игрой.
+
+     Поворачивается только сама плашка, а подписи стоят ровно: когда
+     наклоняли всю колонку целиком, косыми становились и слова,
+     и обложка начинала выглядеть небрежной, а не живой. */
+  .игра:nth-child(1) .значок { transform: rotate(-5deg); }
+  .игра:nth-child(3) .значок { transform: rotate(5deg); }
+
+  .значок {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12.4em;
+    height: 12.4em;
+    color: #ffffff;
+    border-radius: 3.4em;
+    background-image: linear-gradient(158deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 62%);
+    box-shadow:
+      inset 0 0 0 0.09em rgba(255, 255, 255, 0.22),
+      0 0.7em 1.6em rgba(0, 0, 0, 0.45);
+  }
+
+  .значок svg { display: block; width: 8em; height: 8em; }
+
+  .игра--дурак   .значок { background-color: var(--дурак); }
+  .игра--шашки   .значок { background-color: var(--шашки); }
+  .игра--шахматы .значок { background-color: var(--шахматы); }
+
+  .имя {
+    font-size: 1.7em;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-shadow: 0 0.06em 0.25em rgba(0, 0, 0, 0.5);
+  }
+
+  /* «Скоро» у шахмат — тихая плашка: обещание, а не реклама. */
+  .скоро {
+    margin-top: -0.35em;
+    padding: 0.16em 0.7em 0.22em;
+    font-size: 0.82em;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+  }
+</style>
+</head>
+<body>
+
+<div class="обложка">
+  <div class="шапка">
+    <div class="название">Настольные игры</div>
+    <div class="черта"></div>
+  </div>
+
+  <div class="игры">
+    <div class="игра игра--дурак">
+      <div class="значок"><svg viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="10" y="14" width="26" height="36" rx="4" transform="rotate(-14 23 32)" fill="none" stroke="currentColor" stroke-width="3"/>
+        <rect x="28" y="14" width="26" height="36" rx="4" transform="rotate(12 41 32)" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+        <path d="M41 22c-4 5-8 8-8 12a4 4 0 0 0 7 2c0 3-1 4-2 5h6c-1-1-2-2-2-5a4 4 0 0 0 7-2c0-4-4-7-8-12z" fill="currentColor"/>
+      </svg></div>
+      <div class="имя">Дурак</div>
+    </div>
+
+    <div class="игра игра--шашки">
+      <div class="значок"><svg viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="22" cy="41" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+        <circle cx="42" cy="25" r="13" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+        <circle cx="42" cy="25" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg></div>
+      <div class="имя">Шашки</div>
+    </div>
+
+    <div class="игра игра--шахматы">
+      <div class="значок"><svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 54h28v-6H18z" fill="currentColor"/>
+        <path d="M24 48c-3-9-1-16 6-21 2-2 3-5 4-9l4 3 5-2c3 5 0 10-4 14l-2 15z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="34" cy="26" r="1.8" fill="currentColor"/>
+      </svg></div>
+      <div class="имя">Шахматы</div>
+      <div class="скоро">скоро</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

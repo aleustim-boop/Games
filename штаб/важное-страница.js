@@ -503,14 +503,16 @@ function решённыеСуткиНазад(сейчас) {
   const имя = 'штаб/важное.json';
   const рубеж = new Date(сейчас - СУТКИ_МС).toISOString();
   let что = null;
+  // windowsHide обязателен: у дашборда нет своей консоли, и без него Windows
+  // открывает на каждый вызов git видимое окно консоли (мигающие окна).
   const лог = spawnSync('git', ['log', '-1', '--format=%H', '--until=' + рубеж, '--', имя],
-    { cwd: КОРЕНЬ, timeout: 8000 });
+    { cwd: КОРЕНЬ, timeout: 8000, windowsHide: true });
   if (!лог.error && лог.status === 0) {
     const хэш = лог.stdout.toString('utf8').trim();
     if (!хэш) {
       что = new Set();
     } else {
-      const файл = spawnSync('git', ['show', хэш + ':' + имя], { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 8 * 1024 * 1024 });
+      const файл = spawnSync('git', ['show', хэш + ':' + имя], { cwd: КОРЕНЬ, timeout: 8000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
       if (!файл.error && файл.status === 0) {
         try {
           const тогда = JSON.parse(файл.stdout.toString('utf8'));

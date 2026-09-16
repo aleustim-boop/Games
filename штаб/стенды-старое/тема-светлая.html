@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Витрина — светлая тема Telegram</title>
+<link rel="stylesheet" href="../style.css">
+<!-- Пробная страница оформителя: подставляет цвета светлой темы Telegram,
+     чтобы посмотреть витрину так, как её увидит игрок. Разметка скопирована
+     из index.html; в игру этот файл не входит, папка tmp/ вне git. -->
+<style>
+:root {
+  --tg-theme-bg-color: #ffffff;
+  --tg-theme-secondary-bg-color: #f1f1f1;
+  --tg-theme-text-color: #000000;
+  --tg-theme-button-color: #3390ec;
+  --tg-theme-button-text-color: #ffffff;
+}
+</style>
+</head>
+<body>
+<div id="приложение">
+  <section id="экран-витрины" class="экран экран--виден витрина">
+    <header class="витрина__шапка">
+      <h1 class="витрина__заголовок">Настольные игры</h1>
+      <p id="серия-дней" class="серия-дней">3 дня подряд</p>
+    </header>
+    <div class="витрина__плитки">
+      <button id="кнопка-игра-дурак" class="плитка-игры плитка-игры--ждут" data-игра="дурак">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="10" y="14" width="26" height="36" rx="4" transform="rotate(-14 23 32)" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="28" y="14" width="26" height="36" rx="4" transform="rotate(12 41 32)" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+          <path d="M41 22c-4 5-8 8-8 12a4 4 0 0 0 7 2c0 3-1 4-2 5h6c-1-1-2-2-2-5a4 4 0 0 0 7-2c0-4-4-7-8-12z" fill="currentColor"/>
+        </svg></span>
+        <span class="плитка-игры__название">Дурак</span>
+        <span id="пометка-дурак" class="плитка-игры__пометка">вас ждёт партия с другом</span>
+      </button>
+      <button id="кнопка-игра-шашки" class="плитка-игры" data-игра="шашки">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <circle cx="22" cy="41" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="42" cy="25" r="13" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3"/>
+          <circle cx="42" cy="25" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg></span>
+        <span class="плитка-игры__название">Шашки</span>
+        <span id="пометка-шашки" class="плитка-игры__пометка">вы играли в прошлый раз</span>
+      </button>
+      <button class="плитка-игры плитка-игры--скоро" disabled data-игра="шахматы">
+        <span class="плитка-игры__значок"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <path d="M18 54h28v-6H18z" fill="currentColor"/>
+          <path d="M24 48c-3-9-1-16 6-21 2-2 3-5 4-9l4 3 5-2c3 5 0 10-4 14l-2 15z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="1.8" fill="currentColor"/>
+        </svg></span>
+        <span class="плитка-игры__название">Шахматы</span>
+        <span class="плитка-игры__пометка">скоро</span>
+      </button>
+    </div>
+  </section>
+</div>
+</body>
+</html>
