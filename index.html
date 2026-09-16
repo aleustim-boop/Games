@@ -15,7 +15,7 @@
        игрокам старую версию: правку видно только после полной очистки кэша.
        Добавка ?v= к адресу самой страницы файлы НЕ обновляет — версия
        должна стоять именно здесь, в строках подключения. -->
-  <link rel="stylesheet" href="style.css?v=55">
+  <link rel="stylesheet" href="style.css?v=56">
   <!-- Официальный скрипт Telegram: даёт тему, кнопки и данные игрока.
        В обычном браузере он просто ничего не находит и не мешает. -->
   <!-- defer обязателен: без него браузер не рисует ни одной карты, пока
@@ -197,14 +197,16 @@
     </figure>
 
     <div class="лобби__входы">
-      <!-- Онлайн: подбора соперников нет — честно выключено и помечено. -->
-      <button id="лобби-онлайн" type="button" class="карточка-входа карточка-входа--онлайн" disabled>
+      <!-- Найти игру: список открытых столов и посадка за один из них.
+           Живая карточка (была «скоро») — нажатие слушает js/открытые-столы.js
+           сам, по id «лобби-онлайн»; этот файл он не трогает. -->
+      <button id="лобби-онлайн" type="button" class="карточка-входа карточка-входа--онлайн">
         <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M3 7h18M2 12h20M3 17h18"/></svg></span>
         <span class="карточка-входа__текст">
-          <span class="карточка-входа__название">Играть онлайн</span>
-          <span class="карточка-входа__подпись">Соперники со всего мира</span>
+          <span class="карточка-входа__название">Найти игру</span>
+          <span class="карточка-входа__подпись">Открытые столы прямо сейчас</span>
         </span>
-        <span class="пометка-скоро">скоро</span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
       </button>
       <button id="лобби-боты" type="button" class="карточка-входа карточка-входа--боты">
         <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V3M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="2" r="1"/></svg></span>
@@ -1167,7 +1169,11 @@
 <script src="js/дурак-комната.js?v=2"></script>
 <!-- Игра вдвоём. Подключается последней и только добавляет второй режим:
      без этого файла игра против бота работает как прежде. -->
-<script src="js/сеть.js?v=36"></script>
+<script src="js/сеть.js?v=37"></script>
+<!-- Экран «Найти игру»: список открытых столов и посадка за один из них.
+     Строго после js/сеть.js — берёт у него все три двери (открытыеСтолы,
+     сестьЗаСтол, создатьОткрытыйСтол) и без него не подключает кнопку. -->
+<script src="js/открытые-столы.js?v=1"></script>
 <!-- «Похвастаться победой»: дверь «Сеть.похвастаться» живёт здесь, а не в сети.
      СТРОГО ПОСЛЕ js/сеть.js: внутри стоит страховка «if (window.Сеть) return»,
      и, встань файл раньше, она ослепла бы на упавшем сеть.js. -->
