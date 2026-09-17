@@ -34,7 +34,17 @@ const http = require('http');
 const path = require('path');
 const правила = require(path.join(__dirname, '..', 'js', 'game.js'));
 
-const ПОРТ = Number(process.argv[2]) || 8790;
+const ПОРТ = Number(process.argv[2]);
+if (isNaN(ПОРТ)) {
+  console.error('Ошибка: требуется явно указать порт сервера комнат аргументом');
+  console.error('');
+  console.error('Пример запуска:');
+  console.error('  node tests/сеть-парами-с-выбыванием.js 8790');
+  console.error('  node tests/сеть-парами-с-выбыванием.js 8790 20');
+  console.error('');
+  console.error('Молчаливый fallback на 8790 запрещён — укажите порт явно.');
+  process.exit(1);
+}
 const ПАРТИЙ = Number(process.argv[3]) || 8;
 const ХОСТ = '127.0.0.1';
 const ПОТОЛОК_ДЕЙСТВИЙ = 1200;

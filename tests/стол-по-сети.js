@@ -36,7 +36,18 @@ function довод(имя, поумолчанию) {
   return з === undefined ? поумолчанию : з;
 }
 
-const ПОРТ = Number(process.argv[2]) || 8790;
+const ПОРТ = Number(process.argv[2]);
+if (isNaN(ПОРТ)) {
+  console.error('Ошибка: требуется явно указать порт сервера комнат аргументом');
+  console.error('');
+  console.error('Пример запуска:');
+  console.error('  node tests/стол-по-сети.js 8790');
+  console.error('  node tests/стол-по-сети.js 8790 мест 4 парами');
+  console.error('  node tests/стол-по-сети.js 8790 мест 4 парами ждать 60 имя Первый');
+  console.error('');
+  console.error('Молчаливый fallback на 8790 запрещён — укажите порт явно.');
+  process.exit(1);
+}
 const МЕСТ = Number(довод('мест', 4)) || 4;
 const ПАРАМИ = process.argv.indexOf('парами') !== -1;
 const ПЕРЕВОДНОЙ = process.argv.indexOf('переводной') !== -1;
