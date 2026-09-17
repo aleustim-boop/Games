@@ -168,7 +168,7 @@
          строку рисует он сам, и оформление её прячет (как на столе). -->
     <div class="верх-игры">
       <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
-      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button id="кнопка-лобби-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
 
     <!-- Недоигранная партия с другом. Узел прежний, «кнопка-вернуться-в-игру»:
@@ -258,7 +258,7 @@
   <section id="экран-путь-правила" class="экран путь" data-шаг="правила">
     <div class="верх-игры">
       <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
-      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button id="кнопка-путь-правила-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
     <header class="путь__шапка">
       <h1 class="путь__заголовок">Новая игра</h1>
@@ -288,7 +288,7 @@
   <section id="экран-путь-игроки" class="экран путь" data-шаг="игроки">
     <div class="верх-игры">
       <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
-      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button id="кнопка-путь-игроки-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
     <header class="путь__шапка">
       <h1 class="путь__заголовок">Состав игроков</h1>
@@ -324,7 +324,7 @@
   <section id="экран-путь-настройки" class="экран путь" data-шаг="настройки">
     <div class="верх-игры">
       <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
-      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button id="кнопка-путь-настройки-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
     <header class="путь__шапка">
       <h1 class="путь__заголовок">Настройки</h1>
@@ -947,7 +947,7 @@
          неё то же самое, что и стрелка Telegram, — «Выйти из комнаты». -->
     <div class="верх-игры">
       <button id="кнопка-комната-назад" type="button" class="верх-игры__кнопка" aria-label="Выйти из комнаты"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
-      <button type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button id="кнопка-комната-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
     <div id="комната" class="комната скрыт">
       <header class="комната__шапка">
@@ -1155,6 +1155,9 @@
 <script src="js/нижние-вкладки.js?v=4"></script>
 <script src="js/колода-рисунок.js?v=5"></script>
 <script src="js/движение-карт.js?v=2"></script>
+<!-- Лист «Ещё» стола — общий модуль (тот же, что у шашек/шахмат/нард).
+     СТРОГО ДО js/game.js: он при старте зовёт window.ЛистЕщё.подключить(). -->
+<script src="js/лист-ещё.js?v=2"></script>
 <!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
      подключает его к странице и отдаёт ему свои двери. -->
 <script src="js/дурак-путь.js?v=3"></script>
