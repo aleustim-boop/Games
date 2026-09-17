@@ -38,6 +38,19 @@ function проверить(условие, слова) {
 }
 const спать = (мс) => new Promise((ф) => setTimeout(ф, мс));
 
+/** Нажать узел по имени; отвечает, нашёлся ли он и можно ли было нажать.
+    Работает даже для скрытых предков, в отличие от Playwright.click(). */
+async function нажать(страница, имя) {
+  return страница.evaluate(function (имяУзла) {
+    const узел = document.getElementById(имяУзла);
+    if (!узел) return 'нет такого';
+    if (узел.disabled) return 'выключен';
+    if (узел.classList.contains('скрыт')) return 'спрятан';
+    узел.click();
+    return 'нажали';
+  }, имя);
+}
+
 async function новаяСтраница(браузер, ш, в) {
   const окно = await браузер.newContext({ viewport: { width: ш, height: в }, hasTouch: true, deviceScaleFactor: 2 });
   const страница = await окно.newPage();
@@ -174,8 +187,8 @@ async function ходПальцем(страница) {
   проверить(проВерсии.пояснение.trim().length > 20,
     'под кнопками версий есть объяснение разницы');
 
-  await страница.click('#версия-короткие'); await спать(200);
-  await страница.click('#кнопка-вдвоём'); await спать(800);
+  await нажать(страница, 'версия-короткие'); await спать(800);
+  await нажать(страница, 'кнопка-вдвоём'); await спать(800);
   await поставитьНаблюдателя(страница);
 
   const доскаВидна = await страница.evaluate(() => {
@@ -230,13 +243,13 @@ async function ходПальцем(страница) {
   console.log('\n=== Отмена шага (сразу после хода) ===');
   {
     const есть = await страница.evaluate(() => {
-      const к = document.getElementById('кнопка-вернуть');
+      const к = document.getElementById('кнопка-отменить-ход');
       return !!(к && к.offsetParent !== null);
     });
     проверить(есть, 'кнопка «Вернуть шаг» есть сразу после своего хода');
     if (есть) {
       await страница.evaluate(() => window.__начать());
-      await страница.click('#кнопка-вернуть');
+      await нажать(страница, 'кнопка-отменить-ход');
       await спать(900);
       const отмена = await страница.evaluate(() => window.__кончить());
       const едущие = отмена.filter((с) => с.едет > 0);
@@ -294,7 +307,7 @@ async function ходПальцем(страница) {
   /* --- отмена шага --- */
   console.log('\n=== Отмена шага ===');
   const можноВернуть = await страница.evaluate(() => {
-    const к = document.getElementById('кнопка-вернуть');
+    const к = document.getElementById('кнопка-отменить-ход');
     return !!(к && к.offsetParent !== null);
   });
   if (!можноВернуть) {
@@ -303,7 +316,7 @@ async function ходПальцем(страница) {
     console.log('  (после боя ход уже передан — отменять нечего, проверено выше)');
   } else {
     await страница.evaluate(() => window.__начать());
-    await страница.click('#кнопка-вернуть');
+    await нажать(страница, 'кнопка-отменить-ход');
     await спать(800);
     const отмена = await страница.evaluate(() => window.__кончить());
     const едущие = отмена.filter((с) => с.едет > 0);
@@ -326,8 +339,8 @@ async function ходПальцем(страница) {
   console.log('\n=== Темп: свой ход и ход бота ===');
   {
     const { окно: о2, страница: с2, красные: к2 } = await новаяСтраница(браузер, 390, 844);
-    await с2.click('#кнопка-режим-бот'); await спать(500);
-    await с2.click('#кнопка-с-ботом'); await спать(900);
+    await нажать(с2, 'кнопка-режим-бот'); await спать(500);
+    await нажать(с2, 'кнопка-с-ботом'); await спать(900);
     await поставитьНаблюдателя(с2);
 
     /* Свой ход */
@@ -445,10 +458,10 @@ async function ходПальцем(страница) {
   console.log('\n=== Длинные нарды, 320×568 ===');
   {
     const { окно: о3, страница: с3, красные: к3 } = await новаяСтраница(браузер, 320, 568);
-    await с3.click('#версия-длинные'); await спать(300);
+    await нажать(с3, 'версия-длинные'); await спать(800);
     const пояснение = await с3.evaluate(() => (document.getElementById('пояснение-версии') || {}).textContent || '');
     console.log('  строчка про длинные: «' + пояснение.trim() + '»');
-    await с3.click('#кнопка-вдвоём'); await спать(800);
+    await нажать(с3, 'кнопка-вдвоём'); await спать(800);
     await поставитьНаблюдателя(с3);
 
     const доска = await с3.evaluate(() => {
@@ -522,7 +535,7 @@ async function ходПальцем(страница) {
   console.log('\n=== 360×640 ===');
   {
     const { окно: о4, страница: с4, красные: к4 } = await новаяСтраница(браузер, 360, 640);
-    await с4.click('#кнопка-вдвоём'); await спать(800);
+    await нажать(с4, 'кнопка-вдвоём'); await спать(800);
     const мера = await с4.evaluate(() => {
       const д = document.getElementById('доска').getBoundingClientRect();
       const кн = [...document.querySelectorAll('#экран-игры button')].filter((к) => к.offsetParent !== null);
