@@ -31,6 +31,15 @@
             "command": "node D:/Claud/Games/.claude/hooks/охрана-файлов.js"
           }
         ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node D:/Claud/Games/.claude/hooks/разрешение-команд.js"
+          }
+        ]
       }
     ],
     "SubagentStop": [
