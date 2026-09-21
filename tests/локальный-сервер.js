@@ -26,7 +26,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const КОРЕНЬ = path.resolve(path.join(__dirname, '..'));
+// Поддержка переменной окружения КОРЕНЬ_СЕРВЕРА для тестирования копий
+const КОРЕНЬ = process.env.КОРЕНЬ_СЕРВЕРА ? path.resolve(process.env.КОРЕНЬ_СЕРВЕРА) : path.resolve(path.join(__dirname, '..'));
 const ПОРТ = Number(process.argv[2]) || 8130;
 // Только свой компьютер. Менять на 0.0.0.0 или '' нельзя — см. пояснение выше.
 const АДРЕС = '127.0.0.1';
