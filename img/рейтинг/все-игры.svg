@@ -1,6 +1,6 @@
 <!-- Значок «Все игры»: сетка из четырёх скруглённых квадратов, по макету
      владельца (prototype/app.js и styles.css пакета макета). Цвет обводки —
-     литерал переменной --рейтинг-золото-общее из style.css (#e6b34a),
+     литерал переменной рейтинг-золото-общее из style.css (#e6b34a),
      вписан числом: внутри svg переменные css не читаются. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#e6b34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
   <rect x="3" y="3" width="6" height="6" rx="1.5"/>
