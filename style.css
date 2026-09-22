@@ -13335,6 +13335,17 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
   gap: 8px;
 }
 
+/* Заголовок «Выбрать игру» — как dialog-header h2 макета
+   (prototype/styles.css:95): размер 22px, буквы чуть плотнее,
+   без своего отступа снизу (зазор уже даёт flex-gap шапки). */
+.рейтинг-панель-игр__заголовок {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--текст);
+}
+
 .рейтинг-панель-игр__поиск {
   flex: 1 1 auto;
   min-width: 0;
@@ -13374,13 +13385,23 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
   -webkit-overflow-scrolling: touch;
 }
 
+/* Заголовок группы «ИГРЫ» / «СКОРО» внутри списка — как option-heading
+   макета (prototype/styles.css:112). Текст заглавными уже приходит из
+   js, своего text-transform в макете нет — не добавляем. */
+.рейтинг-панель-игр__раздел {
+  margin: 17px 4px 8px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #b0aeaa;
+}
+
 .рейтинг-панель-игр__пункт {
   display: flex;
   flex-shrink: 0;
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 48px;
+  min-height: 70px;
   padding: 0 14px;
   font: inherit;
   font-size: 16px;
@@ -13399,6 +13420,18 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
   background: var(--плитка-нажата);
 }
 
+/* Игры из группы «СКОРО» — как .game-option:disabled макета
+   (prototype/styles.css:111): приглушены и не реагируют на палец. */
+.рейтинг-панель-игр__пункт:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
+.рейтинг-панель-игр__пункт:disabled:active {
+  transform: none;
+  background: var(--плитка);
+}
+
 /* Значок игры слева от подписи (план «Рейтинг по макету», шаг 7).
    Своя плитка-подложка («--плитка-нажата», уже есть в наборе панели
    выше) — запасной цвет, если картинка не найдётся: квадрат остаётся
@@ -13407,12 +13440,15 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
    создаёт) — не «не загрузилось», а сознательно пусто. */
 .рейтинг-панель-игр__значок {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   background-color: var(--плитка-нажата);
   background-image: var(--значок-игры, none);
   background-position: center;
-  background-size: contain;
+  /* Плитка 50×50 (макет prototype/styles.css:105), сама картинка внутри
+     47×47 (prototype/styles.css:106) — небольшое поле вокруг рисунка,
+     не «contain» во всю плитку. */
+  background-size: 47px 47px;
   background-repeat: no-repeat;
   border-radius: 8px;
 }
@@ -13422,6 +13458,17 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Вторая строка подписи «Общий рейтинг» у пункта «Все игры» — как
+   .option-name small макета (prototype/styles.css:109). */
+.рейтинг-панель-игр__подпись-мелкая {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--текст-тихий);
 }
 
 /* Текущая игра — золотая рамка и приглушённая золотая заливка, как в
@@ -13431,6 +13478,15 @@ html.в-телеграме :is(#экран-рейтинга-игроков, #э�
   color: var(--текст);
   background: color-mix(in srgb, var(--акцент) 14%, var(--плитка));
   border-color: var(--акцент);
+}
+
+/* Галочка активного пункта — .game-option>.icon макета
+   (prototype/styles.css:110), прижата к правому краю через
+   margin-left: auto (пункт уже flex-контейнер). */
+.рейтинг-панель-игр__галочка {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--акцент);
 }
 
 .рейтинг-панель-игр__пусто {
