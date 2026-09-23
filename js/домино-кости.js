@@ -12,15 +12,26 @@
     if (button) root.type = 'button'; return root;
   }
   function цепь(root, chain, last) {
-    const columns = Math.max(2, Math.floor(root.clientWidth / 94)), cellW = root.clientWidth / columns, cellH = 94;
-    const inner = document.createElement('div'); inner.className = 'дом-цепь-внутри'; inner.style.height = `${Math.max(2, Math.ceil(chain.length / columns)) * cellH}px`;
-    const points = chain.map((t, i) => { const row = Math.floor(i / columns), col = row % 2 ? columns - 1 - i % columns : i % columns; return [(col + .5) * cellW, (row + .5) * cellH]; });
+    // Реальная ширина дубля — 39, обычной кости — 78: стыкуем их,
+    // а не разбрасываем по одинаковым ячейкам с большими промежутками.
+    const edge = 6, right = root.clientWidth - edge, cellH = 94;
+    let row = 0, cursor = edge;
+    const points = chain.map(t => {
+      const width = t.a === t.b ? 39 : 78;
+      if (row % 2 ? cursor - width < edge : cursor + width > right) {
+        row++; cursor = row % 2 ? right : edge;
+      }
+      const reverse = row % 2, x = cursor + (reverse ? -width / 2 : width / 2);
+      cursor += (reverse ? -1 : 1) * (width + 3);
+      return [x, row * cellH + cellH / 2, reverse];
+    });
+    const inner = document.createElement('div'); inner.className = 'дом-цепь-внутри'; inner.style.height = `${Math.max(2, row + 1) * cellH}px`;
     if (points.length > 1) {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('aria-hidden', 'true');
-      const line = document.createElementNS(svg.namespaceURI, 'polyline'); line.setAttribute('points', points.map(p => p.join(',')).join(' ')); svg.append(line); inner.append(svg);
+      const line = document.createElementNS(svg.namespaceURI, 'polyline'); line.setAttribute('points', points.map(p => p.slice(0,2).join(',')).join(' ')); svg.append(line); inner.append(svg);
     }
     chain.forEach((t, i) => {
-      const reverse = Math.floor(i / columns) % 2, tile = кость(reverse ? t.b : t.a, reverse ? t.a : t.b);
+      const reverse = points[i][2], tile = кость(reverse ? t.b : t.a, reverse ? t.a : t.b);
       tile.classList.add('дом-на-столе'); if (t.a === t.b) tile.classList.add('дом-дубль');
       tile.style.left = `${points[i][0]}px`; tile.style.top = `${points[i][1]}px`; tile.dataset.id = t.id;
       if (last?.тип === 'кость' && last.кость === t.id) tile.classList.add('дом-последняя');

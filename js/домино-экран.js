@@ -95,7 +95,13 @@
       const e = document.createElement('div'); e.className = 'дом-игрок'; e.id = `дом-игрок-${i}`; e.classList.toggle('ходит', active && вид.ход === i);
       const name = document.createElement('b'); name.textContent = имя(i); name.title = имя(i);
       const n = document.createElement('strong'); n.textContent = score; n.setAttribute('aria-label', `${score} очков`);
-      const count = document.createElement('small'); count.textContent = `${вид.количества[i]} костей`; e.append(name, n, count); return e;
+      const count = document.createElement('small'); count.textContent = `${вид.количества[i]} костей`; e.append(name, n, count);
+      if (i !== вид.я) {
+        const backs = document.createElement('span'); backs.className = 'дом-закрытые'; backs.setAttribute('aria-hidden', 'true');
+        for (let j = 0; j < Math.min(вид.количества[i], 7); j++) backs.append(document.createElement('i'));
+        e.append(backs);
+      }
+      return e;
     }));
     $('дом-базар').textContent = `Базар: ${вид.базар} костей`;
     К.цепь($('дом-цепь'), вид.цепь, вид.последнее);
@@ -122,6 +128,7 @@
     const lastText = last?.тип === 'базар' ? `${имя(last.кто)}: взято ${last.сколько}` : last?.тип === 'пас' ? `${имя(last.кто)}: пас` : 'Очередь по часовой стрелке';
     $('дом-подсказка').textContent = mine ? !вид.цепь.length ? `Начните с ${П.КОСТИ[вид.открывающая].join('–')}` : selected !== null ? 'Выберите подсвеченный конец на столе' : вид.допустимые.length ? 'Выберите подходящую кость' : вид.базар ? 'Нет подходящей кости — возьмите из базара' : 'Нет хода и базар пуст — пасуйте' : lastText;
     const scroll = $('дом-рука').scrollTop;
+    $('дом-рука').style.setProperty('--костей', Math.max(1, Math.min(7, вид.рука.length)));
     $('дом-рука').replaceChildren(...вид.рука.slice().sort((a, b) => a - b).map(id => {
       const tile = К.кость(...П.КОСТИ[id], true); tile.dataset.id = id;
       const legal = вид.допустимые.some(v => v.кость === id); tile.dataset.можно = legal;
@@ -151,7 +158,6 @@
   } });
   document.querySelectorAll('[data-назад]').forEach(e => e.onclick = назад);
   document.querySelectorAll('[data-меню]').forEach(e => e.onclick = () => лист.открыть());
-  $('дом-афиша').append(К.кость(6, 6), К.кость(3, 5), К.кость(2, 4));
   $('дом-боты').onclick = () => { for (const key of ['мест', 'цель', 'уровень']) $(`дом-${key}`).value = настройки[key]; экран('дом-настройки'); };
   $('дом-начать').onclick = () => {
     настройки.мест = Number($('дом-мест').value); настройки.цель = Number($('дом-цель').value); настройки.уровень = $('дом-уровень').value; сохранить();
