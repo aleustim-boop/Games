@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),F=require('../js/морской-бой-флот');
+const marks=Array(100).fill('неизвестно');marks[0]='попадание';assert.deepEqual(F.потопленные(marks),[]);
+for(const n of [8,9,10,20,30]) marks[n]='потоплен';assert.deepEqual(F.потопленные(marks),[[8,9],[10,20,30]]);
+const {chromium,безTelegram}=require('./браузер-робот');
+(async()=>{const b=await chromium.launch({headless:true});try{const p=await b.newPage({viewport:{width:390,height:844}});await безTelegram(p);await p.goto('http://127.0.0.1:8137/морской-бой.html');await p.locator('#море-боты').click();await p.locator('#море-начать').click();await p.locator('#море-случайно').click();await p.locator('#море-поле-расстановки img').evaluateAll(es=>Promise.all(es.map(e=>e.decode())));assert.equal(await p.locator('#море-поле-расстановки .море-корпус').count(),10);await p.screenshot({path:'tests/снимки/море-новый-флот.png'});
+ await p.locator('#море-готов').click();assert.equal(await p.locator('#море-поле-врага img').count(),0,'Скрытый флот отсутствует даже в DOM');assert.equal(await p.locator('#море-поле-своё .море-корпус').count(),10);
+ await p.waitForFunction(()=>document.querySelector('#море-очередь').textContent==='Ваш ход');await p.locator('#море-поле-врага button:not(:disabled)').first().click();await p.locator('#море-выстрел').click();assert(await p.locator('.море-всплеск').count()>0);
+ await p.waitForFunction(()=>!document.querySelector('.море-всплеск'));await p.screenshot({path:'tests/снимки/море-новый-бой.png'});console.log('Флот: 10 кораблей, секретность DOM, границы потопленных кораблей, эффект и очистка — OK');
+}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1;});

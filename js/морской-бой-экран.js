@@ -104,6 +104,7 @@
       e.setAttribute('aria-pressed', String(selected === n)); e.disabled = !active || (id === 'море-поле-врага' && state !== 'неизвестно');
       e.classList.toggle('последняя', !!вид?.последний && вид.последний.клетка === n && ((id === 'море-поле-врага') === вид.последний.ваш));
     });
+    window.МорскойБойФлот.рисовать($(id), marks, fleet);
   }
   function разместить(n) {
     if (вид?.готовы[0] || busy) return;
@@ -127,7 +128,9 @@
     $('море-готовность').textContent = ready ? 'Флот готов' : `${черновик.length} из 10 кораблей`;
     $('море-корабли').replaceChildren(...[4, 3, 2, 1].map(d => {
       const left = П.СОСТАВ.filter(x => x === d).length - черновик.filter(s => s.length === d).length;
-      const b = document.createElement('button'); b.className = 'кнопка'; b.textContent = `${'■'.repeat(d)} · ${left}`; b.disabled = ready || !left || busy;
+      const b = document.createElement('button'); b.className = 'кнопка'; b.disabled = ready || !left || busy;
+      const caption = document.createElement('span'); caption.className = 'море-корабль-подпись'; caption.textContent = `${d} пал. · ${left}`; b.append(caption);
+      const preview = document.createElement('img'); preview.src = `img/морской-бой/корабль-${d}.png`; preview.alt = ''; b.prepend(preview);
       b.setAttribute('aria-label', `${d} палубы: осталось ${left}`); b.setAttribute('aria-pressed', String(длина === d)); b.onclick = () => { длина = d; расстановка(); }; return b;
     }));
     for (const id of ['море-повернуть', 'море-случайно', 'море-очистить']) $(id).disabled = ready || busy;
@@ -169,6 +172,7 @@
     const key = JSON.stringify(last);
     if (last && key !== последний) {
       последний = key; звук(last.результат !== 'мимо');
+      window.МорскойБойФлот.эффект($(last.ваш ? 'море-поле-врага' : 'море-поле-своё'), last.клетка, last.результат !== 'мимо');
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const cell = $(last.ваш ? 'море-поле-врага' : 'море-поле-своё').querySelector(`[data-клетка="${last.клетка}"]`);
         cell?.animate([{ filter: 'brightness(3)', transform: 'scale(.85)' }, { filter: 'brightness(1)', transform: 'scale(1)' }], { duration: 550 });

@@ -112,3 +112,32 @@ html.в-телеграме .море-верх { display: none; }
 .море #экран-эмоций #ряд-фраз { display: flex; flex-wrap: wrap; }
 .море #экран-эмоций #ряд-фраз .кнопка { font-size: 14px; width: auto; flex: 1 1 40%; }
 .море #экран-эмоций #ряд-эмоций .кнопка { border: 0; background: transparent; box-shadow: none; font-size: 30px; }
+
+/* Флот лежит над водой; клетки остаются единственным слоем ввода. */
+.море-сетка { --ось: 17px; --рамка: 5px; position: relative; isolation: isolate; background: radial-gradient(ellipse at 30% 20%,#194761,#081e31 75%); box-shadow: 0 12px 32px #0004,inset 0 0 24px #3c9ed314; }
+.море-клетка { background: #11374b45; border-color: #6ca3c02e; }
+.море-клетка[data-состояние=корабль] { background: #84c8d612; box-shadow: none; border-radius: 0; }
+.море-свой .море-сетка { --ось: 12px; --рамка: 0px; }
+.море-флот-слой { position: absolute; inset: calc(var(--ось) + var(--рамка)) var(--рамка) var(--рамка) calc(var(--ось) + var(--рамка)); display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); grid-template-rows: repeat(10,minmax(0,1fr)); pointer-events: none; z-index: 2; }
+.море-корпус { position: relative; min-width: 0; min-height: 0; filter: drop-shadow(0 2px 2px #000a); }
+.море-корпус-рисунок { position: absolute; inset: 0; overflow: hidden; }
+.море-корпус img { position: absolute; width: 100%; height: 230%; top: -65%; left: 0; max-width: none; object-fit: contain; }
+.море-корпус--вертикальный .море-корпус-рисунок { inset: auto; left: 50%; top: 50%; width: calc(100% * var(--длина)); height: calc(100% / var(--длина)); transform: translate(-50%,-50%) rotate(90deg); }
+.море-корпус--потоплен { filter: grayscale(.9) sepia(.4) brightness(.65) drop-shadow(0 0 2px #f36b49); }
+.море-пробоина { z-index: 3; display: grid; place-items: center; color: #ff9a65; font: 900 clamp(12px,4vw,24px)/1 system-ui; text-shadow: 0 0 5px #ff5c24,0 1px 3px #000; background: radial-gradient(circle,#5a140d90,transparent 65%); }
+.море-корабли .кнопка { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 3px 5px; }
+.море-корабли img { width: 100%; height: 28px; object-fit: contain; pointer-events: none; }
+.море-корабль-подпись { font-size: 11px; white-space: nowrap; }
+.море-сетка:has(.море-клетка[aria-pressed=true]) { border-color: #b5dd68; }
+.море-клетка[aria-pressed=true] { background: radial-gradient(circle,#d2f76b38,#d2f76b12); outline: 2px solid #d2f76b; outline-offset: -3px; }
+.море-шапка h1 { letter-spacing: -.6px; }
+.море-сводка { background: linear-gradient(135deg,#1c2e34,#101c23); border-color: #48657180; }
+.море-имя > strong { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.море-всплеск { position: absolute; z-index: 5; pointer-events: none; width: 0; height: 0; }
+.море-всплеск i { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--цвет-всплеска); box-shadow: 0 0 6px var(--цвет-всплеска); }
+.море-всплеск b { position: absolute; width: 32px; height: 32px; border: 2px solid var(--цвет-всплеска); border-radius: 50%; }
+.море-сетка { background-image: linear-gradient(#0b2339aa,#071c30c9),url('img/морской-бой/вода.jpg'); background-size: cover; }
+.море-сетка > .море-клетка { background-color: #0f304833; }
+.море-сетка > .море-клетка[data-состояние=попадание] { background-color: #ff8d4b20; }
+.море-сетка > .море-клетка[data-состояние=потоплен] { background-color: #71362750; }
+.море-сетка > .море-клетка[aria-pressed=true] { background: radial-gradient(circle,#d2f76b50,#d2f76b16); }
