@@ -1,0 +1,39 @@
+'use strict';
+const assert=require('node:assert/strict'),os=require('node:os'),path=require('node:path');
+process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'catan-browser-'+process.pid);
+const adapter=require('../server/игры/катан');adapter.темпБота.обычный=80;adapter.темпБота.внеОчереди=80;
+const server=require('../server/сервер').создатьСервер(),Б=require('../js/катан-бот');
+const {chromium,безTelegram}=require('./браузер-робот'),{ход}=require('./катан-действия-браузера');
+(async()=>{
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));const b=await chromium.launch({headless:true}),errors=[];
+  try{
+    const base='http://127.0.0.1:'+server.address().port,pages=[];
+    for(let i=0;i<2;i++){
+      const p=await b.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});await безTelegram(p);p.on('pageerror',e=>errors.push(e.message));
+      await p.goto('http://127.0.0.1:8137/катан.html?server='+base);
+      await p.evaluate(()=>{const original=window.ИграПоСети.показатьВид;window.ИграПоСети.показатьВид=function(v){window.__publicView=v.катан;return original(v);};});pages.push(p);
+    }
+    const [a,c]=pages;await a.locator('#лобби-найти-игру').click();await a.locator('#открытые-столы-создать').click();
+    await a.locator('#кат-число-онлайн').getByRole('radio',{name:'Трое'}).click();
+    const creating=a.waitForResponse(r=>decodeURIComponent(new URL(r.url()).pathname)==='/создать');await a.locator('#кнопка-создать-игру').click();const ticket=await(await creating).json();
+    await a.locator('#комната').waitFor();assert.equal(await a.locator('#комната-стол button').count(),3);assert.match(await a.locator('#комната-правила').innerText(),/Катан/);
+    await a.screenshot({path:'tests/снимки/катан-онлайн-комната.png'});
+    await c.locator('#лобби-найти-игру').click();await c.locator('#открытые-столы-создать').click();await c.locator('#кнопка-войти-по-коду').click();await c.locator('#поле-кода').fill(ticket.код);await c.locator('#кнопка-войти').click();await c.locator('#комната').waitFor();
+    await a.waitForFunction(()=>document.querySelectorAll('#комната-стол .рассадка__место--свободно').length===1);
+    await a.locator('#комната-стол button').nth(2).click();await a.locator('#лист-места').getByRole('button',{name:/Посадить бота/}).click();await a.locator('#комната-начать').click();
+    for(const p of pages)await p.locator('#экран-игры').waitFor();
+    await c.reload();await c.evaluate(()=>{const original=window.ИграПоСети.показатьВид;window.ИграПоСети.показатьВид=function(v){window.__publicView=v.катан;return original(v);};});await c.locator('#кнопка-вернуться-в-игру').click();await c.locator('#экран-игры').waitFor();
+    let steps=0;
+    while(steps++<2000){
+      if(await a.evaluate(()=>window.__publicView?.phase==='finished'))break;
+      for(const p of pages){
+        const view=await p.evaluate(()=>window.__publicView);if(!view||view.phase==='finished')continue;
+        const action=Б.ход(view,'сложный');if(action){await ход(p,view,action);await p.waitForFunction(serial=>window.__publicView.serial!==serial,view.serial);assert.equal(await p.locator('#кат-ошибка').innerText(),'');}
+      }
+      await a.waitForTimeout(60);if(steps%50===0)console.log('Онлайн: шаг',steps);
+    }
+    assert(steps<2000);for(const p of pages)await p.locator('#кат-диалог').waitFor();await a.screenshot({path:'tests/снимки/катан-онлайн-победа.png'});assert.deepEqual(errors,[]);
+    console.log('Катан онлайн: два независимых браузера, стол, бот, возврат и полная партия — OK');
+    await fetch(base+'/выйти',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({код:ticket.код,пропуск:ticket.пропуск})});
+  }finally{await b.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
+})().catch(e=>{console.error(e);process.exitCode=1;});
