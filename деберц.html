@@ -6,7 +6,7 @@
   <title>Деберц — Игры с друзьями</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E♠%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css?v=80">
-  <link rel="stylesheet" href="style-деберц.css?v=22">
+  <link rel="stylesheet" href="style-деберц.css?v=23">
   <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 </head>
 <body class="деберц">
@@ -171,25 +171,78 @@
     <button id="кнопка-друг-назад" class="кнопка">Назад</button>
   </section>
   <section id="экран-комнаты" class="экран">
-    <h2>Код игры</h2>
-    <p class="деберц-тихо">Продиктуйте или перешлите код другу.</p>
-    <div id="код-комнаты" class="код-игры код-игры--ждём">····</div>
-    <button id="кнопка-позвать-друга" class="кнопка скрыт">Позвать друга</button>
-    <p id="сообщение-приглашения" class="сеть-сообщение скрыт"></p>
-    <button id="кнопка-копировать-код" class="кнопка">Скопировать код</button>
-    <p id="сообщение-копирования" class="сеть-сообщение скрыт"></p>
-    <p id="ожидание-соперника" class="деберц-тихо">Ждём друга…</p>
-    <div id="прихожая" class="прихожая скрыт">
-      <p id="прихожая-правила" class="подпись"></p>
-      <div id="список-мест" class="таблица список-мест"></div>
-      <div id="кнопки-хозяина" class="кнопки-хозяина скрыт">
-        <button id="кнопка-посадить-бота" class="кнопка">Посадить бота</button>
-        <button id="кнопка-убрать-бота" class="кнопка">Убрать бота</button>
-        <button id="кнопка-начать-игру" class="кнопка кнопка--главная">Начать игру</button>
-      </div>
-      <p id="сообщение-прихожей" class="сеть-сообщение скрыт"></p>
+    <div class="верх-игры">
+      <button id="кнопка-комната-назад" type="button" class="верх-игры__кнопка" aria-label="Выйти из комнаты"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button id="кнопка-комната-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
-    <button id="кнопка-комната-отмена" class="кнопка">Отменить игру</button>
+    <div id="комната" class="комната скрыт">
+      <header class="комната__шапка">
+        <h2 class="комната__заголовок">Комната игры</h2>
+        <span id="комната-режим" class="путь__режим путь__режим--друзья"></span>
+        <p id="комната-правила" class="комната__правила"></p>
+        <p id="комната-игроки" class="комната__игроки"></p>
+      </header>
+      <div id="комната-стол" class="рассадка рассадка--комната"></div>
+      <div id="комната-команды" class="комната__команды скрыт">
+        <div id="комната-команда-наша" class="комната__команда комната__команда--наша">
+          <span class="комната__команда-подпись"></span>
+          <span class="комната__команда-состав"></span>
+        </div>
+        <div id="комната-команда-соперники" class="комната__команда комната__команда--соперники">
+          <span class="комната__команда-подпись"></span>
+          <span class="комната__команда-состав"></span>
+        </div>
+      </div>
+      <p id="комната-весть" class="комната__весть сеть-сообщение скрыт"></p>
+      <span id="место-кнопка-позвать-друга" class="скрыт" aria-hidden="true"></span>
+      <span id="место-сообщение-приглашения" class="скрыт" aria-hidden="true"></span>
+      <div class="комната__код">
+        <span id="место-код-комнаты" class="скрыт" aria-hidden="true"></span>
+        <span id="место-кнопка-копировать-код" class="скрыт" aria-hidden="true"></span>
+      </div>
+      <span id="место-сообщение-копирования" class="скрыт" aria-hidden="true"></span>
+      <button id="комната-подбор" type="button" class="комната__подбор" role="switch" aria-checked="false" disabled>
+        <span id="комната-подбор-подпись"></span>
+        <span class="комната__скоро">скоро</span>
+      </button>
+      <button id="комната-начать" type="button" class="кнопка кнопка--главная комната__начать" disabled></button>
+      <p id="комната-подсказка" class="комната__подсказка скрыт"></p>
+      <span id="место-кнопка-комната-отмена" class="скрыт" aria-hidden="true"></span>
+    </div>
+    <div id="комната-старая">
+      <h2 class="заголовок">Код игры</h2>
+      <p class="подпись">Продиктуйте или перешлите этот код другу.</p>
+      <div class="комната__код">
+        <div id="код-комнаты" class="код-игры код-игры--ждём">····</div>
+        <button id="кнопка-копировать-код" class="кнопка">Скопировать код</button>
+      </div>
+      <p id="сообщение-копирования" class="сеть-сообщение скрыт"></p>
+      <button id="кнопка-позвать-друга" class="кнопка кнопка--главная комната__пригласить скрыт">Пригласить друга</button>
+      <p id="сообщение-приглашения" class="сеть-сообщение скрыт"></p>
+      <div id="прихожая" class="прихожая скрыт">
+        <p id="прихожая-правила" class="подпись"></p>
+        <div id="список-мест" class="таблица список-мест"></div>
+        <div id="кнопки-хозяина" class="кнопки-хозяина скрыт">
+          <button id="кнопка-посадить-бота" class="кнопка">Посадить бота</button>
+          <button id="кнопка-убрать-бота" class="кнопка">Убрать бота</button>
+          <button id="кнопка-начать-игру" class="кнопка кнопка--главная">Начать игру</button>
+        </div>
+        <p id="сообщение-прихожей" class="сеть-сообщение скрыт"></p>
+      </div>
+      <p id="ожидание-соперника" class="сеть-ожидание">Ждём, когда друг войдёт…</p>
+      <div class="кнопки-комнаты">
+        <button id="кнопка-как-играть-комната" class="кнопка кнопка--мелкая">Как играть</button>
+      </div>
+      <button id="кнопка-комната-отмена" class="кнопка кнопка--мелкая">Выйти из комнаты</button>
+    </div>
+    <div id="лист-места" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-места-заголовок">
+      <div id="лист-места-фон" class="лист-ещё__фон"></div>
+      <div class="лист-ещё__лист">
+        <h2 id="лист-места-заголовок" class="лист-ещё__заголовок">Место за столом</h2>
+        <div id="лист-места-действия"></div>
+        <button id="кнопка-лист-места-закрыть" type="button" class="лист-ещё__закрыть">Закрыть</button>
+      </div>
+    </div>
   </section>
   <section id="экран-входа" class="экран">
     <h2>Вход по коду</h2>
@@ -266,8 +319,9 @@
 <script src="js/движение-карт.js?v=3"></script>
 <script src="js/деберц-знаки.js?v=1"></script>
 <script src="js/деберц-сказать.js?v=3"></script>
-<script src="js/деберц-экран.js?v=23"></script>
-<script src="js/сеть.js?v=50"></script>
+<script src="js/деберц-экран.js?v=24"></script>
+<script src="js/дурак-комната.js?v=12"></script>
+<script src="js/сеть.js?v=51"></script>
 <script src="js/деберц-онлайн.js?v=1"></script>
 <script src="js/открытые-столы.js?v=3"></script>
 </body>

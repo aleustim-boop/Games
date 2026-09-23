@@ -10,17 +10,17 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || 8137) + '/дебе�
       const n = режим === '2x2' ? 4 : +режим;
       const p = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
       await безTelegram(p); p.on('pageerror', e => ошибки.push(e.message));
-      await p.goto(адрес); await p.locator('#кнопка-с-другом').click();
+      await p.goto(адрес); await p.locator('#лобби-найти-игру').click(); await p.locator('#открытые-столы-создать').click();
       await p.locator('[data-друзья-режим="' + режим + '"]').click();
       await p.locator('[data-друзья-цель="501"]').click();
       await p.locator('#кнопка-создать-игру').click();
-      await p.locator('#прихожая').waitFor({ state: 'visible' });
-      assert(await p.locator('#кнопка-начать-игру').isDisabled());
+      await p.locator('#комната').waitFor({ state: 'visible' });
+      assert(await p.locator('#комната-начать').isDisabled());
       for (let i = 1; i < n; i++) {
-        await p.locator('#кнопка-посадить-бота').click();
-        await p.waitForFunction(n => document.querySelectorAll('#список-мест .место-за-столом:not(.место-за-столом--пусто)').length >= n, i + 1);
+        await p.locator('#комната-стол button').nth(i).click(); await p.locator('#лист-места').getByRole('button', { name: /Посадить бота/ }).click();
+        await p.waitForFunction(n => document.querySelectorAll('#комната-стол .рассадка__место--бот').length >= n - 1, i + 1);
       }
-      await p.locator('#кнопка-начать-игру').click();
+      await p.locator('#комната-начать').click();
       await p.locator('#экран-игры').waitFor({ state: 'visible' });
       assert.equal(await p.locator('.деберц-участник').count(), n - 1);
       assert.equal(await p.locator('#деберц-цель-стола').textContent(), '501');
@@ -37,7 +37,7 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || 8137) + '/дебе�
       assert(взятка, 'В комнате разыграна взятка всеми участниками');
       assert.match(await p.locator('#деберц-обяз').textContent(), /^Обяз: /);
       await p.reload();
-      if (!(await p.locator('#экран-игры').isVisible())) await p.locator('#кнопка-с-другом').click();
+      if (!(await p.locator('#экран-игры').isVisible())) await p.locator('#кнопка-вернуться-в-игру').click();
       await p.locator('#экран-игры').waitFor({ state: 'visible' });
       assert.equal(await p.locator('.деберц-участник').count(), n - 1);
       await p.getByRole('button', { name: 'За столом', exact: true }).click();

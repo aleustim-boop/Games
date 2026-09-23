@@ -353,3 +353,16 @@
  .деберц #приложение #экран-игры.экран--виден { grid-template-rows: 26px 63px minmax(170px,1fr) 44px; }
  html.в-телеграме .деберц #приложение #экран-игры.экран--виден { grid-template-rows: 0 63px minmax(170px,1fr) 44px; }
 }
+
+/* Общий стол создания комнаты — тот же компонент, что в Дураке. */
+.деберц #экран-комнаты { justify-content: flex-start; padding-top: calc(12px + var(--отступ-сверху,0px)); }
+.деберц #комната-подбор { display: none; }
+.деберц #комната-начать.комната__ожидает::after,
+.деберц #ожидание-соперника::after {
+ content: ''; display: inline-block; width: 16px; height: 16px; margin-left: 10px;
+ border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+ vertical-align: -2px; animation: деберц-ожидание 900ms linear infinite;
+}
+@keyframes деберц-ожидание { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .деберц #комната-начать::after, .деберц #ожидание-соперника::after { animation: none; } }
+.деберц #экран-комнаты > .верх-игры { width: 100%; justify-content: space-between; }
