@@ -33,6 +33,14 @@ const server = require('../server/сервер').создатьСервер(), �
     const again = await req('состояние', players[0]); assert.equal((again.состояние || again).море.фаза, 'расстановка');
     for (const i of [0, 1]) assert.equal((await turn(i, { действие: 'готов', флот: П.случайныйФлот() })).принято, true);
     const next = await req('состояние', players[0]); assert.equal((next.состояние || next).море.вашХод, !первый, 'В реванше первый игрок меняется');
+    assert.equal((await turn(0, { действие: 'сдаться' })).принято, true);
+    const surrendered = await req('состояние', players[1]);
+    assert.equal((surrendered.состояние || surrendered).море.победа, true);
+    for (const i of [0, 1]) assert.equal((await turn(i, { действие: 'ещё' })).принято, true);
+    await req('выйти', players[1]);
+    const abandoned = await req('состояние', players[0]);
+    assert.equal((abandoned.состояние || abandoned).море.фаза, 'конец');
+    assert.equal((abandoned.состояние || abandoned).море.прерван, true);
     console.log('HTTP: независимая готовность, полный бой, защита от повторных выстрелов, скрытые флоты, реванш — OK');
   } finally { server.closeAllConnections(); await new Promise(r => server.close(r)); }
 })().catch(e => { console.error(e); process.exitCode = 1; });

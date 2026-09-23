@@ -14,7 +14,12 @@ const { chromium, безTelegram } = require('./браузер-робот'), Б 
     await a.waitForFunction(() => /^[A-Z0-9]{4,6}$/.test(document.getElementById('код-комнаты').textContent.trim()));
     const код = (await a.locator('#код-комнаты').textContent()).trim();
     await c.locator('#лобби-найти-игру').click(); await c.locator('#открытые-столы-код').click(); await c.locator('#поле-кода').fill(код); await c.locator('#кнопка-войти').click();
-    for (const p of [c, a]) { await p.locator('#море-случайно').click(); await p.locator('#море-готов').click(); }
+    await c.locator('#море-случайно').click();
+    const draft = await c.locator('#море-поле-расстановки [data-состояние="корабль"]').evaluateAll(es => es.map(e => e.dataset.клетка));
+    await c.reload(); await c.locator('#кнопка-вернуться-в-игру').click();
+    await c.locator('#море-расстановка').waitFor();
+    assert.deepEqual(await c.locator('#море-поле-расстановки [data-состояние="корабль"]').evaluateAll(es => es.map(e => e.dataset.клетка)), draft);
+    await c.locator('#море-готов').click(); await a.locator('#море-случайно').click(); await a.locator('#море-готов').click();
     await a.locator('#море-бой').waitFor(); await c.locator('#море-бой').waitFor();
     await c.reload(); await c.locator('#кнопка-вернуться-в-игру').click(); await c.locator('#море-бой').waitFor();
     for (let n = 0; n < 200; n++) {
