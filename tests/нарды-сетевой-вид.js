@@ -406,7 +406,15 @@ async function основнойСценарий() {
        ПУНКТ 1 (часть первая): доска с ботом — координаты «б1», для
        сверки с сетевым видом позже.
        ------------------------------------------------------------- */
+    // «Играть с ботом» теперь открывает второй шаг (#экран-бота-нард) —
+    // партию начинает отдельная кнопка «Играть» (#кнопка-с-ботом) на нём.
     await страница.evaluate(function () { document.getElementById('лобби-боты').click(); });
+    await спать(300);
+    await страница.evaluate(function () {
+      const кнопка = document.getElementById('кнопка-с-ботом');
+      if (!кнопка) throw new Error('на втором шаге нет кнопки «Играть» (#кнопка-с-ботом)');
+      кнопка.click();
+    });
     await спать(600);
     const рект1Бот = await страница.evaluate(function () {
       const ш = document.querySelector('[data-шашка="б1"]');
@@ -734,19 +742,26 @@ async function основнойСценарий() {
     console.log('Пункт 11. выключитьСеть() возвращает обычную игру, бот ходит.');
     await страница.evaluate(function () { window.НардыЭкран.выключитьСеть(); });
     await спать(200);
+    // «Играть с ботом» на первом шаге лобби обязан открыть второй шаг
+    // с кнопкой «Играть» — не «если есть», а именно так, иначе дальше
+    // партию не начать вообще: ноль найденного здесь = честный провал.
     await страница.evaluate(function () {
       const у = document.getElementById('лобби-боты');
-      if (у) у.click();
+      if (!у) throw new Error('на лобби нет карточки «Играть с ботом» (#лобби-боты)');
+      у.click();
     });
-    await спать(600);
+    await спать(300);
     const кнопкаСБотомВидна = await страница.evaluate(function () {
       const у = document.getElementById('кнопка-с-ботом');
       return у && !у.classList.contains('скрыт');
     });
-    if (кнопкаСБотомВидна) {
-      await страница.evaluate(function () { document.getElementById('кнопка-с-ботом').click(); });
-      await спать(600);
-    }
+    проверить(кнопкаСБотомВидна, '[11] после «Играть с ботом» на втором шаге видна кнопка «Играть» (#кнопка-с-ботом)');
+    await страница.evaluate(function () {
+      const у = document.getElementById('кнопка-с-ботом');
+      if (!у) throw new Error('кнопка «Играть» (#кнопка-с-ботом) не найдена на втором шаге');
+      у.click();
+    });
+    await спать(600);
     const экранИгрыВиден = await страница.evaluate(function () {
       const у = document.getElementById('экран-игры');
       return !!у && у.classList.contains('экран--виден');
