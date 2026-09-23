@@ -1,0 +1,111 @@
+.домино { color:#f5f3e9; background:#101715; --акцент:#d2f76b; }
+.домино *, .домино *::before, .домино *::after { box-sizing:border-box; }
+.домино .скрыт,.домино [hidden] { display:none!important; }
+.домино .экран { padding:calc(12px + var(--отступ-сверху,0px)) max(12px,calc((100% - 680px)/2)) calc(12px + var(--отступ-снизу,0px)); gap:14px; justify-content:flex-start; overflow:auto; min-height:100dvh; background:radial-gradient(ellipse at top,#34403555,transparent 60%),#101715; }
+.домино h1,.домино h2,.домино p { margin:0; }
+.домино h1 { font-size:clamp(28px,7vw,42px); }
+.домино h2 { font-size:24px; }
+.домино button { touch-action:manipulation; }
+.домино button:focus-visible { outline:3px solid #d2f76b; outline-offset:3px; }
+.домино .кнопка { min-width:0; max-width:none; min-height:44px; padding:12px 16px; background:#202825; border:1px solid #ffffff25; border-radius:14px; color:#f5f3e9; box-shadow:none; font:600 15px/1.25 system-ui; }
+.домино .кнопка--главная { background:#d2f76b; color:#172014; border-color:#d2f76b; }
+.домино button:disabled { opacity:.42; cursor:default; }
+.дом-верх { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:38px; }
+.дом-верх button { background:none; color:inherit; border:0; min-width:40px; min-height:38px; font-size:24px; }
+.дом-верх h1 { font-size:24px; }
+.дом-тихо { color:#a4b3aa; font-size:13px; line-height:1.5; }
+.дом-панель { display:grid; gap:15px; width:100%; padding:20px; border:1px solid #ffffff22; border-radius:20px; background:#1b2420; }
+.дом-настройки { display:grid; gap:14px; }
+.дом-настройки label { display:grid; gap:8px; color:#c3cec6; font-size:14px; }
+.дом-настройки select { width:100%; border:1px solid #68765d; border-radius:12px; padding:12px; color:#f5f3e9; background:#202a24; font:600 16px system-ui; }
+.дом-вход { width:100%; display:grid; gap:7px; text-align:left; }
+.дом-вход strong { font-size:23px; }
+.дом-вход span { font-weight:400; opacity:.7; font-size:13px; }
+.дом-вкладки { display:flex; width:100%; gap:8px; margin-top:auto; }
+.дом-вкладки > * { flex:1; }
+.дом-афиша { width:100%; min-height:180px; height:clamp(180px,28dvh,280px); overflow:hidden; border-radius:22px; border:1px solid #8b987043; display:flex; justify-content:center; align-items:center; gap:18px; background:radial-gradient(ellipse at center,#3d5741,#14291e 80%); box-shadow:inset 0 0 70px #0008; }
+.дом-афиша .дом-кость { width:82px; height:160px; transform:rotate(-18deg); flex-shrink:0; }
+.дом-афиша .дом-кость:nth-child(2) { transform:translateY(-20px) rotate(8deg); }
+.дом-афиша .дом-кость:nth-child(3) { transform:rotate(23deg); }
+.домино #экран-игры { height:100dvh; min-height:0; display:none; gap:8px; }
+.домино #экран-игры.экран--виден { display:grid; grid-template-columns:minmax(0,1fr); justify-content:stretch; grid-template-rows:auto auto minmax(120px,1fr) auto minmax(80px,19dvh) auto; }
+.дом-счёт { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:7px; }
+.дом-игрок { min-width:0; padding:10px; border:1px solid #546259; border-radius:14px; background:#1b2420; display:grid; grid-template-columns:1fr auto; gap:5px; position:relative; }
+.дом-игрок.ходит { border-color:#d2f76b; box-shadow:inset 0 0 0 1px #d2f76b; }
+.дом-игрок b { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.дом-игрок strong { color:#d2f76b; font-size:23px; grid-column:2; grid-row:1/3; align-self:center; }
+.дом-игрок small { color:#9cafa2; font-size:11px; }
+.дом-стол { min-height:0; display:flex; flex-direction:column; padding:10px; border:7px solid #99764e; border-radius:27px; background:radial-gradient(ellipse at 40% 20%,#294d37,#102d20); box-shadow:inset 0 0 0 2px #d0af77,inset 0 0 70px #0008,0 12px 25px #0005; }
+.дом-стол-шапка { display:flex; justify-content:space-between; gap:8px; color:#c3d3c7; font-size:12px; padding:3px 4px 7px; }
+.дом-стол-шапка button { background:transparent; color:#cfe697; border:0; font:inherit; }
+.дом-цепь { min-height:0; flex:1; position:relative; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#92a982 transparent; }
+.дом-цепь-внутри { position:relative; width:100%; }
+.дом-цепь svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.дом-цепь polyline { stroke:#a1b9a370; stroke-width:9px; fill:none; stroke-linejoin:round; }
+.дом-пустой-стол { position:absolute; inset:0; display:grid; place-items:center; text-align:center; color:#b5cdb988; pointer-events:none; font-size:16px; }
+.дом-кость { display:inline-flex; flex-direction:column; width:43px; height:86px; padding:4px; border:1px solid #c1b596; border-radius:7px; background:linear-gradient(110deg,#fff9e9,#e6dfcc); color:#172019; box-shadow:2px 4px 5px #0005,inset 1px 1px 0 #fff; gap:5px; position:relative; flex-shrink:0; }
+.дом-кость::after { content:''; position:absolute; height:1px; left:4px; right:4px; top:50%; background:#b1a890; }
+.дом-половина { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:2px; flex:1; padding:2px; min-width:0; min-height:0; }
+.дом-половина i { aspect-ratio:1; align-self:center; border-radius:50%; }
+.дом-половина .точка { background:#16211c; box-shadow:inset 1px 1px 1px #0009; }
+.дом-кость.дом-на-столе { position:absolute; width:78px; height:39px; flex-direction:row; transform:translate(-50%,-50%); }
+.дом-на-столе::after { width:1px; height:auto; top:4px; bottom:4px; left:50%; right:auto; }
+.дом-на-столе.дом-дубль { transform:translate(-50%,-50%) rotate(90deg); }
+.дом-последняя { outline:2px solid #d2f76b; outline-offset:2px; }
+.дом-концы { display:flex; gap:7px; padding-top:7px; }
+.домино .дом-концы button { flex:1; padding:8px; min-height:38px; font-size:13px; background:#12241a; border:1px solid #77925f; }
+.домино .дом-концы button:enabled { background:#d2f76b; color:#172014; }
+.дом-очередь { padding:9px 13px; border-radius:12px; background:#253028; text-align:center; min-height:47px; display:grid; place-items:center; }
+.дом-очередь strong { font-size:20px; }
+.дом-очередь small { color:#b7c6ba; font-size:12px; }
+.дом-очередь.ваш { background:#d2f76b; color:#172014; }
+.дом-очередь.ваш small { color:#3f522d; }
+.дом-ждём::after { content:''; display:inline-block; width:13px; height:13px; border:2px solid #b0c09755; border-top-color:#d2f76b; border-radius:50%; margin-left:8px; animation:дом-ждать .8s linear infinite; }
+@keyframes дом-ждать { to { transform:rotate(360deg); } }
+.дом-рука { min-height:0; overflow:auto; display:flex; flex-wrap:wrap; align-content:flex-start; justify-content:center; gap:9px; padding:8px 5px; overscroll-behavior:contain; }
+.дом-зона-руки { min-height:0; display:flex; flex-direction:column; gap:2px; }
+.дом-зона-руки > .дом-тихо { font-size:11px; text-align:center; }
+.дом-зона-руки .дом-рука { flex:1; scrollbar-width:thin; scrollbar-color:#b3ce83 #253028; }
+.домино .дом-рука button:disabled { opacity:.64; }
+.дом-рука button[aria-pressed=true] { outline:3px solid #d2f76b; transform:translateY(-3px); }
+.дом-рука button[data-можно=true] { border-bottom:4px solid #b7e148; }
+.дом-действия { display:flex; gap:8px; }
+.дом-действия > :first-child { flex:1; }
+.домино dialog { width:min(620px,calc(100vw - 24px)); max-height:calc(100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 24px); top:var(--отступ-сверху,0px); bottom:var(--отступ-снизу,0px); overflow:auto; border:1px solid #526453; border-radius:24px; padding:24px; background:#19231d; color:#f5f3e9; }
+.домино dialog::backdrop { background:#000b; backdrop-filter:blur(5px); }
+.домино .деберц-летящий-предмет { position:fixed; left:0; top:0; width:48px; height:48px; pointer-events:none; z-index:160; }
+.домино .деберц-попадание { --брызги:#d2f76b; position:fixed; left:var(--x); top:var(--y); z-index:165; pointer-events:none; }
+.домино .деберц-пятно { position:absolute; left:-25px; top:-22px; width:50px; height:44px; background:var(--брызги); border-radius:40% 60% 35% 65%; }
+.домино .деберц-капля { position:absolute; width:8px; height:11px; background:var(--брызги); border-radius:50%; }
+.домино #экран-эмоций[open] { position:fixed; top:auto; bottom:var(--отступ-снизу,0px); border-radius:22px 22px 0 0; max-height:80dvh; }
+.домино #экран-эмоций #ряд-фраз { display:flex; flex-wrap:wrap; }
+.домино #экран-эмоций #ряд-фраз .кнопка { font-size:14px; width:auto; flex:1 1 40%; }
+.домино #экран-эмоций #ряд-эмоций .кнопка { border:0; background:transparent; box-shadow:none; font-size:30px; }
+.домино .комната__ожидает::after { content:''; display:inline-block; width:14px; height:14px; margin-left:9px; border:2px solid #d2f76b44; border-top-color:#d2f76b; border-radius:50%; animation:дом-ждать .8s linear infinite; }
+.домино dialog > * + * { margin-top:18px; }
+.домино dialog .кнопка { width:100%; }
+.дом-итоги { display:grid; gap:9px; }
+.дом-итог-игрок { display:grid; grid-template-columns:1fr auto; gap:6px; padding:15px; background:#273128; border:1px solid #546447; border-radius:14px; }
+.дом-итог-игрок strong { font-size:30px; color:#d2f76b; }
+.дом-итог-игрок small { color:#aebdaf; }
+.дом-итог-игрок .дом-остаток { grid-column:1/-1; display:flex; gap:5px; overflow:auto; padding-bottom:5px; }
+.дом-остаток .дом-кость { width:27px; height:54px; padding:2px; gap:3px; }
+.дом-остаток .дом-половина { gap:1px; padding:1px; }
+.дом-история-строка { padding:12px 0; border-bottom:1px solid #ffffff20; line-height:1.7; font-size:14px; }
+#дом-обзор .дом-цепь { height:55dvh; min-height:200px; background:#163624; border-radius:16px; }
+@media(max-width:400px) { .дом-игрок { padding:7px; grid-template-columns:1fr; gap:3px; } .дом-игрок strong { grid-column:1; grid-row:auto; font-size:22px; } .дом-игрок b { font-size:12px; } .дом-верх { gap:4px; } .дом-верх h1 { font-size:21px; } .дом-верх .дом-тихо { font-size:11px; } .дом-стол { border-width:5px; padding:7px; } .домино .дом-действия .кнопка { padding:10px; font-size:13px; } }
+@media(max-height:520px) and (min-width:600px) { .домино #экран-игры.экран--виден { padding-left:12px; padding-right:12px; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); grid-template-rows:36px auto 48px minmax(60px,1fr) 44px; gap:6px 12px; } .дом-верх { grid-column:1/-1; } .дом-стол { grid-column:1; grid-row:2/6; } .дом-счёт { grid-column:2; grid-row:2; } .дом-очередь { grid-column:2; grid-row:3; } .дом-рука { grid-column:2; grid-row:4; } .дом-действия { grid-column:2; grid-row:5; } .дом-игрок { padding:6px; } .дом-игрок strong { font-size:19px; } }
+@media(max-height:520px) and (min-width:600px) { .дом-зона-руки { grid-column:2; grid-row:4; } }
+@media(prefers-reduced-motion:reduce) { .домино *, .домино *::after { animation:none!important; transition:none!important; } }
+
+/* Материалы общего эталона: дерево и ткань. */
+.дом-стол { --сукно-свет:#2a5039; --сукно:#173824; --сукно-тень:#0e2318; --дерево-свет:#aa8455; --дерево:#80603d; --дерево-тень:#493821; border-color:transparent;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E") padding-box,
+    radial-gradient(120% 95% at 50% 32%, var(--сукно-свет) 0%, var(--сукно) 50%, var(--сукно-тень) 100%) padding-box,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='60'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.5' numOctaves='2'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='240' height='60' filter='url(%23d)' opacity='0.7'/%3E%3C/svg%3E") border-box,
+    linear-gradient(180deg, var(--дерево-свет) 0%, var(--дерево) 40%, var(--дерево-тень) 100%) border-box;
+  background-size: 160px 160px, auto, 240px 60px, auto;
+  background-repeat: repeat, no-repeat, repeat, no-repeat;
+  background-blend-mode: soft-light, normal, soft-light, normal;
+}
