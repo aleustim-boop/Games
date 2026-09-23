@@ -304,6 +304,12 @@
 .деберц-история-раздач .текущая-раздача { background: rgba(210,247,107,.09); color: var(--акцент); font-weight: 700; }
 
 /* Полоса козыря внутри увеличенного сукна; карты всегда ниже неё. */
+.деберц #экран-игры #подсказка { height: 52px; min-height: 52px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 8px; border: 1px solid #ffffff28; border-radius: 12px; background: #202624; overflow: hidden; }
+.деберц #экран-игры #подсказка.деберц-подсказка--ваша { border-color: var(--сб-акцент); background: #d2f76b16; }
+#деберц-чей-ход { color: #f8f5eb; font-size: 20px; line-height: 23px; }
+.деберц-подсказка--ваша #деберц-чей-ход { color: var(--сб-акцент); }
+.деберц #экран-игры #подсказка .подсказка__текст { font-size: 11px; line-height: 13px; }
+@media (max-height: 560px) and (min-width: 600px) { .деберц #экран-игры #подсказка { height: 44px; min-height: 44px; } #деберц-чей-ход { font-size: 18px; line-height: 21px; } }
 .деберц #деберц-участники { height: 54px; }
 .деберц #деберц-участники .деберц-очередь { color: var(--сб-акцент); font-weight: 700; }
 .деберц #деберц-объявление { height: 12px; min-height: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
