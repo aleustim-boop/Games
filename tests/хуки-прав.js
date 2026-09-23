@@ -245,19 +245,31 @@ console.log('Временная папка: ' + ВРЕМ);
 
 // ---------- «Read» на чужой файл: matcher в settings.json + поведение кода ----------
 {
-  // (а) Единственная главная защита чтения — matcher в settings.json:
-  // PreToolUse для охраны навешан только на "Edit|Write|MultiEdit". Проверяем
-  // боевой (не временный — это статичный файл настроек, не трогаем и не
-  // портим) settings.json.
+  // (а) Единственная главная защита чтения — matcher(ы) в settings.json:
+  // PreToolUse для охраны навешан на Edit/Write/MultiEdit И на Bash/PowerShell
+  // (правка 23.09 — команды тоже под охраной), но не на Read. Шагов, где
+  // упоминается охрана-файлов.js, теперь может быть несколько — собираем
+  // ВСЕ их matcher'ы разом. Проверяем боевой (не временный — это статичный
+  // файл настроек, не трогаем и не портим) settings.json.
   const настройки = JSON.parse(fs.readFileSync(НАСТРОЙКИ_ИСТОЧНИК, 'utf8'));
   const преТулШаги = (настройки.hooks && настройки.hooks.PreToolUse) || [];
-  const шагОхраны = преТулШаги.find((ш) => (ш.hooks || []).some((х) => String(х.command || '').includes('охрана-файлов.js')));
-  проверить('2. в settings.json нашёлся шаг PreToolUse для охраны', !!шагОхраны, JSON.stringify(преТулШаги));
-  if (шагОхраны) {
+  const шагиОхраны = преТулШаги.filter((ш) => (ш.hooks || []).some((х) => String(х.command || '').includes('охрана-файлов.js')));
+  проверить('2. в settings.json нашёлся хотя бы один шаг PreToolUse для охраны', шагиОхраны.length > 0, JSON.stringify(преТулШаги));
+  if (шагиОхраны.length > 0) {
+    // Инструменты из всех matcher'ов охраны разом, без пустых частей от
+    // возможных лишних «|».
+    const инструментыОхраны = new Set();
+    шагиОхраны.forEach((ш) => String(ш.matcher || '').split('|').filter(Boolean).forEach((и) => инструментыОхраны.add(и)));
+    const нужныеИнструменты = ['Edit', 'Write', 'MultiEdit', 'Bash', 'PowerShell'];
     проверить(
-      '2. matcher охраны — ровно «Edit|Write|MultiEdit» (Read туда не долетает)',
-      шагОхраны.matcher === 'Edit|Write|MultiEdit',
-      'matcher=' + шагОхраны.matcher
+      '2. охрана навешана на Edit, Write, MultiEdit, Bash и PowerShell разом',
+      нужныеИнструменты.every((и) => инструментыОхраны.has(и)),
+      'найдено: ' + JSON.stringify([...инструментыОхраны])
+    );
+    проверить(
+      '2. Read в matcher(ах) охраны отсутствует (Read туда не долетает)',
+      !инструментыОхраны.has('Read'),
+      'найдено: ' + JSON.stringify([...инструментыОхраны])
     );
   }
 

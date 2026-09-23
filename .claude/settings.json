@@ -38,6 +38,10 @@
           {
             "type": "command",
             "command": "node D:/Claud/Games/.claude/hooks/разрешение-команд.js"
+          },
+          {
+            "type": "command",
+            "command": "node D:/Claud/Games/.claude/hooks/охрана-файлов.js"
           }
         ]
       }
