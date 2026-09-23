@@ -6,7 +6,7 @@
   <title>Деберц — Игры с друзьями</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E♠%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css?v=78">
-  <link rel="stylesheet" href="style-деберц.css?v=20">
+  <link rel="stylesheet" href="style-деберц.css?v=21">
   <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 </head>
 <body class="деберц">
@@ -55,25 +55,35 @@
 <a id="кнопка-лобби-назад" class="скрыт" href="index.html">Все игры</a>
 <nav class="нижние-вкладки" data-вкладки="лобби-деберц" aria-label="Разделы игры"></nav>
 </section>
-<section id="деберц-настройки" class="экран путь">
+<section id="деберц-настройки" class="экран">
 <div class="верх-игры">
       <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
       <button id="деберц-настройки-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
     </div>
 
 
-<header class="путь__шапка"><h1 class="путь__заголовок">Игра с ботом</h1><p class="путь__шаг">Настройте партию</p></header>
-<div class="сводка"><strong>Деберц</strong><p>32 карты · бела, терц, полтинник и деберц</p><p>Без обмена семёрки</p></div>
-<h2 class="путь__вопрос">Кто за столом?</h2>
-<div class="переключатель деберц-режимы" role="radiogroup" aria-label="Режим игры"><button class="переключатель__вариант" role="radio" aria-checked="true" data-режим="2">Вдвоём</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="3">Втроём</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="4">Вчетвером</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="2x2">2 на 2</button></div>
-<p id="деберц-режим-подсказка" class="путь__подсказка"></p>
-<h2 class="путь__вопрос">До скольких очков?</h2>
-<div class="переключатель" role="radiogroup" aria-label="Цель партии"><button class="переключатель__вариант" role="radio" aria-checked="true" data-цель="301">301</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-цель="501">501</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-цель="1001">1001</button></div>
-<h2 class="путь__вопрос">Сила соперника</h2>
-<div id="деберц-сложность" class="переключатель" role="radiogroup" aria-label="Сила бота"><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="лёгкий">Лёгкий</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="обычный">Обычный</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="сложный">Сложный</button></div>
-<p class="путь__подсказка">Лёгкий — для знакомства. Обычный бережёт сильные карты. Сложный запоминает сыгранные карты.</p>
+<header class="деберц-друзья-шапка"><span class="деберц-надзаголовок">ДЕБЕРЦ · ИГРА С БОТАМИ</span><h2>Настройте свой стол</h2><p>Выберите состав, длину партии и силу ботов.</p></header>
+<div class="деберц-создание">
+      <div class="деберц-шаг"><span>01</span><h3 id="деберц-бот-формат-заголовок">Как играем?</h3></div>
+      <div class="деберц-форматы" role="radiogroup" aria-labelledby="деберц-бот-формат-заголовок">
+        <button class="деберц-формат" role="radio" data-режим="2" aria-checked="true"><span class="деберц-формат-число" aria-hidden="true">1 <i>×</i> 1</span><strong>Вдвоём</strong><small>Вы и один бот</small></button>
+        <button class="деберц-формат" role="radio" data-режим="3" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">3</span><strong>Втроём</strong><small>Каждый за себя</small></button>
+        <button class="деберц-формат" role="radio" data-режим="4" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">4</span><strong>Вчетвером</strong><small>Каждый за себя</small></button>
+        <button class="деберц-формат" role="radio" data-режим="2x2" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">2 <i>×</i> 2</span><strong>Командами</strong><small>Бот-напарник напротив</small></button>
+      </div>
+      <p id="деберц-режим-подсказка" class="деберц-выбор-подсказка" aria-live="polite"></p>
+      <div class="деберц-шаг"><span>02</span><h3 id="деберц-бот-длина-заголовок">До скольких очков?</h3></div>
+      <div class="деберц-длина" role="radiogroup" aria-labelledby="деберц-бот-длина-заголовок">
+        <button role="radio" data-цель="301" aria-checked="true"><strong>301</strong><small>Короткая</small></button>
+        <button role="radio" data-цель="501" aria-checked="false"><strong>501</strong><small>Подольше</small></button>
+        <button role="radio" data-цель="1001" aria-checked="false"><strong>1001</strong><small>Большая игра</small></button>
+      </div>
+      <div class="деберц-шаг"><span>03</span><h3 id="деберц-бот-сложность-заголовок">Сила ботов</h3></div>
+<div id="деберц-сложность" class="деберц-длина деберц-сложность-выбор" role="radiogroup" aria-labelledby="деберц-бот-сложность-заголовок"><button role="radio" aria-checked="false" data-уровень="лёгкий"><strong>Лёгкий</strong><small>Знакомство</small></button><button role="radio" aria-checked="false" data-уровень="обычный"><strong>Обычный</strong><small>Практика</small></button><button role="radio" aria-checked="false" data-уровень="сложный"><strong>Сложный</strong><small>Вызов</small></button></div>
 <select id="деберц-уровень" hidden aria-label="Сила бота"><option value="лёгкий">Лёгкий</option><option value="обычный">Обычный</option><option value="сложный">Сложный</option></select>
-<button id="деберц-начать" class="кнопка кнопка--главная путь__далее">Начать игру</button>
+<button id="деберц-начать" class="кнопка кнопка--главная">Начать игру <span aria-hidden="true">→</span></button>
+<p class="деберц-после-создания">Партия сохраняется автоматически</p>
+</div>
 </section>
   <p id="деберц-память" class="деберц-тихо" role="status"></p>
   <section id="экран-игры" class="экран скрыт" aria-label="Игровой стол">
