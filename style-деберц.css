@@ -160,7 +160,7 @@
 }
 
 /* Весь игровой стол укладывается в высоту окна; рука и действия не сжимаются. */
-.деберц #приложение #экран-игры { box-sizing: border-box; height: var(--tg-viewport-stable-height, 100dvh); max-height: 100dvh; min-height: 0; padding: 6px max(10px, calc((100% - 560px) / 2)) max(8px, env(safe-area-inset-bottom)); gap: 5px; overflow: hidden; justify-content: flex-start; --в: clamp(105px, 20dvh, 176px); --ш: calc(var(--в) / 1.4); }
+.деберц #приложение #экран-игры { box-sizing: border-box; height: var(--tg-viewport-stable-height, 100dvh); max-height: 100dvh; min-height: 0; padding: calc(6px + var(--отступ-сверху, 0px)) max(10px, var(--отступ-справа, 0px), calc((100% - 560px) / 2)) max(8px, var(--отступ-снизу, 0px)) max(10px, var(--отступ-слева, 0px), calc((100% - 560px) / 2)); gap: 5px; overflow: hidden; justify-content: flex-start; --в: clamp(105px, 20dvh, 176px); --ш: calc(var(--в) / 1.4); }
 .деберц #экран-игры > * { flex-shrink: 0; }
 .деберц #экран-игры > .верх-игры { height: 26px; min-height: 26px; margin: 0; }
 .деберц #экран-игры > .шапка-игры { margin: 0; padding: 0; height: 22px; display: flex; align-items: baseline; flex-direction: row; gap: 10px; overflow: hidden; }
@@ -275,10 +275,10 @@
 .деберц #деберц-заказ { display: block; grid-column: 1; grid-row: 2; text-align: left; color: #f4f0e4; font-size: 12px; line-height: 1.25; font-weight: 600; margin: 0; padding: 0; }
 .деберц #деберц-обяз { grid-column: 2; grid-row: 1 / 3; max-width: 110px; }
 
-.деберц .деберц-счёт-сторона { grid-template-columns: 1fr auto; }
-.деберц .деберц-счёт-сторона > strong { grid-row: 1; font-size: 23px; }
+.деберц .деберц-счёт-сторона { grid-template-columns: minmax(0, 1fr); gap: 3px; padding: 5px 4px; container-type: inline-size; }
+.деберц .деберц-счёт-сторона > strong { grid-column: 1; grid-row: 2; font-size: clamp(28px, 7.5vw, 34px); letter-spacing: -1.5px; }
 .деберц .деберц-счёт-сторона > small { display: none; }
-.деберц .деберц-счёт-карточки:has(> :nth-child(3)) strong { font-size: 17px; }
+.деберц .деберц-счёт-карточки:has(> :nth-child(3)) strong { font-size: clamp(15px, 20cqw, 25px); }
 .деберц-попадание { --брызги: #dca83d; position: fixed; left: var(--x); top: var(--y); z-index: 165; pointer-events: none; }
 .деберц-попадание[data-предмет="помидор"] { --брызги: #ef4330; }
 .деберц-попадание[data-предмет="какашка"] { --брызги: #81502f; }
@@ -339,3 +339,17 @@
 .деберц #деберц-настройки { background: var(--сб-фон); color: var(--сб-текст); }
 .деберц #деберц-настройки > * { flex-shrink: 0; }
 .деберц-сложность-выбор strong { font-size: clamp(12px, 3.4vw, 15px); }
+.деберц #зона-стола > #стол { container-type: size; }
+.деберц #экран-игры #стол .карта { --в: clamp(80px, calc(100cqh - 22px), 132px); }
+
+/* Панели Telegram занимают часть окна: сохраняем место для руки и действий. */
+@media (max-height: 700px) and (max-width: 599px) {
+ html.в-телеграме .деберц #приложение #экран-игры { --в: 100px; gap: 2px; }
+ html.в-телеграме .деберц #карты-человека .карта { --в: 100px; }
+ html.в-телеграме .деберц #экран-игры > #зона-стола { min-height: 185px; }
+ html.в-телеграме .деберц #стол .карта { --в: 90px; }
+}
+@media (max-height: 560px) and (min-width: 600px) {
+ .деберц #приложение #экран-игры.экран--виден { grid-template-rows: 26px 63px minmax(170px,1fr) 44px; }
+ html.в-телеграме .деберц #приложение #экран-игры.экран--виден { grid-template-rows: 0 63px minmax(170px,1fr) 44px; }
+}
