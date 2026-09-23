@@ -98,6 +98,27 @@
 @media(max-height:520px) and (min-width:600px) { .дом-зона-руки { grid-column:2; grid-row:4; } }
 @media(prefers-reduced-motion:reduce) { .домино *, .домино *::after { animation:none!important; transition:none!important; } }
 
+/* Игровой стол использует ширину экрана, лобби сохраняет свой размер. */
+body.домино #экран-игры { padding-inline:max(8px,calc((100% - 1120px)/2)); gap:6px; }
+body.домино #экран-игры .дом-стол { padding:14px; }
+body.домино #экран-игры .дом-игрок { grid-template-columns:minmax(0,1fr) auto; padding:7px; gap:3px; }
+body.домино #экран-игры .дом-игрок strong { grid-column:2; grid-row:1/3; font-size:23px; }
+body.домино #экран-игры .дом-закрытые { grid-column:1/-1; min-height:19px; }
+body.домино #дом-обзор { width:min(1100px,calc(100vw - 16px)); max-width:none; height:calc(100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 16px); max-height:calc(100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 16px); padding:12px; overflow:hidden; }
+body.домино #дом-обзор[open] { display:grid; grid-template-rows:auto minmax(0,1fr) auto; gap:12px; }
+body.домино #дом-обзор > * { margin:0; }
+body.домино #дом-обзор #дом-цепь-большая { min-height:0; height:auto; padding:0; }
+@media(min-width:1000px) and (min-height:521px) {
+  body.домино #экран-игры.экран--виден { grid-template-columns:minmax(0,1fr) 280px; grid-template-rows:38px auto auto minmax(120px,1fr) 44px; gap:8px 12px; }
+  body.домино #экран-игры .дом-верх, body.домино #экран-игры .дом-счёт { grid-column:1/-1; }
+  body.домино #экран-игры .дом-стол { grid-column:1; grid-row:3/6; padding:32px; }
+  body.домино #экран-игры .дом-очередь { grid-column:2; grid-row:3; }
+  body.домино #экран-игры .дом-зона-руки { grid-column:2; grid-row:4; justify-content:center; }
+  body.домино #экран-игры .дом-действия { grid-column:2; grid-row:5; }
+  body.домино #экран-игры .дом-действия .кнопка { padding:8px; font-size:12px; }
+}
+@media(max-width:400px) { body.домино #экран-игры .дом-счёт { gap:4px; } body.домино #экран-игры .дом-игрок { padding:5px; } body.домино #экран-игры .дом-игрок strong { font-size:20px; } }
+
 /* Материалы общего эталона: дерево и ткань. */
 .дом-стол { --сукно-свет:#2a5039; --сукно:#173824; --сукно-тень:#0e2318; --дерево-свет:#aa8455; --дерево:#80603d; --дерево-тень:#493821; border-color:transparent;
   background:

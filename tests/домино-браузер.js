@@ -5,7 +5,7 @@ const assert = require('node:assert/strict'), { chromium, безTelegram } = req
   try {
     const p = await b.newPage({ reducedMotion: 'reduce' }); const errors = []; p.on('pageerror', e => errors.push(e.message)); await безTelegram(p);
     await p.goto('http://127.0.0.1:8137/домино.html');
-    await p.locator('#дом-боты').click(); await p.locator('#дом-выбор-число').getByRole('radio', { name:'Четверо' }).click(); await p.locator('#дом-выбор-цель').getByRole('radio', { name:'50', exact:true }).click(); await p.locator('#дом-начать').click();
+    await p.locator('#дом-боты').click(); await p.locator('#дом-выбор-число').getByRole('radio', { name:'Четверо' }).click(); await p.locator('#дом-выбор-цель').getByRole('radio', { name:'150', exact:true }).click(); await p.locator('#дом-начать').click();
     for (const [width, height] of [[320,640],[390,844],[768,1024],[1280,720],[844,390]]) {
       await p.setViewportSize({ width, height });
       const boxes = await p.locator('.дом-стол,.дом-рука,.дом-действия').evaluateAll(es => es.map(e => e.getBoundingClientRect().toJSON()));

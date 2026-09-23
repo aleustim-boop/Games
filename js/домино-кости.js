@@ -14,18 +14,29 @@
   function цепь(root, chain, last) {
     // Реальная ширина дубля — 39, обычной кости — 78: стыкуем их,
     // а не разбрасываем по одинаковым ячейкам с большими промежутками.
-    const edge = 6, right = root.clientWidth - edge, cellH = 94;
+    const edge = 6, right = root.clientWidth - edge;
     let row = 0, cursor = edge;
+    const rows = [[]];
     const points = chain.map(t => {
       const width = t.a === t.b ? 39 : 78;
       if (row % 2 ? cursor - width < edge : cursor + width > right) {
-        row++; cursor = row % 2 ? right : edge;
+        row++; rows.push([]); cursor = row % 2 ? right : edge;
       }
       const reverse = row % 2, x = cursor + (reverse ? -width / 2 : width / 2);
       cursor += (reverse ? -1 : 1) * (width + 3);
-      return [x, row * cellH + cellH / 2, reverse];
+      const point = [x, 0, reverse];
+      rows[row].push({ point, height:t.a === t.b ? 78 : 39 });
+      return point;
     });
-    const inner = document.createElement('div'); inner.className = 'дом-цепь-внутри'; inner.style.height = `${Math.max(2, row + 1) * cellH}px`;
+    // Между обычными рядами больше не остаётся пустой полосы в полкостяшки.
+    // Высоту ряда задаёт самая высокая кость (вертикальный дубль, если он есть).
+    let bottom = 7;
+    for (const items of rows) {
+      const height = Math.max(39, ...items.map(t => t.height));
+      items.forEach(t => { t.point[1] = bottom + height / 2; });
+      bottom += height + 9;
+    }
+    const inner = document.createElement('div'); inner.className = 'дом-цепь-внутри'; inner.style.height = `${bottom}px`;
     if (points.length > 1) {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('aria-hidden', 'true');
       const line = document.createElementNS(svg.namespaceURI, 'polyline'); line.setAttribute('points', points.map(p => p.slice(0,2).join(',')).join(' ')); svg.append(line); inner.append(svg);
