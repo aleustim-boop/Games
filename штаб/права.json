@@ -968,7 +968,7 @@
     "файлы": [],
     "начал": "2026-09-23 01:00",
     "номер": "a71e71fe4e07e864c",
-    "завершил": "2026-09-23 01:21"
+    "завершил": "2026-09-23 02:04"
   },
   "aeb667c278db96266": {
     "имя": "developer",
@@ -983,7 +983,8 @@
     "роль": "tester",
     "файлы": [],
     "начал": "2026-09-23 01:09",
-    "номер": "a391c4393a174a4ad"
+    "номер": "a391c4393a174a4ad",
+    "завершил": "2026-09-23 01:41"
   },
   "a5d39ac160cbe1d6a": {
     "имя": "developer",
@@ -1048,5 +1049,113 @@
     "начал": "2026-09-23 01:37",
     "номер": "a0373322543fac868",
     "завершил": "2026-09-23 01:37"
+  },
+  "ae99e9f2189c04414": {
+    "имя": "developer",
+    "роль": "developer",
+    "файлы": [],
+    "начал": "2026-09-23 01:47",
+    "номер": "ae99e9f2189c04414",
+    "завершил": "2026-09-23 01:55"
+  },
+  "aa60615c6279e196b": {
+    "имя": "reviewer",
+    "роль": "reviewer",
+    "файлы": [],
+    "начал": "2026-09-23 01:50",
+    "номер": "aa60615c6279e196b",
+    "завершил": "2026-09-23 01:56"
+  },
+  "ac9feef80b45e5990": {
+    "имя": "developer",
+    "роль": "developer",
+    "файлы": [
+      "js/рейтинг-экран.js",
+      "tests/рейтинг-партия-7.js",
+      "tests/рейтинг-мелочи-после-партии-6.js",
+      "tests/поддельный-браузер.js",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/prototype/app.js",
+      "docs/01_LOGIC_AND_NAVIGATION_RU.md",
+      "style.css"
+    ],
+    "начал": "2026-09-23 02:05",
+    "номер": "ac9feef80b45e5990"
+  },
+  "ab85f9f53fa5f6f34": {
+    "имя": "developer",
+    "роль": "developer",
+    "файлы": [
+      "server/рейтинг.js",
+      "server/комнаты.js",
+      "server/билеты.js",
+      "tests/рейтинг-повтор-партии.js",
+      "tests/очки-рейтинга.js",
+      "tests/срочная-запись-рейтинга.js",
+      "server/сила.js"
+    ],
+    "начал": "2026-09-23 02:05",
+    "номер": "ab85f9f53fa5f6f34"
+  },
+  "a1d90f34a08fa072a": {
+    "имя": "смотритель",
+    "роль": "смотритель",
+    "файлы": [],
+    "начал": "2026-09-23 02:05",
+    "номер": "a1d90f34a08fa072a",
+    "завершил": "2026-09-23 02:06"
+  },
+  "a0fbddb706a7b3dae": {
+    "имя": "developer",
+    "роль": "developer",
+    "файлы": [
+      "style.css",
+      "js/профиль-экран.js",
+      "js/game.js",
+      "index.html",
+      "tests/все-экраны-в-полном-экране.js",
+      "tests/снимок-профиля.js",
+      "штаб/план-профиль-по-макету.md",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/prototype/styles.css"
+    ],
+    "начал": "2026-09-23 02:07",
+    "номер": "a0fbddb706a7b3dae"
+  },
+  "ac3e1080f237f03d5": {
+    "имя": "смотритель",
+    "роль": "смотритель",
+    "файлы": [],
+    "начал": "2026-09-23 02:09",
+    "номер": "ac3e1080f237f03d5",
+    "завершил": "2026-09-23 02:09"
+  },
+  "a484821a0ee9bc17c": {
+    "имя": "reviewer",
+    "роль": "reviewer",
+    "файлы": [
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/CLAUDE_START_HERE.md",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/docs",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/qa/VALIDATION_RU.md",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/prototype/app.js",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/prototype/styles.css",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/prototype/demo-data.js",
+      "js/рейтинг-экран.js",
+      "js/нижние-вкладки.js",
+      "js/профиль-экран.js",
+      "style.css",
+      "штаб/план-рейтинг-партия-7.md"
+    ],
+    "начал": "2026-09-23 02:19",
+    "номер": "a484821a0ee9bc17c"
+  },
+  "a1d5130af7190fbf8": {
+    "имя": "смотритель",
+    "роль": "смотритель",
+    "файлы": [
+      "D:/Claud/Games/tests/снимки/рейтинг-шторка-390.png",
+      "C:/Users/Admin/Downloads/leaderboard_cloudcode_pack_v1/leaderboard_cloudcode_pack_v1/references/screens/02_game_picker.png"
+    ],
+    "начал": "2026-09-23 02:22",
+    "номер": "a1d5130af7190fbf8",
+    "завершил": "2026-09-23 02:22"
   }
 }
