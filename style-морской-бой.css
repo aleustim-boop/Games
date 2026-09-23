@@ -1,0 +1,100 @@
+.море { color: #f8f5eb; background: #0e1417; --акцент: #d2f76b; }
+.море *, .море *::before, .море *::after { box-sizing: border-box; }
+.море .экран { padding: calc(12px + var(--отступ-сверху, 0px)) max(12px, calc((100% - 560px)/2)) calc(16px + var(--отступ-снизу, 0px)); gap: 14px; overflow-y: auto; justify-content: flex-start; min-height: 100dvh; background: radial-gradient(ellipse at top,#24302770,transparent 55%),#0e1417; }
+.море .скрыт, .море [hidden] { display: none !important; }
+.море h1, .море h2, .море p { margin: 0; }
+.море h1 { font-size: clamp(26px,7vw,38px); line-height: 1.12; }
+.море h2 { font-size: 22px; }
+.море .кнопка { border: 1px solid #ffffff28; background: #1d2326; color: #f8f5eb; box-shadow: none; font: inherit; font-weight: 650; min-height: 44px; min-width: 0; padding: 10px 14px; border-radius: 14px; max-width: none; }
+.море .кнопка--главная { background: #d2f76b; color: #131910; border-color: transparent; }
+.море button { touch-action: manipulation; }
+.море button:focus-visible { outline: 3px solid #d2f76b; outline-offset: 2px; }
+.море button:disabled { opacity: .45; cursor: default; }
+.море-верх { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 36px; }
+.море-верх button { background: transparent; border: 0; color: inherit; font-size: 25px; min-width: 40px; height: 36px; }
+html.в-телеграме .море-верх { display: none; }
+.море-тихо { color: #9aa8b3; font-size: 13px; line-height: 1.5; }
+.море-вход { display: flex; flex-direction: column; gap: 6px; padding: 20px; text-align: left; width: 100%; }
+.море-вход strong { font-size: 22px; }
+.море-вход span { font-size: 13px; opacity: .7; }
+.море-афиша { width: 100%; min-height: 180px; height: clamp(160px,26dvh,260px); border: 1px solid #35566a; border-radius: 20px; overflow: hidden; background: radial-gradient(ellipse at 65% 40%,#194e70,#0b1b2b 70%); display: grid; place-items: center; position: relative; }
+.море-афиша::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(#74b4df14 1px,transparent 1px),linear-gradient(90deg,#74b4df14 1px,transparent 1px); background-size: 28px 28px; }
+.море-афиша svg { width: 80%; max-height: 180px; position: relative; }
+.море-вкладки { display: flex; justify-content: space-around; width: 100%; gap: 8px; margin-top: auto; }
+.море-вкладки button { flex: 1; }
+.море-выбор { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.море-выбор [aria-checked=true] { border-color: #d2f76b; color: #d2f76b; background: #d2f76b12; }
+.море-панель { padding: 14px; border: 1px solid #ffffff22; border-radius: 16px; background: #171f23; width: 100%; display: grid; gap: 12px; }
+.море #экран-игры { --поле: min(calc(100vw - 24px),calc((100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 202px)/1.49),500px); gap: 8px; height: 100dvh; min-height: 0; overflow: auto; align-items: center; }
+.море-шапка { display: flex; align-items: center; justify-content: space-between; width: min(100%,560px); gap: 8px; }
+.море-шапка h1 { font-size: 23px; }
+.море #экран-игры > .море-верх { display: none; }
+@media (max-width: 400px) { .море-шапка h1 { font-size: 19px; white-space: nowrap; } .море-шапка { gap: 5px; } .море-шапка button { padding: 5px; font-size: 11px; } .море-сводка { padding: 7px; gap: 6px; } .море-сводка .море-тихо { font-size: 10px; } }
+.море-шапка button { background: transparent; color: #aebcc7; border: 1px solid #ffffff25; border-radius: 10px; padding: 7px; }
+.море-стол { width: var(--поле); min-width: 260px; display: grid; gap: 8px; }
+.море-имя { display: flex; justify-content: space-between; align-items: center; font-size: 13px; min-height: 27px; gap: 6px; }
+.море-имя span { color: #a8b9c7; font-size: 11px; }
+.море-сетка { display: grid; grid-template-columns: 17px repeat(10,minmax(0,1fr)); grid-template-rows: 17px repeat(10,minmax(0,1fr)); aspect-ratio: 1; width: 100%; border: 1px solid #31536b; background: #0a2133; border-radius: 10px; padding: 5px; overflow: hidden; }
+.море-сетка > span { text-align: center; font-size: 10px; color: #adc5d9; display: grid; place-items: center; }
+.море-клетка { border: 0; border-right: 1px solid #345b78; border-bottom: 1px solid #345b78; border-radius: 0; min-width: 0; min-height: 0; padding: 0; display: grid; place-items: center; background: #0d2940; color: #d6e6f5; font: 700 clamp(12px,4vw,22px)/1 system-ui; position: relative; }
+.море .море-клетка:disabled { opacity: 1; }
+.море-клетка[data-состояние=корабль] { background: #607b8b; box-shadow: inset 0 0 0 2px #a9bcc459; border-radius: 4px; }
+.море-клетка[data-состояние=потоплен] { background: #6e3b38; color: #ff8b7b; }
+.море-клетка[data-состояние=попадание] { background: #324353; color: #ff7c68; }
+.море-клетка[data-состояние=пусто] { color: #608098; }
+.море-клетка[aria-pressed=true] { outline: 2px solid #d2f76b; outline-offset: -2px; background: #304531; color: #d2f76b; }
+.море-клетка.последняя { box-shadow: inset 0 0 0 2px #d2f76b80; }
+.море-низ { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.море-свой { background: #101c23; border: 1px solid #2c404b; border-radius: 12px; padding: 6px; }
+.море-свой .море-сетка { grid-template-columns: 12px repeat(10,minmax(0,1fr)); grid-template-rows: 12px repeat(10,minmax(0,1fr)); border: 0; padding: 0; }
+.море-свой .море-сетка > span { font-size: 7px; }
+.море-свой .море-клетка { font-size: 11px; }
+.море-свой button.море-увеличить { width: 100%; background: transparent; border: 0; color: #dbe7ed; padding: 0 0 4px; text-align: left; font-size: 11px; }
+.море-сводка { border: 1px solid #2c404b; background: #111c22; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+#море-очередь { font-size: clamp(14px,3.5vw,20px); color: #d2f76b; }
+#море-цель { font-size: 18px; }
+#море-событие { font-size: 12px; line-height: 1.35; color: #acbdc9; min-height: 32px; }
+.море-действия { display: flex; width: 100%; gap: 8px; }
+.море-действия > :first-child { flex: 1; }
+.море-действия .кнопка { font-size: 14px; min-height: 44px; padding: 8px; }
+.море-расстановка { width: 100%; max-width: 430px; min-width: 0; display: grid; gap: 10px; }
+.море-корабли { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; }
+.море-корабли button { min-height: 43px; font-size: 12px; padding: 6px; }
+.море-корабли [aria-pressed=true] { border-color: #d2f76b; color: #d2f76b; }
+.море-расстановка .море-сетка { width: min(100%,calc(100dvh - var(--отступ-сверху,0px) - 305px)); min-width: 250px; margin: auto; }
+.море-расстановка > p { min-height: 36px; }
+.море dialog { width: min(500px,calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; background: #171f23; color: #f8f5eb; border: 1px solid #52625a; border-radius: 22px; padding: 22px; }
+.море dialog::backdrop { background: #000b; }
+.море dialog h2 { margin-bottom: 16px; }
+.море dialog p { margin: 10px 0; line-height: 1.55; }
+.море dialog .кнопка { width: 100%; margin-top: 12px; }
+.море-итоги { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.море-итоги > div { padding: 16px; background: #ffffff06; border: 1px solid #ffffff19; border-radius: 16px; }
+.море-итоги strong { font-size: 32px; color: #d2f76b; display: block; margin: 10px 0; }
+.море #экран-эмоций .ряд-знаков { display: grid; grid-template-columns: repeat(6,1fr); gap: 6px; }
+.море #экран-эмоций .ряд-знаков .кнопка { padding: 6px; min-width: 0; font-size: 24px; }
+.море #экран-эмоций .панель-знаков__вкладки { display: flex; gap: 6px; margin-bottom: 14px; }
+.море #экран-эмоций .ряд-знаков:has(.предмет-броска) { grid-template-columns: repeat(5,1fr); }
+.море #экран-эмоций .предмет-броска { width: 100%; }
+@media (min-width: 800px), (orientation: landscape) and (min-width: 600px) {
+ .море #экран-игры { --поле: min(40vw,calc(100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 152px),430px); padding-inline: 12px; }
+ .море-стол { width: min(100%,900px); grid-template-columns: var(--поле) minmax(200px,300px); justify-content: center; align-items: start; }
+ .море-низ { grid-template-columns: 1fr; }
+ .море-свой { max-width: 210px; width: 100%; justify-self: center; }
+ .море-стол > .море-действия { grid-column: 1 / -1; }
+ .море-сводка { gap: 5px; }
+}
+@media (max-height: 520px) and (min-width: 600px) {
+ .море-стол { grid-template-columns: minmax(200px,270px) minmax(210px,280px); }
+ .море-низ { grid-template-columns: 1fr 1fr; }
+ .море #экран-игры { height: auto; min-height: 100dvh; }
+}
+@media (prefers-reduced-motion: reduce) { .море * { animation: none !important; transition: none !important; } }
+.море .деберц-летящий-предмет { position: fixed; left: 0; top: 0; width: 48px; height: 48px; pointer-events: none; z-index: 160; }
+.море .деберц-попадание { --брызги: #9ad5ed; position: fixed; left: var(--x); top: var(--y); z-index: 165; pointer-events: none; }
+.море .деберц-пятно { position: absolute; left: -25px; top: -22px; width: 50px; height: 44px; background: var(--брызги); border-radius: 40% 60% 35% 65%; }
+.море .деберц-капля { position: absolute; width: 8px; height: 11px; background: var(--брызги); border-radius: 50%; }
+.море #экран-эмоций[open] { position: fixed; top: auto; bottom: 0; border-radius: 22px 22px 0 0; max-height: 80dvh; }
+.море #экран-эмоций #ряд-фраз { display: flex; flex-wrap: wrap; }
+.море #экран-эмоций #ряд-фраз .кнопка { font-size: 14px; width: auto; flex: 1 1 40%; }
+.море #экран-эмоций #ряд-эмоций .кнопка { border: 0; background: transparent; box-shadow: none; font-size: 30px; }

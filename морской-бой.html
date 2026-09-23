@@ -1,0 +1,72 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Морской бой — Игры с друзьями</title><link rel="stylesheet" href="style.css?v=78"><link rel="stylesheet" href="style-морской-бой.css?v=1"><script>window.ИграСтраницы='морской-бой';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script></head><body class="море"><main id="приложение">
+<section id="экран-лобби" class="экран экран--виден"><div class="море-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div><h1>Морской бой</h1><p class="море-тихо">Десять кораблей. Один победитель.</p><button id="море-продолжить" class="кнопка скрыт">Продолжить бой с ботом</button>
+<div class="море-афиша" aria-label="Корабль на морской карте"><svg viewBox="0 0 400 180" fill="none" aria-hidden="true"><circle cx="305" cy="65" r="44" stroke="#d2f76b" opacity=".5"/><path d="M305 10v110M250 65h110" stroke="#d2f76b" opacity=".5"/><path d="M35 118h290l-42 36H69z" fill="#7693a5"/><path d="M106 116V77h103v39M135 76V48h33v28M156 46V21M210 102h40V84h19v32" stroke="#b4c9d5" stroke-width="7"/><path d="M80 133h177" stroke="#233e50" stroke-width="7"/><path d="M12 169q30-15 60 0t60 0t60 0t60 0t60 0t60 0" stroke="#4384a8" stroke-width="3"/></svg></div>
+<button id="лобби-найти-игру" class="кнопка кнопка--главная море-вход"><strong>Играть онлайн</strong><span>Выберите стол или пригласите друга</span></button><button id="море-боты" class="кнопка море-вход"><strong>Играть с ботами</strong><span>Три уровня · расстановка вручную или случайно</span></button><p id="море-память" class="море-тихо" role="status"></p><nav class="море-вкладки"><button class="кнопка" id="кнопка-лобби-назад">Игры</button><button class="кнопка" id="море-рейтинг">Рейтинг</button><button class="кнопка" id="море-профиль">Профиль</button></nav></section>
+<section id="море-настройки" class="экран"><div class="море-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div><h1>Настройте свой бой</h1><div class="море-панель"><strong>Классический морской бой</strong><p class="море-тихо">10 × 10 · 10 кораблей · без касаний</p><h2>Сила бота</h2><div class="море-выбор" role="radiogroup" aria-label="Сила бота"><button class="кнопка" data-уровень="лёгкий" role="radio">Лёгкий</button><button class="кнопка" data-уровень="обычный" role="radio">Обычный</button><button class="кнопка" data-уровень="сложный" role="radio">Сложный</button></div><p class="море-тихо">Бот не видит ваши корабли и стреляет по тем же правилам.</p><button id="море-начать" class="кнопка кнопка--главная">Расставить корабли →</button></div></section>
+<section id="экран-игры" class="экран"><div class="море-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div><div class="море-шапка"><button data-назад aria-label="Назад">‹</button><h1>Морской бой</h1><button id="море-правила">Правила</button><button id="море-сдаться">Сдаться</button></div><p id="строка-связи" class="море-тихо скрыт" role="status"></p>
+<div id="море-расстановка" class="море-расстановка"><div class="море-имя"><strong>Ваш флот</strong><span id="море-готовность">0 из 10 кораблей</span></div><div id="море-поле-расстановки" class="море-сетка" aria-label="Расстановка кораблей"></div><div id="море-корабли" class="море-корабли"></div><div class="море-действия"><button id="море-повернуть" class="кнопка">↻ Горизонтально</button><button id="море-случайно" class="кнопка">Случайно</button><button id="море-очистить" class="кнопка">Очистить</button></div><p id="море-подсказка-расстановки" class="море-тихо" role="status">Выберите корабль, затем его начальную клетку. Нажмите на установленный корабль, чтобы убрать его.</p><button id="море-готов" class="кнопка кнопка--главная">Готов к бою</button></div>
+<div id="море-бой" class="море-стол" hidden><div><div class="море-имя"><strong id="море-соперник">Соперник</strong><span id="море-счёт-врага"></span></div><div id="море-поле-врага" class="море-сетка" aria-label="Поле соперника"></div></div><div class="море-низ"><div class="море-свой"><button id="море-увеличить" class="море-увеличить">Ваш флот ↗</button><div id="море-поле-своё" class="море-сетка" aria-label="Ваш флот"></div></div><div class="море-сводка"><strong id="море-очередь" role="status"></strong><strong id="море-цель">Цель: —</strong><p id="море-событие" role="status"></p><small class="море-тихо">● Мимо · × Попадание</small><small id="море-счёт-свой" class="море-тихо"></small></div></div><div class="море-действия"><button id="море-выстрел" class="кнопка кнопка--главная">Выстрелить</button><button id="кнопка-эмоции" class="кнопка">Сказать</button></div></div></section>
+<section id="экран-друга" class="экран"><div class="море-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div><button id="кнопка-с-другом" class="скрыт">Создать игру</button><h1>Ваш стол</h1><div class="море-панель"><h2>Классический морской бой</h2><p>Два игрока · поле 10 × 10 · десять кораблей</p><p class="море-тихо">Стол появится в онлайн-списке. Друга можно пригласить по коду.</p><button id="кнопка-создать-игру" class="кнопка кнопка--главная">Создать игру</button></div>    <button id="кнопка-вернуться-в-игру" class="кнопка скрыт">Вернуться к игре с другом</button>
+    <div class="деберц-пригласили"><div><strong>Уже пригласили?</strong><p>Присоединитесь к столу друзей</p></div><button id="кнопка-войти-по-коду" class="кнопка">Ввести код <span aria-hidden="true">↗</span></button></div>
+    <p id="сообщение-друга" class="сеть-сообщение скрыт"></p>
+    <p id="нет-сервера-главное" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-играть-с-ботом" class="кнопка скрыт">Играть с ботом</button>
+    <button id="кнопка-почему-нет-сервера" class="кнопка скрыт">Почему так и что делать</button>
+    <p id="нет-сервера-подробности" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-адрес-сервера" class="кнопка скрыт">Указать адрес сервера</button>
+    <p id="адрес-подпись" class="деберц-тихо скрыт">Адрес сервера игры</p>
+    <input id="поле-адреса" class="поле-кода поле-адреса скрыт" type="text" inputmode="url" aria-label="Адрес сервера" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button id="кнопка-проверить-адрес" class="кнопка скрыт">Проверить</button>
+    <button id="кнопка-сохранить-адрес" class="кнопка скрыт">Сохранить адрес</button>
+    <p id="сообщение-адреса" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-стереть-адрес" class="кнопка скрыт">Стереть вписанный адрес</button>
+    <button id="кнопка-друг-назад" class="кнопка">Назад</button>
+  </section>
+  <section id="экран-комнаты" class="экран">
+    <h2>Код игры</h2>
+    <p class="деберц-тихо">Продиктуйте или перешлите код другу.</p>
+    <div id="код-комнаты" class="код-игры код-игры--ждём">····</div>
+    <button id="кнопка-позвать-друга" class="кнопка скрыт">Позвать друга</button>
+    <p id="сообщение-приглашения" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-копировать-код" class="кнопка">Скопировать код</button>
+    <p id="сообщение-копирования" class="сеть-сообщение скрыт"></p>
+    <p id="ожидание-соперника" class="деберц-тихо">Ждём друга…</p>
+    <div id="прихожая" class="прихожая скрыт">
+      <p id="прихожая-правила" class="подпись"></p>
+      <div id="список-мест" class="таблица список-мест"></div>
+      <div id="кнопки-хозяина" class="кнопки-хозяина скрыт">
+        <button id="кнопка-посадить-бота" class="кнопка">Посадить бота</button>
+        <button id="кнопка-убрать-бота" class="кнопка">Убрать бота</button>
+        <button id="кнопка-начать-игру" class="кнопка кнопка--главная">Начать игру</button>
+      </div>
+      <p id="сообщение-прихожей" class="сеть-сообщение скрыт"></p>
+    </div>
+    <button id="кнопка-комната-отмена" class="кнопка">Отменить игру</button>
+  </section>
+  <section id="экран-входа" class="экран">
+    <h2>Вход по коду</h2>
+    <input id="поле-кода" class="поле-кода" type="text" maxlength="6" placeholder="ABCD" aria-label="Код комнаты" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <button id="кнопка-войти" class="кнопка кнопка--главная">Войти в игру</button>
+    <p id="сообщение-входа" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-адрес-из-входа" class="кнопка скрыт">Указать адрес сервера</button>
+    <button id="кнопка-вход-назад" class="кнопка">Назад</button>
+  </section>
+
+<dialog id="море-справка"><h2>Как играть</h2><p>Расставьте 10 кораблей: один на 4 клетки, два на 3, три на 2 и четыре на 1. Корабли стоят по прямой и не касаются даже углами.</p><p>Первый ход определяется случайно. Выберите клетку противника и нажмите «Выстрелить». Попадание даёт ещё один выстрел, промах передаёт ход.</p><p>Корабль потоплен, когда поражены все его клетки. Вода вокруг отмечается автоматически — эти отметки не считаются выстрелами. Побеждает тот, кто первым потопит весь флот противника.</p><p>При расстановке нажмите на корабль, чтобы убрать и установить заново. После «Готов» расстановку менять нельзя. Бой начинается, когда готовы оба.</p><form method="dialog"><button class="кнопка кнопка--главная">Понятно</button></form></dialog>
+<dialog id="море-результат"><h2 id="море-итог-заголовок"></h2><p id="море-итог-подпись" class="море-тихо"></p><div id="море-статистика" class="море-итоги"></div><button id="море-реванш" class="кнопка кнопка--главная">Ещё бой</button><button id="море-посмотреть" class="кнопка">Посмотреть поля</button><button id="море-в-лобби" class="кнопка">В лобби</button></dialog>
+<dialog id="море-подтверждение"><h2>Сдаться?</h2><p>Сопернику будет записана победа.</p><button id="море-сдаться-да" class="кнопка">Да, сдаться</button><form method="dialog"><button class="кнопка кнопка--главная">Продолжить бой</button></form></dialog>
+<dialog id="море-новая"><h2>Начать новый бой?</h2><p>Сохранённая партия с ботом будет заменена.</p><button id="море-новая-да" class="кнопка кнопка--главная">Новый бой</button><form method="dialog"><button id="море-старую" class="кнопка">Продолжить старую партию</button></form></dialog>
+<dialog id="море-большой-флот"><h2>Ваш флот</h2><div id="море-поле-большое" class="море-сетка"></div><form method="dialog"><button class="кнопка">Закрыть</button></form></dialog>
+<dialog id="море-история"><h2>Мои бои</h2><div id="море-история-список"></div><form method="dialog"><button class="кнопка">Закрыть</button></form></dialog>  <div id="лист-игры" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-игры-заголовок">
+    <div id="лист-игры-фон" class="лист-ещё__фон"></div>
+    <div class="лист-ещё__лист">
+      <h2 id="лист-игры-заголовок" class="лист-ещё__заголовок">Ещё</h2>
+      <button id="кнопка-лист-игры-меню" class="лист-ещё__строка">В меню</button>
+      <button id="кнопка-лист-игры-правила" class="лист-ещё__строка">Как играть</button>
+      <button id="кнопка-лист-игры-звук" class="лист-ещё__строка" role="switch" aria-checked="true">Звук <span id="лист-игры-звук-состояние" class="лист-ещё__значение">вкл</span></button>
+      <button id="кнопка-лист-игры-рекорды" class="лист-ещё__строка">Мои результаты</button>
+      <button id="кнопка-лист-игры-закрыть" class="лист-ещё__закрыть">Закрыть</button>
+    </div>
+  </div>
+</main>
+<script src="js/telegram.js?v=27"></script><script src="js/лист-ещё.js?v=2"></script><script src="js/рейтинг-экран.js?v=31"></script><script src="js/профиль-экран.js?v=1"></script><script src="js/морской-бой-правила.js?v=1"></script><script src="js/морской-бой-бот.js?v=1"></script><script src="js/морской-бой-память.js?v=1"></script><script src="js/деберц-знаки.js?v=1"></script><script src="js/деберц-сказать.js?v=3"></script><script src="js/морской-бой-экран.js?v=1"></script><script src="js/сеть.js?v=50"></script><script src="js/деберц-онлайн.js?v=1"></script><script src="js/открытые-столы.js?v=3"></script></body></html>
