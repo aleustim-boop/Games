@@ -1,0 +1,22 @@
+/* Тот же стол и места, что на шаге игроков Дурака и в общей комнате. */
+.домино .дом-сбор-стола { gap:16px; padding:18px; }
+.дом-выбор-числа { display:flex; gap:7px; }
+.дом-выбор-числа button { flex:1; min-width:0; min-height:44px; border:1px solid #ffffff25; border-radius:12px; padding:8px 5px; background:#182126; color:#eaece6; font:600 14px system-ui; }
+.дом-выбор-числа button[aria-checked=true] { color:#15200e; background:#d2f76b; border-color:#d2f76b; }
+.дом-выбор-параметра { display:grid; gap:9px; }
+.дом-выбор-параметра > strong { font-size:14px; }
+.домино .дом-выбор-стол { width:calc(100% - 60px); max-width:400px; justify-self:center; aspect-ratio:1.85; margin:35px auto 58px; --место:48px; --дерево-свет:#b99066; --дерево:#89603d; --дерево-тень:#4c301c; --сукно-свет:#31573d; --сукно:#183b27; --сукно-тень:#10271a; }
+.дом-выбор-стол__центр { position:absolute; inset:0; display:grid; place-items:center; font-size:15px; letter-spacing:.17em; font-weight:700; color:#eee9d58c; text-shadow:0 2px 4px #0008; pointer-events:none; }
+.домино .дом-выбор-стол .рассадка__место { padding:0; border:1px solid #8d9c9860; cursor:pointer; }
+.домино .дом-выбор-стол .рассадка__место:disabled { opacity:1; cursor:default; }
+.домино #комната-стол .рассадка__место:disabled { opacity:1; }
+.домино .дом-выбор-стол .рассадка__место--я { border-color:#d2f76b; }
+.дом-место-значок { display:grid; place-items:center; width:32px; height:32px; font-size:32px; line-height:1; color:#cad8c9; }
+.дом-место-значок img { width:100%; height:100%; filter:invert(.85); }
+.дом-выбор-стол .рассадка__место--я img { filter:invert(88%) sepia(59%) saturate(500%) hue-rotate(22deg); }
+.дом-выбор-стол .рассадка__имя { font-size:12px; color:#e6ece2; padding:3px 5px; background:#101a16dd; border-radius:5px; }
+.дом-выбор-стол .рассадка__место--я .рассадка__имя { color:#d2f76b; }
+.дом-выбор-стол .рассадка__место--свободно { border-style:dashed; box-shadow:none; background:#18251fee; }
+.домино .дом-сбор-стола > [role=status] { text-align:center; min-height:20px; }
+.домино #экран-друга .дом-сбор-стола > p:not([role=status]):last-of-type { font-size:12px; color:#9dada5; }
+@media(min-width:600px) { .домино .дом-выбор-стол { --место:58px; margin-top:38px; margin-bottom:63px; } }

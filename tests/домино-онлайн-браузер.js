@@ -12,7 +12,7 @@ const { chromium, безTelegram } = require('./браузер-робот');
     for (const p of pages) { await безTelegram(p); p.on('pageerror', e => errors.push(e.message)); await p.goto('http://127.0.0.1:8137/домино.html?server=' + base); }
     const [a, c] = pages;
     await a.locator('#лобби-найти-игру').click(); await a.locator('#открытые-столы-создать').click();
-    await a.locator('#домино-мест-друга').selectOption('3'); await a.locator('#домино-цель-друга').selectOption('50');
+    await a.locator('#дом-онлайн-число').getByRole('radio', { name:'Трое' }).click(); await a.locator('#дом-онлайн-цель').getByRole('radio', { name:'50', exact:true }).click();
     const creating = a.waitForResponse(r => decodeURIComponent(new URL(r.url()).pathname) === '/создать');
     await a.locator('#кнопка-создать-игру').click(); const ticket = await (await creating).json();
     await a.locator('#комната').waitFor({ timeout: 5000 }).catch(async e => { console.log(JSON.stringify(ticket), errors, await a.locator('#экран-комнаты').innerText()); throw e; }); assert.equal(await a.locator('#комната-стол button').count(), 3); assert.match(await a.locator('#комната-правила').innerText(), /Домино/);

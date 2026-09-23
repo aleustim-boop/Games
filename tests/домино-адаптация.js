@@ -5,7 +5,7 @@ const { chromium, подготовитьПодделку } = require('./брау
   const b = await chromium.launch({ headless: true });
   try {
     const p = await b.newPage({ reducedMotion: 'reduce' }); await подготовитьПодделку(p, { версия: '9.0' });
-    await p.goto('http://127.0.0.1:8137/домино.html'); await p.locator('#дом-боты').click(); await p.locator('#дом-мест').selectOption('4'); await p.locator('#дом-начать').click();
+    await p.goto('http://127.0.0.1:8137/домино.html'); await p.locator('#дом-боты').click(); await p.locator('#дом-выбор-число').getByRole('radio', { name:'Четверо' }).click(); await p.locator('#дом-начать').click();
     for (const [width, height] of [[320,640],[390,844],[768,1024],[1280,720],[844,390]]) {
       await p.setViewportSize({ width, height });
       await p.evaluate(() => { ПоддельныйТелеграм.поменятьОтступы({ системные: { top: 24, bottom: 16 }, содержимого: { top: 48 } }); document.querySelector('#экран-игры').scrollTop = 0; });
