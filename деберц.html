@@ -30,17 +30,17 @@
       <span class="карточка-профиля__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
     </button>
 <figure class="лобби__картинка"><img class="лобби__рисунок" src="img/деберц/лобби.png?v=1" alt="Пиковый деберц: восьмёрка, девятка, десятка, валет, дама, король и туз пик" width="1536" height="1024"><figcaption class="лобби__подпись">Комбинации решают. Взятки приносят победу.</figcaption></figure>
-<div class="лобби__входы"><button id="кнопка-с-другом" type="button" class="карточка-входа карточка-входа--играть-онлайн">
+<div class="лобби__входы"><button id="лобби-найти-игру" type="button" class="карточка-входа карточка-входа--играть-онлайн">
         <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="6" r="3"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><path d="M6 21v-5c0-6 12-6 12 0v5ZM1 20v-5c0-2 1-3 3-3M23 20v-5c0-2-1-3-3-3"/></svg></span>
         <span class="карточка-входа__текст">
-          <span class="карточка-входа__название"><span class="кнопка__начало">Играть с</span> другом</span>
-          <span class="карточка-входа__подпись">Пригласите друга по коду комнаты</span>
+          <span class="карточка-входа__название">Играть онлайн</span>
+          <span class="карточка-входа__подпись">Присоединитесь к игре или создайте свою</span>
         </span>
         <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
       </button><button id="деберц-боты" type="button" class="карточка-входа карточка-входа--боты">
         <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V3M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="2" r="1"/></svg></span>
         <span class="карточка-входа__текст">
-          <span class="карточка-входа__название">Играть с ботом</span>
+          <span class="карточка-входа__название">Играть с ботами</span>
           <span class="карточка-входа__подпись">Тренировка в своём темпе</span>
         </span>
         <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
@@ -127,6 +127,7 @@
     <div id="деберц-итог-действия"></div>
   </section>
   <section id="экран-друга" class="экран">
+    <button id="кнопка-с-другом" class="скрыт" type="button" tabindex="-1" aria-hidden="true">Создать игру</button>
     <header class="деберц-друзья-шапка"><span class="деберц-надзаголовок">ДЕБЕРЦ · СВОЯ КОМПАНИЯ</span><h2>Соберите свой стол</h2><p>Пригласите друзей. Свободные места можно занять ботами.</p></header>
     <div class="деберц-создание">
       <div class="деберц-шаг"><span>01</span><h3 id="деберц-формат-заголовок">Как играем?</h3></div>
@@ -146,7 +147,7 @@
       <select id="деберц-режим-друга" hidden aria-label="Режим комнаты"><option value="2">Вдвоём</option><option value="3">Втроём</option><option value="4">Вчетвером</option><option value="2x2">2 на 2</option></select>
       <select id="деберц-цель-друга" hidden aria-label="Цель комнаты"><option value="301">301</option><option value="501">501</option><option value="1001">1001</option></select>
       <button id="кнопка-создать-игру" class="кнопка кнопка--главная">Создать комнату <span aria-hidden="true">→</span></button>
-      <p class="деберц-после-создания">Получите код и отправьте его друзьям</p>
+      <p class="деберц-после-создания">Стол появится в списке онлайн-игр. Друзей можно пригласить по коду.</p>
     </div>
     <button id="кнопка-вернуться-в-игру" class="кнопка скрыт">Вернуться к игре с другом</button>
     <div class="деберц-пригласили"><div><strong>Уже пригласили?</strong><p>Присоединитесь к столу друзей</p></div><button id="кнопка-войти-по-коду" class="кнопка">Ввести код <span aria-hidden="true">↗</span></button></div>
@@ -262,5 +263,7 @@
 <script src="js/деберц-сказать.js?v=3"></script>
 <script src="js/деберц-экран.js?v=22"></script>
 <script src="js/сеть.js?v=49"></script>
+<script src="js/деберц-онлайн.js?v=1"></script>
+<script src="js/открытые-столы.js?v=3"></script>
 </body>
 </html>

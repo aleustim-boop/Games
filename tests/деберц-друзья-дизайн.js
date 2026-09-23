@@ -32,7 +32,7 @@ const { chromium, безTelegram } = require('./браузер-робот.js');
     assert.equal(await p.locator('#деберц-цель-стола').textContent(), '1001');
     assert.equal(await p.locator('.деберц-участник').count(), 3);
     await p.reload();
-    await p.locator('#кнопка-с-другом').click();
+    await p.locator('#лобби-найти-игру').click(); await p.locator('#открытые-столы-создать').click();
     for (const режим of ['2', '3', '4', '2x2']) {
       await p.locator('[data-друзья-режим="' + режим + '"]').click();
       assert.equal(await p.locator('#деберц-режим-друга').inputValue(), режим);
