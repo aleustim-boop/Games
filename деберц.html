@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru" class="страница-деберца">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Деберц — Игры с друзьями</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E♠%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css?v=78">
+  <link rel="stylesheet" href="style-деберц.css?v=19">
+  <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+</head>
+<body class="деберц">
+<main id="приложение">
+
+  <section id="экран-лобби" class="экран экран--виден лобби">
+<div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button id="деберц-лобби-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+    </div>
+
+
+<button id="деберц-продолжить" class="плашка-возврата скрыт">Вас ждёт партия с ботом — доиграть</button>
+<h1 class="лобби__заголовок">Деберц</h1><p class="подпись">Комбинации, козырь и взятки.</p>
+<button id="лобби-профиль" type="button" class="карточка-профиля">
+      <span id="лобби-аватар" class="аватар" aria-hidden="true"></span>
+      <span class="карточка-профиля__текст">
+        <span id="лобби-имя" class="карточка-профиля__имя">Вы</span>
+        <span id="лобби-рейтинг" class="карточка-профиля__рейтинг карточка-профиля__рейтинг--нет"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2h12v7c0 8-12 8-12 0ZM6 4H2v3c0 4 3 5 5 5M18 4h4v3c0 4-3 5-5 5M12 15v5M7 22h10M9 20h6"/></svg><span id="лобби-место" class="карточка-профиля__место"></span></span>
+      </span>
+      <span class="карточка-профиля__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+    </button>
+<figure class="лобби__картинка"><img class="лобби__рисунок" src="img/деберц/лобби.png?v=1" alt="Пиковый деберц: восьмёрка, девятка, десятка, валет, дама, король и туз пик" width="1536" height="1024"><figcaption class="лобби__подпись">Комбинации решают. Взятки приносят победу.</figcaption></figure>
+<div class="лобби__входы"><button id="кнопка-с-другом" type="button" class="карточка-входа карточка-входа--играть-онлайн">
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="6" r="3"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><path d="M6 21v-5c0-6 12-6 12 0v5ZM1 20v-5c0-2 1-3 3-3M23 20v-5c0-2-1-3-3-3"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название"><span class="кнопка__начало">Играть с</span> другом</span>
+          <span class="карточка-входа__подпись">Пригласите друга по коду комнаты</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button><button id="деберц-боты" type="button" class="карточка-входа карточка-входа--боты">
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V3M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="2" r="1"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Играть с ботом</span>
+          <span class="карточка-входа__подпись">Тренировка в своём темпе</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button><button id="деберц-правила" type="button" class="карточка-входа карточка-входа--боты">
+        <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 3h12l4 4v14H4zM8 11h8M8 15h8M8 7h4"/></svg></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Как играть</span>
+          <span class="карточка-входа__подпись">Козыри, комбинации и взятки</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button></div>
+<a id="кнопка-лобби-назад" class="скрыт" href="index.html">Все игры</a>
+<nav class="нижние-вкладки" data-вкладки="лобби-деберц" aria-label="Разделы игры"></nav>
+</section>
+<section id="деберц-настройки" class="экран путь">
+<div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" data-путь="назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button id="деберц-настройки-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+    </div>
+
+
+<header class="путь__шапка"><h1 class="путь__заголовок">Игра с ботом</h1><p class="путь__шаг">Настройте партию</p></header>
+<div class="сводка"><strong>Деберц</strong><p>32 карты · бела, терц, полтинник и деберц</p><p>Без обмена семёрки</p></div>
+<h2 class="путь__вопрос">Кто за столом?</h2>
+<div class="переключатель деберц-режимы" role="radiogroup" aria-label="Режим игры"><button class="переключатель__вариант" role="radio" aria-checked="true" data-режим="2">Вдвоём</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="3">Втроём</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="4">Вчетвером</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-режим="2x2">2 на 2</button></div>
+<p id="деберц-режим-подсказка" class="путь__подсказка"></p>
+<h2 class="путь__вопрос">До скольких очков?</h2>
+<div class="переключатель" role="radiogroup" aria-label="Цель партии"><button class="переключатель__вариант" role="radio" aria-checked="true" data-цель="301">301</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-цель="501">501</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-цель="1001">1001</button></div>
+<h2 class="путь__вопрос">Сила соперника</h2>
+<div id="деберц-сложность" class="переключатель" role="radiogroup" aria-label="Сила бота"><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="лёгкий">Лёгкий</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="обычный">Обычный</button><button class="переключатель__вариант" role="radio" aria-checked="false" data-уровень="сложный">Сложный</button></div>
+<p class="путь__подсказка">Лёгкий — для знакомства. Обычный бережёт сильные карты. Сложный запоминает сыгранные карты.</p>
+<select id="деберц-уровень" hidden aria-label="Сила бота"><option value="лёгкий">Лёгкий</option><option value="обычный">Обычный</option><option value="сложный">Сложный</option></select>
+<button id="деберц-начать" class="кнопка кнопка--главная путь__далее">Начать игру</button>
+</section>
+  <p id="деберц-память" class="деберц-тихо" role="status"></p>
+  <section id="экран-игры" class="экран скрыт" aria-label="Игровой стол">
+<div class="верх-игры">
+      <button type="button" class="верх-игры__кнопка" id="деберц-назад" aria-label="К выбору игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4-8 8 8 8"/></svg></button>
+      <button id="кнопка-игра-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+    </div>
+
+
+<header class="шапка-игры"><h1 class="шапка-игры__заголовок">Деберц</h1><p class="шапка-игры__подзаголовок"><span id="деберц-сдача"></span> · до <span id="деберц-цель-стола">301</span><br><span id="деберц-счёт-имя-я">Вы: </span><span id="счёт-я">0</span> · <span id="деберц-счёт-имя-бот">Бот: </span><span id="счёт-бот">0</span><span id="деберц-доп-счёт"></span></p></header>
+<div id="деберц-текущий-счёт" aria-label="Очки текущей сдачи" aria-live="polite"></div>
+<div id="деберц-участники" hidden aria-label="Игроки за столом"></div>
+<div id="рука-бота" class="рука строка-игрока"><span class="аватар" aria-hidden="true"></span><div id="счётчик-бота" class="счётчик"><span id="деберц-имя-соперника" class="счётчик__имя">Бот</span><span id="деберц-соперник"></span></div><div id="карты-бота" class="веер" aria-hidden="true"></div></div>
+<p id="деберц-объявление" class="деберц-тихо" aria-live="polite"></p>
+<div id="зона-стола" class="стол-игры">
+<div id="метка-козыря"><span id="деберц-масть-козыря" aria-hidden="true"></span><div><span id="деберц-козырь" role="status"></span><strong id="деберц-обяз" role="status"></strong><p id="деберц-заказ"></p></div></div>
+<div id="колода"><div id="козырная-карта"></div><div id="верх-колоды"></div></div><div id="стол" class="деберц-центр"></div>
+<section id="деберц-показ-комбинаций" hidden aria-label="Показ комбинаций перед первой взяткой" aria-live="polite"></section></div>
+<p id="строка-связи" class="связь скрыт" role="status"></p>
+<div id="строка-меня" class="строка-игрока строка-игрока--я"><span class="аватар" aria-hidden="true"></span><span class="строка-игрока__имя">Вы</span><span id="статус-хода" class="пилюля"></span></div>
+<div id="подсказка" class="подсказка-игры"><span id="деберц-статус" class="подсказка__текст" role="status" aria-live="polite"></span></div>
+<div id="рука-человека" class="рука"><div id="карты-человека" class="веер" aria-label="Ваши карты"></div></div>
+<div id="панель-кнопок" class="панель-действий"></div>
+</section>
+<dialog id="деберц-сведения" aria-labelledby="деберц-сведения-заголовок">
+  <h2 id="деберц-сведения-заголовок">За столом</h2>
+  <p id="деберц-обяз-подробно"></p>
+  <div id="деберц-счёт-всех"></div>
+  <table class="деберц-сводка"><caption>Текущая сдача</caption><thead><tr><th scope="col">Счёт</th><th scope="col">Вы</th><th id="деберц-сводка-соперник" scope="col">Соперник</th></tr></thead><tbody>
+    <tr><th scope="row">Набрано очков</th><td id="деберц-очки-я">0</td><td id="деберц-очки-друг">0</td></tr>
+    <tr><th scope="row">Комбинации к зачёту</th><td id="деберц-бонус-я">0</td><td id="деберц-бонус-друг">0</td></tr>
+  </tbody></table>
+  <p id="деберц-комбинации"></p><p id="деберц-взятки"></p>
+  <h3>Последняя взятка</h3><p id="деберц-последняя-подпись"></p><div id="деберц-последняя-карты" class="деберц-последняя-карты"></div>
+  <button id="деберц-результаты" class="кнопка">Мои результаты</button><button id="деберц-сдаться" class="кнопка">Сдаться</button><form method="dialog"><button class="кнопка">Закрыть</button></form>
+</dialog>
+  <section id="экран-результата" class="экран" role="region" aria-label="Результат">
+    <h2 id="текст-результата" class="заголовок"></h2>
+    <p id="пояснение-результата" class="подпись"></p>
+    <div id="деберц-итог-таблица"></div>
+    <div id="деберц-итог-действия"></div>
+  </section>
+  <section id="экран-друга" class="экран">
+    <header class="деберц-друзья-шапка"><span class="деберц-надзаголовок">ДЕБЕРЦ · СВОЯ КОМПАНИЯ</span><h2>Соберите свой стол</h2><p>Пригласите друзей. Свободные места можно занять ботами.</p></header>
+    <div class="деберц-создание">
+      <div class="деберц-шаг"><span>01</span><h3 id="деберц-формат-заголовок">Как играем?</h3></div>
+      <div class="деберц-форматы" role="radiogroup" aria-labelledby="деберц-формат-заголовок">
+        <button class="деберц-формат" role="radio" data-друзья-режим="2" aria-checked="true"><span class="деберц-формат-число" aria-hidden="true">1 <i>×</i> 1</span><strong>Вдвоём</strong><small>Вы и один соперник</small></button>
+        <button class="деберц-формат" role="radio" data-друзья-режим="3" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">3</span><strong>Втроём</strong><small>Каждый за себя</small></button>
+        <button class="деберц-формат" role="radio" data-друзья-режим="4" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">4</span><strong>Вчетвером</strong><small>Каждый за себя</small></button>
+        <button class="деберц-формат" role="radio" data-друзья-режим="2x2" aria-checked="false"><span class="деберц-формат-число" aria-hidden="true">2 <i>×</i> 2</span><strong>Командами</strong><small>Напарник напротив</small></button>
+      </div>
+      <p id="деберц-друзья-подсказка" class="деберц-выбор-подсказка" aria-live="polite"></p>
+      <div class="деберц-шаг"><span>02</span><h3 id="деберц-длина-заголовок">До скольких очков?</h3></div>
+      <div class="деберц-длина" role="radiogroup" aria-labelledby="деберц-длина-заголовок">
+        <button role="radio" data-друзья-цель="301" aria-checked="true"><strong>301</strong><small>Короткая</small></button>
+        <button role="radio" data-друзья-цель="501" aria-checked="false"><strong>501</strong><small>Подольше</small></button>
+        <button role="radio" data-друзья-цель="1001" aria-checked="false"><strong>1001</strong><small>Большая игра</small></button>
+      </div>
+      <select id="деберц-режим-друга" hidden aria-label="Режим комнаты"><option value="2">Вдвоём</option><option value="3">Втроём</option><option value="4">Вчетвером</option><option value="2x2">2 на 2</option></select>
+      <select id="деберц-цель-друга" hidden aria-label="Цель комнаты"><option value="301">301</option><option value="501">501</option><option value="1001">1001</option></select>
+      <button id="кнопка-создать-игру" class="кнопка кнопка--главная">Создать комнату <span aria-hidden="true">→</span></button>
+      <p class="деберц-после-создания">Получите код и отправьте его друзьям</p>
+    </div>
+    <button id="кнопка-вернуться-в-игру" class="кнопка скрыт">Вернуться к игре с другом</button>
+    <div class="деберц-пригласили"><div><strong>Уже пригласили?</strong><p>Присоединитесь к столу друзей</p></div><button id="кнопка-войти-по-коду" class="кнопка">Ввести код <span aria-hidden="true">↗</span></button></div>
+    <p id="сообщение-друга" class="сеть-сообщение скрыт"></p>
+    <p id="нет-сервера-главное" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-играть-с-ботом" class="кнопка скрыт">Играть с ботом</button>
+    <button id="кнопка-почему-нет-сервера" class="кнопка скрыт">Почему так и что делать</button>
+    <p id="нет-сервера-подробности" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-адрес-сервера" class="кнопка скрыт">Указать адрес сервера</button>
+    <p id="адрес-подпись" class="деберц-тихо скрыт">Адрес сервера игры</p>
+    <input id="поле-адреса" class="поле-кода поле-адреса скрыт" type="text" inputmode="url" aria-label="Адрес сервера" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button id="кнопка-проверить-адрес" class="кнопка скрыт">Проверить</button>
+    <button id="кнопка-сохранить-адрес" class="кнопка скрыт">Сохранить адрес</button>
+    <p id="сообщение-адреса" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-стереть-адрес" class="кнопка скрыт">Стереть вписанный адрес</button>
+    <button id="кнопка-друг-назад" class="кнопка">Назад</button>
+  </section>
+  <section id="экран-комнаты" class="экран">
+    <h2>Код игры</h2>
+    <p class="деберц-тихо">Продиктуйте или перешлите код другу.</p>
+    <div id="код-комнаты" class="код-игры код-игры--ждём">····</div>
+    <button id="кнопка-позвать-друга" class="кнопка скрыт">Позвать друга</button>
+    <p id="сообщение-приглашения" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-копировать-код" class="кнопка">Скопировать код</button>
+    <p id="сообщение-копирования" class="сеть-сообщение скрыт"></p>
+    <p id="ожидание-соперника" class="деберц-тихо">Ждём друга…</p>
+    <div id="прихожая" class="прихожая скрыт">
+      <p id="прихожая-правила" class="подпись"></p>
+      <div id="список-мест" class="таблица список-мест"></div>
+      <div id="кнопки-хозяина" class="кнопки-хозяина скрыт">
+        <button id="кнопка-посадить-бота" class="кнопка">Посадить бота</button>
+        <button id="кнопка-убрать-бота" class="кнопка">Убрать бота</button>
+        <button id="кнопка-начать-игру" class="кнопка кнопка--главная">Начать игру</button>
+      </div>
+      <p id="сообщение-прихожей" class="сеть-сообщение скрыт"></p>
+    </div>
+    <button id="кнопка-комната-отмена" class="кнопка">Отменить игру</button>
+  </section>
+  <section id="экран-входа" class="экран">
+    <h2>Вход по коду</h2>
+    <input id="поле-кода" class="поле-кода" type="text" maxlength="6" placeholder="ABCD" aria-label="Код комнаты" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <button id="кнопка-войти" class="кнопка кнопка--главная">Войти в игру</button>
+    <p id="сообщение-входа" class="сеть-сообщение скрыт"></p>
+    <button id="кнопка-адрес-из-входа" class="кнопка скрыт">Указать адрес сервера</button>
+    <button id="кнопка-вход-назад" class="кнопка">Назад</button>
+  </section>
+  <dialog id="деберц-история" aria-labelledby="деберц-история-заголовок">
+    <h2 id="деберц-история-заголовок">Мои результаты</h2>
+    <p class="деберц-тихо">Последние 30 партий с ботом на этом устройстве</p>
+    <div id="деберц-статистика"></div>
+    <ol id="деберц-список"></ol>
+    <form method="dialog"><button class="кнопка">Закрыть результаты</button></form>
+  </dialog>
+  <dialog id="деберц-новая-партия" aria-labelledby="деберц-новая-партия-заголовок">
+    <h2 id="деберц-новая-партия-заголовок">Начать новую партию?</h2>
+    <p>У вас есть незавершённая партия с ботом. Новая партия заменит её.</p>
+    <button id="деберц-новая-партия-да" class="кнопка кнопка--главная">Начать новую</button>
+    <form method="dialog"><button class="кнопка">Отмена</button></form>
+  </dialog>
+  <dialog id="деберц-подтверждение" aria-labelledby="деберц-сдаться-заголовок">
+    <h2 id="деберц-сдаться-заголовок">Сдаться?</h2>
+    <p>Сопернику будет записана победа.</p>
+    <button id="деберц-сдаться-да" class="кнопка">Да, сдаться</button>
+    <form method="dialog"><button class="кнопка кнопка--главная">Продолжить игру</button></form>
+  </dialog>
+  <dialog id="деберц-выход" aria-labelledby="деберц-выход-заголовок">
+    <h2 id="деберц-выход-заголовок">Выйти из комнаты?</h2>
+    <p>Вы покинете стол. Незавершённая партия будет засчитана как поражение.</p>
+    <button id="деберц-выход-да" class="кнопка">Выйти из комнаты</button>
+    <form method="dialog"><button class="кнопка кнопка--главная">Остаться</button></form>
+  </dialog>
+  <dialog id="деберц-справка" aria-labelledby="деберц-справка-заголовок">
+    <h2 id="деберц-справка-заголовок">Как играть</h2>
+    <p>Выберите режим: вдвоём, втроём, вчетвером каждый за себя или 2 на 2. Цель партии — 301, 501 или 1001 очко. Сначала каждому сдают 6 карт. Можно принять открытую масть козырем или сказать «Пас». После паса всех игроков начинается второй круг с выбором другой масти. У сдающего обяз: во втором круге он не может пасовать и обязан выбрать одну из трёх оставшихся мастей. Первого сдающего определяем раздачей карт по очереди до первого туза.</p>
+    <p>Вдвоём и втроём после выбора козыря каждому добавляют 3 карты — играют по 9. Вчетвером добавляют по 2 — играют по 8, открытая карта достаётся сдающему. Первый ход — у следующего за сдающим. Во взятку каждый кладёт по одной карте по очереди.</p>
+    <p>Отвечайте в масть; нет масти — кладите козырь; нет козыря — любую карту. Если нужно отвечать козырем, перебивайте старший козырь во взятке, когда это возможно. Козырь напарника перебивать не обязательно.</p>
+    <p>В 2 на 2 напарники сидят напротив: вы и Бот 2 при игре с ботами. В комнате можно выбрать напарника до начала. Очки пары общие; комбинации обоих напарников засчитываются, если у их команды старшая комбинация и хотя бы одна взятка.</p>
+    <p>Старшинство козырей: В, 9, Т, 10, К, Д, 8, 7. Остальные масти: Т, 10, К, Д, В, 9, 8, 7.</p>
+    <p>Очки: Т — 11, 10 — 10, К — 4, Д — 3, В — 2. Козырные В — 20 и 9 — 14. Остальные карты — 0. Последняя взятка — ещё 10.</p>
+    <p>Терц — 3 карты одной масти подряд (20), полтинник — 4 (50). Порядок: 7, 8, 9, 10, В, Д, К, Т. Длинный ряд считается как старший полтинник, остаток может дать отдельную комбинацию. Объявления автоматические. Засчитываются комбинации игрока со старшей: сначала длина, затем рост, козырь, затем право первого хода. Нужно взять хотя бы одну взятку.</p>
+    <p>Бела — козырные К и Д на одной руке. Объявляется при розыгрыше первой из этих карт. За неё начисляются 20 очков, только если эту взятку заберёт объявивший игрок или его напарник в игре 2 на 2. Если взятку забрал соперник, бела не засчитывается. Повторно объявить её второй картой нельзя.</p>
+    <p>Деберц — семь козырей от восьмёрки до туза: 8, 9, 10, В, Д, К, Т. Объявляется автоматически после прикупа и сразу приносит победу в партии при любом счёте.</p>
+    <p>Обяз — у сдающего; его имя выделено на столе. Заказчик козыря должен набрать больше очков, чем каждый соперник отдельно; в 2 на 2 сравниваются суммы команд. Набрал меньше — байт: очки заказчика поровну переходят соперникам, остаток по одному очку — по очереди после заказчика. Вдвоём и в парах всё получает другая сторона.</p>
+    <p>При равенстве заказчика с лучшим соперником его очки «висят». Их получает единственный лидер следующей сдачи, а при байте они делятся между соперниками заказчика. Остальные записывают свои очки. При равном общем счёте лидеров партия продолжается.</p>
+    <p>Игра без обмена семёрки. В игре каждый за себя сдаёт лидер предыдущей сдачи; при равенстве и в 2 на 2 сдающий меняется по очереди. Кроме победы по деберцу, победа определяется после сдачи. Партия с ботами автоматически сохраняется на этом устройстве. После открытия страницы нажмите «Продолжить партию».</p>
+    <p>Лёгкий бот выбирает случайные допустимые карты. Обычный бережёт дорогие карты и старается брать взятки. Сложный учитывает комбинации при торговле и помнит сыгранные карты. Ни один бот не подсматривает вашу руку.</p>
+    <form method="dialog"><button class="кнопка кнопка--главная">Понятно</button></form>
+  </dialog>
+  <div id="лист-игры" class="лист-ещё скрыт" role="dialog" aria-modal="true" aria-labelledby="лист-игры-заголовок">
+    <div id="лист-игры-фон" class="лист-ещё__фон"></div>
+    <div class="лист-ещё__лист">
+      <h2 id="лист-игры-заголовок" class="лист-ещё__заголовок">Ещё</h2>
+      <button id="кнопка-лист-игры-меню" class="лист-ещё__строка">В меню</button>
+      <button id="кнопка-лист-игры-правила" class="лист-ещё__строка">Как играть</button>
+      <button id="кнопка-лист-игры-звук" class="лист-ещё__строка" role="switch" aria-checked="true">Звук <span id="лист-игры-звук-состояние" class="лист-ещё__значение">вкл</span></button>
+      <button id="кнопка-лист-игры-рекорды" class="лист-ещё__строка">Мои результаты</button>
+      <button id="кнопка-лист-игры-закрыть" class="лист-ещё__закрыть">Закрыть</button>
+    </div>
+  </div>
+</main>
+<script src="js/telegram.js?v=26"></script>
+<script src="js/колода-рисунок.js?v=5"></script>
+<script src="js/лист-ещё.js?v=2"></script>
+<script src="js/нижние-вкладки.js?v=10"></script>
+<script src="js/рейтинг-экран.js?v=30"></script>
+<script src="js/профиль-экран.js?v=1"></script>
+<script src="js/деберц-правила.js?v=8"></script>
+<script src="js/деберц-бот.js?v=3"></script>
+<script src="js/деберц-память.js?v=5"></script>
+<script src="js/деберц-звук.js?v=1"></script>
+<script src="js/движение-карт.js?v=3"></script>
+<script src="js/деберц-знаки.js?v=1"></script>
+<script src="js/деберц-сказать.js?v=3"></script>
+<script src="js/деберц-экран.js?v=21"></script>
+<script src="js/сеть.js?v=49"></script>
+</body>
+</html>

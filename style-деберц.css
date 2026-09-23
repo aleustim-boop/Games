@@ -1,0 +1,331 @@
+/* Лобби, стол, игроки, карты и кнопки используют оформление Дурака из style.css.
+   Здесь только отличия правил: две карты во взятке, торговля, комбинации и счёт. */
+.деберц .скрыт { display: none !important; }
+.деберц #экран-игры > #зона-стола { min-height: 270px; flex-shrink: 0; }
+.деберц #экран-игры { overflow-y: auto; }
+.деберц #деберц-участники { width: 100%; max-width: 520px; box-sizing: border-box; align-self: center; }
+.деберц-очередь { color: var(--сб-акцент); font-size: 11px; letter-spacing: .06em; }
+.деберц :is(.деберц-участник--ходит, .строка-игрока--ходит, .деберц-забирает) { box-shadow: 0 0 0 2px var(--сб-акцент), 0 0 18px #d2f76b22; }
+.деберц .деберц-забирает { border-color: var(--сб-акцент); }
+.деберц #статус-хода { max-width: 55%; white-space: normal; text-align: center; }
+.деберц #строка-меня { height: auto; min-height: 54px; flex-shrink: 0; }
+.деберц #строка-меня .строка-игрока__имя { min-width: 0; font-size: clamp(12px, 3.5vw, 17px); }
+.деберц #статус-хода { height: auto; min-height: 30px; line-height: 1.25; padding-block: 5px; }
+.деберц #экран-друга { justify-content: flex-start; align-items: stretch; gap: 18px; padding: 30px max(16px, calc((100% - 480px) / 2)) 24px; box-sizing: border-box; }
+.деберц-друзья-шапка { text-align: left; }
+.деберц-надзаголовок { color: var(--сб-акцент); font-size: 10px; letter-spacing: .15em; font-weight: 700; }
+.деберц #экран-друга h2 { font-size: clamp(26px, 6vw, 34px); line-height: 1.1; margin: 12px 0; letter-spacing: -.04em; }
+.деберц-друзья-шапка p { color: var(--сб-текст-тихий); font-size: 13px; line-height: 1.5; margin: 0; max-width: 330px; }
+.деберц-создание { padding: 20px; border: 1px solid #ffffff16; border-radius: 24px; background: linear-gradient(135deg, #222b24, #171b1c 55%); box-shadow: 0 14px 40px #0003; }
+.деберц-шаг { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.деберц-шаг > span { font-size: 10px; color: var(--сб-текст-тихий); border: 1px solid #ffffff20; border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; }
+.деберц-шаг h3 { font-size: 15px; margin: 0; font-weight: 600; }
+.деберц-форматы { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.деберц-формат { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 13px; color: var(--сб-текст); font: inherit; text-align: left; border: 1px solid #ffffff22; border-radius: 14px; background: #111616; cursor: pointer; }
+.деберц-формат-число { font-size: 24px; line-height: 1; margin-bottom: 7px; font-weight: 700; letter-spacing: -.05em; }
+.деберц-формат-число i { font-size: 15px; font-style: normal; color: var(--сб-текст-тихий); }
+.деберц-формат strong { font-size: 14px; }
+.деберц-формат small { font-size: 10px; line-height: 1.4; color: var(--сб-текст-тихий); }
+.деберц :is(.деберц-формат, .деберц-длина button)[aria-checked="true"] { border-color: var(--сб-акцент); background: #d2f76b0e; box-shadow: inset 0 0 0 1px var(--сб-акцент); }
+.деберц-формат[aria-checked="true"]::after { content: '✓'; position: absolute; right: 10px; top: 10px; color: var(--сб-акцент); font-size: 13px; }
+.деберц :is(.деберц-формат, .деберц-длина button):focus-visible { outline: 2px solid var(--сб-акцент); outline-offset: 3px; }
+.деберц-выбор-подсказка { min-height: 32px; margin: 12px 0 22px; color: var(--сб-текст-тихий); font-size: 11px; line-height: 1.5; text-align: left; }
+.деберц-длина { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-bottom: 20px; }
+.деберц-длина button { display: flex; flex-direction: column; align-items: center; gap: 5px; border-radius: 12px; padding: 12px 2px; background: #111616; border: 1px solid #ffffff22; color: var(--сб-текст); cursor: pointer; font: inherit; }
+.деберц-длина strong { font-size: 21px; }
+.деберц-длина small { font-size: 9px; color: var(--сб-текст-тихий); }
+.деберц #экран-друга #кнопка-создать-игру { width: 100%; max-width: none; display: flex; align-items: center; justify-content: space-between; font-size: 16px; padding: 15px 18px; min-height: 50px; border-radius: 13px; }
+.деберц-после-создания { color: var(--сб-текст-тихий); font-size: 10px; margin: 10px 0 0; text-align: center; }
+.деберц-пригласили { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 2px; border-top: 1px solid #ffffff16; }
+.деберц-пригласили strong { font-size: 13px; }
+.деберц-пригласили p { font-size: 10px; color: var(--сб-текст-тихий); margin: 5px 0 0; }
+.деберц #экран-друга #кнопка-войти-по-коду { width: auto; min-width: 108px; min-height: 42px; padding: 10px 12px; font-size: 12px; border: 1px solid #ffffff30; border-radius: 12px; background: transparent; color: var(--сб-текст); }
+.деберц #экран-друга #кнопка-друг-назад { width: auto; align-self: center; padding: 6px 22px; min-height: 40px; font-size: 12px; border: 0; background: transparent; color: var(--сб-текст-тихий); box-shadow: none; }
+.деберц #экран-друга > .кнопка:not(#кнопка-друг-назад) { align-self: stretch; width: 100%; max-width: none; min-height: 44px; padding: 10px 16px; background: var(--сб-поверхность); color: var(--сб-текст); border: 1px solid #ffffff25; border-radius: 12px; font-size: 13px; }
+@media (max-width: 350px) { .деберц-создание { padding: 14px; } .деберц #экран-друга { padding-top: 20px; } }
+.деберц #экран-лобби { padding-bottom: calc(76px + var(--отступ-снизу)); }
+.деберц #экран-лобби > .нижние-вкладки { flex-shrink: 0; }
+.деберц #зона-стола > #стол { position: absolute; inset: 110px 12px 30px; display: grid; place-items: center; width: auto; height: auto; padding: 0; }
+.деберц #стол > .деберц-подпись-карты { grid-area: 1 / 1; position: relative; z-index: 1; }
+.деберц #стол:has(> :nth-child(2)) > :first-child { transform: translate(-32%, -8%); }
+.деберц #стол:has(> :nth-child(2)) > :first-child > span { order: -1; }
+.деберц #стол > .деберц-подпись-карты:nth-child(2) { transform: translate(32%, 10%); z-index: 2; }
+.деберц #зона-стола > #метка-козыря { left: auto; right: 14px; top: 14px; width: min(180px, calc(100% - 120px)); max-width: none; height: auto; min-height: 56px; box-sizing: border-box; gap: 9px; padding: 8px 10px; background: #171a17ed; border: 1px solid #e4e9d155; border-radius: 12px; box-shadow: 0 3px 10px #0004; }
+#деберц-козырь { font-size: 14px; line-height: 1.3; color: #fff9eb; }
+#деберц-масть-козыря { display: grid; place-items: center; flex: 0 0 36px; height: 40px; border-radius: 6px; background: #fff6e3; color: #171a17; font-size: 32px; line-height: 1; }
+#деберц-масть-козыря.деберц-козырь--красный { color: #bd2029; }
+#деберц-обяз { display: block; color: var(--сб-акцент); font-size: 12px; line-height: 1.35; margin-top: 5px; overflow-wrap: anywhere; }
+.деберц #зона-стола:has(#верх-колоды:empty):has(#козырная-карта:empty) > #метка-козыря { left: auto; right: 14px; top: 14px; height: auto; width: min(210px, calc(100% - 28px)); }
+.деберц .деберц-режимы { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.деберц [hidden] { display: none !important; }
+#деберц-участники:not([hidden]) { display: flex; flex: 0 0 auto; gap: 6px; position: relative; z-index: 1; padding-inline: 12px; }
+.деберц-участник { flex: 1; min-width: 0; padding: 8px 5px; display: flex; flex-direction: column; gap: 4px; text-align: center; border: 1px solid var(--сб-граница); border-radius: 12px; background: var(--сб-поверхность); font-size: 12px; }
+.деберц-участник strong { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.деберц-участник span, .деберц-участник small { font-size: 10px; color: var(--сб-текст-тихий); }
+.деберц-участник--ходит { border-color: var(--сб-акцент); }
+.деберц-участник--напарник small { color: var(--сб-акцент); }
+.деберц #стол[data-карт="3"] > :first-child { transform: translate(-65%, -12%); }
+.деберц #стол[data-карт="3"] > :nth-child(2) { transform: none; }
+.деберц #стол[data-карт="3"] > :nth-child(3) { transform: translate(65%, 12%); z-index: 3; }
+.деберц #стол[data-карт="4"] > :first-child { transform: translate(-96%, -15%); }
+.деберц #стол[data-карт="4"] > :nth-child(2) { transform: translate(-32%, -5%); }
+.деберц #стол[data-карт="4"] > :nth-child(3) { transform: translate(32%, 5%); z-index: 3; }
+.деберц #стол[data-карт="4"] > :nth-child(4) { transform: translate(96%, 15%); z-index: 4; }
+.деберц #стол > .деберц-подпись-карты:not(:last-child) > span { order: -1; }
+.деберц #стол > .деберц-подпись-карты > span { order: -1; max-width: 76px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+.деберц-последняя-карты { flex-wrap: wrap; }
+.деберц #стол .карта { position: relative; left: auto; top: auto; rotate: 0deg; --в: clamp(106px, 30vw, 132px); --ш: calc(var(--в) / 1.4); }
+.деберц-подпись-карты { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #f8f1e4; font-size: 12px; }
+.деберц-подпись-карты:first-child .карта { rotate: -3deg; }
+.деберц-подпись-карты:nth-child(2) .карта { rotate: 5deg; }
+#деберц-заказ { flex: 0 0 auto; margin: 0; padding: 5px 12px; text-align: center; font-size: 12px; line-height: 1.4; color: var(--сб-текст-тихий); }
+.деберц #карты-человека button { padding: 0; font: inherit; }
+.деберц #карты-человека .карта:disabled { cursor: default; }
+.деберц #карты-человека .карта:focus-visible { outline: 2px solid var(--сб-акцент); outline-offset: 3px; }
+.деберц #экран-игры #панель-кнопок { flex-wrap: nowrap; }
+.деберц #экран-игры #панель-кнопок .кнопка { min-width: 0; flex: 1; padding-inline: 4px; font-size: 14px; }
+.деберц #экран-игры #панель-кнопок .кнопка::before { display: none; }
+.деберц #экран-игры #панель-кнопок .кнопка--инфо { flex: 0 0 44px; font-size: 20px; }
+.деберц #экран-игры #панель-кнопок .деберц-масть--красная { color: #ff9da6; }
+.деберц-сводка { width: 100%; border-collapse: collapse; margin: 18px 0 8px; font-size: 13px; }
+.деберц-сводка caption { text-align: left; font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.деберц-сводка th, .деберц-сводка td { padding: 10px 5px; border-bottom: 1px solid var(--сб-граница); text-align: right; }
+.деберц-сводка th:first-child { text-align: left; font-weight: 500; }
+.деберц-последняя-карты { display: flex; justify-content: center; gap: 22px; padding: 12px; }
+.деберц-последняя-карты .карта { position: relative; --в: 112px; --ш: 80px; }
+.деберц-тихо { color: var(--сб-текст-тихий); font-size: 13px; line-height: 1.5; }
+#деберц-объявление { position: relative; z-index: 1; flex: 0 0 auto; margin: 0 12px; font-size: 12px; text-align: center; color: var(--сб-акцент); }
+.деберц dialog { box-sizing: border-box; width: min(440px, calc(100% - 24px)); max-height: 85dvh; overflow: auto; margin: auto; border: 1px solid var(--сб-граница); border-radius: 20px; background: var(--сб-поверхность); color: var(--сб-текст); padding: 24px; }
+.деберц dialog::backdrop { background: #000a; }
+.деберц dialog { --кнопка-фон: var(--сб-поверхность); --кнопка-текст: var(--сб-текст); --акцент: var(--сб-акцент); --край: var(--сб-граница); }
+.деберц dialog h2:focus { outline: none; }
+.деберц dialog .кнопка--главная { background: var(--сб-акцент); color: var(--сб-акцент-текст); }
+.деберц dialog p { margin: 14px 0; line-height: 1.6; font-size: 14px; }
+.деберц dialog .кнопка { width: 100%; margin-top: 10px; }
+#деберц-список { padding-left: 24px; font-size: 14px; }
+#деберц-список li { padding: 12px 0; border-bottom: 1px solid var(--сб-граница); line-height: 1.6; }
+#деберц-память { position: fixed; z-index: 50; bottom: 70px; left: 16px; right: 16px; background: var(--сб-поверхность); }
+#деберц-память:empty { display: none; }
+.деберц #экран-результата { max-height: calc(100dvh - 100px); overflow-y: auto; }
+.деберц #деберц-текущий-счёт { width: 100%; max-width: 520px; align-self: center; flex-shrink: 0; box-sizing: border-box; padding: 0 12px; }
+.деберц-счёт-заголовок { margin: 0 0 5px; color: var(--сб-текст-тихий); font-size: 9px; font-weight: 600; letter-spacing: .12em; }
+.деберц-счёт-карточки { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.деберц-счёт-сторона { display: grid; grid-template-columns: 1fr auto; gap: 3px 8px; align-items: center; min-width: 0; padding: 8px 11px; border-radius: 12px; background: #ffffff06; border: 1px solid #ffffff15; }
+.деберц-счёт-сторона > span { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.деберц-счёт-сторона > strong { grid-column: 2; grid-row: 1 / 3; font-size: 27px; line-height: 1; font-variant-numeric: tabular-nums; }
+.деберц-счёт-сторона > small { font-size: 9px; color: var(--сб-текст-тихий); }
+.деберц-счёт-сторона--вы { border-color: #d2f76b50; background: #d2f76b08; }
+.деберц-счёт-сторона--вы > strong { color: var(--сб-акцент); }
+.деберц #экран-результата { width: min(500px, calc(100% - 24px)); padding: 24px 18px; box-sizing: border-box; border-radius: 24px; border: 1px solid #ffffff25; background: linear-gradient(150deg, #263125, #151a1a 45%); box-shadow: 0 25px 100px #000b; gap: 16px; }
+.деберц #экран-результата h2 { margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: -.035em; text-align: left; }
+.деберц #пояснение-результата { margin: 0; font-size: 12px; line-height: 1.5; text-align: left; color: var(--сб-текст-тихий); }
+#деберц-итог-таблица { width: 100%; }
+.деберц-итог-счёт { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.деберц-итог-счёт thead th { padding: 10px 5px; font-size: 10px; font-weight: 500; color: var(--сб-текст-тихий); border-bottom: 1px solid #ffffff20; text-align: right; }
+.деберц-итог-счёт thead th:first-child { text-align: left; }
+.деберц-итог-счёт tbody th { text-align: left; font-size: 12px; font-weight: 600; max-width: 115px; overflow-wrap: anywhere; }
+.деберц-итог-счёт tbody :is(th, td) { padding: 15px 5px 10px; }
+.деберц-итог-счёт td { text-align: right; }
+.деберц-итог-счёт td small { display: block; font-size: 10px; color: var(--сб-текст-тихий); margin-bottom: 4px; }
+.деберц-итог-счёт td strong { font-size: 22px; }
+.деберц-итог-прибавка { font-weight: 700; }
+.деберц-итог-вы :is(th, .деберц-итог-прибавка, strong) { color: var(--сб-акцент); }
+.деберц-итог-счёт .деберц-итог-детали td { text-align: left; font-size: 10px; color: var(--сб-текст-тихий); padding: 0 5px 12px; border-bottom: 1px solid #ffffff15; }
+.деберц-итог-подсказка { font-size: 10px; color: var(--сб-текст-тихий); line-height: 1.5; text-align: left; margin: 14px 0 0; }
+.деберц #деберц-итог-действия .кнопка { width: 100%; font-size: 14px; min-height: 46px; border-radius: 12px; }
+.деберц #экран-игры > #метка-козыря { position: relative; inset: auto; transform: none; align-self: center; display: flex; align-items: center; gap: 10px; box-sizing: border-box; width: min(100%, 520px); max-width: none; height: auto; min-height: 54px; flex: 0 0 auto; padding: 8px 12px; border: 1px solid #ffffff20; border-radius: 12px; background: #171c1b; }
+.деберц #экран-игры > #метка-козыря > div { display: flex; flex: 1; gap: 8px; align-items: center; justify-content: space-between; min-width: 0; }
+.деберц #деберц-обяз { margin: 0; text-align: right; max-width: 48%; }
+.деберц #экран-игры > #зона-стола { min-height: 220px; }
+.деберц #зона-стола > #стол { inset: 28px 12px 28px; }
+.деберц #зона-стола:has(#колода:not(.скрыт)) > #стол { left: 65px; }
+@media (max-height: 700px) {
+  .деберц #зона-стола > #стол:is([data-карт="3"], [data-карт="4"]) { top: 28px; bottom: 28px; }
+}
+#деберц-итог-действия { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.деберц #деберц-настройки .сводка { display: block; padding: 18px; line-height: 1.6; }
+.деберц #деберц-настройки .сводка p { margin-top: 8px; color: var(--сб-текст-тихий); }
+.деберц :is(#экран-друга, #экран-комнаты, #экран-входа) { background: var(--сб-фон); color: var(--сб-текст); gap: 14px; overflow-y: auto; }
+@media (max-height: 700px) { .деберц #экран-игры > #зона-стола { min-height: 200px; } .деберц #зона-стола > #стол { top: 28px; bottom: 28px; } .деберц #стол .карта { --в: 106px; } }
+@media (max-height: 700px) {
+  .деберц #зона-стола > #стол:is([data-карт="3"], [data-карт="4"]) { top: 28px; bottom: 28px; }
+  .деберц #стол:is([data-карт="3"], [data-карт="4"]) .карта { --в: 106px; }
+  .деберц #стол:is([data-карт="3"], [data-карт="4"]) > .деберц-подпись-карты > span { order: -1; font-size: 8px; max-width: 32px; }
+  .деберц #стол[data-карт="3"] > :first-child { transform: translateX(-65%); }
+  .деберц #стол[data-карт="3"] > :nth-child(3) { transform: translateX(65%); }
+  .деберц #стол[data-карт="4"] > :first-child { transform: translateX(-96%); }
+  .деберц #стол[data-карт="4"] > :nth-child(2) { transform: translateX(-32%); }
+  .деберц #стол[data-карт="4"] > :nth-child(3) { transform: translateX(32%); }
+  .деберц #стол[data-карт="4"] > :nth-child(4) { transform: translateX(96%); }
+}
+
+/* Весь игровой стол укладывается в высоту окна; рука и действия не сжимаются. */
+.деберц #приложение #экран-игры { box-sizing: border-box; height: var(--tg-viewport-stable-height, 100dvh); max-height: 100dvh; min-height: 0; padding: 6px max(10px, calc((100% - 560px) / 2)) max(8px, env(safe-area-inset-bottom)); gap: 5px; overflow: hidden; justify-content: flex-start; --в: clamp(105px, 20dvh, 176px); --ш: calc(var(--в) / 1.4); }
+.деберц #экран-игры > * { flex-shrink: 0; }
+.деберц #экран-игры > .верх-игры { height: 26px; min-height: 26px; margin: 0; }
+.деберц #экран-игры > .шапка-игры { margin: 0; padding: 0; height: 22px; display: flex; align-items: baseline; flex-direction: row; gap: 10px; overflow: hidden; }
+.деберц #экран-игры .шапка-игры__заголовок { font-size: 18px; line-height: 22px; }
+.деберц #экран-игры .шапка-игры__подзаголовок { font-size: 11px; line-height: 22px; margin: 0; }
+.деберц #экран-игры .шапка-игры__подзаголовок br ~ span { display: none; }
+.деберц #экран-игры .шапка-игры__подзаголовок br { display: none; }
+.деберц #деберц-участники { padding: 0; gap: 6px; }
+.деберц .деберц-участник { padding: 5px; gap: 2px; font-size: 11px; }
+.деберц .деберц-участник span, .деберц .деберц-участник small { font-size: 9px; }
+.деберц #деберц-текущий-счёт { padding: 0; }
+.деберц .деберц-счёт-заголовок { margin-bottom: 3px; font-size: 8px; }
+.деберц .деберц-счёт-сторона { padding: 5px 8px; }
+.деберц .деберц-счёт-сторона > strong { font-size: 24px; }
+.деберц .деберц-счёт-карточки:has(> :nth-child(3)) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.деберц .деберц-счёт-карточки:has(> :nth-child(3)) .деберц-счёт-сторона { display: flex; flex-direction: column; gap: 2px; padding: 4px 2px; }
+.деберц .деберц-счёт-карточки:has(> :nth-child(3)) small { font-size: 8px; }
+.деберц #экран-игры > #метка-козыря { min-height: 40px; padding: 4px 10px; }
+.деберц #деберц-масть-козыря { height: 30px; flex-basis: 27px; font-size: 26px; }
+.деберц #деберц-козырь { font-size: 12px; }
+.деберц #деберц-обяз { font-size: 10px; }
+.деберц #экран-игры > #зона-стола { flex: 1 1 0; min-height: 145px; max-height: none; margin: 0; width: 100%; }
+.деберц #зона-стола > #стол { inset: 20px 8px 12px; }
+.деберц #зона-стола:has(#колода:not(.скрыт)) > #стол { left: 62px; }
+.деберц #зона-стола > #стол:is([data-карт="3"], [data-карт="4"]) { top: 20px; bottom: 12px; }
+.деберц #стол .карта { --в: clamp(100px, 18dvh, 132px); }
+.деберц #стол:has(> :nth-child(2)) > :first-child { transform: translateX(-32%); }
+.деберц #стол > .деберц-подпись-карты:nth-child(2) { transform: translateX(32%); }
+.деберц #стол[data-карт="3"] > :first-child { transform: translateX(-65%); }
+.деберц #стол[data-карт="3"] > :nth-child(2) { transform: none; }
+.деберц #стол[data-карт="3"] > :nth-child(3) { transform: translateX(65%); }
+.деберц #стол[data-карт="4"] > :first-child { transform: translateX(-96%); }
+.деберц #стол[data-карт="4"] > :nth-child(2) { transform: translateX(-32%); }
+.деберц #стол[data-карт="4"] > :nth-child(3) { transform: translateX(32%); }
+.деберц #стол[data-карт="4"] > :nth-child(4) { transform: translateX(96%); }
+.деберц #стол > .деберц-подпись-карты > span { max-width: 42px; font-size: 10px; line-height: 12px; }
+.деберц #экран-игры #строка-меня { display: none; }
+.деберц #деберц-заказ { padding: 0; font-size: 10px; line-height: 14px; }
+.деберц #подсказка { min-height: 22px; height: 22px; margin: 0; padding: 0; flex: 0 0 auto; font-size: 12px; }
+.деберц #подсказка .подсказка__текст { font-size: 12px; }
+.деберц #приложение #экран-игры #рука-человека { height: calc(var(--в) + 24px); min-height: calc(var(--в) + 24px); max-height: calc(var(--в) + 24px); margin: 0; flex: 0 0 auto; }
+.деберц #карты-человека .карта { --в: clamp(105px, 20dvh, 176px); --ш: calc(var(--в) / 1.4); }
+.деберц #экран-игры #панель-кнопок { margin: 0; padding: 0; min-height: 42px; flex: 0 0 auto; gap: 6px; }
+.деберц #экран-игры #панель-кнопок .кнопка { min-height: 42px; padding: 6px 4px; font-size: 12px; }
+.деберц #экран-игры #панель-кнопок #кнопка-эмоции { flex: 0 0 64px; width: 64px; }
+.деберц #рука-бота { min-height: 44px; height: 44px; margin: 0; }
+.деберц #деберц-объявление { font-size: 10px; line-height: 12px; }
+@media (max-height: 700px) {
+ .деберц #приложение #экран-игры { gap: 3px; }
+ .деберц #экран-игры > .шапка-игры { display: none; }
+ .деберц #стол .карта { --в: 100px; }
+ .деберц #деберц-участники small { display: none; }
+}
+/* Лобби: изображение зависит и от высоты окна, нижняя панель не закрывает кнопки. */
+.деберц #экран-лобби { box-sizing: border-box; height: 100dvh; overflow-y: auto; justify-content: flex-start; gap: 8px; padding-top: 10px; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+.деберц #экран-лобби > * { flex-shrink: 0; }
+.деберц #экран-лобби .лобби__картинка { height: clamp(110px, 25dvh, 250px); min-height: 0; aspect-ratio: auto; margin: 0; }
+.деберц #экран-лобби .лобби__рисунок { height: 100%; width: 100%; object-fit: cover; }
+.деберц #экран-лобби .лобби__заголовок { font-size: clamp(30px, 5dvh, 48px); margin: 0; line-height: 1; }
+.деберц #экран-лобби > .подпись { margin: 0; font-size: 12px; }
+.деберц #экран-лобби .карточка-профиля { min-height: 45px; padding: 8px 12px; --аватар: 30px; }
+.деберц #экран-лобби .карточка-входа { min-height: 54px; padding: 9px 12px; }
+.деберц #экран-лобби .карточка-входа__название { font-size: 17px; }
+.деберц #экран-лобби .карточка-входа__подпись { font-size: 11px; }
+.деберц #экран-лобби .лобби__подпись { font-size: clamp(15px, 3dvh, 22px); }
+.деберц #экран-лобби .плашка-возврата { font-size: 12px; min-height: 36px; padding: 7px 10px; }
+.деберц #деберц-настройки, .деберц #экран-комнаты, .деберц #экран-друга { box-sizing: border-box; max-height: 100dvh; overflow-y: auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.деберц-летящий-предмет { position: fixed; top: 0; left: 0; width: 48px; height: 48px; z-index: 160; pointer-events: none; }
+
+.деберц #экран-игры #панель-кнопок #кнопка-эмоции { flex: 0 0 76px; width: 76px; min-width: 0; gap: 4px; order: 2; font-size: 11px; }
+.деберц #экран-игры #панель-кнопок #кнопка-эмоции::before { display: none; }
+.деберц #экран-игры #панель-кнопок .кнопка--инфо { flex: 0 0 32px; width: 32px; order: 3; font-size: 16px; }
+.деберц #карты-человека.деберц-забирает { box-shadow: none; }
+.деберц #приложение #экран-игры #рука-человека { width: 100%; }
+.деберц #экран-игры #карты-человека { width: calc(100% - 16px); margin-inline: 8px; }
+@media (max-height: 560px) and (min-width: 600px) {
+ .деберц #приложение #экран-игры.экран--виден { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: 26px 52px 40px minmax(115px, 1fr) 44px; grid-template-areas: 'top top' 'score score' 'players trump' 'table hand' 'hint buttons'; padding-inline: 12px; gap: 6px 12px; }
+ .деберц #экран-игры > .верх-игры { grid-area: top; width: 100%; }
+ .деберц #экран-игры > .шапка-игры, .деберц #деберц-заказ, .деберц #деберц-объявление { display: none; }
+ .деберц #деберц-участники, .деберц #рука-бота { grid-area: players; width: 100%; }
+ .деберц #деберц-текущий-счёт { grid-area: score; }
+ .деберц #экран-игры > #метка-козыря { grid-area: trump; width: 100%; }
+ .деберц #экран-игры > #зона-стола { grid-area: table; min-height: 0; height: 100%; box-sizing: border-box; }
+ .деберц #экран-игры #стол .карта { --в: clamp(78px, 24dvh, 110px); }
+ .деберц #приложение #экран-игры #рука-человека { grid-area: hand; align-self: center; }
+ .деберц #подсказка { grid-area: hint; }
+ .деберц #экран-игры #панель-кнопок { grid-area: buttons; width: 100%; }
+}
+
+.деберц #экран-результата { position: fixed; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); margin: 0; padding: 24px; background: #171d1b; box-shadow: 0 0 0 100vmax #000b, 0 20px 70px #0008; flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; pointer-events: auto; }
+.деберц #экран-результата::before { display: none; }
+.деберц #экран-результата h2 { width: 100%; text-align: center; font-size: 28px; }
+.деберц #пояснение-результата { text-align: center; }
+.деберц-результаты-команд { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.деберц-результат-команды { min-width: 0; border: 1px solid #ffffff24; border-radius: 16px; background: #ffffff05; padding: 16px 10px; text-align: center; }
+.деберц-результат-команды--вы { border-color: #d2f76b60; background: #d2f76b09; }
+.деберц-результат-команды h3 { margin: 0 0 16px; font-size: 13px; line-height: 1.3; }
+.деберц-результат-команды > span { font-size: 10px; color: var(--сб-текст-тихий); }
+.деберц-результат-команды > strong { display: block; margin: 5px 0 18px; font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums; }
+.деберц-результат-команды--вы > strong { color: var(--сб-акцент); }
+.деберц-результат-команды p { margin: 0 0 12px; font-size: clamp(16px, 4.5vw, 21px); font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.деберц-результат-команды progress { width: 100%; height: 4px; border: 0; border-radius: 4px; accent-color: var(--сб-акцент); }
+.деберц-результат-команды progress::-webkit-progress-bar { background: #ffffff1a; border-radius: 4px; }
+.деберц-результат-команды progress::-webkit-progress-value { background: var(--сб-акцент); border-radius: 4px; }
+.деберц-расчёт { margin-top: 16px; }
+.деберц-расчёт summary { color: var(--сб-текст-тихий); font-size: 12px; cursor: pointer; padding: 8px 0; text-align: center; }
+@media (max-width: 350px) { .деберц #экран-результата { padding: 18px 14px; } .деберц-результаты-команд { gap: 8px; } }
+
+/* Заказчик рядом с козырем, читаемым текстом вместо тихой строки под сукном. */
+.деберц #экран-игры > #метка-козыря > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; }
+.деберц #деберц-козырь { grid-column: 1; grid-row: 1; }
+.деберц #деберц-заказ { display: block; grid-column: 1; grid-row: 2; text-align: left; color: #f4f0e4; font-size: 12px; line-height: 1.25; font-weight: 600; margin: 0; padding: 0; }
+.деберц #деберц-обяз { grid-column: 2; grid-row: 1 / 3; max-width: 110px; }
+
+.деберц .деберц-счёт-сторона { grid-template-columns: 1fr auto; }
+.деберц .деберц-счёт-сторона > strong { grid-row: 1; font-size: 23px; }
+.деберц .деберц-счёт-сторона > small { display: none; }
+.деберц .деберц-счёт-карточки:has(> :nth-child(3)) strong { font-size: 17px; }
+.деберц-попадание { --брызги: #dca83d; position: fixed; left: var(--x); top: var(--y); z-index: 165; pointer-events: none; }
+.деберц-попадание[data-предмет="помидор"] { --брызги: #ef4330; }
+.деберц-попадание[data-предмет="какашка"] { --брызги: #81502f; }
+.деберц-попадание[data-предмет="яйцо"], .деберц-попадание[data-предмет="банан"] { --брызги: #ffdc55; }
+.деберц-попадание[data-предмет="шарик-с-водой"] { --брызги: #64d9ff; }
+.деберц-попадание[data-предмет="снежок"] { --брызги: #e5f5ff; }
+.деберц-попадание[data-предмет="сердце"], .деберц-попадание[data-предмет="роза"] { --брызги: #fa6f9c; }
+.деберц-попадание[data-предмет="торт"] { --брызги: #ffe2d0; }
+.деберц-попадание[data-предмет="бомба"], .деберц-попадание[data-предмет="огонь"] { --брызги: #ff922e; }
+.деберц-попадание[data-предмет="рыба"], .деберц-попадание[data-предмет="тапок"], .деберц-попадание[data-предмет="перчатка"] { --брызги: #bcc9d2; }
+.деберц-пятно { position: absolute; left: -25px; top: -22px; width: 50px; height: 44px; background: var(--брызги); border-radius: 37% 63% 46% 54% / 60% 39% 61% 40%; box-shadow: 14px -10px 0 -8px var(--брызги), -18px 6px 0 -10px var(--брызги), 8px 21px 0 -12px var(--брызги); }
+.деберц-капля { position: absolute; left: -4px; top: -4px; width: 8px; height: 11px; background: var(--брызги); border-radius: 50%; }
+
+/* Общие с Дураком компоненты реплик и нижнего листа. */
+#экран-эмоций[open] { position: fixed; top: auto; bottom: 0; display: flex; flex-direction: column; pointer-events: auto; max-height: 85dvh; overflow-y: auto; color: var(--текст); box-sizing: border-box; }
+#экран-эмоций::backdrop { background: rgba(5,7,8,.55); }
+#экран-эмоций > p:empty { display: none; }
+.деберц-история-раздач { max-height: 180px; overflow: auto; margin-bottom: 16px; border: 1px solid var(--край); border-radius: 12px; }
+.деберц-история-раздач table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.деберц-история-раздач th, .деберц-история-раздач td { padding: 10px 6px; text-align: center; border-bottom: 1px solid var(--край); overflow-wrap: anywhere; }
+.деберц-история-раздач thead th { position: sticky; top: 0; background: #202624; font-size: 11px; }
+.деберц-история-раздач tbody th { font-weight: 400; color: var(--тихий); }
+.деберц-история-раздач .текущая-раздача { background: rgba(210,247,107,.09); color: var(--акцент); font-weight: 700; }
+
+/* Полоса козыря внутри увеличенного сукна; карты всегда ниже неё. */
+.деберц #деберц-участники { height: 54px; }
+.деберц #деберц-участники .деберц-очередь { color: var(--сб-акцент); font-weight: 700; }
+.деберц #деберц-объявление { height: 12px; min-height: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.деберц #деберц-объявление:empty { visibility: hidden; }
+@media (max-height: 560px) and (min-width: 600px) { .деберц #деберц-объявление, .деберц #деберц-объявление[hidden] { display: none; } .деберц #деберц-участники { height: 48px; } }
+.деберц #экран-игры #стол > .деберц-подпись-карты { transform: translateX(calc((var(--место-карты) - (var(--мест-за-столом) - 1) / 2) * 64%)); }
+.деберц #экран-игры #стол .карта { --в: clamp(100px, 18dvh, 132px); }
+@media (max-height: 700px) { .деберц #экран-игры #стол .карта { --в: 100px; } }
+@media (max-height: 560px) and (min-width: 600px) { .деберц #экран-игры #стол .карта { --в: clamp(78px, 24dvh, 110px); } }
+.деберц #приложение #экран-игры #зона-стола:has(#колода) > #метка-козыря { position: absolute; inset: 12px 14px auto; transform: none; width: auto; max-width: none; height: auto; min-height: 42px; display: flex; align-items: center; gap: 8px; padding: 5px 9px; border-radius: 9px; background: #171c1bea; z-index: 3; }
+.деберц #приложение #экран-игры #зона-стола:has(#колода) > #метка-козыря > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 2px 8px; flex: 1; min-width: 0; }
+.деберц #приложение #экран-игры #зона-стола:has(#колода) > #стол { inset: 82px 8px 12px; }
+.деберц #приложение #экран-игры #зона-стола:has(#колода) > #колода { top: 75px; }
+.деберц #экран-игры > #зона-стола { min-height: 205px; }
+#деберц-показ-комбинаций:not([hidden]) { position: absolute; inset: 67px 14px 14px; z-index: 4; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; background: #171c1bf5; border: 1px solid #d2f76b60; border-radius: 12px; padding: 12px; color: #f8f5eb; }
+#деберц-показ-комбинаций > strong { font-size: 12px; text-align: center; }
+.деберц-показ-ряда { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+.деберц-карты-комбинации { display: flex; gap: 3px; }
+.деберц-карты-комбинации > span { display: grid; place-items: center; min-width: 30px; height: 44px; border-radius: 4px; background: #f6ead3; color: #181815; font: bold 16px Georgia,serif; box-shadow: 0 2px 4px #0008; }
+.деберц-карты-комбинации > .красная { color: #c71932; }
+@media (max-height: 560px) and (min-width: 600px) {
+ .деберц #приложение #экран-игры.экран--виден { grid-template-rows: 26px 48px minmax(190px,1fr) 44px; grid-template-areas: 'top top' 'score players' 'table hand' 'hint buttons'; }
+ .деберц #экран-игры > #зона-стола { min-height: 0; }
+ .деберц #приложение #экран-игры #зона-стола:has(#колода) > #стол { top: 77px; }
+}
