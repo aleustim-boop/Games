@@ -5,7 +5,7 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
   const b=await chromium.launch({headless:true});
   try{
     const p=await b.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];await безTelegram(p);p.on('pageerror',e=>errors.push(e.message));
-    await p.clock.install();await p.goto('http://127.0.0.1:8137/катан.html');await p.locator('#кат-боты').click();await p.locator('#кат-начать').click();
+    await p.clock.install();await p.goto(process.env.CATAN_URL||'http://127.0.0.1:8137/катан.html');await p.locator('#кат-боты').click();await p.locator('#кат-начать').click();
     let steps=0,game;const seen=new Set();
     while(steps++<1800){
       const data=await p.evaluate(()=>JSON.parse(localStorage.getItem('catan-match-v1')));game=М.восстановить(data);
