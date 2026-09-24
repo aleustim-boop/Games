@@ -56,7 +56,7 @@
     if(v.phase==='setupRoad'||v.phase==='freeRoad')return {type:'road',edge:путь(v)?.edge&&v.legal.road.includes(путь(v).edge)?путь(v).edge:v.legal.road[0]};
     if(v.phase==='robber'){
       const score=h=>Г.hexes[h.id].vertices.reduce((s,id)=>{const b=v.buildings[id];return s+(!b?0:b.owner===p?-20:b.level*(2+v.players[b.owner].score));},0)*(h.number?6-Math.abs(7-h.number):.2);
-      return {type:'robber',hex:v.hexes.filter(h=>h.id!==v.robber).sort((a,b)=>score(b)-score(a))[0].id};
+      return {type:'robber',hex:v.hexes.filter(h=>(v.legal.robber||v.hexes.filter(t=>t.id!==v.robber).map(t=>t.id)).includes(h.id)).sort((a,b)=>score(b)-score(a))[0].id};
     }
     if(v.phase==='steal')return {type:'steal',victim:v.victims.slice().sort((a,b)=>v.players[b].score-v.players[a].score)[0]};
     if(v.legal.dev.includes('knight'))return {type:'dev',card:'knight'};

@@ -17,10 +17,10 @@ async function ход(page,v,a){
     await page.locator('#кат-главное').click();
     if(a.type==='discard'){for(let r=0;r<5;r++)await dialog.getByRole('spinbutton',{name:resources[r],exact:true}).fill(String(a.resources[r]));await dialog.getByRole('button',{name:'Подтвердить'}).click();}
     if(a.type==='steal')await dialog.getByRole('button',{name:new RegExp((v.names?.[a.victim]||'Бот '+a.victim)+' ·')}).click();
-  }else if(a.type==='robber')await page.locator(`#кат-поле [data-hex="${a.hex}"][role=button]`).click();
+  }else if(a.type==='robber'){await page.locator(`#кат-поле [data-hex="${a.hex}"][role=button]`).click();await page.locator('#кат-главное').click();}
   else if(a.type==='development'){await page.locator('#кат-карты').click();await dialog.getByRole('button',{name:'Купить карту развития',exact:true}).click();await page.locator('#кат-закрыть').click();}
   else if(a.type==='bank'){
-    await page.locator('#кат-обмен').click();await dialog.getByRole('combobox',{name:'Отдать банку'}).selectOption(String(a.give));await dialog.getByRole('combobox',{name:'Получить из банка'}).selectOption(String(a.want));await dialog.getByRole('button',{name:'Обменять',exact:true}).click();await page.locator('#кат-закрыть').click();
+    await page.locator('#кат-обмен').click();await dialog.locator(`[data-bank-give="${a.give}"]`).click();await dialog.locator(`[data-bank-want="${a.want}"]`).click();await dialog.getByRole('button',{name:'Обменять',exact:true}).click();await page.locator('#кат-закрыть').click();
   }else if(a.type==='dev'){
     await page.locator('#кат-карты').click();await dialog.getByRole('button',{name:new RegExp('^'+names[a.card]+' ×')}).click();
     if(a.card==='plenty'){for(let r=0;r<5;r++)await dialog.getByRole('spinbutton',{name:resources[r],exact:true}).fill(String(a.resources[r]));await dialog.getByRole('button',{name:'Подтвердить'}).click();}

@@ -15,8 +15,10 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
     }
     const [a,c]=pages;await a.locator('#лобби-найти-игру').click();await a.locator('#открытые-столы-создать').click();
     await a.locator('#кат-число-онлайн').getByRole('radio',{name:'Трое'}).click();
+    await a.locator('#экран-друга').getByRole('checkbox',{name:/Дружелюбный/}).check();await a.locator('#экран-друга').getByRole('checkbox',{name:/Мягкий/}).check();await a.locator('#экран-друга').getByRole('combobox',{name:'Время на ход'}).selectOption('120');
     const creating=a.waitForResponse(r=>decodeURIComponent(new URL(r.url()).pathname)==='/создать');await a.locator('#кнопка-создать-игру').click();const ticket=await(await creating).json();
     await a.locator('#комната').waitFor();assert.equal(await a.locator('#комната-стол button').count(),3);assert.match(await a.locator('#комната-правила').innerText(),/Катан/);
+    assert.match(await a.locator('#комната-правила').innerText(),/Дружелюбный разбойник/);assert.match(await a.locator('#комната-правила').innerText(),/120 с/);
     const header=await a.locator('#экран-комнаты > .верх-игры').boundingBox();assert(header.width>330,'Навигация комнаты сжалась в центре');
     await a.locator('#кнопка-комната-ещё').click();await a.locator('#лист-игры').waitFor();await a.locator('#кнопка-лист-игры-закрыть').click();
     await a.screenshot({path:'tests/снимки/катан-онлайн-комната.png'});

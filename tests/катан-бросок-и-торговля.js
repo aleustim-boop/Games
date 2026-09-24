@@ -38,7 +38,7 @@ function fixtures(){
     await p.screenshot({path:'tests/снимки/катан-v3-расстановка.png'});
     await load(cases.roll);before=await state();await p.locator('#кат-главное').click();
     await p.locator('#кат-бросок').waitFor();let current=await state();assert.equal(current.serial,before.serial+1);
-    const values=await p.locator('#кат-бросок .кат-кубик').evaluateAll(es=>es.map(e=>e.children.length));assert.deepEqual(values,current.dice);
+    const values=await p.locator('#кат-бросок .грань-0').evaluateAll(es=>es.map(e=>e.children.length));assert.deepEqual(values,current.dice);
     assert.match(await p.locator('#кат-бросок').innerText(),/Вы бросаете/);assert(await p.locator('#кат-главное').isDisabled());
     await p.clock.fastForward(1800);assert(await p.locator('#кат-бросок').isVisible(),'Результат броска исчез слишком рано');assert.equal((await state()).serial,current.serial);
     await p.screenshot({path:'tests/снимки/катан-v3-бросок.png'});
@@ -48,7 +48,7 @@ function fixtures(){
     assert.deepEqual(current.players[0].resources,before.players[0].resources.map((n,i)=>n-П.ЦЕНЫ.development[i]));
     assert(current.players[0].dev.at(-1).bought===current.round);await p.screenshot({path:'tests/снимки/катан-v3-развитие.png'});await p.locator('#кат-закрыть').click();
     await load(cases.bank);before=await state();let v=П.вид(before,0);const give=v.hand.findIndex((n,r)=>n>=v.rates[r]),want=v.bank.findIndex((n,r)=>n&&r!==give);
-    await p.locator('#кат-обмен').click();await p.getByRole('combobox',{name:'Отдать банку'}).selectOption(String(give));await p.getByRole('combobox',{name:'Получить из банка'}).selectOption(String(want));await p.getByRole('button',{name:'Обменять',exact:true}).click();
+    await p.locator('#кат-обмен').click();await p.locator(`[data-bank-give="${give}"]`).click();await p.locator(`[data-bank-want="${want}"]`).click();await p.getByRole('button',{name:'Обменять',exact:true}).click();
     current=await state();assert.equal(current.players[0].resources[give],before.players[0].resources[give]-v.rates[give]);assert.equal(current.players[0].resources[want],before.players[0].resources[want]+1);await p.locator('#кат-закрыть').click();
     await load(cases.offer.record);before=await state();const o=cases.offer,names=['Дерево','Глина','Шерсть','Зерно','Руда'];
     await p.locator('#кат-обмен').click();await p.getByRole('button',{name:'С игроками',exact:true}).click();await p.getByRole('combobox',{name:'Кому предложить обмен'}).selectOption(String(o.to));await p.getByRole('spinbutton',{name:'Отдаю: '+names[o.give],exact:true}).fill('1');await p.getByRole('spinbutton',{name:'Получаю: '+names[o.want],exact:true}).fill('1');await p.screenshot({path:'tests/снимки/катан-v3-торговля.png'});await p.getByRole('button',{name:'Предложить обмен',exact:true}).click();

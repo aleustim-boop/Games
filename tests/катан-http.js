@@ -7,13 +7,15 @@ const server=require('../server/сервер').создатьСервер(),Б=r
   const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,200,JSON.stringify(data));return data;};
   try{
     for(const n of [3,4]){
-      const a=await req('создать',{игра:'катан',имя:'Анна',мест:n}),players=[{код:a.код,пропуск:a.пропуск}];
+      const options={friendlyRobber:n===4,easyStart:n===4,turnSeconds:n===4?120:0};
+      const a=await req('создать',{игра:'катан',имя:'Анна',мест:n,катанНастройки:options}),players=[{код:a.код,пропуск:a.пропуск}];
       for(let i=1;i<n;i++){const p=await req('войти',{код:a.код,имя:`Участник ${i}`});players.push({код:a.код,пропуск:p.пропуск});}
       const turn=(i,action)=>req('ход',{...players[i],...action});assert.equal((await turn(0,{действие:'начать'})).принято,true);
       let count=0;
       while(count++<2000){
         const states=await Promise.all(players.map(p=>req('состояние',p))),views=states.map(s=>(s.состояние||s).катан),v=views[0];
         assert(v);assert.equal(v.names[1],'Участник 1');
+        assert.deepEqual(v.options,options);if(n===4&&v.phase!=='finished')assert(v.secondsLeft>0&&v.secondsLeft<=120);
         for(const view of views){assert.equal(view.hand.length,5);assert(!('seed'in view));assert(!('deck'in view));assert(view.players.every(p=>!('resources'in p)&&!('dev'in p)));}
         if(v.phase==='finished')break;
         const who=v.actor,move=Б.ход(views[who],'сложный');

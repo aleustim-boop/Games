@@ -118,6 +118,40 @@
 /* Композиция образца: остров и игроки занимают сцену, карты лежат отдельным рядом. */
 .катан #экран-игры { background:radial-gradient(ellipse at 50% 40%,#15151633,#070a0cdd 85%),url('img/катан/материалы-v3.webp') left center/200% 100%; }
 .кат-сцена #кат-поле { filter:none; }
+.катан #экран-игры[data-terrain=soft] .кат-земля { filter:saturate(.52) brightness(.72); }
+.катан #экран-игры[data-terrain=bright] .кат-земля { filter:none; }
+.катан #экран-игры .кат-приглушён .кат-земля { filter:saturate(.15) brightness(.42); }
+.кат-название-земли { display:none; font:600 16px system-ui; fill:#fff8e1; stroke:#201810; stroke-width:4; paint-order:stroke; text-anchor:middle; pointer-events:none; }
+.названия-ресурсов .кат-название-земли { display:block; }
+.без-вероятностей .кат-вероятность { display:none; }
+.кат-гекс.кат-выбрано { filter:none!important; }
+.кат-гекс.кат-выбрано .кат-земля { stroke:#fff783; stroke-width:9; filter:none!important; }
+.кат-гекс[role=button] { cursor:pointer; }
+.кат-гекс[role=button]:focus-visible .кат-земля { stroke:#fff; stroke-width:8; }
+.кат-гекс[role=button] .кат-земля { stroke:#c5ff70; stroke-width:4; }
+.катан .кат-выбор-настроек { display:flex; flex-wrap:wrap; gap:7px; margin:10px 0 18px; }
+.катан .кат-выбор-настроек button { padding:10px 12px; border:1px solid #b7985f66; border-radius:10px; color:#eee2c8; background:#272b25; min-height:42px; }
+.катан .кат-выбор-настроек button[aria-pressed=true] { border-color:#eac579; background:#68502b; color:#fff4d5; }
+.кат-настройка-флажок { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid #baa78122; font-size:15px; }
+.кат-настройка-флажок input { width:22px; height:22px; accent-color:#c5dd6e; }
+.кат-обмен-карты { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; }
+.катан #кат-диалог .кат-обмен-карта { min-width:0; min-height:118px; display:flex; flex-direction:column; align-items:center; gap:5px; padding:7px 2px; border:1px solid #927c58; border-radius:12px; background:#292e25; color:#f6ecd4; }
+.кат-обмен-карта .кат-рисунок { width:42px; height:42px; border-radius:8px; }
+.кат-обмен-карта b { font-size:12px; }.кат-обмен-карта small { font-size:10px; white-space:nowrap; }
+.катан #кат-диалог .кат-обмен-карта[aria-pressed=true] { border:2px solid #d3f377; background:#3d5028; box-shadow:0 0 12px #c7ee5233; }
+.катан #кат-диалог .кат-обмен-карта:disabled { opacity:.4; }
+.кат-обмен-итог { padding:13px; background:#111a15; border-radius:10px; color:#e7f5c3; text-align:center; font-weight:600; }
+.кат-счётчик { display:flex; min-width:0; align-items:center; }
+.катан #кат-диалог .кат-счётчик button { padding:0; min-width:28px; min-height:40px; border-radius:7px; background:#3b4333; color:#fff3d3; font-size:20px; }
+.катан #кат-диалог .кат-счётчик input { min-width:0; width:36px; padding:4px 0; text-align:center; appearance:textfield; }
+.кат-счётчик input::-webkit-inner-spin-button { appearance:none; }
+.катан #кат-диалог .кат-обмен-строка { grid-template-columns:minmax(70px,1fr) minmax(90px,1fr) minmax(90px,1fr); gap:5px; }
+.кат-кубик-пространство { width:64px; height:64px; perspective:600px; }
+.кат-кубик-3d { width:64px; height:64px; position:relative; transform-style:preserve-3d; transform:rotateX(-12deg) rotateY(-18deg); }
+.кат-бросок .кат-грань { position:absolute; inset:0; backface-visibility:hidden; border:1px solid #cdbfaa; box-shadow:inset 0 0 10px #a28a5d44; border-radius:10px; }
+.кат-грань.грань-0 { transform:translateZ(32px); }.кат-грань.грань-1 { transform:rotateY(180deg) translateZ(32px); }
+.кат-грань.грань-2 { transform:rotateY(90deg) translateZ(32px); }.кат-грань.грань-3 { transform:rotateY(-90deg) translateZ(32px); }
+.кат-грань.грань-4 { transform:rotateX(90deg) translateZ(32px); }.кат-грань.грань-5 { transform:rotateX(-90deg) translateZ(32px); }
 .кат-сцена .кат-карта { inset:35px -10px; }
 .кат-сцена #кат-окно-карты { mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent); mask-composite:intersect; }
 .кат-сцена .кат-карта.увеличена #кат-окно-карты { mask-image:none; }
@@ -125,7 +159,7 @@
 .кат-номер-фон { fill:#f6d29d; stroke:#b78854; stroke-width:2; filter:drop-shadow(1px 5px 2px #2a1c0c99); }
 .кат-номер { font:500 29px Georgia,serif; fill:#32200f; }.кат-красный { fill:#b72313; }
 /* Приглушаем только ландшафт: фишки, дороги и номера остаются контрастными. */
-.кат-земля { stroke:#eed0a0; stroke-width:1.6; filter:saturate(.52) brightness(.72); }
+.кат-земля { stroke:#eed0a0; stroke-width:1.6; filter:saturate(.76) brightness(.86); }
 .кат-сцена .кат-карта-верх { top:25px; }.кат-сцена .кат-карта-низ { bottom:27px; }
 .катан #экран-игры .кат-управление { border:0; box-shadow:none; background:linear-gradient(#141819a6,#131719e8); }
 .кат-управление .кат-ресурсы { padding:5px 7px; border:1px solid #bcad8c66; border-radius:12px; background:linear-gradient(#2c2b26,#141919); box-shadow:0 5px 16px #0008; }

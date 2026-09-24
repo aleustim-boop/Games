@@ -37,6 +37,7 @@
       group.append(node('title',{},['Лес — дерево','Холмы — глина','Пастбище — шерсть','Поля — зерно','Горы — руда','Пустыня'][h.resource]+(h.number?` · бросок ${h.number}`:'')+(h.id===v.robber?' · заблокировано разбойником':'')));
       const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.985,y+(vy-y)*.985].join(',');}).join(' ');
       const path=node('polygon',{points,fill:`url(#${prefix}земля-${h.resource})`,'class':'кат-земля'});group.append(path);
+      group.append(node('text',{x,y:y-36,'class':'кат-название-земли'},['Дерево','Глина','Шерсть','Зерно','Руда','Пустыня'][h.resource]));
       if(production===h.number&&h.id!==v.robber)group.append(node('polygon',{points,fill:'none','class':'кат-производство'}));
       if(h.number){
         group.append(node('circle',{cx:x,cy:y+22,r:25,'class':'кат-номер-фон'}));
@@ -44,7 +45,7 @@
         group.append(node('text',{x,y:y+40,'class':'кат-вероятность'},'•'.repeat(6-Math.abs(7-h.number))));
       }
       if(h.id===v.robber){const robber=node('g',{transform:`translate(${x},${y-16})`,'class':'кат-разбойник',style:'stroke:none'});robber.append(node('ellipse',{cx:3,cy:22,rx:20,ry:8,fill:'#20150670'}),node('ellipse',{cx:0,cy:18,rx:17,ry:9,fill:`url(#${prefix}черная-фигура)`}),node('path',{d:'M-14 14Q-7 1-8-9H8Q7 1 14 14Q0 24-14 14Z',fill:`url(#${prefix}черная-фигура)`}),node('circle',{cx:0,cy:-17,r:12,fill:`url(#${prefix}черная-фигура)`}));robber.append(node('title',{},'Разбойник: производство заблокировано'));group.append(robber);}
-      if(mode==='robber'&&v.turn===v.me&&h.id!==v.robber){path.classList.add('доступно');group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`Разбойник: гекс ${h.id+1}`);group.onclick=()=>act({type:'robber',hex:h.id});group.onkeydown=e=>{if(e.key==='Enter')group.onclick();};}
+      if(mode==='robber'&&v.turn===v.me&&(v.legal.robber||v.hexes.filter(h=>h.id!==v.robber).map(h=>h.id)).includes(h.id)){path.classList.add('доступно');group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`Разбойник: гекс ${h.id+1}`);group.onclick=()=>act({type:'robber',hex:h.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
       svg.append(group);
     }
     for(const port of v.ports){
