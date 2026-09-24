@@ -124,7 +124,8 @@
 .кат-порт line { stroke-width:11px; stroke-dasharray:3 1; }
 .кат-номер-фон { fill:#f6d29d; stroke:#b78854; stroke-width:2; filter:drop-shadow(1px 5px 2px #2a1c0c99); }
 .кат-номер { font:500 29px Georgia,serif; fill:#32200f; }.кат-красный { fill:#b72313; }
-.кат-земля { stroke:#eed0a0; stroke-width:1.6; }
+/* Приглушаем только ландшафт: фишки, дороги и номера остаются контрастными. */
+.кат-земля { stroke:#eed0a0; stroke-width:1.6; filter:saturate(.52) brightness(.72); }
 .кат-сцена .кат-карта-верх { top:25px; }.кат-сцена .кат-карта-низ { bottom:27px; }
 .катан #экран-игры .кат-управление { border:0; box-shadow:none; background:linear-gradient(#141819a6,#131719e8); }
 .кат-управление .кат-ресурсы { padding:5px 7px; border:1px solid #bcad8c66; border-radius:12px; background:linear-gradient(#2c2b26,#141919); box-shadow:0 5px 16px #0008; }
