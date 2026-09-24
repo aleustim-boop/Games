@@ -29,7 +29,7 @@
     return {hexes,vertices,edges};
   }
   const Г=геометрия();
-  function создать(n=4,seed=(Date.now()^Math.floor(Math.random()*1e9))>>>0,secure=false){
+  function создать(n=4,seed=(Date.now()^Math.floor(Math.random()*1e9))>>>0,secure=false,rules=1){
     нужно([3,4].includes(n),'Нужно 3 или 4 игрока');
     нужно(!secure||secureRandom,'Защищённая случайность доступна на сервере');
     const g={version:1,seed:seed||1,n,turn:0,round:1,phase:'setupSettlement',bank:[19,19,19,19,19],roads:Array(72).fill(-1),buildings:Array(54).fill(null),players:Array.from({length:n},()=>({resources:нули(),dev:[],knights:0})),deck:[],log:[],serial:0,dice:null,offer:null,roadOwner:-1,armyOwner:-1,lengths:Array(n).fill(0),winner:-1,playedDev:false,discard:Array(n).fill(0),setupIndex:0,lastSettlement:-1,freeRoads:0,returnPhase:'main'};
@@ -48,7 +48,14 @@
     const types=shuffle(g,[-1,-1,-1,-1,0,1,2,3,4]);
     g.ports=[0,3,6,10,13,16,20,23,26].map((j,i)=>({edge:coast[j].id,resource:types[i]}));
     g.deck=shuffle(g,[...Array(14).fill('knight'),...Array(5).fill('vp'),...Array(2).fill('roads'),...Array(2).fill('plenty'),...Array(2).fill('monopoly')]);
-    g.start=Math.floor(random(g)*n);const order=Array.from({length:n},(_,i)=>(i+g.start)%n);g.setup=[...order,...order.slice().reverse()];g.turn=g.setup[0];
+    g.start=Math.floor(random(g)*n);
+    if(rules>=2){
+      // Старые записи ходов продолжают использовать прежнюю последовательность случайности.
+      g.rules=2;g.startRolls=[];let candidates=Array.from({length:n},(_,i)=>i);
+      while(candidates.length>1){const rolls=candidates.map(player=>({player,dice:[1+Math.floor(random(g)*6),1+Math.floor(random(g)*6)]}));g.startRolls.push(rolls);const max=Math.max(...rolls.map(x=>сумма(x.dice)));candidates=rolls.filter(x=>сумма(x.dice)===max).map(x=>x.player);}
+      g.start=candidates[0];
+    }
+    const order=Array.from({length:n},(_,i)=>(i+g.start)%n);g.setup=[...order,...order.slice().reverse()];g.turn=g.setup[0];
     return g;
   }
   function фигуры(g,p){return {road:g.roads.filter(x=>x===p).length,settlement:g.buildings.filter(x=>x?.owner===p&&x.level===1).length,city:g.buildings.filter(x=>x?.owner===p&&x.level===2).length};}
@@ -205,7 +212,7 @@
     }
     return копия({version:1,n:g.n,me,turn:g.turn,actor:кто(g),round:g.round,phase:g.phase,hexes:g.hexes,ports:g.ports,roads:g.roads,buildings:g.buildings,robber:g.robber,bank:g.bank,dice:g.dice,deckCount:g.deck.length,
       players:g.players.map((p,i)=>({score:очки(g,i,i===me||g.phase==='finished'),cards:сумма(p.resources),devCount:p.dev.length,victoryCards:i===me||g.phase==='finished'?p.dev.filter(d=>d.type==='vp').length:null,knights:p.knights,pieces:фигуры(g,i),roadLength:g.lengths[i]})),hand:h,dev:g.players[me].dev,legal,
-      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log,serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads});
+      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log,serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
   }
   const api={РЕСУРСЫ,ЦЕНЫ,Г,создать,действие,вид,кто,очки,длина,поселения,дороги,курс,произвести,итог,фигуры,сумма};
   if(typeof module!=='undefined')module.exports=api;else root.КатанПравила=api;

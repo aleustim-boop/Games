@@ -8,11 +8,12 @@
   let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true};
   let lastSerial=null,audio=null;
   let artReady=false;
-  Promise.all(['земли','ресурсы'].map(file=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=`img/катан/${file}.jpg`;}))).catch(()=>{$('кат-ошибка').textContent='Часть графики не загрузилась. Проверьте соединение и обновите страницу.';}).finally(()=>{artReady=true;render();});
+  Promise.all(['земли-v2','ресурсы-v2'].map(file=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=`img/катан/${file}.jpg`;}))).catch(()=>{$('кат-ошибка').textContent='Часть графики не загрузилась. Проверьте соединение и обновите страницу.';}).finally(()=>{artReady=true;render();});
   const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
   const button=(text,action,cls='кнопка')=>{const e=el('button',text,cls);e.type='button';e.onclick=action;return e;};
   const name=i=>i===v?.me?'Вы':v?.names?.[i]||`Бот ${i}`;
   const picture=(i,cls='кат-рисунок')=>{const e=el('span',undefined,cls);e.style.setProperty('--столбец',i%3);e.style.setProperty('--ряд',Math.floor(i/3));e.setAttribute('aria-hidden','true');return e;};
+  const die=n=>{const e=el('span',undefined,'кат-кубик');e.setAttribute('aria-label',`Кубик: ${n}`);for(const cell of [[5],[1,9],[1,5,9],[1,3,7,9],[1,3,5,7,9],[1,3,4,6,7,9]][n-1]){const dot=el('i');dot.style.gridArea=`${Math.ceil(cell/3)} / ${(cell-1)%3+1}`;e.append(dot);}return e;};
   const resourceText=a=>a.flatMap((n,i)=>n?[`${ресурсы[i]} × ${n}`]:[]).join(', ');
   try{const p=JSON.parse(localStorage.getItem(PREF));if(p&&[3,4].includes(p.n)&&['лёгкий','обычный','сложный'].includes(p.level))prefs=p;}catch(_){}
   let loadError='';
@@ -24,9 +25,9 @@
     $('кат-продолжить').classList.toggle('скрыт',!g||g.phase==='finished');
     window.Телеграм?.показатьСтрелку(back);лист?.освежитьКнопкуНастроек(id);
   }
-  function close(){ $('кат-диалог').close();dialogKind=''; }
+  function close(){ $('кат-диалог').close();dialogKind='';if(!online)render(); }
   function closeAction(){if(dialogKind!=='result')close();}
-  function modal(title,kind=''){dialogKind=kind;$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
+  function modal(title,kind=''){dialogKind=kind;if(!online){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
   function back(){
     if($('кат-диалог').open){close();return;}
     if(document.querySelector('.кат-карта.увеличена')){zoom(false);return;}
@@ -42,7 +43,7 @@
   function fresh(){
     online=false;network=null;mode=null;lastResult='';busy=false;lastSerial=null;
     const seed=crypto.getRandomValues(new Uint32Array(1))[0]||1;
-    record={version:1,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,actions:[]};g=П.создать(record.n,seed);save();screen('экран-игры');render();
+    record={version:1,rules:2,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,actions:[]};g=П.создать(record.n,seed,false,2);save();screen('экран-игры');render();
   }
   function local(player,action){П.действие(g,player,action);record.actions.push({player,action});save();}
   async function act(action){
@@ -56,7 +57,7 @@
     return ok;
   }
   function bot(){
-    if(online||!g||g.phase==='finished'||busy)return;
+    if(online||!g||g.phase==='finished'||busy||$('кат-диалог').open)return;
     let who=-1,action=null;
     for(let i=1;i<g.n;i++){
       const view=П.вид(g,i);
@@ -88,20 +89,22 @@
     const mine=v.phase==='discard'?v.discard[v.me]>0:v.turn===v.me,active=v.phase!=='finished';
     const forced={setupSettlement:'settlement',setupRoad:'road',freeRoad:'road',robber:'robber'}[v.phase];
     if(forced)mode=mine?forced:null;else if(v.phase!=='main'||!mine||!['road','settlement','city'].includes(mode))mode=null;
-    $('кат-раунд').textContent=(v.phase.startsWith('setup')?'Расстановка':`Ход ${v.round}`)+' · до 10';
+    $('кат-раунд').textContent=(v.phase.startsWith('setup')?`Расстановка ${v.setupRound||1}/2`:`Ход ${v.round}`)+' · до 10';
     $('кат-игроки').replaceChildren(...v.players.map((p,i)=>{
-      const card=el('div',undefined,`кат-игрок цвет-${i}`);card.classList.toggle('ходит',active&&(v.phase==='discard'?v.discard[i]>0:i===v.turn));
+      const card=button('',()=>playerInfo(i),`кат-игрок цвет-${i}`);card.classList.toggle('ходит',active&&(v.phase==='discard'?v.discard[i]>0:i===v.turn));
       const title=el('b',name(i));title.title=name(i);
-      card.append(title,el('strong',p.score),el('small',`${p.cards} ресурсов · ${p.devCount} карт`));card.setAttribute('aria-label',`${name(i)}: ${p.score} очков, ${p.cards} ресурсов`);return card;
+      const avatar=el('span',name(i).slice(0,1),'кат-аватар');avatar.setAttribute('aria-hidden','true');
+      card.append(avatar,title,el('strong',p.score),el('small',`${p.cards} ресурсов · ${p.devCount} карт`));card.setAttribute('aria-label',`${name(i)}: ${p.score} очков, ${p.cards} ресурсов`);return card;
     }));
     window.КатанПоле.рисовать($('кат-поле'),v,busy?null:mode,act);
-    $('кат-кубики').replaceChildren(...(v.dice?v.dice.map(n=>{const e=el('span','⚀⚁⚂⚃⚄⚅'[n-1],'кат-кубик');e.setAttribute('aria-label',String(n));return e;}):[el('span','Кубики ещё не брошены')]));
+    $('кат-кубики').replaceChildren(...(v.dice?v.dice.map(die):[el('span','Кубики ещё не брошены')]));
     if(v.dice)$('кат-кубики').append(el('b',' = '+П.сумма(v.dice)));
     $('кат-награды').textContent=`Дорога: ${v.roadOwner<0?'от 5 участков':name(v.roadOwner)} · Армия: ${v.armyOwner<0?'от 3 рыцарей':name(v.armyOwner)}`;
     $('кат-действие-текст').textContent=!active?'Партия завершена':busy?'Отправляем ход…':mine?'Ваш ход':`Ходит ${name(v.actor)}`;
-    $('кат-подсказка').textContent=mode&&v.phase==='main'?`Выберите место: ${названия[mode].toLowerCase()}`:mine?phaseText[v.phase]:({setupSettlement:'Выбирает место для поселения',setupRoad:'Прокладывает дорогу',roll:'Готовится бросить кубики',main:'Строит и обменивается',discard:'Ждём сброса ресурсов',robber:'Перемещает разбойника',steal:'Выбирает соперника',freeRoad:'Прокладывает бесплатную дорогу',finished:'Партия завершена'}[v.phase]);
+    $('кат-подсказка').textContent=mode&&v.phase==='main'?`Выберите место: ${названия[mode].toLowerCase()}`:mine&&v.phase==='setupSettlement'?`Поселение бесплатно · круг ${v.setupRound}/2${v.setupRound===2?' · получите соседние ресурсы':''}`:mine?phaseText[v.phase]:({setupSettlement:'Выбирает место для поселения',setupRoad:'Прокладывает дорогу',roll:'Готовится бросить кубики',main:'Строит и обменивается',discard:'Ждём сброса ресурсов',robber:'Перемещает разбойника',steal:'Выбирает соперника',freeRoad:'Прокладывает бесплатную дорогу',finished:'Партия завершена'}[v.phase]);
     $('кат-ход').classList.toggle('ваш',mine&&active);$('кат-ход').classList.toggle('ожидание',!mine&&active);
-    $('кат-ресурсы').replaceChildren(...v.hand.map((n,i)=>{const e=el('div',undefined,'кат-ресурс');e.append(picture(i),el('strong',n),el('small',ресурсы[i]));e.title=`${ресурсы[i]}: у вас ${n}, в банке ${v.bank[i]}`;return e;}));
+    const last=v.log.at(-1);$('кат-событие').textContent=last?logText(last):v.startRolls?.length?`${name(v.start)} начинает: наибольший бросок кубиков`:'Выберите первое поселение';
+    $('кат-ресурсы').replaceChildren(...v.hand.map((n,i)=>{const e=button('',()=>resourceInfo(i),'кат-ресурс');e.append(picture(i),el('strong',n),el('small',ресурсы[i]));e.title=`${ресурсы[i]}: у вас ${n}, в банке ${v.bank[i]}`;e.setAttribute('aria-label',e.title);return e;}));
     $('кат-стройки').replaceChildren(...Object.entries(П.ЦЕНЫ).map(([type,cost])=>{
       const enabled=type==='development'?v.legal.development:v.legal[type].length>0;
       const b=button(названия[type],()=>{
@@ -109,13 +112,15 @@
         if(type==='development')act({type});else{mode=mode===type?null:type;render();}
       },enabled?'':'кат-нехватка');
       b.disabled=busy||!mine||v.phase!=='main';b.setAttribute('aria-pressed',String(mode===type));
+      b.dataset.build=type;
+      const icon=el('span',undefined,'кат-строение');icon.setAttribute('aria-hidden','true');b.prepend(icon);
       const price=el('span',undefined,'кат-цена');cost.forEach((n,r)=>{for(let j=0;j<n;j++)price.append(picture(r,'кат-рисунок кат-мини'));});b.append(price);
       const missing=cost.map((n,r)=>Math.max(0,n-v.hand[r]));b.title=resourceText(cost)+(П.сумма(missing)?' · Не хватает: '+resourceText(missing):'');return b;
     }));
     $('кат-отмена').classList.toggle('скрыт',!mode||v.phase!=='main');
     $('кат-главное').textContent=!active?'Результаты':v.phase==='roll'?'Бросить кубики':v.phase==='discard'&&mine?`Сбросить ${v.discard[v.me]}`:v.phase==='steal'&&mine?'Выбрать соперника':v.phase==='main'&&mine?'Завершить ход':mine?'Выберите место':'Ждём хода';
     $('кат-главное').disabled=busy||active&&(!mine||!['roll','main','discard','steal'].includes(v.phase));
-    $('кат-обмен').disabled=busy||v.phase!=='main';$('кат-карты').disabled=!v.dev.length;
+    $('кат-обмен').disabled=busy||v.phase!=='main';$('кат-карты').disabled=!v.dev.length;$('кат-карты').textContent=`Мои карты${v.dev.length?' · '+v.dev.length:''}`;
     offer();
     feedback();
     if(!active){saveResult();const key=`${network?.код||record?.id}:${network?.сыграноПартий||0}`;if(lastResult!==key){lastResult=key;results();}}
@@ -125,6 +130,17 @@
     const body=modal(title,'resources'),values=[0,0,0,0,0],summary=el('p'),confirm=button('Подтвердить',async()=>{if(await done(values.slice()))closeAction();},'кнопка кнопка--главная');
     const update=()=>{const total=П.сумма(values);summary.textContent=`Выбрано ${total} из ${count}`;confirm.disabled=total!==count||busy;};body.append(summary);
     ресурсы.forEach((text,i)=>{const row=el('label',undefined,'кат-строка-выбора'),input=el('input');input.type='number';input.min=0;input.max=limit[i];input.step=1;input.value=0;input.inputMode='numeric';input.setAttribute('aria-label',text);input.oninput=()=>{values[i]=Math.max(0,Math.min(limit[i],Math.floor(Number(input.value)||0)));input.value=values[i];update();};row.append(picture(i),el('span',`${text} · ${limit[i]} доступно`),input);body.append(row);});body.append(confirm);update();
+  }
+  function playerInfo(i){
+    const p=v.players[i],body=modal(name(i),'player');
+    body.append(el('p',`Победные очки: ${p.score} из 10`),el('p',`В руке: ${p.cards} ресурсов · ${p.devCount} карт развития`));
+    for(const [title,value]of [['Поселения',p.pieces.settlement],['Города',p.pieces.city*2],['Самая длинная дорога',v.roadOwner===i?2:0],['Самая большая армия',v.armyOwner===i?2:0]]){const row=el('div',undefined,'кат-счёт-строка');row.append(el('span',title),el('b',String(value)));body.append(row);}
+    if(p.victoryCards!==null){const row=el('div',undefined,'кат-счёт-строка');row.append(el('span',i===v.me?'Ваши скрытые победные очки':'Карты победных очков'),el('b',String(p.victoryCards)));body.append(row);}else body.append(el('p','Победные карты соперника скрыты и не входят в его видимый счёт до конца партии.'));
+    body.append(el('p',`Непрерывная дорога: ${p.roadLength} · Разыграно рыцарей: ${p.knights}`),el('p',`Фигуры в запасе: ${15-p.pieces.road} дорог, ${5-p.pieces.settlement} поселений, ${4-p.pieces.city} городов.`));
+  }
+  function resourceInfo(r){
+    const body=modal(ресурсы[r],'resource'),art=picture(r,'кат-рисунок кат-ресурс-крупно');body.append(art,el('p',`У вас: ${v.hand[r]} · В банке: ${v.bank[r]} · Ваш курс: ${v.rates[r]} к 1`));
+    const lands=v.hexes.filter(h=>h.resource===r);body.append(el('p',`Ресурс приносят ${['леса','глиняные холмы','пастбища','поля','горы'][r]} при броске: ${lands.map(h=>h.number).sort((a,b)=>a-b).join(', ')}.`),el('p','Поселение у такого гекса получает 1 карту, город — 2. Это работает на бросках всех игроков. Гекс с разбойником не производит ресурсов.'));
   }
   function development(){
     const body=modal('Ваши карты развития','development');
@@ -143,22 +159,30 @@
   }
   function trade(){
     const body=modal('Обмен ресурсами','trade');
+    const turn=v.turn,bankPanel=el('div',undefined,'кат-форма-обмена'),peoplePanel=el('div',undefined,'кат-форма-обмена');
+    const validTurn=()=>{if(v.phase!=='main'||v.turn!==turn){$('кат-ошибка').textContent='Ход сменился. Откройте обмен заново.';close();return false;}return true;};
+    const tabs=el('div',undefined,'кат-переключатель');
+    function tab(bank){bankPanel.hidden=!bank;peoplePanel.hidden=bank;[...tabs.children].forEach((b,i)=>b.setAttribute('aria-pressed',String((i===0)===bank)));}
     if(v.turn===v.me){
-      body.append(el('h3','Банк и порты'));
+      tabs.append(button('Банк и порты',()=>tab(true)),button('С игроками',()=>tab(false)));body.append(tabs);
+      bankPanel.append(el('p','Курс учитывает ваши порты. Выберите ресурс, который отдаёте, и тот, который нужен.'));
       const give=el('select'),want=el('select');give.setAttribute('aria-label','Отдать банку');want.setAttribute('aria-label','Получить из банка');
       ресурсы.forEach((r,i)=>{const a=el('option',`${r} · отдать ${v.rates[i]}`);a.value=i;give.append(a);const b=el('option',`${r} · в банке ${v.bank[i]}`);b.value=i;want.append(b);});want.value=1;
-      const exchange=button('Обменять',async()=>{if(await act({type:'bank',give:Number(give.value),want:Number(want.value)}))trade();},'кнопка кнопка--главная');
-      const update=()=>exchange.disabled=give.value===want.value||v.hand[+give.value]<v.rates[+give.value]||v.bank[+want.value]===0;give.onchange=want.onchange=update;update();body.append(give,want,exchange);
+      const exchange=button('Обменять',async()=>{if(validTurn()&&await act({type:'bank',give:Number(give.value),want:Number(want.value)}))trade();},'кнопка кнопка--главная');
+      const update=()=>exchange.disabled=give.value===want.value||v.hand[+give.value]<v.rates[+give.value]||v.bank[+want.value]===0;give.onchange=want.onchange=update;update();bankPanel.append(el('b','Отдаю'),give,el('b','Получаю'),want,exchange);
     }
-    body.append(el('h3','Предложить игрокам'),el('p','Укажите, что отдаёте и что хотите получить. Обмен происходит после согласия соперника.'));
+    body.append(bankPanel,peoplePanel);tab(v.turn===v.me);
+    peoplePanel.append(el('p','Укажите ресурсы с обеих сторон. Обмен состоится только после согласия игрока.'));
     const target=el('select');target.setAttribute('aria-label','Кому предложить обмен');
     if(v.turn===v.me){const o=el('option','Всем игрокам');o.value=-1;target.append(o);}
-    v.players.forEach((_,i)=>{if(i!==v.me&&(v.turn===v.me||i===v.turn)){const o=el('option',name(i));o.value=i;target.append(o);}});body.append(target);
+    v.players.forEach((_,i)=>{if(i!==v.me&&(v.turn===v.me||i===v.turn)){const o=el('option',name(i));o.value=i;target.append(o);}});peoplePanel.append(target);
     const give=[0,0,0,0,0],want=[0,0,0,0,0];
-    for(const [label,values,max]of [['Отдаю',give,v.hand],['Получаю',want,[19,19,19,19,19]]]){
-      body.append(el('b',label));ресурсы.forEach((r,i)=>{const row=el('label',undefined,'кат-строка-выбора'),input=el('input');input.type='number';input.min=0;input.max=max[i];input.value=0;input.inputMode='numeric';input.setAttribute('aria-label',`${label}: ${r}`);input.oninput=()=>values[i]=Math.max(0,Math.min(max[i],Math.floor(Number(input.value)||0)));row.append(picture(i),el('span',r),input);body.append(row);});
-    }
-    body.append(button('Предложить обмен',async()=>{if(await act({type:'offer',to:Number(target.value),give,want}))closeAction();},'кнопка кнопка--главная'));
+    const confirm=button('Предложить обмен',async()=>{if(validTurn()&&await act({type:'offer',to:Number(target.value),give,want}))closeAction();},'кнопка кнопка--главная');
+    const update=()=>confirm.disabled=!П.сумма(give)||!П.сумма(want)||give.some((n,i)=>n&&want[i]);
+    const head=el('div',undefined,'кат-обмен-строка кат-обмен-шапка');head.append(el('span','Ресурс'),el('span','Отдаю'),el('span','Получаю'));peoplePanel.append(head);
+    ресурсы.forEach((r,i)=>{const row=el('div',undefined,'кат-обмен-строка'),label=el('span',undefined,'кат-обмен-ресурс');label.append(picture(i),el('span',r));row.append(label);
+      for(const [label,values,max]of [['Отдаю',give,v.hand[i]],['Получаю',want,19]]){const input=el('input');input.type='number';input.min=0;input.max=max;input.value=0;input.inputMode='numeric';input.setAttribute('aria-label',`${label}: ${r}`);input.oninput=()=>{values[i]=Math.max(0,Math.min(max,Math.floor(Number(input.value)||0)));input.value=values[i];update();};row.append(input);}peoplePanel.append(row);
+    });peoplePanel.append(confirm);update();
   }
   function offer(){
     const root=$('кат-предложение'),o=v.offer;root.classList.toggle('скрыт',!o);root.replaceChildren();if(!o)return;
@@ -179,7 +203,7 @@
     if(e.type==='discard')return `${n}: сброшено ${e.count} ресурсов`;
     return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',robber:'разбойник перемещён'}[e.type]||e.type}`;
   }
-  function journal(){const body=modal('Журнал ходов','log');if(!v?.log.length)body.append(el('p','Здесь появятся броски кубиков, постройки и обмены.'));else v.log.slice().reverse().forEach(e=>body.append(el('div',logText(e),'кат-журнал')));}
+  function journal(){const body=modal('Журнал ходов','log');if(!v?.log.length)body.append(el('p','Здесь появятся броски кубиков, постройки и обмены.'));else v.log.slice().reverse().forEach(e=>body.append(el('div',logText(e),'кат-журнал')));if(v?.startRolls?.length){body.append(el('h3','Кто начинает'));v.startRolls.forEach((rolls,i)=>body.append(el('p',`Бросок ${i+1}: `+rolls.map(r=>`${name(r.player)} — ${r.dice.join(' + ')} = ${П.сумма(r.dice)}`).join('; '))));body.append(el('p','Начинает: '+name(v.start)));}}
   function saveResult(){
     if(online||record.resultSaved)return;
     try{let history=JSON.parse(localStorage.getItem(HIST))||[];if(!Array.isArray(history))history=[];if(!history.some(x=>x.id===record.id))history.unshift({id:record.id,date:Date.now(),win:v.winner===0,scores:v.players.map(p=>p.score),level:record.level});localStorage.setItem(HIST,JSON.stringify(history.slice(0,30)));record.resultSaved=true;save();}catch(_){}
@@ -218,7 +242,7 @@
   }
   const лист=window.ЛистЕщё.подключить({экраныСЛистом:['экран-лобби','экран-игры','кат-настройки'],двери:{вМеню:{действие:back},завершить:{видна:()=>$('экран-игры').classList.contains('экран--виден')&&v?.phase!=='finished',текст:()=>'Вы завершите партию досрочно. Вам будет записано поражение.',действие:()=>act({type:'surrender'})},какИграть:{действие:rules},рекорды:{действие:history},звук:{состояние:()=>prefs.sound?'вкл':'выкл',действие:()=>{prefs.sound=!prefs.sound;save();}}}});
   document.querySelectorAll('[data-back]').forEach(b=>b.onclick=back);document.querySelectorAll('[data-menu]').forEach(b=>b.onclick=()=>лист.открыть());
-  $('кат-закрыть').onclick=close;$('кат-диалог').addEventListener('cancel',()=>dialogKind='');
+  $('кат-закрыть').onclick=close;$('кат-диалог').addEventListener('cancel',e=>{e.preventDefault();close();});
   $('кат-боты').onclick=()=>{settings();screen('кат-настройки');};
   $('кат-начать').onclick=()=>{if(g&&g.phase!=='finished')$('кат-новая').showModal();else fresh();};
   $('кат-новая-да').onclick=()=>{$('кат-новая').close();fresh();};

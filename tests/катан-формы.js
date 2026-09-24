@@ -25,7 +25,7 @@ function fixtures(){
       const before=М.восстановить(cases[type]),v=П.вид(before,0);
       const rects=await p.evaluate(()=>({top:document.querySelector('#экран-игры .кат-верх').getBoundingClientRect().top,bottom:document.getElementById('кат-главное').getBoundingClientRect().bottom}));assert(rects.top>=68);assert(rects.bottom<=820);
       if(type==='trade'){
-        const r=v.hand.findIndex(Boolean),want=(r+1)%5;await p.locator('#кат-обмен').click();
+        const r=v.hand.findIndex(Boolean),want=(r+1)%5;await p.locator('#кат-обмен').click();await p.getByRole('button',{name:'С игроками',exact:true}).click();
         const names=['Дерево','Глина','Шерсть','Зерно','Руда'];await p.getByRole('spinbutton',{name:'Отдаю: '+names[r],exact:true}).fill('1');await p.getByRole('spinbutton',{name:'Получаю: '+names[want],exact:true}).fill('1');await p.getByRole('button',{name:'Предложить обмен',exact:true}).click();
         await p.locator('#кат-предложение button').waitFor();await p.locator('#кат-предложение button').click();await p.locator('#кат-диалог').getByRole('button',{name:'Отменить предложение'}).click();
         const data=await p.evaluate(()=>JSON.parse(localStorage.getItem('catan-match-v1')));assert.equal(М.восстановить(data).offer,null);

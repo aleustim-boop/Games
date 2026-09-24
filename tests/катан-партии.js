@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот');
 assert.equal(П.Г.vertices.length,54);assert.equal(П.Г.edges.length,72);
 for(let seed=1;seed<=24;seed++){
-  const g=П.создать(seed%2?3:4,seed);let steps=0;
+  const g=П.создать(seed%2?3:4,seed,false,2);let steps=0;
   while(g.phase!=='finished'&&steps++<12000){
     const who=П.кто(g),v=П.вид(g,who),a=Б.ход(v,seed%3===0?'лёгкий':'сложный');
     assert(a,`Нет действия ${g.phase}`);
