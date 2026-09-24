@@ -734,12 +734,20 @@ async function новаяСтраница(браузер, адрес, без) {
     const т = м.text();
     const откуда = (м.location() && м.location().url) || '';
     if (/telegram-web-app\.js|telegram\.org/.test(т) || /telegram-web-app\.js|telegram\.org/.test(откуда)) return;
+    // 24.09, ТЕСТИРОВЩИК: боевой сервер комнат на 8790 на этом стенде не поднят
+    // (и поднимать его нельзя) — дурак честно не достучался до рейтинга, это
+    // ожидаемый шум окружения, не поломка страницы. Фильтр точечный — прощает
+    // ТОЛЬКО отказ к самому порту 8790 (тот же приём, что в обход-завершить-
+    // партию.js:новаяСтраница), настоящие сетевые провалы остаются красными.
+    if (/:8790\//.test(откуда) && /ERR_CONNECTION_REFUSED/.test(т)) return;
     красные.push('консоль: ' + т);
   });
   страница.on('requestfailed', (з) => {
     const адресЗапроса = з.url();
     if (/telegram-web-app\.js|telegram\.org/.test(адресЗапроса)) return;
-    красные.push('сеть: ' + адресЗапроса + ' — ' + (з.failure() && з.failure().errorText));
+    const отказ = (з.failure() && з.failure().errorText) || '';
+    if (/:8790\//.test(адресЗапроса) && /ERR_CONNECTION_REFUSED/.test(отказ)) return;
+    красные.push('сеть: ' + адресЗапроса + ' — ' + отказ);
   });
 
   if (без === 'telegram') await безTelegram(страница);
