@@ -11,6 +11,14 @@
   Promise.all(['земли-v2','ресурсы-v2'].map(file=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=`img/катан/${file}.webp`;}))).catch(()=>{$('кат-ошибка').textContent='Часть графики не загрузилась. Проверьте соединение и обновите страницу.';}).finally(()=>{artReady=true;render();});
   const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
   const button=(text,action,cls='кнопка')=>{const e=el('button',text,cls);e.type='button';e.onclick=action;return e;};
+  const icons={back:'<path d="m15 4-8 8 8 8"/>',more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',robot:'<rect x="3" y="6" width="18" height="15" rx="4"/><path d="M12 6V2M1 11v6M23 11v6M9 16h6"/><circle cx="8" cy="11" r="1"/><circle cx="16" cy="11" r="1"/>',person:'<circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/>',book:'<path d="M12 5v16M3 3c4-1 6 0 9 2 3-2 5-3 9-2v16c-4-1-6 0-9 2-3-2-5-3-9-2Z"/>'};
+  function icon(kind){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.7');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');svg.innerHTML=icons[kind];return svg;}
+  function profile(){
+    $('кат-имя').textContent=window.Телеграм?.имяИгрока?.()||'Вы';
+    const avatar=$('кат-аватар'),photo=window.Телеграм?.фотоИгрока?.()||'';
+    if(avatar.dataset.photo===photo)return;avatar.dataset.photo=photo;avatar.replaceChildren();
+    if(photo){const img=new Image();img.alt='';img.onload=()=>{if(avatar.dataset.photo===photo)avatar.replaceChildren(img);};img.src=photo;}
+  }
   const name=i=>i===v?.me?'Вы':v?.names?.[i]||`Бот ${i}`;
   const picture=(i,cls='кат-рисунок')=>{const e=el('span',undefined,cls);e.style.setProperty('--столбец',i%3);e.style.setProperty('--ряд',Math.floor(i/3));e.setAttribute('aria-hidden','true');return e;};
   const die=n=>{const e=el('span',undefined,'кат-кубик');e.setAttribute('aria-label',`Кубик: ${n}`);for(const cell of [[5],[1,9],[1,5,9],[1,3,7,9],[1,3,5,7,9],[1,3,4,6,7,9]][n-1]){const dot=el('i');dot.style.gridArea=`${Math.ceil(cell/3)} / ${(cell-1)%3+1}`;e.append(dot);}return e;};
@@ -24,6 +32,7 @@
     document.querySelectorAll('.экран').forEach(e=>e.classList.toggle('экран--виден',e.id===id));
     $('кат-продолжить').classList.toggle('скрыт',!g||g.phase==='finished');
     window.Телеграм?.показатьСтрелку(back);лист?.освежитьКнопкуНастроек(id);
+    if(id==='экран-лобби')profile();
   }
   function close(){ $('кат-диалог').close();dialogKind='';if(!online)render(); }
   function closeAction(){if(dialogKind!=='result')close();}
@@ -32,6 +41,7 @@
     if($('кат-диалог').open){close();return;}
     if(document.querySelector('.кат-карта.увеличена')){zoom(false);return;}
     if(лист.открыт()){лист.закрыть();return;}
+    if($('экран-комнаты').classList.contains('экран--виден')){$('кнопка-комната-отмена').click();return;}
     if(online&&$('экран-игры').classList.contains('экран--виден')){
       if(v?.phase!=='finished'&&лист.спроситьЗавершить())return;
       window.Сеть.покинутьПартию();online=false;
@@ -209,9 +219,9 @@
     try{let history=JSON.parse(localStorage.getItem(HIST))||[];if(!Array.isArray(history))history=[];if(!history.some(x=>x.id===record.id))history.unshift({id:record.id,date:Date.now(),win:v.winner===0,scores:v.players.map(p=>p.score),level:record.level});localStorage.setItem(HIST,JSON.stringify(history.slice(0,30)));record.resultSaved=true;save();}catch(_){}
   }
   function results(){
-    const body=modal(v.winner<0?'Партия завершена':v.winner===v.me?'Ваш остров победил!':`Победитель: ${name(v.winner)}`,'result');
+    const body=modal(v.winner<0?'Партия завершена':v.winner===v.me?'Вы победили!':`Победитель: ${name(v.winner)}`,'result');
     if(v.surrendered>=0)body.append(el('p',`${name(v.surrendered)} завершили партию досрочно.`));else if(v.interrupted)body.append(el('p','Партия прервана без результата.'));
-    [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / 10`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
+    [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / 10`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Победные карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
     body.append(button('Посмотреть остров',close));
     body.append(button(online&&network?.яХочуЕщё?'Ждём согласия игроков…':'Сыграть ещё',async()=>{if(online){const r=await window.Сеть.отправитьХод({действие:'ещё'});if(!r?.принято)$('кат-ошибка').textContent=r?.причина||'Нет связи';}else{close();fresh();}},'кнопка кнопка--главная'));
     body.append(button('В меню',()=>{close();if(online)window.Сеть.покинутьПартию();online=false;screen('экран-лобби');}));
@@ -236,12 +246,22 @@
     radios('кат-уровень',[['лёгкий','Лёгкий'],['обычный','Обычный'],['сложный','Сложный']],prefs.level,x=>prefs.level=x);
     radios('кат-число-онлайн',[[3,'Трое'],[4,'Четверо']],Number($('катан-мест-друга').value),n=>$('катан-мест-друга').value=n);
     for(const [id,n,bots]of [['кат-стол-ботов',prefs.n,true],['кат-стол-онлайн',Number($('катан-мест-друга').value),false]]){
-      const root=$(id);root.style.setProperty('--мест',n);root.replaceChildren(el('b','КАТАН'));
-      for(let i=0;i<n;i++){const b=button('',()=>{if(bots){const body=modal(`Бот ${i}`);body.append(el('p','Сила соперников выбирается под столом.'));}else $('кнопка-создать-игру').click();},`рассадка__место рассадка__место--${i===0?'я':bots?'бот':'свободно'}`);b.style.setProperty('--номер-места',n/2+i);const img=el('img');img.src=`img/дурак/значки/${i===0?'avatar':'robot'}.svg`;img.alt='';b.append(bots||i===0?img:el('span','+'),el('span',i===0?'Вы':bots?`Бот ${i}`:'Свободно','рассадка__имя'));b.disabled=i===0;root.append(b);}
+      const root=$(id);root.style.setProperty('--мест',n);root.replaceChildren();
+      const preview=document.createElementNS('http://www.w3.org/2000/svg','svg');preview.classList.add('кат-превью');preview.setAttribute('aria-hidden','true');
+      window.КатанПоле.рисовать(preview,П.вид(П.создать(n,1729),0),null,null,id+'-');root.append(preview);
+      for(let i=0;i<n;i++){
+        const b=button('',()=>{
+          if(bots){const body=modal('Сила соперников','seat');body.append(el('p','Выбранный уровень применяется ко всем ботам за столом.'));
+            for(const [value,label]of [['лёгкий','Лёгкий · знакомство с игрой'],['обычный','Обычный · сбалансированная игра'],['сложный','Сложный · опытные соперники']]){const choice=button(label,()=>{prefs.level=value;save();settings();close();},value===prefs.level?'кнопка кнопка--главная':'кнопка');body.append(choice);}
+          }else{const body=modal('Свободное место','seat');body.append(el('p','После создания стола пригласите друга по коду или посадите сюда бота.'),button('Создать стол',()=>{close();$('кнопка-создать-игру').click();},'кнопка кнопка--главная'));}
+        },`рассадка__место рассадка__место--${i===0?'я':bots?'бот':'свободно'} цвет-${i}`);
+        b.style.setProperty('--номер-места',n/2+i);b.setAttribute('aria-label',i===0?'Ваше место':bots?`Бот ${i}: ${prefs.level}. Изменить сложность`:`Место ${i+1}: пригласить игрока`);
+        const avatar=el('span',undefined,'кат-место-значок');avatar.append(i===0?icon('person'):bots?icon('robot'):el('span','+'));b.append(avatar,el('span',i===0?'Вы':bots?`Бот ${i}`:'Пригласить','рассадка__имя'));b.disabled=i===0;root.append(b);
+      }
     }
   }
-  const лист=window.ЛистЕщё.подключить({экраныСЛистом:['экран-лобби','экран-игры','кат-настройки'],двери:{вМеню:{действие:back},завершить:{видна:()=>$('экран-игры').classList.contains('экран--виден')&&v?.phase!=='finished',текст:()=>'Вы завершите партию досрочно. Вам будет записано поражение.',действие:()=>act({type:'surrender'})},какИграть:{действие:rules},рекорды:{действие:history},звук:{состояние:()=>prefs.sound?'вкл':'выкл',действие:()=>{prefs.sound=!prefs.sound;save();}}}});
-  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=back);document.querySelectorAll('[data-menu]').forEach(b=>b.onclick=()=>лист.открыть());
+  const лист=window.ЛистЕщё.подключить({экраныСЛистом:['экран-лобби','экран-игры','кат-настройки','экран-друга','экран-комнаты'],двери:{вМеню:{действие:back},завершить:{видна:()=>$('экран-игры').classList.contains('экран--виден')&&v?.phase!=='finished',текст:()=>'Вы завершите партию досрочно. Вам будет записано поражение.',действие:()=>act({type:'surrender'})},какИграть:{действие:rules},рекорды:{действие:history},звук:{состояние:()=>prefs.sound?'вкл':'выкл',действие:()=>{prefs.sound=!prefs.sound;save();}}}});
+  document.querySelectorAll('[data-back]').forEach(b=>{b.replaceChildren(icon('back'));b.onclick=back;});document.querySelectorAll('[data-menu]').forEach(b=>{b.replaceChildren(icon('more'));b.onclick=()=>лист.открыть();});$('кат-правила').prepend(icon('book'));
   $('кат-закрыть').onclick=close;$('кат-диалог').addEventListener('cancel',e=>{e.preventDefault();close();});
   $('кат-боты').onclick=()=>{settings();screen('кат-настройки');};
   $('кат-начать').onclick=()=>{if(g&&g.phase!=='finished')$('кат-новая').showModal();else fresh();};
@@ -250,7 +270,7 @@
   $('кат-главное').onclick=()=>{if(v.phase==='finished')results();else if(v.phase==='discard')chooseResources('Сбросьте ресурсы',v.hand,v.discard[v.me],resources=>act({type:'discard',resources}));else if(v.phase==='steal'){const body=modal('У кого забрать ресурс?');v.victims.forEach(i=>body.append(button(`${name(i)} · ${v.players[i].cards} ресурсов`,async()=>{if(await act({type:'steal',victim:i}))closeAction();})));}else act({type:v.phase==='roll'?'roll':'end'});};
   $('кат-масштаб').onclick=()=>zoom(!document.querySelector('.кат-карта').classList.contains('увеличена'));
   $('кат-отмена').onclick=()=>{mode=null;render();};$('кат-обмен').onclick=trade;$('кат-карты').onclick=development;$('кат-журнал-кнопка').onclick=journal;$('кат-правила').onclick=rules;
-  $('кат-профиль').onclick=()=>window.ЭкранПрофиля.открыть('катан');$('кат-имя').textContent=window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name||'Вы';
+  $('кат-профиль').onclick=()=>window.ЭкранПрофиля.открыть('катан');window.addEventListener('load',profile);
   $('кнопка-комната-назад').onclick=()=>$('кнопка-комната-отмена').click();$('кнопка-комната-ещё').onclick=()=>лист.открыть();
   $('экран-лобби').insertBefore($('кнопка-вернуться-в-игру'),$('кат-продолжить'));
   document.querySelector('nav.нижние-вкладки').innerHTML=window.НижниеВкладки.вкладкиНабора('лобби-деберц').map(x=>window.НижниеВкладки.кнопкаHTML({...x,id:x.id.replace('деберц','катан')})).join('');

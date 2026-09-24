@@ -17,6 +17,8 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
     await a.locator('#кат-число-онлайн').getByRole('radio',{name:'Трое'}).click();
     const creating=a.waitForResponse(r=>decodeURIComponent(new URL(r.url()).pathname)==='/создать');await a.locator('#кнопка-создать-игру').click();const ticket=await(await creating).json();
     await a.locator('#комната').waitFor();assert.equal(await a.locator('#комната-стол button').count(),3);assert.match(await a.locator('#комната-правила').innerText(),/Катан/);
+    const header=await a.locator('#экран-комнаты > .верх-игры').boundingBox();assert(header.width>330,'Навигация комнаты сжалась в центре');
+    await a.locator('#кнопка-комната-ещё').click();await a.locator('#лист-игры').waitFor();await a.locator('#кнопка-лист-игры-закрыть').click();
     await a.screenshot({path:'tests/снимки/катан-онлайн-комната.png'});
     await c.locator('#лобби-найти-игру').click();await c.locator('#открытые-столы-создать').click();await c.locator('#кнопка-войти-по-коду').click();await c.locator('#поле-кода').fill(ticket.код);await c.locator('#кнопка-войти').click();await c.locator('#комната').waitFor();
     await a.waitForFunction(()=>document.querySelectorAll('#комната-стол .рассадка__место--свободно').length===1);

@@ -3,11 +3,11 @@
   const П=КатанПравила,Г=П.Г,NS='http://www.w3.org/2000/svg',R=76;
   const xy=v=>[450+v.x*R,420+v.y*R];
   function node(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
-  function поле(svg,v,mode,act){
+  function поле(svg,v,mode,act,prefix=''){
     const defs=node('defs');
-    for(let r=0;r<6;r++){const p=node('pattern',{id:`земля-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/земли-v2.webp',width:1536,height:1024}));defs.append(p);}
-    for(let r=0;r<6;r++){const p=node('pattern',{id:`ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
-    const shadows=node('filter',{id:'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
+    for(let r=0;r<6;r++){const p=node('pattern',{id:`${prefix}земля-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/земли-v2.webp',width:1536,height:1024}));defs.append(p);}
+    for(let r=0;r<6;r++){const p=node('pattern',{id:`${prefix}ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
+    const shadows=node('filter',{id:prefix+'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
     const existing=svg.querySelector('defs');
     if(existing){for(const child of [...svg.children])if(child!==existing)child.remove();}else svg.replaceChildren(defs);
     svg.setAttribute('viewBox','15 35 870 770');
@@ -24,7 +24,7 @@
       const geom=Г.hexes[h.id],[x,y]=xy(geom),group=node('g',{'class':'кат-гекс','data-hex':h.id});
       group.append(node('title',{},['Лес — дерево','Холмы — глина','Пастбище — шерсть','Поля — зерно','Горы — руда','Пустыня'][h.resource]+(h.number?` · бросок ${h.number}`:'')+(h.id===v.robber?' · заблокировано разбойником':'')));
       const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.975,y+(vy-y)*.975].join(',');}).join(' ');
-      const path=node('polygon',{points,fill:`url(#земля-${h.resource})`,'class':'кат-земля'});group.append(path);
+      const path=node('polygon',{points,fill:`url(#${prefix}земля-${h.resource})`,'class':'кат-земля'});group.append(path);
       if(production===h.number&&h.id!==v.robber)group.append(node('polygon',{points,fill:'none','class':'кат-производство'}));
       if(h.number){
         group.append(node('circle',{cx:x,cy:y+22,r:25,'class':'кат-номер-фон'}));
@@ -40,7 +40,7 @@
       for(const id of [edge.a,edge.b]){const [x,y]=xy(Г.vertices[id]);group.append(node('line',{x1:x,y1:y,x2:center[0],y2:center[1]}));}
       const specific=port.resource>=0;
       group.append(node('rect',{x:center[0]-43,y:center[1]-22,width:86,height:44,rx:14}));
-      group.append(node('rect',{x:center[0]-37,y:center[1]-17,width:34,height:34,rx:9,style:`fill:url(#ресурс-${specific?port.resource:5});stroke:none`}));
+      group.append(node('rect',{x:center[0]-37,y:center[1]-17,width:34,height:34,rx:9,style:`fill:url(#${prefix}ресурс-${specific?port.resource:5});stroke:none`}));
       group.append(node('text',{x:center[0]+19,y:center[1]+7},specific?'2:1':'3:1'));
       group.append(node('title',{},port.resource<0?'Порт: любые три одинаковых ресурса за один':'Порт: '+['лес','глина','шерсть','зерно','руда'][port.resource]+' 2:1'));svg.append(group);
     }

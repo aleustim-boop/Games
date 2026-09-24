@@ -1,0 +1,16 @@
+/* У остальных плиток название вписано в фотографию. У Катана — живой текст. */
+.плитка-игры[data-игра="катан"] {
+  aspect-ratio:2.8; min-height:128px; max-height:230px;
+  border-radius:18px; background-size:cover; background-position:50% 44%;
+  background-image:linear-gradient(90deg,#081419e8 0%,#08141980 48%,#08141915 100%),url('img/катан/обложка-v2.webp');
+  text-decoration:none; border:1px solid #b6d4c22b;
+}
+.плитка-игры[data-игра="катан"] .плитка-игры__название {
+  inset:auto 50px 38px 18px; width:auto; height:auto; margin:0;
+  overflow:visible; clip:auto; clip-path:none; white-space:normal;
+  color:#f5f4ed; font:700 clamp(24px,5.5vw,36px)/1.1 'Onest',system-ui,sans-serif;
+  letter-spacing:-.04em; text-shadow:0 2px 12px #0008;
+}
+.катан-витрина__метка { position:absolute; top:14px; left:18px; color:#d5e1dc; font:500 11px/1.3 'Onest',system-ui,sans-serif; }
+.катан-витрина__подпись { position:absolute; bottom:17px; left:18px; right:42px; color:#becfc9; font:400 12px/1.3 'Onest',system-ui,sans-serif; }
+.катан-витрина__стрелка { position:absolute; right:16px; bottom:14px; color:#d2f76b; font-size:25px; line-height:1; }
