@@ -58,6 +58,7 @@ const req = async (p, body) => {
   console.log(
     "Монополия: опубликованные код, стили и иллюстрации совпадают с проверенными.",
   );
+  if (process.env.MONOPOLY_ASSETS_ONLY) return;
   try {
     const a = await req("создать", {
       игра: "монополия",
