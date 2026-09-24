@@ -37,6 +37,10 @@ function fixtures(){
       await p.screenshot({path:`tests/снимки/катан-${type}-telegram.png`});
     }
     await p.locator('#экран-игры [data-back]').click();await p.locator('#кат-профиль').click();await p.locator('#экран-профиля-игрока').waitFor();
+    await p.setViewportSize({width:844,height:390});await p.goto('http://127.0.0.1:8137/катан.html');await p.locator('#кат-продолжить').click();
+    await p.evaluate(()=>{document.documentElement.style.setProperty('--отступ-слева','47px');document.documentElement.style.setProperty('--отступ-справа','20px');});
+    const landscape=await p.locator('#экран-игры').evaluate(e=>({left:parseFloat(getComputedStyle(e).paddingLeft),right:parseFloat(getComputedStyle(e).paddingRight)}));
+    assert(landscape.left>=47,'Вырез экрана слева перекрывает поле');assert(landscape.right>=20,'Справа не учтён безопасный отступ');
     assert.deepEqual(errors,[]);console.log('Катан: сброс, изобилие, предложение/отмена обмена, профиль и безопасные отступы Telegram — OK');
   }finally{await b.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

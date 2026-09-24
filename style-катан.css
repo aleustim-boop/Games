@@ -155,7 +155,7 @@
 .катан .кнопка { background:#203438; border-color:#9db9af36; border-radius:12px; }
 .катан .кнопка--главная { background:linear-gradient(120deg,#def994,#c7ed70); color:#19301c; border-color:#d3f58b; box-shadow:0 4px 18px #bde86c12; }
 .катан button:focus-visible { outline:2px solid #e4f9b4; outline-offset:3px; }
-.катан #экран-игры { padding-inline:max(12px,calc((100% - 1560px)/2)); gap:10px; }
+.катан #экран-игры { padding-left:max(12px,calc((100% - 1560px)/2),var(--отступ-слева,0px)); padding-right:max(12px,calc((100% - 1560px)/2),var(--отступ-справа,0px)); gap:10px; }
 .катан #экран-игры .кат-верх { justify-content:flex-start; gap:12px; }
 .катан #экран-игры .кат-верх h1 { font:600 26px Georgia,serif; letter-spacing:-.05em; }
 .катан #экран-игры .кат-верх [data-menu] { margin-left:auto; }
@@ -248,7 +248,7 @@
   .кат-управление { overflow:auto; }.кат-ресурс { min-height:95px; }
 }
 @media(max-width:899px) {
-  .катан #экран-игры { padding-inline:8px; gap:7px; }
+  .катан #экран-игры { padding-left:max(8px,var(--отступ-слева,0px)); padding-right:max(8px,var(--отступ-справа,0px)); gap:7px; }
   #кат-раунд { font-size:10px; white-space:nowrap; }
   .катан #экран-игры .кат-верх { gap:7px; }
   .катан #экран-игры .кат-верх h1 { font-size:24px; }
