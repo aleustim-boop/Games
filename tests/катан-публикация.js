@@ -4,10 +4,10 @@ const base=process.env.CATAN_BASE||'https://igra.medart.com.ua';
 const players=[];
 const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,200,JSON.stringify(data));return data;};
 (async()=>{
-  for(const file of ['катан.html','style-катан.css','js/катан-правила.js','js/катан-бот.js','js/катан-поле.js','js/катан-память.js','js/катан-экран.js','img/катан/обложка-v2.jpg','img/катан/земли-v2.jpg','img/катан/развитие-v2.jpg','img/катан/ресурсы-v2.jpg','img/катан/постройки-v2.jpg']){
+  for(const file of ['катан.html','style-катан.css','js/катан-правила.js','js/катан-бот.js','js/катан-поле.js','js/катан-память.js','js/катан-экран.js','img/катан/обложка-v2.webp','img/катан/земли-v2.webp','img/катан/развитие-v2.webp','img/катан/ресурсы-v2.webp','img/катан/постройки-v2.webp']){
     const response=await fetch(base+'/'+file.split('/').map(encodeURIComponent).join('/')+'?check='+Date.now());assert.equal(response.status,200,file);
     const actual=Buffer.from(await response.arrayBuffer()),expected=fs.readFileSync(path.join(__dirname,'..',file));
-    if(file.endsWith('.jpg'))assert.equal(crypto.createHash('sha256').update(actual).digest('hex'),crypto.createHash('sha256').update(expected).digest('hex'),file);
+    if(/\.(jpg|webp)$/.test(file))assert.equal(crypto.createHash('sha256').update(actual).digest('hex'),crypto.createHash('sha256').update(expected).digest('hex'),file);
     else assert.equal(actual.toString('utf8').replace(/\r\n/g,'\n').trimEnd(),expected.toString('utf8').replace(/\r\n/g,'\n').trimEnd(),file);
   }
   console.log('Опубликованные код, стили и пять изображений совпадают с проверенными файлами.');

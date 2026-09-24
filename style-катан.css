@@ -122,7 +122,7 @@
 .кат-строка-выбора .кат-рисунок { height:40px; border-radius:8px; }
 .кат-строка-выбора input,.катан select { font:inherit; background:#111d18; color:#fff; padding:9px; border:1px solid #667e61; border-radius:9px; width:100%; }
 .кат-карта-развития { display:grid; grid-template-columns:90px 1fr; gap:14px; padding:10px; border:1px solid #65765c; background:#202d26; border-radius:16px; text-align:left; color:#f5f3e9; }
-.кат-карта-развития .кат-рисунок { background-image:url('img/катан/развитие-v2.jpg'); width:90px; height:90px; border-radius:10px; }
+.кат-карта-развития .кат-рисунок { background-image:url('img/катан/развитие-v2.webp'); width:90px; height:90px; border-radius:10px; }
 .кат-карта-развития div { display:grid; gap:5px; align-content:center; }.кат-карта-развития small { color:#b2c5b7; }
 .кат-журнал { border-bottom:1px solid #ffffff1a; padding-bottom:10px; font-size:13px; line-height:1.6; }
 .кат-итог { display:grid; grid-template-columns:1fr auto; padding:14px; border-radius:13px; background:#27372b; }.кат-итог strong { font-size:32px; color:#d2f76b; }
@@ -210,7 +210,7 @@
 .кат-ресурс { color:#f5f0df; padding:0; font-family:inherit; }
 .кат-ресурс-крупно { width:110px; height:110px; border-radius:20px; justify-self:center; }
 .кат-счёт-строка { display:flex; justify-content:space-between; gap:20px; font-size:14px; padding-bottom:9px; border-bottom:1px solid #b3c8bc26; }
-.кат-рисунок { background-image:url('img/катан/ресурсы-v2.jpg'); }
+.кат-рисунок { background-image:url('img/катан/ресурсы-v2.webp'); }
 .кат-ресурс .кат-рисунок { inset:12px -4px 18px; opacity:1; }
 .кат-ресурс strong { font:650 26px/1 system-ui; top:7px; right:7px; background:#0b2122aa; border-radius:7px; padding:0 3px; }
 .кат-ресурс small { font-size:10px; left:0; right:0; text-align:center; bottom:7px; color:#e5e6d3; }
@@ -218,9 +218,9 @@
 .кат-стройки { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
 .кат-стройки button { min-height:108px; position:relative; padding:8px 6px; border-radius:14px; background:#10262d; border-color:#6e969449; font-size:13px; font-weight:550; gap:4px; }
 .кат-стройки button:disabled { opacity:.55; }
-.кат-строение { display:block; width:56px; height:48px; border-radius:8px; background-image:url('img/катан/постройки-v2.jpg'); background-size:400% 200%; background-position:0 0; mask-image:radial-gradient(ellipse,#000 45%,transparent 75%); }
+.кат-строение { display:block; width:56px; height:48px; border-radius:8px; background-image:url('img/катан/постройки-v2.webp'); background-size:400% 200%; background-position:0 0; mask-image:radial-gradient(ellipse,#000 45%,transparent 75%); }
 [data-build=city] .кат-строение { background-position:0 100%; }
-[data-build=development] .кат-строение { background-image:url('img/катан/развитие-v2.jpg'); background-size:300% 200%; background-position:0 0; }
+[data-build=development] .кат-строение { background-image:url('img/катан/развитие-v2.webp'); background-size:300% 200%; background-position:0 0; }
 [data-build=road] .кат-строение { background:none; mask-image:none; position:relative; }
 [data-build=road] .кат-строение::before { content:''; position:absolute; inset:20px 2px 15px; border:1px solid #ffd483; border-radius:3px; transform:rotate(-30deg); background:linear-gradient(#efbc68,#9b6936); box-shadow:0 5px 0 #553f28,0 8px 6px #0005; }
 .кат-мини { width:17px; height:17px; border-color:#b6c6a944; border-radius:4px; }

@@ -5,8 +5,8 @@
   function node(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
   function поле(svg,v,mode,act){
     const defs=node('defs');
-    for(let r=0;r<6;r++){const p=node('pattern',{id:`земля-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/земли-v2.jpg',width:1536,height:1024}));defs.append(p);}
-    for(let r=0;r<6;r++){const p=node('pattern',{id:`ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.jpg',width:1536,height:1024}));defs.append(p);}
+    for(let r=0;r<6;r++){const p=node('pattern',{id:`земля-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/земли-v2.webp',width:1536,height:1024}));defs.append(p);}
+    for(let r=0;r<6;r++){const p=node('pattern',{id:`ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
     const shadows=node('filter',{id:'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
     const existing=svg.querySelector('defs');
     if(existing){for(const child of [...svg.children])if(child!==existing)child.remove();}else svg.replaceChildren(defs);
