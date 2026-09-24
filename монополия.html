@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Монополия — Игры с друзьями</title>
+    <link rel="stylesheet" href="style.css?v=92" />
+    <link rel="stylesheet" href="style-монополия.css?v=1" />
+    <script>
+      window.ИграСтраницы = "монополия";
+    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+  </head>
+  <body class="монополия">
+    <main id="приложение">
+      <section id="экран-лобби" class="экран экран--виден mono-lobby">
+        <div class="mono-top">
+          <button data-back aria-label="Назад">‹</button><span></span
+          ><button data-rules aria-label="Правила">?</button>
+        </div>
+        <h1>МОНОПОЛИЯ</h1>
+        <p class="mono-sub">Ваш город. Ваши правила успеха.</p>
+        <button id="mono-resume" class="mono-btn скрыт">
+          Продолжить партию с ботами ↗
+        </button>
+        <button id="mono-profile" class="mono-profile">
+          <span class="mono-token" aria-hidden="true"></span
+          ><span
+            ><strong id="mono-name">Вы</strong><small>Мой профиль</small></span
+          ><b style="margin-left: auto">›</b>
+        </button>
+        <figure class="mono-hero">
+          <img
+            src="img/монополия/обложка.webp"
+            alt="Вечерний город у реки, золотой автомобиль и серебряный цилиндр на игровом столе"
+          />
+          <figcaption>
+            Большой город.<br />Большие возможности.<small
+              >2–6 игроков · Покупайте, стройте, договаривайтесь</small
+            >
+          </figcaption>
+        </figure>
+        <button id="лобби-найти-игру" class="mono-btn mono-gold mono-entry">
+          <span>◎</span
+          ><span
+            ><strong>Играть онлайн</strong
+            ><small>Найдите стол или пригласите друзей</small></span
+          ><b>›</b>
+        </button>
+        <button id="mono-bots" class="mono-btn mono-entry">
+          <span>♙</span
+          ><span
+            ><strong>Играть с ботами</strong
+            ><small>Свой город. Свой темп.</small></span
+          ><b>›</b>
+        </button>
+        <nav class="mono-footer">
+          <a href="index.html">Игры</a
+          ><button id="mono-history">Мои партии</button
+          ><button data-rules>Как играть</button>
+        </nav>
+      </section>
+      <section id="mono-settings" class="экран mono-settings">
+        <div class="mono-top">
+          <button data-back aria-label="Назад">‹</button><span>С ботами</span
+          ><button data-rules>?</button>
+        </div>
+        <h1>Ваш стол</h1>
+        <p class="mono-sub">Соберите компанию для большого города</p>
+        <h2>Игроков за столом</h2>
+        <div id="mono-count" class="mono-options"></div>
+        <div id="mono-seats" class="mono-seat-table"></div>
+        <label
+          >Темп ходов ботов<select id="mono-pace">
+            <option value="2500">Обычный · 2,5 секунды</option>
+            <option value="4500" selected>Спокойный · 4,5 секунды</option>
+            <option value="6500">Вдумчивый · 6,5 секунды</option>
+          </select></label
+        >
+        <p class="mono-sub">
+          Классическая партия · 1 500 на старте · Без лимита ходов
+        </p>
+        <button id="mono-start" class="mono-btn mono-gold" style="width: 100%">
+          Начать игру
+        </button>
+      </section>
+      <section id="экран-друга" class="экран mono-settings">
+        <div class="mono-top">
+          <button data-back aria-label="Назад">‹</button><span>Онлайн</span
+          ><button data-rules>?</button>
+        </div>
+        <h1>Ваш стол</h1>
+        <p>Пригласите друзей. Свободные места можно занять ботами.</p>
+        <div id="mono-count-online" class="mono-options"></div>
+        <select id="монополия-мест-друга" hidden>
+          <option>2</option>
+          <option>3</option>
+          <option selected>4</option>
+          <option>5</option>
+          <option>6</option>
+        </select>
+        <div id="mono-seats-online" class="mono-seat-table"></div>
+        <button id="кнопка-создать-игру" class="кнопка кнопка--главная">
+          Создать игру</button
+        ><button id="кнопка-с-другом" class="скрыт">Создать стол</button
+        ><button id="кнопка-вернуться-в-игру" class="кнопка скрыт">
+          Вернуться к игре
+        </button>
+        <div class="деберц-пригласили">
+          <div>
+            <strong>Уже пригласили?</strong>
+            <p>Присоединитесь к столу друзей</p>
+          </div>
+          <button id="кнопка-войти-по-коду" class="кнопка">
+            Ввести код <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+        <p id="сообщение-друга" class="сеть-сообщение скрыт"></p>
+        <p id="нет-сервера-главное" class="сеть-сообщение скрыт"></p>
+        <button id="кнопка-играть-с-ботом" class="кнопка скрыт">
+          Играть с ботом
+        </button>
+        <button id="кнопка-почему-нет-сервера" class="кнопка скрыт">
+          Почему так и что делать
+        </button>
+        <p id="нет-сервера-подробности" class="сеть-сообщение скрыт"></p>
+        <button id="кнопка-адрес-сервера" class="кнопка скрыт">
+          Указать адрес сервера
+        </button>
+        <p id="адрес-подпись" class="деберц-тихо скрыт">Адрес сервера игры</p>
+        <input
+          id="поле-адреса"
+          class="поле-кода поле-адреса скрыт"
+          type="text"
+          inputmode="url"
+          aria-label="Адрес сервера"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
+        <button id="кнопка-проверить-адрес" class="кнопка скрыт">
+          Проверить
+        </button>
+        <button id="кнопка-сохранить-адрес" class="кнопка скрыт">
+          Сохранить адрес
+        </button>
+        <p id="сообщение-адреса" class="сеть-сообщение скрыт"></p>
+        <button id="кнопка-стереть-адрес" class="кнопка скрыт">
+          Стереть вписанный адрес
+        </button>
+        <button id="кнопка-друг-назад" class="кнопка">Назад</button>
+      </section>
+
+      <section id="экран-игры" class="экран">
+        <div class="mono-top">
+          <button data-back aria-label="Назад">‹</button>
+          <div class="mono-title">
+            <h1>МОНОПОЛИЯ</h1>
+            <small id="mono-round"></small>
+          </div>
+          <button data-rules aria-label="Правила">?</button>
+        </div>
+        <div id="mono-players" class="mono-players"></div>
+        <div class="mono-layout">
+          <div id="mono-board-wrap" class="mono-board-wrap">
+            <div class="mono-board-stage">
+              <svg
+                id="mono-board"
+                class="mono-board"
+                role="group"
+                aria-label="Игровое поле, 40 клеток"
+              ></svg>
+              <div
+                id="mono-dice"
+                class="mono-dice-tray"
+                aria-label="Последний бросок"
+              ></div>
+            </div>
+            <div class="mono-board-tools">
+              <button id="mono-zoom">Увеличить поле ↗</button
+              ><button id="mono-log">История ходов</button>
+            </div>
+            <p id="mono-event" class="mono-event" aria-live="polite"></p>
+          </div>
+          <aside class="mono-side">
+            <h2 id="mono-turn" class="mono-turn"></h2>
+            <p id="mono-hint" class="mono-hint"></p>
+            <div id="mono-actions" class="mono-action-panel"></div>
+            <div class="mono-tools">
+              <button id="mono-properties">Собственность</button
+              ><button id="mono-trade">Обмен</button
+              ><button id="mono-settings-game">Настройки</button>
+            </div>
+            <p id="mono-error" class="mono-error" role="alert"></p>
+            <p id="строка-связи" class="скрыт" role="status"></p>
+          </aside>
+        </div>
+      </section>
+      <section id="экран-комнаты" class="экран">
+        <div class="верх-игры">
+          <button
+            id="кнопка-комната-назад"
+            type="button"
+            class="верх-игры__кнопка"
+            aria-label="Выйти из комнаты"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="m15 4-8 8 8 8" />
+            </svg>
+          </button>
+          <button
+            id="кнопка-комната-ещё"
+            type="button"
+            class="верх-игры__кнопка"
+            data-путь="ещё"
+            aria-label="Ещё"
+            aria-haspopup="dialog"
+            aria-controls="лист-игры"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle
+                cx="5"
+                cy="12"
+                r="1.5"
+                fill="currentColor"
+                stroke="none"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="1.5"
+                fill="currentColor"
+                stroke="none"
+              />
+              <circle
+                cx="19"
+                cy="12"
+                r="1.5"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+          </button>
+        </div>
+        <div id="комната" class="комната скрыт">
+          <header class="комната__шапка">
+            <h2 class="комната__заголовок">Комната игры</h2>
+            <span
+              id="комната-режим"
+              class="путь__режим путь__режим--друзья"
+            ></span>
+            <p id="комната-правила" class="комната__правила"></p>
+            <p id="комната-игроки" class="комната__игроки"></p>
+          </header>
+          <div id="комната-стол" class="рассадка рассадка--комната"></div>
+          <div id="комната-команды" class="комната__команды скрыт">
+            <div
+              id="комната-команда-наша"
+              class="комната__команда комната__команда--наша"
+            >
+              <span class="комната__команда-подпись"></span>
+              <span class="комната__команда-состав"></span>
+            </div>
+            <div
+              id="комната-команда-соперники"
+              class="комната__команда комната__команда--соперники"
+            >
+              <span class="комната__команда-подпись"></span>
+              <span class="комната__команда-состав"></span>
+            </div>
+          </div>
+          <p id="комната-весть" class="комната__весть сеть-сообщение скрыт"></p>
+          <span
+            id="место-кнопка-позвать-друга"
+            class="скрыт"
+            aria-hidden="true"
+          ></span>
+          <span
+            id="место-сообщение-приглашения"
+            class="скрыт"
+            aria-hidden="true"
+          ></span>
+          <div class="комната__код">
+            <span
+              id="место-код-комнаты"
+              class="скрыт"
+              aria-hidden="true"
+            ></span>
+            <span
+              id="место-кнопка-копировать-код"
+              class="скрыт"
+              aria-hidden="true"
+            ></span>
+          </div>
+          <span
+            id="место-сообщение-копирования"
+            class="скрыт"
+            aria-hidden="true"
+          ></span>
+          <button
+            id="комната-подбор"
+            type="button"
+            class="комната__подбор"
+            role="switch"
+            aria-checked="false"
+            disabled
+          >
+            <span id="комната-подбор-подпись"></span>
+            <span class="комната__скоро">скоро</span>
+          </button>
+          <button
+            id="комната-начать"
+            type="button"
+            class="кнопка кнопка--главная комната__начать"
+            disabled
+          ></button>
+          <p id="комната-подсказка" class="комната__подсказка скрыт"></p>
+          <span
+            id="место-кнопка-комната-отмена"
+            class="скрыт"
+            aria-hidden="true"
+          ></span>
+        </div>
+        <div id="комната-старая">
+          <h2 class="заголовок">Код игры</h2>
+          <p class="подпись">Продиктуйте или перешлите этот код другу.</p>
+          <div class="комната__код">
+            <div id="код-комнаты" class="код-игры код-игры--ждём">····</div>
+            <button id="кнопка-копировать-код" class="кнопка">
+              Скопировать код
+            </button>
+          </div>
+          <p id="сообщение-копирования" class="сеть-сообщение скрыт"></p>
+          <button
+            id="кнопка-позвать-друга"
+            class="кнопка кнопка--главная комната__пригласить скрыт"
+          >
+            Пригласить друга
+          </button>
+          <p id="сообщение-приглашения" class="сеть-сообщение скрыт"></p>
+          <div id="прихожая" class="прихожая скрыт">
+            <p id="прихожая-правила" class="подпись"></p>
+            <div id="список-мест" class="таблица список-мест"></div>
+            <div id="кнопки-хозяина" class="кнопки-хозяина скрыт">
+              <button id="кнопка-посадить-бота" class="кнопка">
+                Посадить бота
+              </button>
+              <button id="кнопка-убрать-бота" class="кнопка">
+                Убрать бота
+              </button>
+              <button id="кнопка-начать-игру" class="кнопка кнопка--главная">
+                Начать игру
+              </button>
+            </div>
+            <p id="сообщение-прихожей" class="сеть-сообщение скрыт"></p>
+          </div>
+          <p id="ожидание-соперника" class="сеть-ожидание">
+            Ждём, когда друг войдёт…
+          </p>
+          <div class="кнопки-комнаты">
+            <button
+              id="кнопка-как-играть-комната"
+              class="кнопка кнопка--мелкая"
+            >
+              Как играть
+            </button>
+          </div>
+          <button id="кнопка-комната-отмена" class="кнопка кнопка--мелкая">
+            Выйти из комнаты
+          </button>
+        </div>
+        <div
+          id="лист-места"
+          class="лист-ещё скрыт"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="лист-места-заголовок"
+        >
+          <div id="лист-места-фон" class="лист-ещё__фон"></div>
+          <div class="лист-ещё__лист">
+            <h2 id="лист-места-заголовок" class="лист-ещё__заголовок">
+              Место за столом
+            </h2>
+            <div id="лист-места-действия"></div>
+            <button
+              id="кнопка-лист-места-закрыть"
+              type="button"
+              class="лист-ещё__закрыть"
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      </section>
+      <section id="экран-входа" class="экран">
+        <h2>Вход по коду</h2>
+        <input
+          id="поле-кода"
+          class="поле-кода"
+          type="text"
+          maxlength="6"
+          placeholder="ABCD"
+          aria-label="Код комнаты"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+        />
+        <button id="кнопка-войти" class="кнопка кнопка--главная">
+          Войти в игру
+        </button>
+        <p id="сообщение-входа" class="сеть-сообщение скрыт"></p>
+        <button id="кнопка-адрес-из-входа" class="кнопка скрыт">
+          Указать адрес сервера
+        </button>
+        <button id="кнопка-вход-назад" class="кнопка">Назад</button>
+      </section>
+
+      <dialog id="mono-modal">
+        <header class="mono-dialog-head">
+          <h2 id="mono-modal-title"></h2>
+          <button id="mono-close" aria-label="Закрыть">×</button>
+        </header>
+        <div id="mono-modal-body"></div>
+      </dialog>
+      <div
+        id="лист-игры"
+        class="лист-ещё скрыт"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="лист-игры-заголовок"
+      >
+        <div id="лист-игры-фон" class="лист-ещё__фон"></div>
+        <div class="лист-ещё__лист">
+          <h2 id="лист-игры-заголовок" class="лист-ещё__заголовок">Ещё</h2>
+          <button id="кнопка-лист-игры-меню" class="лист-ещё__строка">
+            <span class="лист-ещё__подпись">В меню</span>
+          </button>
+          <button id="кнопка-лист-игры-правила" class="лист-ещё__строка">
+            Как играть
+          </button>
+          <button
+            id="кнопка-лист-игры-звук"
+            class="лист-ещё__строка"
+            role="switch"
+            aria-checked="true"
+          >
+            Звук
+            <span id="лист-игры-звук-состояние" class="лист-ещё__значение"
+              >вкл</span
+            >
+          </button>
+          <button id="кнопка-лист-игры-рекорды" class="лист-ещё__строка">
+            Мои результаты
+          </button>
+          <button id="кнопка-лист-игры-закрыть" class="лист-ещё__закрыть">
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </main>
+    <script src="js/telegram.js?v=31"></script>
+    <script src="js/лист-ещё.js?v=6"></script>
+    <script src="js/нижние-вкладки.js?v=10"></script>
+    <script src="js/рейтинг-экран.js?v=36"></script>
+    <script src="js/профиль-экран.js?v=2"></script>
+    <script src="js/монополия-данные.js?v=1"></script>
+    <script src="js/монополия-правила.js?v=1"></script>
+    <script src="js/монополия-бот.js?v=1"></script>
+    <script src="js/монополия-поле.js?v=1"></script>
+    <script src="js/монополия-экран.js?v=1"></script>
+    <script src="js/дурак-комната.js?v=16"></script>
+    <script src="js/сеть.js?v=60"></script>
+    <script src="js/деберц-онлайн.js?v=1"></script>
+    <script src="js/открытые-столы.js?v=5"></script>
+  </body>
+</html>

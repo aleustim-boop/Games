@@ -1,0 +1,42 @@
+.плитка-игры[data-игра="монополия"] {
+  aspect-ratio: 2.8;
+  min-height: 128px;
+  max-height: 230px;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, #09150feb, #09150f66 60%, #09150f22),
+    url("img/монополия/обложка.webp") center 54% / cover;
+  text-decoration: none;
+  border: 1px solid #c5a76d66;
+}
+.плитка-игры[data-игра="монополия"] .плитка-игры__название {
+  inset: auto 20px 39px 18px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  color: #eed39a;
+  font:
+    700 clamp(25px, 5.5vw, 36px) / 1.1 Georgia,
+    serif;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 12px #0008;
+}
+.монополия-витрина__метка {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  color: #cfceae;
+  font-size: 11px;
+}
+.монополия-витрина__подпись {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  right: 12px;
+  color: #c9c3a6;
+  font-size: 12px;
+}
