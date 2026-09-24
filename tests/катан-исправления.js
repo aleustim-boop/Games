@@ -28,14 +28,14 @@ function exchangeFixture(){
     assert.equal(await page.evaluate(()=>localStorage.getItem('catan-match-v1')),before,'Бот изменил позицию во время ввода обмена');
     assert(await page.locator('#кат-диалог').getByRole('spinbutton',{name:'Отдаю: Дерево',exact:true}).isVisible());
     await page.screenshot({path:'tests/снимки/катан-обмен-v2.png'});
-    await page.keyboard.press('Escape');await page.clock.fastForward(1200);
+    await page.keyboard.press('Escape');await page.clock.fastForward(3000);
     assert.notEqual(await page.evaluate(()=>localStorage.getItem('catan-match-v1')),before,'Бот не продолжил после закрытия окна');
     await page.locator('#экран-игры [data-back]').click();await page.evaluate(()=>Promise.all([...document.images].map(i=>i.decode().catch(()=>{}))));
     await page.screenshot({path:'tests/снимки/катан-лобби-v2.png'});
     await page.setViewportSize({width:1440,height:960});await page.locator('#кат-продолжить').click();
     await page.waitForFunction(()=>!document.querySelector('.кат-карта').classList.contains('загрузка'));
-    const vertical=await page.locator('#кат-поле .кат-дорога:not(.доступно)').evaluateAll(lines=>lines.filter(e=>e.getAttribute('x1')===e.getAttribute('x2')).map(e=>getComputedStyle(e).filter));
-    assert(vertical.length>0,'Сценарий должен содержать вертикальную дорогу');assert(vertical.every(f=>f==='none'),'Фильтр с нулевой шириной скрывает вертикальные дороги');
+    const straight=await page.locator('#кат-поле .кат-дорога:not(.доступно)').evaluateAll(lines=>lines.filter(e=>Math.abs(+e.getAttribute('x1')-e.getAttribute('x2'))<.001||Math.abs(+e.getAttribute('y1')-e.getAttribute('y2'))<.001).map(e=>getComputedStyle(e).filter));
+    assert(straight.length>0,'Сценарий должен содержать горизонтальную или вертикальную дорогу');assert(straight.every(f=>f==='none'),'Фильтр с нулевой шириной/высотой скрывает дорогу');
     await page.screenshot({path:'tests/снимки/катан-игра-v2-1440.png'});
     const dice=await page.locator('#кат-кубики .кат-кубик').evaluateAll(es=>es.map(e=>({value:Number(e.getAttribute('aria-label').split(': ')[1]),dots:e.children.length})));assert(dice.length===2);assert(dice.every(d=>d.value===d.dots));
     await page.locator('#кат-игроки button').first().click();assert.match(await page.locator('#кат-диалог-тело').innerText(),/Поселения/);assert.match(await page.locator('#кат-диалог-тело').innerText(),/Разыграно рыцарей/);await page.locator('#кат-закрыть').click();

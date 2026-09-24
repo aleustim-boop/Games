@@ -11,16 +11,18 @@ const {chromium,безTelegram}=require('./браузер-робот');
     await page.evaluate(()=>Promise.all([...document.images].map(i=>i.decode().catch(()=>{}))));
     await page.screenshot({path:'tests/снимки/катан-настройки.png'});
     await page.locator('#кат-начать').click();
-    await page.waitForFunction(()=>document.querySelector('#кат-поле [role=button]')!==null,{},{timeout:15000});
+    await page.waitForFunction(()=>document.querySelector('#кат-поле [role=button]')!==null,{},{timeout:45000});
     await page.locator('#кат-поле [role=button]').first().click();
+    await page.locator('#кат-главное').click();
     await page.waitForFunction(()=>document.querySelector('#кат-поле [data-edge][role=button]')!==null);
     await page.locator('#кат-поле [data-edge][role=button]').first().click();
+    await page.locator('#кат-главное').click();
     await page.waitForTimeout(150);
     const saved=await page.evaluate(()=>localStorage.getItem('catan-match-v1'));assert(saved);
     await page.screenshot({path:'tests/снимки/катан-поле-1280.png'});
     await page.reload();await page.locator('#кат-продолжить').click();
-    assert.equal(await page.locator('#экран-игры').getAttribute('class'),'экран экран--виден');
-    for(const [w,h]of [[390,844],[320,640],[844,390],[768,1024]]){
+    assert(await page.locator('#экран-игры').evaluate(e=>e.classList.contains('экран--виден')));
+    for(const [w,h]of [[390,844],[320,640],[844,390],[768,1024],[1024,1536]]){
       await page.setViewportSize({width:w,height:h});await page.waitForTimeout(150);
       const bounds=await page.locator('#экран-игры').evaluate(e=>({scroll:document.documentElement.scrollWidth,width:innerWidth,bottom:e.getBoundingClientRect().bottom,control:document.getElementById('кат-главное').getBoundingClientRect().bottom,height:innerHeight,right:Math.max(...[...e.querySelectorAll('.кат-ресурс,.кат-действия button,.кат-стройки button')].map(x=>x.getBoundingClientRect().right))}));
       assert(bounds.scroll<=bounds.width+1,JSON.stringify(bounds));assert(bounds.control<=bounds.height+1,JSON.stringify(bounds));
