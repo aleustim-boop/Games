@@ -22,7 +22,7 @@ body.монополия #экран-лобби.mono-lobby {
   margin-inline: auto;
   padding: calc(18px + var(--отступ-сверху, 0px)) clamp(22px, 9vw, 100px)
     calc(15px + var(--отступ-снизу, 0px));
-  background: url("img/монополия/сцена-лобби-v2.webp") center center / 100% 100%;
+  background: #063329 url("img/монополия/сукно-v2.webp") center / cover;
   align-items: stretch;
   gap: 0;
   isolation: isolate;
@@ -697,6 +697,21 @@ body.монополия #экран-лобби > .mono-profile {
 body.монополия #экран-лобби > .mono-hero {
   min-height: 130px;
   flex: 1 1 0;
+  margin-block: 14px;
+  display: grid;
+  place-items: center;
+  background: none;
+  overflow: hidden;
+}
+body.монополия #экран-лобби > .mono-hero::before {
+  content: "";
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  max-height: 100%;
+  background: url("img/монополия/обложка-v3.webp") center / cover no-repeat;
+  border: 1px solid #e6bd7066;
+  border-radius: 18px;
+  box-sizing: border-box;
 }
 body.монополия #экран-лобби.mono-lobby {
   height: max(620px, 100dvh);

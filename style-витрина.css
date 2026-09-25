@@ -67,7 +67,8 @@
 #экран-витрины [data-игра="домино"] { --catalog-art: url('img/витрина/dominoes.jpg'); }
 #экран-витрины [data-игра="морской-бой"] { --catalog-art: url('img/витрина/battleship.jpg'); }
 #экран-витрины [data-игра="катан"] { --catalog-art: url('img/катан/обложка-v2.webp'); }
-#экран-витрины [data-игра="монополия"] { --catalog-art: url('img/монополия/город-v2.webp'); }
+#экран-витрины [data-игра="монополия"] { --catalog-art: url('img/монополия/обложка-v3.webp'); }
+#экран-витрины [data-игра="монополия"]::before { background-size: cover; background-position: center; }
 #экран-витрины [data-игра="деберц"] { --catalog-art: url('img/деберц/лобби.png'); }
 @media (min-width: 900px) {
   #экран-витрины.витрина > :not(.нижние-вкладки):not(.лист-ещё) { max-width: 1000px; }
