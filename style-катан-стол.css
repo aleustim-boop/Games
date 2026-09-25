@@ -251,3 +251,11 @@
 .катан #кат-диалог .кат-счётчик { display:grid; grid-template-columns:28px minmax(28px,1fr) 28px; }
 .катан #кат-диалог .кат-счётчик button { width:28px; min-width:28px; max-width:28px; }
 .катан #кат-диалог .кат-счётчик input { width:100%; }
+
+.кат-новая-карта { width:min(100%,220px); margin:0 auto; padding:8px; border:2px solid #d2b16e; border-radius:17px; background:linear-gradient(135deg,#634f2b,#29291e); box-shadow:0 9px 22px #0007,inset 0 1px 0 #fff3; text-align:center; }
+.кат-новая-карта .кат-рисунок { display:block; width:100%; aspect-ratio:1; border-radius:10px; background-image:url('img/катан/развитие-v2.webp'); }
+.кат-новая-карта>b { display:block; padding:10px 3px 3px; color:#ffe1a2; font:700 20px/1.2 Georgia,serif; }
+.кат-новая-описание { display:grid; gap:9px; text-align:center; }
+.катан #кат-диалог .кат-новая-описание p { margin:0; color:#f1e8d4; }
+.кат-новая-описание small { color:#cbb889; line-height:1.4; }
+@media(max-height:700px) { .кат-новая-карта { width:160px; }.кат-новая-карта>b { font-size:17px; } }

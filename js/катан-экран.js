@@ -50,7 +50,7 @@
     if(busy||presenting)return;
     if(!mode&&v.phase==='main'&&v.turn===v.me){
       const body=modal(названия[action.type]);body.append(el('p',action.type==='city'?'Улучшить это поселение до города?':'Построить здесь '+(action.type==='road'?'дорогу?':'поселение?')),el('p','Стоимость: '+resourceText(П.ЦЕНЫ[action.type])));
-      body.append(button('Построить '+(action.type==='city'?'город':action.type==='road'?'дорогу':'поселение'),async()=>{if(await act(action))close();},'кнопка кнопка--главная'),button('Отмена',close));return;
+      body.append(button('Построить '+(action.type==='city'?'город':action.type==='road'?'дорогу':'поселение'),async()=>{if(await act(action))closeAction();},'кнопка кнопка--главная'),button('Отмена',close));return;
     }
     selected=action;render();
   }
@@ -113,7 +113,7 @@
     window.Телеграм?.показатьСтрелку(back);лист?.освежитьКнопкуНастроек(id);
     if(id==='экран-лобби')profile();
   }
-  function close(){ refreshTrade=null;restoreBuilds();$('кат-диалог').close();dialogKind='';if(!online)render();else syncAutoRoll(); }
+  function close(){if(dialogKind==='purchase'&&v?.phase==='finished'){results();return;}refreshTrade=null;restoreBuilds();$('кат-диалог').close();dialogKind='';if(!online)render();else syncAutoRoll(); }
   function closeAction(){if(dialogKind!=='result')close();}
   function modal(title,kind=''){stopAutoRoll();refreshTrade=null;restoreBuilds();dialogKind=kind;if(!online){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
   function back(){
@@ -144,6 +144,7 @@
       mode=null;selected=null;zoom(false);ok=true;
     }catch(e){$('кат-ошибка').textContent=e.message;if($('кат-диалог').open){let error=$('кат-диалог-ошибка');if(!error){error=el('p');error.id='кат-диалог-ошибка';error.setAttribute('role','alert');$('кат-диалог-тело').append(error);}error.textContent=e.message;error.scrollIntoView({block:'nearest'});}}
     finally{busy=false;render();}
+    if(ok&&action.type==='development')showPurchasedCard(v.dev.at(-1));
     return ok;
   }
   function bot(){
@@ -253,9 +254,25 @@
     const body=modal(ресурсы[r],'resource'),art=picture(r,'кат-рисунок кат-ресурс-крупно');body.append(art,el('p',`У вас: ${v.hand[r]} · В банке: ${v.bank[r]} · Ваш курс: ${v.rates[r]} к 1`));
     const lands=v.hexes.filter(h=>h.resource===r);body.append(el('p',`Ресурс приносят ${['леса','глиняные холмы','пастбища','поля','горы'][r]} при броске: ${lands.map(h=>h.number).sort((a,b)=>a-b).join(', ')}.`),el('p','Поселение у такого гекса получает 1 карту, город — 2. Это работает на бросках всех игроков. Гекс с разбойником не производит ресурсов.'));
   }
+  function showPurchasedCard(card){
+    if(!card)return;
+    const type=card.type,index=['knight','roads','plenty','monopoly','vp'].indexOf(type),body=modal('Ваша новая карта','purchase');
+    const frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=type;frame.append(picture(index),el('b',названия[type]));
+    const details=el('div',undefined,'кат-новая-описание');details.append(el('p',описания[type]),el('p',type==='vp'?'Добавляет 1 победное очко сразу. Разыгрывать её не нужно; до конца партии соперники не видят это очко.':'Можно разыграть со следующего вашего хода, до или после броска кубиков. За ход разрешена одна карта развития.'));
+    if(type==='knight')details.append(el('small','Три сыгранных рыцаря могут принести «Самую большую армию» и 2 победных очка.'));
+    if(v.phase==='finished')details.append(el('p','Эта карта принесла вам победу!'));
+    const putAway=()=>{
+      if(v.phase==='finished'){results();return;}
+      const from=frame.getBoundingClientRect(),to=$('кат-карты').getBoundingClientRect(),fly=motion()?frame.cloneNode(true):null;
+      if(fly){fly.setAttribute('aria-hidden','true');Object.assign(fly.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',pointerEvents:'none',zIndex:'10000'});document.body.append(fly);}
+      close();
+      if(fly){const animation=fly.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${to.left+to.width/2-from.left-from.width/2}px,${to.top+to.height/2-from.top-from.height/2}px) scale(.12)`,opacity:.2}],{duration:450,easing:'ease-in',fill:'forwards'});animation.finished.catch(()=>{}).finally(()=>fly.remove());}
+    };
+    body.append(frame,details,button(v.phase==='finished'?'Посмотреть результат':'В мои карты',putAway,'кнопка кнопка--главная'));
+  }
   function development(){
     const body=modal('Карты развития','development');
-    const purchase=button('Купить карту развития',async()=>{if(await act({type:'development'}))development();},'кнопка кнопка--главная');purchase.disabled=!v.legal.development||busy||presenting;
+    const purchase=button('Купить карту развития',()=>act({type:'development'}),'кнопка кнопка--главная');purchase.disabled=!v.legal.development||busy||presenting;
     body.append(el('p',`Цена: 1 шерсть + 1 зерно + 1 руда. В колоде: ${v.deckCount}. Купленная карта скрыта от соперников.`),purchase);
     if(purchase.disabled)body.append(el('small',!v.deckCount?'Колода развития закончилась.':v.phase!=='main'||v.turn!==v.me?'Покупка доступна в ваш ход после броска кубиков.':'Не хватает ресурсов: '+resourceText(П.ЦЕНЫ.development.map((n,i)=>Math.max(0,n-v.hand[i]))),'кат-тихо'));
     body.append(el('h3','Ваша рука'));
