@@ -259,3 +259,61 @@
 .катан #кат-диалог .кат-новая-описание p { margin:0; color:#f1e8d4; }
 .кат-новая-описание small { color:#cbb889; line-height:1.4; }
 @media(max-height:700px) { .кат-новая-карта { width:160px; }.кат-новая-карта>b { font-size:17px; } }
+
+@media(min-width:1000px) and (orientation:landscape) {
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден { grid-template-columns:minmax(0,min(880px,calc(100vw - 344px),calc((100dvh - 306px)*1.07143))) 300px; justify-content:center; column-gap:20px; }
+ .кат-сцена { width:100%; }
+ .кат-сцена .кат-карта:not(.увеличена) .кат-карта-верх { top:8px; }
+}
+
+.катан .кат-управление .кат-действия .кнопка--главная { min-width:0; height:100%; padding:4px 10px; line-height:1.15; white-space:normal; display:flex; align-items:center; justify-content:center; }
+@media(min-width:1000px) and (orientation:landscape) { .катан .кат-управление .кат-действия .кнопка--главная { font-size:15px; }.катан .кат-управление #кат-отмена { font-size:12px; padding:6px 8px; min-width:0; } }
+
+.кат-гекс .кат-земля { stroke:var(--ресурс-цвет); stroke-width:1.4; filter:saturate(.84) brightness(.93); }
+.кат-значок-земли { stroke:#ecd5a3; stroke-width:1.5; pointer-events:none; }
+.кат-разбойник { pointer-events:none; filter:drop-shadow(1px 3px 2px #000a); }
+.кат-летящий-ресурс { position:fixed; left:0; top:0; z-index:160; display:grid; place-items:center; width:42px; height:52px; border:1px solid #edd198; border-radius:9px; background:#172b25; box-shadow:0 3px 12px #000a; pointer-events:none; color:#ffe8b5; }
+.кат-летящий-ресурс .кат-рисунок { width:32px; height:32px; }
+.кат-получено { position:absolute; left:0; right:0; top:100%; padding:4px; color:#fff1ca; background:#152c25ed; border:1px solid var(--цвет); border-radius:8px; font:600 10px/1.3 system-ui; z-index:10; }
+.кат-сцена>#кат-кубики { position:absolute; z-index:5; width:max-content; max-width:130px; min-height:34px; border:1px solid #c5ab74; background:#17201bea; transition:opacity .25s; }
+.кат-сцена>#кат-кубики>b { white-space:nowrap; font-size:20px; line-height:1; }
+.кат-кубики-погасли { opacity:.35; }
+.кат-показатель[data-stat=resources] { grid-area:1/1; }.кат-показатель[data-stat=development] { grid-area:2/1; }
+.кат-показатель[data-stat=road] { grid-area:1/2; }.кат-показатель[data-stat=knights] { grid-area:2/2; }
+.кат-показатель[data-stat=settlement] { grid-area:1/3; }.кат-показатель[data-stat=city] { grid-area:2/3; }
+.кат-добыча { width:180px; max-width:55vw; margin:auto; text-align:center; }
+.кат-добыча svg { width:100%; height:220px; }.кат-добыча h3 { color:#f5d69a; }
+.кат-счётчик-заперт { opacity:.35; filter:grayscale(1); }
+.кат-статус-торгов { padding:8px 14px; border-left:3px solid #cfa95f; background:#bca06c12; }
+.кат-выбор-цвета { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:12px 0; }
+.кат-выбор-цвета button { padding:8px 3px; border:1px solid #bca06c55; border-radius:12px; background:#142521; color:#f1e7d2; font:600 12px system-ui; }
+.кат-выбор-цвета button::before { content:''; display:block; width:26px; height:26px; border-radius:5px; margin:0 auto 6px; background:var(--цвет); box-shadow:inset 0 -5px 8px #0004; }
+.кат-выбор-цвета button[aria-pressed=true] { outline:2px solid var(--цвет); outline-offset:2px; }
+.катан .кат-журнал { border-left:3px solid var(--цвет); background:color-mix(in srgb,var(--цвет) 8%,transparent); padding:12px; margin:5px 0; border-radius:0 8px 8px 0; }
+.кат-карта-низ { gap:5px; flex-wrap:nowrap; }
+#кат-предложение { left:0; right:0; background:#24302af5; border-color:#cfad6b; }
+#кат-предложение button { white-space:normal; font-size:12px; }
+.катан #экран-эмоций { width:min(540px,calc(100vw - 24px)); max-height:80dvh; border:1px solid #b49a64; border-radius:20px; padding:18px; background:#17251f; color:#f5e8ca; }
+.катан #экран-эмоций::backdrop { background:#0009; }
+.катан .панель-знаков__вкладки { display:flex; gap:6px; margin-bottom:14px; }
+.катан .панель-знаков__вкладки button { flex:1; padding:10px 4px; }
+.катан #экран-эмоций .ряд-знаков { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.катан #экран-эмоций #ряд-фраз,.катан #экран-эмоций #ряд-целей { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.катан #экран-эмоций .кнопка--смайлик { font-size:32px; background:#26392d; border:1px solid #bda97633; padding:5px; }
+.катан .предмет-броска { width:42px; height:42px; object-fit:contain; }
+.катан #экран-эмоций .кнопка--фраза { font-size:13px; padding:10px; }
+.катан #экран-эмоций #кнопка-эмоции-назад { margin-top:14px; width:100%; }
+.катан .знак-внимания { background:#172b26ed; border:1px solid #d6bb81; padding:8px; border-radius:12px; pointer-events:none; box-shadow:0 3px 12px #0008; }
+.катан .знак-внимания__кто { display:block; font-size:11px; color:#d7bc85; }.катан .знак-внимания__что { font-size:20px; }
+.катан .знак-внимания--гаснет { opacity:0; transition:opacity .35s; }
+.катан .деберц-летящий-предмет { position:fixed; top:0; left:0; width:48px; height:48px; z-index:200; pointer-events:none; }
+.катан .деберц-попадание { --брызги:#dca83d; position:fixed; left:var(--x); top:var(--y); z-index:200; pointer-events:none; }
+.катан .деберц-пятно { position:absolute; left:-25px; top:-22px; width:50px; height:44px; background:var(--брызги); border-radius:40% 60% 35% 65%; }
+.катан .деберц-капля { position:absolute; width:8px; height:11px; background:var(--брызги); border-radius:50%; }
+@media(max-width:699px) {
+ .катан #экран-игры.расстановка .кат-ход { gap:2px; }
+ .катан #экран-игры.расстановка .кат-ход strong { font-size:18px; line-height:20px; }
+ .катан #экран-игры.расстановка .кат-ход small { font-size:10px; line-height:12px; }
+ .катан #экран-игры.расстановка .кат-шаги { font-size:11px; line-height:15px; }
+ .катан #экран-игры.расстановка .кат-шаги span { padding:1px 10px; }
+}

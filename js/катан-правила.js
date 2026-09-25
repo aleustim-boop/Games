@@ -134,28 +134,34 @@
   }
   function завершитьРазбойника(g){g.phase=g.returnPhase;g.returnPhase='main';}
   function украсть(g,p,victim){
-    const h=g.players[victim].resources;let index=Math.floor(random(g)*сумма(h));
-    for(let r=0;r<5;r++){if(index<h[r]){h[r]--;g.players[p].resources[r]++;break;}index-=h[r];}
-    событие(g,p,'steal',{victim});завершитьРазбойника(g);
+    const h=g.players[victim].resources;let index=Math.floor(random(g)*сумма(h)),rForStolen=-1;
+    for(let r=0;r<5;r++){if(index<h[r]){h[r]--;g.players[p].resources[r]++;rForStolen=r;break;}index-=h[r];}
+    событие(g,p,'steal',g.rules>=3?{victim,resource:rForStolen}:{victim});завершитьРазбойника(g);
   }
   function применить(g,p,a){
     нужно(Number.isInteger(p)&&p>=0&&p<g.n&&g.phase!=='finished','Партия недоступна');
     нужно(a&&typeof a.type==='string','Неизвестное действие');
     if(a.type==='surrender'){g.phase='finished';g.winner=-1;g.surrendered=p;g.offer=null;событие(g,p,'surrender');return;}
     if(a.type==='accept'){
-      const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&a.offer===o.id,'Предложение уже недоступно');
+      const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p)&&a.offer===o.id,'Предложение уже недоступно');
       нужно(хватит(g.players[p].resources,o.want)&&хватит(g.players[o.from].resources,o.give),'Ресурсы для обмена изменились');
       for(let r=0;r<5;r++){g.players[p].resources[r]+=o.give[r]-o.want[r];g.players[o.from].resources[r]+=o.want[r]-o.give[r];}
-      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});g.offer=null;return;
+      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});if(g.rules>=3)g.tradeStatus={type:'accepted',from:o.from,by:p};g.offer=null;return;
     }
-    if(a.type==='offer'){
+    if(a.type==='reject'){
+      const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Предложение уже недоступно');
+      (o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
+      if(o.to>=0||o.rejected.length===g.n-1){g.tradeStatus={type:'rejected',from:o.from};g.offer=null;}return;
+    }
+    if(a.type==='offer'||a.type==='counter'){
       нужно(g.phase==='main','Обмен доступен после броска');
+      if(a.type==='counter'){const o=g.offer;нужно(o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&a.to===o.from,'Предложение уже недоступно');}
       нужно(Number.isInteger(a.to)&&a.to>=-1&&a.to<g.n&&a.to!==p&&(p===g.turn||a.to===g.turn),'Обмен только с активным игроком');
       нужно(ресурсы(a.give)&&ресурсы(a.want)&&сумма(a.give)>0&&сумма(a.want)>0&&a.give.every((n,i)=>!n||!a.want[i]),'Выберите разные ресурсы с обеих сторон');
       нужно(хватит(g.players[p].resources,a.give),'У вас нет предложенных ресурсов');
-      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice()};событие(g,p,'offer');return;
+      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice()};if(g.rules>=3)g.tradeStatus=null;событие(g,p,'offer',a.type==='counter'?{counter:true}:{});return;
     }
-    if(a.type==='cancelOffer'){нужно(g.offer&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');g.offer=null;return;}
+    if(a.type==='cancelOffer'){нужно(g.offer&&(a.offer===undefined||a.offer===g.offer.id)&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');if(g.rules>=3)g.tradeStatus={type:'cancelled',from:g.offer.from};g.offer=null;return;}
     if(a.type==='discard'){
       нужно(g.phase==='discard'&&g.discard[p]>0,'Вам не нужно сбрасывать карты');
       нужно(ресурсы(a.resources)&&сумма(a.resources)===g.discard[p]&&хватит(g.players[p].resources,a.resources),'Выберите ровно половину ресурсов');
@@ -256,7 +262,7 @@
     }
     return копия({version:1,options:настройки(g.options),n:g.n,me,turn:g.turn,actor:кто(g),round:g.round,phase:g.phase,hexes:g.hexes,ports:g.ports,roads:g.roads,buildings:g.buildings,robber:g.robber,bank:g.bank,dice:g.dice,deckCount:g.deck.length,
       players:g.players.map((p,i)=>({score:очки(g,i,i===me||g.phase==='finished'),cards:сумма(p.resources),devCount:p.dev.length,victoryCards:i===me||g.phase==='finished'?p.dev.filter(d=>d.type==='vp').length:null,knights:p.knights,pieces:фигуры(g,i),roadLength:g.lengths[i]})),hand:h,dev:g.players[me].dev,legal,
-      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log,serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
+      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,tradeStatus:g.tradeStatus||null,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log.map(e=>{if(e.type!=='steal'||e.player===me||e.victim===me)return e;const {resource,...publicEvent}=e;return publicEvent;}),serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
   }
   const api={РЕСУРСЫ,ЦЕНЫ,Г,создать,действие,вид,кто,очки,длина,поселения,дороги,курс,произвести,итог,фигуры,сумма,настройки,местаРазбойника};
   if(typeof module!=='undefined')module.exports=api;else root.КатанПравила=api;

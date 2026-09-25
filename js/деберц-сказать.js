@@ -36,6 +36,7 @@
       else что.textContent = З.текст(знак.номер);
       for (const old of полка.children) if (old.dataset.игрок === облако.dataset.игрок) old.remove();
       облако.append(кто, что); полка.append(облако);
+      if(к.привязать){const r=к.место(знак.от??к.я??0)?.getBoundingClientRect();if(r){Object.assign(облако.style,{position:'fixed',left:Math.max(8,Math.min(innerWidth-200,r.x))+'px',top:Math.max(8,r.bottom-12)+'px',width:'190px',zIndex:200});}}
       while (полка.children.length > 3) полка.firstChild.remove();
       setTimeout(() => облако.classList.add('знак-внимания--гаснет'), 1600);
       setTimeout(() => облако.remove(), 2000);
@@ -56,7 +57,7 @@
         if (к.поСети) {
           const ответ = await window.Сеть.послатьЭмоцию(номер, цель?.id);
           if (!ответ?.принято) { сообщение.textContent = ответ?.причина || 'Не удалось отправить'; return; }
-        } else показать({ номер, этоЯ: true, от: 0, кому: цель?.индекс, цель: цель?.имя });
+        } else показать({ номер, этоЯ: true, от: к.я??0, кому: цель?.индекс, цель: цель?.имя });
         последнееНажатие = Date.now(); окно.close();
       } finally { отправляется = false; }
     }

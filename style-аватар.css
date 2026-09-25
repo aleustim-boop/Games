@@ -1,0 +1,4 @@
+.тг-аватар { position:relative!important; background-image:none!important; filter:none!important; border-radius:50%; }
+.тг-аватар::before,.тг-аватар::after { display:none!important; }
+.тг-аватар>img.тг-аватар-фото { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; max-width:none!important; padding:0!important; border:0!important; object-fit:cover; border-radius:inherit; filter:none!important; z-index:2; }
+img.тг-аватар { object-fit:cover; }

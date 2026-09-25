@@ -44,6 +44,7 @@
   }
   function portrait(i) {
     const e = el("span", undefined, "mono-portrait");
+    if(i===v?.me)e.dataset.myAvatar='';
     e.style.setProperty("--px", (i % 3) * 50 + "%");
     e.style.setProperty("--py", Math.floor(i / 3) * 100 + "%");
     e.setAttribute("aria-hidden", "true");

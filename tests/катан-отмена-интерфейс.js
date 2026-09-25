@@ -39,7 +39,7 @@ const {chromium,безTelegram}=require('./браузер-робот');
   });assert(layout.every(x=>x.clear&&x.hit),'Кнопки закрыты карточкой игрока');
   for(let player=0;player<4;player++){
     const counts=await page.locator('.кат-игрок.цвет-'+player+' .кат-показатель').evaluateAll(es=>Object.fromEntries(es.map(e=>[e.dataset.stat,Number(e.textContent)])));
-    const info=P.вид(g,0).players[player];assert.deepEqual(counts,{resources:info.cards,development:info.devCount,knights:info.knights,...info.pieces});
+    const info=P.вид(g,0).players[player];assert.deepEqual(counts,{resources:info.cards,development:info.devCount,knights:info.knights,...info.pieces,road:info.roadLength});
   }
   await page.screenshot({path:`tests/снимки/катан-номера-цвета-${width}.png`});
  }

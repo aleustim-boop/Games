@@ -20,7 +20,7 @@
 .кат-правило select { max-width:145px; min-height:44px; padding:7px; background:#343728; color:#f6e6c5; border:1px solid #b09156; border-radius:10px; }
 .кат-правила-стола>.кат-ссылка { min-height:44px; width:100%; margin-top:8px; color:#e6ce9d; border:1px solid #ac8c5755; border-radius:10px; }
 .катан .кат-переключатель button[aria-checked=true] { border-color:#edcb88; background:linear-gradient(#d7b977,#a48342); color:#201a10; }
-.катан .кат-рассадка { background:linear-gradient(#27332355,#101e1455),url('img/монополия/сукно-v2.webp') center/cover; border-color:#b49657; box-shadow:inset 0 0 0 5px #372a1f,0 15px 28px #0005; }
+.катан .кат-рассадка { background:radial-gradient(ellipse at 50% 30%,#27859d,#14566d 58%,#082f48);background-image:radial-gradient(ellipse at 50% 30%,#27859da8,#082f48e0),url('img/монополия/сукно-v2.webp');background-size:cover;background-blend-mode:color,normal; border-color:#b49657; box-shadow:inset 0 0 0 5px #372a1f,0 15px 28px #0005; }
 .кат-рассадка .кат-превью > image { display:none; }
 .катан #кат-доп-настройки { background:linear-gradient(110deg,#181410eb,#171914e8),url('img/катан/материалы-v3.webp') left center/200% 100%; }
 .катан #кат-доп-настройки > .кнопка--главная,
