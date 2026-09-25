@@ -287,6 +287,13 @@ function частьСсылки() {
       'своя ссылка обязана проходить, а не прошла: ' + ссылка);
   }
 
+  /* Длинный startapp — законный: в нём едут адрес туннеля и номер
+     приглашения. Прежний предел 300 такие ссылки резал. */
+  for (const длина of [400, 512]) {
+    проверить(сервера.этоНашаСсылка('https://t.me/bot/app?startapp=' + 'a'.repeat(длина)) === true,
+      'ссылка со startapp в ' + длина + ' знаков обязана проходить, а не прошла');
+  }
+
   const чужие = [
     ['http://t.me/bot/app?startapp=x', 'без https'],
     ['https://t.me.evil.example/bot/app?startapp=x', 'домен только похож на t.me'],
@@ -303,7 +310,10 @@ function частьСсылки() {
     ['//t.me/bot/app?startapp=x', 'без протокола'],
     ['https://t.me/бот/игра?startapp=x', 'кириллица в имени бота'],
     ['https://t.me/ab/app?startapp=x', 'слишком короткое имя бота'],
-    ['https://t.me/bot/app?startapp=' + 'a'.repeat(400), 'ссылка длиннее трёхсот знаков'],
+    /* Предел startapp — 512 знаков (как у Telegram для ?startapp=), всей
+       ссылки — 700 (server/сервер.js, ПРЕДЕЛ_STARTAPP и ПРЕДЕЛ_ССЫЛКИ). */
+    ['https://t.me/bot/app?startapp=' + 'a'.repeat(513), 'startapp длиннее 512 знаков'],
+    ['https://t.me/bot/app?startapp=' + 'a'.repeat(800), 'ссылка длиннее 700 знаков'],
     ['https://t.me//app?startapp=x', 'пустое имя бота'],
     ['https://t.me/bot//app?startapp=x', 'лишняя косая черта'],
     ['https://t.me/bot/app?startapp=x?startapp=y', 'два startapp'],
