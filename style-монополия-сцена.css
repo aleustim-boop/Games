@@ -1,0 +1,678 @@
+/* The approved illustrated concept, rendered as live controls over a real scene. */
+body.монополия {
+  background: #063329 url("img/монополия/сукно-v2.webp") center top / cover
+    fixed;
+  --mono-brass: #e6bd70;
+  --mono-ink: #041c15;
+}
+:root:has(body.монополия #приложение) #приложение {
+  background: transparent;
+}
+body.монополия:has(.mono-lobby.экран--виден) {
+  background: #061a13;
+}
+body.монополия:has(.mono-lobby.экран--виден) #приложение {
+  max-width: none;
+  padding: 0;
+}
+body.монополия #экран-лобби.mono-lobby {
+  max-width: 760px;
+  min-height: max(760px, 100dvh);
+  padding: calc(18px + var(--отступ-сверху, 0px)) clamp(22px, 9vw, 100px)
+    calc(15px + var(--отступ-снизу, 0px));
+  background: url("img/монополия/сцена-лобби-v2.webp") center center / 100% 100%;
+  align-items: stretch;
+  gap: 0;
+  isolation: isolate;
+}
+body.монополия #экран-лобби.mono-lobby.экран--виден {
+  display: flex;
+  flex-direction: column;
+}
+body.монополия #экран-лобби > :not(.нижние-вкладки) {
+  max-width: none;
+}
+body.монополия #экран-лобби > .mono-profile {
+  width: min(78%, 430px);
+}
+body.монополия #экран-лобби > .mono-hero {
+  flex-shrink: 1;
+}
+body.монополия #экран-игры {
+  background: transparent;
+}
+.mono-lobby::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    #0004,
+    transparent 30%,
+    transparent 68%,
+    #00190b3d
+  );
+  pointer-events: none;
+}
+.mono-lobby .mono-top {
+  margin: 0 -12px 0;
+  min-height: 42px;
+}
+.mono-top button {
+  flex: none;
+  border: 1px solid #e6bd70;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3227, #03120f);
+  box-shadow:
+    inset 0 0 0 3px #0007,
+    0 4px 8px #0009;
+  color: #ffdda0;
+}
+.mono-lobby h1 {
+  font-size: clamp(34px, 10.5vw, 88px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  text-transform: capitalize;
+  margin: 0;
+  background: linear-gradient(#fff2cb 20%, #f8d996 45%, #bf8839 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 2px #0009);
+  text-shadow: none;
+}
+.mono-lobby > .mono-sub {
+  font:
+    clamp(13px, 2.8vw, 23px) / 1.4 Georgia,
+    serif;
+  color: #f4dca7;
+  margin: 9px 0 22px;
+  text-shadow: 0 2px 3px #000;
+}
+.mono-lobby > .mono-sub::before {
+  content: "";
+  display: block;
+  width: 70%;
+  height: 1px;
+  margin: 0 auto 8px;
+  background: linear-gradient(90deg, transparent, #e6bd70, transparent);
+}
+.mono-profile {
+  width: min(100%, 430px);
+  align-self: center;
+  border: 1px solid #e8c176;
+  border-radius: 17px;
+  padding: 10px 15px;
+  gap: 15px;
+  background: linear-gradient(115deg, #0c2f26ef, #00110eed);
+  box-shadow:
+    inset 0 0 0 2px #b9944035,
+    0 7px 20px #0007;
+}
+.mono-profile strong {
+  font:
+    27px Georgia,
+    serif;
+  color: #f4dda7;
+}
+.mono-profile small {
+  color: #c6bb9b;
+  font-size: 11px;
+}
+.mono-portrait {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  background: url("img/монополия/портреты-v2.webp") var(--px, 0%)
+    var(--py, 0%) / 300% 200%;
+  border: 2px solid #eac779;
+  box-shadow:
+    0 2px 5px #000a,
+    inset 0 0 0 2px #483610;
+}
+.mono-lobby .mono-hero {
+  flex: 1;
+  min-height: 280px;
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+  background: none;
+  overflow: visible;
+}
+.mono-lobby .mono-hero > * {
+  display: none;
+}
+.mono-lobby .mono-entry {
+  flex: none;
+  margin: 7px 0;
+  min-height: 76px;
+  padding: 14px 22px !important;
+  border: 2px solid #e1b365;
+  border-radius: 20px;
+  background:
+    linear-gradient(110deg, #05261be8, #03140de8),
+    url("img/монополия/сукно-v2.webp") center/cover;
+  color: #ffe3ac;
+  box-shadow:
+    inset 0 0 0 2px #f4d99633,
+    0 6px 10px #0008;
+}
+.mono-lobby .mono-entry.mono-gold {
+  background: linear-gradient(
+    115deg,
+    #b98836,
+    #ffe6a4 43%,
+    #ebc06c 68%,
+    #a97c30
+  );
+  color: #201508;
+  border-color: #ffe5a6;
+  box-shadow:
+    inset 0 0 0 3px #876027,
+    inset 0 0 0 4px #ffe3a2,
+    0 6px 12px #0008;
+}
+.mono-lobby .mono-entry strong {
+  font:
+    clamp(21px, 4.5vw, 36px) / 1.15 Georgia,
+    serif;
+}
+.mono-lobby .mono-entry small {
+  font-size: 11px;
+  margin-top: 5px;
+}
+.mono-lobby .mono-entry > span:first-child {
+  font-size: 34px;
+}
+.mono-entry-icon {
+  width: 35px;
+  height: 35px;
+  display: block;
+}
+.mono-lobby .mono-footer {
+  padding: 22px 0 8px;
+  margin-top: 12px;
+  border-top: 1px solid #d4af6855;
+}
+.mono-lobby .mono-footer {
+  align-items: center;
+}
+.mono-lobby .mono-footer a,
+.mono-lobby .mono-footer button {
+  font:
+    16px Georgia,
+    serif;
+  color: #ead099;
+  min-height: 44px;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin: 0;
+}
+#mono-resume {
+  margin: 0 auto 12px;
+  width: min(100%, 430px);
+  padding: 10px;
+  min-height: 44px;
+  font-size: 13px;
+}
+.mono-title h1 {
+  font-weight: 500;
+  color: #ffe0a1;
+  text-shadow: 0 3px 2px #000b;
+  letter-spacing: -0.025em;
+  font-size: clamp(24px, 5vw, 47px);
+}
+.mono-title small {
+  color: #ddcea7;
+}
+.монополия #экран-игры {
+  max-width: 1040px;
+  margin: auto;
+}
+.монополия .mono-players {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 13px;
+  margin: 12px auto 17px;
+  width: min(100%, 800px);
+}
+.монополия .mono-player {
+  flex-direction: row !important;
+  text-align: left !important;
+  gap: 12px !important;
+  padding: 10px 15px !important;
+  border: 1px solid var(--pc);
+  border-radius: 13px;
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--pc) 17%, #052019),
+    #08140eea
+  );
+  box-shadow:
+    inset 0 0 0 2px #e6bd7012,
+    0 5px 10px #0006;
+}
+.монополия .mono-player.active {
+  border-color: #ffe49a;
+  box-shadow:
+    inset 0 0 14px #e6bd7033,
+    0 0 0 1px #f7d477,
+    0 0 16px #f7c14266;
+}
+.mono-player .mono-portrait {
+  width: 62px;
+  height: 62px;
+  border-color: var(--pc);
+}
+.монополия .mono-player-name {
+  font:
+    19px/1.2 Georgia,
+    serif;
+  color: #fff0c7;
+}
+.монополия .mono-player strong {
+  font:
+    32px/1.2 Georgia,
+    serif;
+  color: #ffe7af;
+  white-space: nowrap;
+}
+.mono-player strong::before {
+  content: "▱";
+  display: inline-block;
+  margin-right: 6px;
+  color: #e2bf79;
+  font-size: 0.7em;
+}
+.монополия .mono-player small {
+  font-size: 10px;
+  color: #dccfaf;
+}
+.mono-player .mono-player-piece {
+  width: 27px !important;
+  height: 27px !important;
+  position: absolute;
+  right: 7px;
+  bottom: 6px;
+  opacity: 0.7;
+}
+.монополия .mono-layout {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.mono-board {
+  border: 7px solid #392f23;
+  border-radius: 5px;
+  outline: 1px solid #d6af68;
+  box-shadow:
+    0 4px 0 #9a723b,
+    0 8px 0 #302215,
+    0 18px 30px #000a,
+    inset 0 0 0 2px #d7b374;
+}
+.mono-cell text {
+  font-family: Georgia, serif;
+  fill: #241b10;
+}
+.mono-board-stage > .mono-dice-tray {
+  top: 55%;
+  width: 250px;
+  max-width: 36%;
+  border: 3px double #ebc16f;
+  border-radius: 24px;
+  padding: 24px 12px 16px;
+  gap: 22px;
+  background: #032318 url("img/монополия/сукно-v2.webp") center/cover;
+  box-shadow:
+    inset 0 0 0 2px #8e652d,
+    0 10px 16px #0009;
+}
+.mono-dice-caption {
+  font:
+    16px/1.3 Georgia,
+    serif;
+  color: #ffe4ae;
+  margin-top: 10px;
+}
+.монополия .mono-board-tools {
+  margin-top: 10px;
+}
+.монополия .mono-board-tools button {
+  color: #e4c994;
+}
+.монополия .mono-event {
+  color: #e2d8b8;
+  text-align: center;
+  min-height: 1.4em;
+  margin: 0 0 5px;
+}
+.mono-side {
+  position: relative;
+  top: auto;
+  border: 2px solid #e1b565;
+  border-radius: 20px;
+  background:
+    linear-gradient(100deg, #09281bdd, #04150cee),
+    url("img/монополия/сукно-v2.webp") center/cover;
+  box-shadow:
+    inset 0 0 0 2px #e8c27833,
+    0 8px 20px #0008;
+  padding: 20px;
+  background-size: auto, 1200px;
+}
+.mono-turn {
+  font:
+    29px/1.15 Georgia,
+    serif;
+  color: #ffe5ad;
+}
+.mono-hint {
+  color: #dccfac;
+  font-size: 13px;
+}
+.mono-btn,
+body.монополия .кнопка {
+  border-color: #d7ae65;
+  background: linear-gradient(130deg, #143326, #051b13);
+  color: #f7dfac;
+  box-shadow:
+    inset 0 0 0 2px #bb924029,
+    0 3px 5px #0005;
+}
+.mono-gold,
+body.монополия .кнопка--главная {
+  background: linear-gradient(115deg, #bb8c3d, #ffe8af 45%, #d6a451);
+  color: #261a0c;
+  border-color: #ffe0a0;
+  box-shadow:
+    inset 0 0 0 2px #886229,
+    inset 0 0 0 3px #ffe0a0,
+    0 4px 7px #0006;
+}
+.mono-action-panel .mono-btn {
+  font-size: 18px;
+}
+.mono-action-panel[data-phase="buy"] {
+  display: grid;
+  grid-template-columns: 145px 1fr 1fr;
+  gap: 10px 18px;
+  align-items: center;
+}
+.mono-action-panel[data-phase="buy"] .mono-art {
+  grid-column: 1;
+  grid-row: 1/4;
+  width: 145px;
+  height: 150px;
+  margin: 0;
+  border: 1px solid #e3b970;
+  border-radius: 14px;
+}
+.mono-action-panel[data-phase="buy"] h3 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font:
+    29px Georgia,
+    serif;
+  color: #ffe8b9;
+}
+.mono-action-panel[data-phase="buy"] .mono-price {
+  grid-column: 2;
+  grid-row: 2;
+  font:
+    25px Georgia,
+    serif;
+}
+.mono-action-panel[data-phase="buy"] .mono-price::before {
+  content: "Цена ";
+  font-size: 0.65em;
+}
+.mono-action-panel[data-phase="buy"] .mono-btn {
+  grid-column: 3;
+  margin: 0;
+}
+.монополия .mono-tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  border-top: 1px solid #d4af6840;
+  padding-top: 15px;
+}
+.монополия .mono-tools button {
+  border: 1px solid #ccab66;
+  background: #062719a8;
+  border-radius: 12px;
+  font:
+    18px Georgia,
+    serif;
+  color: #f1dba4;
+  min-height: 60px;
+}
+.mono-tools button::before {
+  display: block;
+  font:
+    25px Georgia,
+    serif;
+  margin-bottom: 5px;
+}
+#mono-properties::before {
+  content: "⌂";
+}
+#mono-trade::before {
+  content: "⇄";
+}
+#mono-settings-game::before {
+  content: "⚙";
+}
+#mono-modal {
+  border: 1px solid #d7ae65;
+  background:
+    linear-gradient(#0e3025ed, #051b13f5),
+    url("img/монополия/сукно-v2.webp") center/cover;
+}
+.mono-settings {
+  background: #031a14cd;
+  padding: 22px !important;
+  border: 1px solid #bc945d75;
+  border-radius: 22px;
+}
+@media (min-width: 1000px) {
+  .монополия #экран-игры {
+    max-width: 1220px;
+  }
+  .монополия .mono-layout {
+    grid-template-columns: minmax(0, 820px) minmax(260px, 320px);
+    gap: 24px;
+  }
+  .монополия .mono-players {
+    grid-template-columns: repeat(var(--players, 4), minmax(0, 1fr));
+    width: 100%;
+  }
+  .mono-player .mono-portrait {
+    width: 48px;
+    height: 48px;
+  }
+  .монополия .mono-player {
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+  .монополия .mono-player-name {
+    font-size: 17px;
+  }
+  .монополия .mono-player strong {
+    font-size: 27px;
+  }
+  .mono-side {
+    position: sticky;
+    top: 16px;
+  }
+  .mono-action-panel[data-phase="buy"] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mono-action-panel[data-phase="buy"] .mono-art {
+    width: 100%;
+    height: 180px;
+  }
+  .монополия .mono-tools button {
+    font-size: 12px;
+  }
+}
+@media (max-width: 600px) {
+  body.монополия #экран-лобби.mono-lobby {
+    min-height: max(730px, 100dvh);
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+  .mono-lobby .mono-top {
+    min-height: 38px;
+  }
+  .mono-lobby .mono-top button {
+    width: 36px;
+    height: 36px;
+    font-size: 23px;
+  }
+  .mono-lobby > .mono-sub {
+    margin-bottom: 16px;
+  }
+  .mono-profile {
+    width: 78%;
+    padding: 8px 10px;
+    gap: 10px;
+  }
+  .mono-profile .mono-portrait {
+    width: 43px;
+    height: 43px;
+  }
+  .mono-profile strong {
+    font-size: 23px;
+  }
+  .mono-profile small {
+    font-size: 9px;
+  }
+  .mono-lobby .mono-hero {
+    min-height: 270px;
+  }
+  .mono-lobby .mono-entry {
+    min-height: 67px;
+    padding: 12px 15px !important;
+    border-radius: 16px;
+    gap: 12px;
+  }
+  .mono-lobby .mono-entry strong {
+    font-size: 23px;
+  }
+  .mono-lobby .mono-entry small {
+    font-size: 9px;
+  }
+  .mono-lobby .mono-footer {
+    padding: 12px 0 0;
+    margin-top: 12px;
+  }
+  .mono-lobby .mono-footer a,
+  .mono-lobby .mono-footer button {
+    font-size: 13px;
+  }
+  .монополия .mono-players {
+    gap: 7px;
+    margin: 9px 0 13px;
+  }
+  .монополия .mono-player {
+    padding: 7px !important;
+    gap: 7px !important;
+    border-radius: 10px;
+  }
+  .mono-player .mono-portrait {
+    width: 42px;
+    height: 42px;
+  }
+  .монополия .mono-player-name {
+    font-size: 14px;
+  }
+  .монополия .mono-player strong {
+    font-size: 24px;
+  }
+  .монополия .mono-player small {
+    font-size: 8px;
+  }
+  .mono-player .mono-player-piece {
+    display: none;
+  }
+  .mono-board {
+    border-width: 4px;
+  }
+  .mono-board-stage > .mono-dice-tray {
+    max-width: 41%;
+    padding: 13px 7px 8px;
+    gap: 14px;
+    border-radius: 15px;
+  }
+  .mono-dice-caption {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+  .mono-side {
+    padding: 13px;
+    border-radius: 15px;
+  }
+  .mono-turn {
+    font-size: 25px;
+  }
+  .mono-hint {
+    font-size: 11px;
+  }
+  .mono-action-panel[data-phase="buy"] {
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 7px 10px;
+  }
+  .mono-action-panel[data-phase="buy"] .mono-art {
+    width: 74px;
+    height: 83px;
+    grid-row: 1/3;
+  }
+  .mono-action-panel[data-phase="buy"] h3 {
+    font-size: 23px;
+  }
+  .mono-action-panel[data-phase="buy"] .mono-price {
+    font-size: 21px;
+  }
+  .mono-action-panel[data-phase="buy"] .mono-btn {
+    grid-column: 1/-1;
+    min-height: 46px;
+  }
+  .монополия .mono-tools {
+    gap: 7px;
+    padding-top: 10px;
+  }
+  .монополия .mono-tools button {
+    font-size: 13px;
+    min-height: 58px;
+  }
+}
+@media (max-width: 350px) {
+  body.монополия #экран-лобби.mono-lobby {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .mono-lobby .mono-entry strong {
+    font-size: 20px;
+  }
+  .mono-player .mono-portrait {
+    width: 32px;
+    height: 32px;
+  }
+  .монополия .mono-player-name {
+    font-size: 12px;
+  }
+  .монополия .mono-player strong {
+    font-size: 21px;
+  }
+}
+@media (min-width: 700px) and (min-height: 800px) {
+  .mono-lobby .mono-hero {
+    min-height: 420px;
+  }
+}

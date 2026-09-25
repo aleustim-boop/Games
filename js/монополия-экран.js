@@ -42,6 +42,13 @@
     e.setAttribute("aria-hidden", "true");
     return e;
   }
+  function portrait(i) {
+    const e = el("span", undefined, "mono-portrait");
+    e.style.setProperty("--px", (i % 3) * 50 + "%");
+    e.style.setProperty("--py", Math.floor(i / 3) * 100 + "%");
+    e.setAttribute("aria-hidden", "true");
+    return e;
+  }
   function art(id) {
     const c = D.cells[id],
       e = el("div", undefined, "mono-art"),
@@ -368,7 +375,9 @@
                   : `${v.properties.filter((s) => s.owner === i).length} владений`,
           ),
         );
-        row.append(token(p.token), text);
+        const piece = token(p.token);
+        piece.classList.add("mono-player-piece");
+        row.append(portrait(i), text, piece);
         return row;
       }),
     );
@@ -397,6 +406,7 @@
     };
     $("mono-hint").textContent = hints[v.phase] || "";
     const actions = $("mono-actions");
+    actions.dataset.phase = v.phase;
     actions.replaceChildren();
     const mine = v.actor === v.me,
       p = v.players[v.me];
@@ -428,7 +438,7 @@
       }
     } else if (v.phase === "buy") {
       const c = D.cells[v.queue[0].id];
-      if (c.group !== undefined) actions.append(art(c.id));
+      actions.append(art(c.id));
       actions.append(el("h3", c.name), el("div", money(c.price), "mono-price"));
       if (mine) {
         action("Купить за " + money(c.price), { type: "buy" }, true);

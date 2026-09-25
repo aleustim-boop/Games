@@ -20,6 +20,7 @@ const req = async (p, body) => {
   for (const file of [
     "монополия.html",
     "style-монополия.css",
+    "style-монополия-сцена.css",
     "style-монополия-витрина.css",
     "js/монополия-данные.js",
     "js/монополия-правила.js",
@@ -30,6 +31,11 @@ const req = async (p, body) => {
     "img/монополия/город.webp",
     "img/монополия/фишки.webp",
     "img/монополия/кварталы.webp",
+    "img/монополия/сцена-лобби-v2.webp",
+    "img/монополия/город-v2.webp",
+    "img/монополия/сукно-v2.webp",
+    "img/монополия/портреты-v2.webp",
+    "img/монополия/фигуры-v2.webp",
   ]) {
     const r = await fetch(
       base +
