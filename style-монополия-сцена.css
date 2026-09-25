@@ -756,3 +756,9 @@ body.монополия #экран-лобби.mono-lobby {
     height: 52px;
   }
 }
+
+/* Telegram provides its own back button; preserve the title's alignment. */
+html.в-телеграме .монополия #экран-игры .mono-top > [data-back] {
+  visibility: hidden;
+  pointer-events: none;
+}
