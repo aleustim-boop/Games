@@ -973,27 +973,46 @@
       );
       body.append(row);
     }
-    body.append(
-      button(
-        "Сыграть ещё",
-        async () => {
-          if (online) {
-            const r = await window.Сеть.отправитьХод({ действие: "ещё" });
-            if (!r?.принято)
-              $("mono-error").textContent = r?.причина || "Нет связи";
-            else
-              $("mono-modal-body").append(
-                el("p", "Ждём согласия остальных игроков…"),
-              );
-          } else {
-            close();
-            fresh();
+    // Соперник (или все за столом) уже вышли — звать на реванш некого,
+    // проверяем это раньше прочих подписей, чтобы не путать игрока.
+    if (online && network?.соперникУшёл)
+      body.append(el("p", "Реванша не будет — вернитесь в меню.", "подпись"));
+    // Мы уже позвали на реванш (видно и после закрытия-открытия «Итогов партии»,
+    // не только сразу после клика) — или это уже соперник зовёт нас.
+    else if (online && network?.яХочуЕщё)
+      body.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
+    else if (online && network?.соперникХочетЕщё)
+      body.append(
+        el(
+          "p",
+          "Кто-то из игроков уже зовёт сыграть ещё — жмите «Сыграть ещё».",
+          "подпись",
+        ),
+      );
+    const кнопкаЕщё = button(
+      "Сыграть ещё",
+      async () => {
+        if (online) {
+          const r = await window.Сеть.отправитьХод({ действие: "ещё" });
+          if (!r?.принято)
+            $("mono-error").textContent = r?.причина || "Нет связи";
+          else {
+            кнопкаЕщё.disabled = true;
+            body.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
           }
-        },
-        true,
-      ),
-      button("Посмотреть поле", close),
+        } else {
+          close();
+          fresh();
+        }
+      },
+      true,
     );
+    кнопкаЕщё.disabled =
+      online && Boolean(network?.яХочуЕщё || network?.соперникУшёл);
+    body.append(кнопкаЕщё, button("Посмотреть поле", close));
+    // «В друзья» — только по сети, узел пустой, дальше рисует js/сеть.js.
+    if (online && typeof window.Сеть?.кнопкаВДрузья === "function")
+      window.Сеть.кнопкаВДрузья(body.appendChild(el("div", undefined, "подпись")));
   }
   function history() {
     const body = modal("Мои партии");

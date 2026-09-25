@@ -292,8 +292,12 @@
     if(v.surrendered>=0)body.append(el('p',`${name(v.surrendered)} завершили партию досрочно.`));else if(v.interrupted)body.append(el('p','Партия прервана без результата.'));
     [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / 10`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Победные карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
     body.append(button('Посмотреть остров',close));
+    // Соперник уже позвал реванш, а мы ещё нет — говорим об этом прямо, иначе непонятно, что жмём.
+    if(online&&network?.соперникХочетЕщё&&!network?.яХочуЕщё)body.append(el('p','Кто-то за столом уже зовёт сыграть ещё — жмите «Сыграть ещё».','подпись'));
     body.append(button(online&&network?.яХочуЕщё?'Ждём согласия игроков…':'Сыграть ещё',async()=>{if(online){const r=await window.Сеть.отправитьХод({действие:'ещё'});if(!r?.принято)$('кат-ошибка').textContent=r?.причина||'Нет связи';}else{close();fresh();}},'кнопка кнопка--главная'));
     body.append(button('В меню',()=>{close();if(online)window.Сеть.покинутьПартию();online=false;screen('экран-лобби');}));
+    // «В друзья» — только по сети, узел пустой, дальше рисует js/сеть.js.
+    if(online&&typeof window.Сеть?.кнопкаВДрузья==='function')window.Сеть.кнопкаВДрузья(body.appendChild(el('div',undefined,'подпись')));
   }
   function history(){const body=modal('Мои партии');let items=[];try{items=JSON.parse(localStorage.getItem(HIST))||[];}catch(_){}if(!Array.isArray(items))items=[];if(!items.length)body.append(el('p','Здесь появятся завершённые партии с ботами.'));items.forEach(x=>body.append(el('div',`${new Date(x.date).toLocaleDateString('ru-RU')} · ${x.win?'Победа':'Поражение'} · ${x.scores.join(' : ')}`,'кат-журнал')));}
   function rules(){
