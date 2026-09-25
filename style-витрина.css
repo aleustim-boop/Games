@@ -1,0 +1,79 @@
+/* One catalogue layout for every game, including links and buttons.
+   Older illustrations include captions: crop those out in the image layer
+   and use the accessible HTML title consistently for every card. */
+#экран-витрины .витрина__плитки {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+#экран-витрины .плитка-игры {
+  order: 0;
+  grid-column: auto;
+  aspect-ratio: 4 / 3;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #b9c5bb35;
+  border-radius: 20px;
+  background: #141c1e;
+  text-decoration: none;
+  filter: none;
+  isolation: isolate;
+  box-shadow: 0 8px 24px #0003;
+}
+#экран-витрины .плитка-игры::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 27%;
+  background: var(--catalog-art) center top / 100% auto no-repeat;
+  mask-image: linear-gradient(#000 75%, transparent);
+  pointer-events: none;
+}
+#экран-витрины .плитка-игры::after {
+  content: "↗";
+  position: absolute;
+  right: 6%;
+  bottom: 7%;
+  color: #d2f76b;
+  font: 400 clamp(20px, 4vw, 30px)/1 system-ui, sans-serif;
+  pointer-events: none;
+}
+#экран-витрины .плитка-игры__название {
+  position: absolute;
+  inset: auto 17% 7% 6%;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  color: #f5f4ed;
+  font: 700 clamp(15px, 4vw, 25px)/1.2 'Onest', system-ui, sans-serif;
+  letter-spacing: -.025em;
+  text-shadow: none;
+}
+#экран-витрины :is(.катан-витрина__метка, .катан-витрина__подпись,
+  .катан-витрина__стрелка, .монополия-витрина__метка, .монополия-витрина__подпись) {
+  display: none;
+}
+#экран-витрины [data-игра="нарды"] { --catalog-art: url('img/витрина/backgammon.jpg'); }
+#экран-витрины [data-игра="шахматы"] { --catalog-art: url('img/витрина/chess.jpg'); }
+#экран-витрины [data-игра="дурак"] { --catalog-art: url('img/витрина/durak.jpg'); }
+#экран-витрины [data-игра="шашки"] { --catalog-art: url('img/витрина/checkers.jpg'); }
+#экран-витрины [data-игра="домино"] { --catalog-art: url('img/витрина/dominoes.jpg'); }
+#экран-витрины [data-игра="морской-бой"] { --catalog-art: url('img/витрина/battleship.jpg'); }
+#экран-витрины [data-игра="катан"] { --catalog-art: url('img/катан/обложка-v2.webp'); }
+#экран-витрины [data-игра="монополия"] { --catalog-art: url('img/монополия/город-v2.webp'); }
+#экран-витрины [data-игра="деберц"] { --catalog-art: url('img/деберц/лобби.png'); }
+@media (min-width: 900px) {
+  #экран-витрины.витрина > :not(.нижние-вкладки):not(.лист-ещё) { max-width: 1000px; }
+  #экран-витрины .витрина__плитки { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+}
+@media (max-width: 360px) {
+  #экран-витрины .витрина__плитки { gap: 10px; }
+  #экран-витрины .плитка-игры { border-radius: 14px; }
+}
