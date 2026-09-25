@@ -5,6 +5,9 @@ const {chromium,безTelegram}=require('./браузер-робот');
  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];
  await безTelegram(page);page.on('pageerror',e=>errors.push(e.message));await page.clock.install();
  await page.goto((process.env.CATAN_BASE||'http://127.0.0.1:8137')+'/катан.html');
+ // На живом сайте загрузка графики может занять больше задержки автоброска.
+ // Двигаем игровые часы явно: сетевые задержки не должны менять проверяемую руку.
+ await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
  let seed=1;while(P.создать(4,seed,false,3).turn!==0)seed++;
  const record={version:1,rules:3,id:'undo-ui',seed,n:4,level:'обычный',actions:[]};
  await page.evaluate(r=>localStorage.setItem('catan-match-v1',JSON.stringify(r)),record);
