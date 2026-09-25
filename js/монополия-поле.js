@@ -194,11 +194,11 @@
             "text",
             {
               x: tx,
-              y: y + (c.group !== undefined && c.id < 10 ? 36 : 24) + i * 15,
+              y: y + (c.group !== undefined && c.id < 10 ? 38 : 23) + i * 20,
               "text-anchor": "middle",
-              "font-size": 13,
-              "font-weight": 500,
-              ...(line.length * 7 > (tall ? w - 8 : w - 32)
+              "font-size": 19,
+              "font-weight": 700,
+              ...(line.length * 12 > (tall ? w - 8 : w - 32)
                 ? {
                     textLength: tall ? w - 8 : w - 32,
                     lengthAdjust: "spacingAndGlyphs",
@@ -220,7 +220,7 @@
                 h -
                 (c.group !== undefined && c.id >= 20 && c.id < 30 ? 25 : 10),
               "text-anchor": "middle",
-              "font-size": 14,
+              "font-size": 24,
               "font-weight": 750,
             },
             c.price,

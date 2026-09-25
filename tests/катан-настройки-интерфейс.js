@@ -4,9 +4,13 @@ const {chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const browser=await chromium.launch();try{
   const p=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];await безTelegram(p);p.on('pageerror',e=>errors.push(e.message));await p.clock.install();await p.goto('http://127.0.0.1:8137/катан.html');
   await p.screenshot({path:'tests/снимки/катан-новое-лобби.png'});await p.locator('#кат-боты').click();
-  await p.locator('#кат-настройки').getByRole('checkbox',{name:/Дружелюбный/}).check();await p.locator('#кат-настройки').getByRole('checkbox',{name:/Мягкий/}).check();await p.locator('#кат-настройки').getByRole('combobox',{name:'Время на ход'}).selectOption('60');
+  await p.locator('#кат-цель').getByRole('radio',{name:'12 ПО'}).click();
+  assert.equal(await p.locator('#кат-настройки .кат-правила-стола').count(),0);
+  await p.locator('#кат-настройки').getByRole('button',{name:'Дополнительные настройки'}).click();
+  await p.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Дружелюбный/}).check();await p.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Мягкий/}).check();await p.locator('#кат-доп-настройки').getByRole('combobox',{name:'Время на ход'}).selectOption('60');
+  await p.locator('#кат-доп-настройки').getByRole('button',{name:'Готово',exact:true}).click();
   await p.screenshot({path:'tests/снимки/катан-правила-стола.png',fullPage:true});await p.locator('#кат-начать').click();
-  let record=await p.evaluate(()=>JSON.parse(localStorage.getItem('catan-match-v1')));assert.deepEqual(record.options,{friendlyRobber:true,easyStart:true,turnSeconds:60});
+  let record=await p.evaluate(()=>JSON.parse(localStorage.getItem('catan-match-v1')));assert.deepEqual(record.options,{friendlyRobber:true,easyStart:true,turnSeconds:60,targetPoints:12});
   await p.clock.fastForward(250);assert(await p.locator('.кат-таймер').isVisible());
   await p.locator('#кат-фильтр').click();await p.getByRole('button',{name:'Яркий',exact:true}).click();assert.equal(await p.locator('#экран-игры').getAttribute('data-terrain'),'bright');await p.getByRole('button',{name:'Средний',exact:true}).click();await p.getByRole('checkbox',{name:'Названия ресурсов на поле'}).check();await p.getByRole('checkbox',{name:'Вероятности на жетонах'}).uncheck();await p.getByRole('button',{name:'Готово',exact:true}).click();
   await p.reload();await p.locator('#кат-продолжить').click();assert.equal(await p.locator('#экран-игры').getAttribute('data-terrain'),'balanced');assert.match(await p.locator('#экран-игры').getAttribute('class'),/названия-ресурсов/);

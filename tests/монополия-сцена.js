@@ -23,8 +23,8 @@ const assert = require("node:assert/strict"),
       return { url, w: im.naturalWidth };
     });
     assert(
-      bg.url.includes(encodeURIComponent("сцена-лобби-v2")) && bg.w > 500,
-      "Лобби должно показывать реальный фон из концепта",
+      bg.url.includes(encodeURIComponent("сукно-v2")) && bg.w > 500,
+      "Лобби должно показывать загруженную текстуру сукна",
     );
     const g = P.create(4, 17),
       actions = [];

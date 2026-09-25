@@ -29,7 +29,7 @@
     return {hexes,vertices,edges};
   }
   const Г=геометрия();
-  function настройки(options={}){return {friendlyRobber:options?.friendlyRobber===true,easyStart:options?.easyStart===true,turnSeconds:[0,60,120,180].includes(options?.turnSeconds)?options.turnSeconds:0};}
+  function настройки(options={}){return {friendlyRobber:options?.friendlyRobber===true,easyStart:options?.easyStart===true,turnSeconds:[0,60,120,180].includes(options?.turnSeconds)?options.turnSeconds:0,targetPoints:[10,12,15].includes(options?.targetPoints)?options.targetPoints:10};}
   function создать(n=4,seed=(Date.now()^Math.floor(Math.random()*1e9))>>>0,secure=false,rules=1,options={}){
     нужно([3,4].includes(n),'Нужно 3 или 4 игрока');
     нужно(!secure||secureRandom,'Защищённая случайность доступна на сервере');
@@ -86,7 +86,7 @@
   function очки(g,p,hidden=true){return g.buildings.reduce((s,b)=>s+(b?.owner===p?b.level:0),0)+(g.roadOwner===p?2:0)+(g.armyOwner===p?2:0)+(hidden?g.players[p].dev.filter(d=>d.type==='vp').length:0);}
   function итог(g){
     g.lengths=g.players.map((_,i)=>длина(g,i));g.roadOwner=награда(g.lengths,g.roadOwner,5);g.armyOwner=награда(g.players.map(p=>p.knights),g.armyOwner,3);
-    if(g.phase!=='finished'&&!g.phase.startsWith('setup')&&очки(g,g.turn)>=10){g.winner=g.turn;g.phase='finished';g.offer=null;}
+    if(g.phase!=='finished'&&!g.phase.startsWith('setup')&&очки(g,g.turn)>=(g.options?.targetPoints||10)){g.winner=g.turn;g.phase='finished';g.offer=null;}
   }
   function хватит(h,cost){return cost.every((n,i)=>h[i]>=n);}
   function pay(g,p,cost){нужно(хватит(g.players[p].resources,cost),'Не хватает ресурсов');cost.forEach((n,i)=>{g.players[p].resources[i]-=n;g.bank[i]+=n;});}

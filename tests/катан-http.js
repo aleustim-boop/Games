@@ -15,7 +15,7 @@ const server=require('../server/сервер').создатьСервер(),Б=r
       while(count++<2000){
         const states=await Promise.all(players.map(p=>req('состояние',p))),views=states.map(s=>(s.состояние||s).катан),v=views[0];
         assert(v);assert.equal(v.names[1],'Участник 1');
-        assert.deepEqual(v.options,options);if(n===4&&v.phase!=='finished')assert(v.secondsLeft>0&&v.secondsLeft<=120);
+        assert.deepEqual(v.options,{...options,targetPoints:10});if(n===4&&v.phase!=='finished')assert(v.secondsLeft>0&&v.secondsLeft<=120);
         for(const view of views){assert.equal(view.hand.length,5);assert(!('seed'in view));assert(!('deck'in view));assert(view.players.every(p=>!('resources'in p)&&!('dev'in p)));}
         if(v.phase==='finished')break;
         const who=v.actor,move=Б.ход(views[who],'сложный');

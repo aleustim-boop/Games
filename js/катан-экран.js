@@ -61,6 +61,8 @@
   const resourceText=a=>a.flatMap((n,i)=>n?[`${ресурсы[i]} × ${n}`]:[]).join(', ');
   try{const p=JSON.parse(localStorage.getItem(PREF));if(p&&[3,4].includes(p.n)&&['лёгкий','обычный','сложный'].includes(p.level))prefs=p;}catch(_){}
   prefs.options=П.настройки(prefs.options);
+  prefs.targetPoints=[10,12,15].includes(prefs.targetPoints)?prefs.targetPoints:10;
+  let optionsReturn='кат-настройки';
   window.КатанНастройкиСтола=()=>({...prefs.options});
   function tableOptions(root){
     root.replaceChildren(el('small','ПРАВИЛА ВАШЕГО ОСТРОВА'),el('h2','Как будем играть?'));
@@ -85,6 +87,7 @@
   function modal(title,kind=''){restoreBuilds();dialogKind=kind;if(!online){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
   function back(){
     if($('кат-диалог').open){close();return;}
+    if($('кат-доп-настройки').classList.contains('экран--виден')){settings();screen(optionsReturn);return;}
     if(document.querySelector('.кат-карта.увеличена')){zoom(false);return;}
     if(лист.открыт()){лист.закрыть();return;}
     if($('экран-комнаты').classList.contains('экран--виден')){$('кнопка-комната-отмена').click();return;}
@@ -99,7 +102,7 @@
   function fresh(){
     clearPresentation();selected=null;online=false;network=null;mode=null;lastResult='';busy=false;lastSerial=null;
     const seed=crypto.getRandomValues(new Uint32Array(1))[0]||1;
-    record={version:1,rules:2,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,options:{...prefs.options},actions:[]};g=П.создать(record.n,seed,false,2,record.options);record.clock=window.КатанЧасы.обновить({},g);save();screen('экран-игры');render();
+    record={version:1,rules:2,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,options:{...prefs.options,targetPoints:prefs.targetPoints},actions:[]};g=П.создать(record.n,seed,false,2,record.options);record.clock=window.КатанЧасы.обновить({},g);save();screen('экран-игры');render();
   }
   function local(player,action){П.действие(g,player,action);record.clock=window.КатанЧасы.обновить(record.clock||{},g);record.actions.push({player,action});save();}
   async function act(action){
@@ -124,7 +127,7 @@
     if(!action)return;
     timer=setTimeout(()=>{try{local(who,action);render();}catch(e){$('кат-ошибка').textContent='Ошибка хода бота: '+e.message;}},display.pace);
   }
-  const phaseText={setupSettlement:'Поставьте поселение на подсвеченное перекрестье',setupRoad:'Проложите дорогу от нового поселения',roll:'Бросьте кубики, чтобы получить ресурсы',main:'Стройте, обменивайтесь или завершите ход',discard:'Сбросьте половину ресурсов',robber:'Выберите другой гекс для разбойника',steal:'Выберите, у кого забрать ресурс',freeRoad:'Проложите бесплатную дорогу',finished:'Победитель набрал 10 очков'};
+  const phaseText={setupSettlement:'Поставьте поселение на подсвеченное перекрестье',setupRoad:'Проложите дорогу от нового поселения',roll:'Бросьте кубики, чтобы получить ресурсы',main:'Стройте, обменивайтесь или завершите ход',discard:'Сбросьте половину ресурсов',robber:'Выберите другой гекс для разбойника',steal:'Выберите, у кого забрать ресурс',freeRoad:'Проложите бесплатную дорогу',finished:'Партия завершена'};
   function feedback(){
     const first=lastSerial===null;if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;if(first)return;
     const event=v.log.at(-1);if(!event)return;
@@ -147,7 +150,7 @@
     feedback();
     const forced={setupSettlement:'settlement',setupRoad:'road',freeRoad:'road',robber:'robber'}[v.phase];
     if(forced)mode=mine?forced:null;else if(v.phase!=='main'||!mine||!['road','settlement','city'].includes(mode))mode=null;
-    $('кат-раунд').textContent=(v.phase.startsWith('setup')?`Расстановка ${v.setupRound||1}/2`:`Ход ${v.round}`)+' · до 10';
+    $('кат-раунд').textContent=(v.phase.startsWith('setup')?`Расстановка ${v.setupRound||1}/2`:`Ход ${v.round}`)+` · до ${v.options.targetPoints||10}`;
     $('кат-игроки').replaceChildren(...v.players.map((p,i)=>{
       const card=button('',()=>playerInfo(i),`кат-игрок цвет-${i}`);card.style.gridArea=['self','northwest','northeast','southwest'][(i-v.me+v.players.length)%v.players.length];card.classList.toggle('ходит',active&&(v.phase==='discard'?v.discard[i]>0:i===v.turn));
       const title=el('b',name(i));title.title=name(i);
@@ -200,7 +203,7 @@
   }
   function playerInfo(i){
     const p=v.players[i],body=modal(name(i),'player');
-    body.append(el('p',`Победные очки: ${p.score} из 10`),el('p',`В руке: ${p.cards} ресурсов · ${p.devCount} карт развития`));
+    body.append(el('p',`Победные очки: ${p.score} из ${v.options.targetPoints||10}`),el('p',`В руке: ${p.cards} ресурсов · ${p.devCount} карт развития`));
     for(const [title,value]of [['Поселения',p.pieces.settlement],['Города',p.pieces.city*2],['Самая длинная дорога',v.roadOwner===i?2:0],['Самая большая армия',v.armyOwner===i?2:0]]){const row=el('div',undefined,'кат-счёт-строка');row.append(el('span',title),el('b',String(value)));body.append(row);}
     if(p.victoryCards!==null){const row=el('div',undefined,'кат-счёт-строка');row.append(el('span',i===v.me?'Ваши скрытые победные очки':'Карты победных очков'),el('b',String(p.victoryCards)));body.append(row);}else body.append(el('p','Победные карты соперника скрыты и не входят в его видимый счёт до конца партии.'));
     body.append(el('p',`Непрерывная дорога: ${p.roadLength} · Разыграно рыцарей: ${p.knights}`),el('p',`Фигуры в запасе: ${15-p.pieces.road} дорог, ${5-p.pieces.settlement} поселений, ${4-p.pieces.city} городов.`));
@@ -290,7 +293,7 @@
   function results(){
     const body=modal(v.winner<0?'Партия завершена':v.winner===v.me?'Вы победили!':`Победитель: ${name(v.winner)}`,'result');
     if(v.surrendered>=0)body.append(el('p',`${name(v.surrendered)} завершили партию досрочно.`));else if(v.interrupted)body.append(el('p','Партия прервана без результата.'));
-    [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / 10`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Победные карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
+    [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / ${v.options.targetPoints||10}`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Победные карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
     body.append(button('Посмотреть остров',close));
     body.append(button(online&&network?.яХочуЕщё?'Ждём согласия игроков…':'Сыграть ещё',async()=>{if(online){const r=await window.Сеть.отправитьХод({действие:'ещё'});if(!r?.принято)$('кат-ошибка').textContent=r?.причина||'Нет связи';}else{close();fresh();}},'кнопка кнопка--главная'));
     body.append(button('В меню',()=>{close();if(online)window.Сеть.покинутьПартию();online=false;screen('экран-лобби');}));
@@ -313,6 +316,8 @@
     document.querySelectorAll('.кат-правила-стола').forEach(tableOptions);
     function radios(id,values,current,change){$(id).replaceChildren(...values.map(([value,label])=>{const b=button(label,()=>{change(value);save();settings();});b.setAttribute('role','radio');b.setAttribute('aria-checked',String(value===current));return b;}));}
     radios('кат-число',[[3,'Трое'],[4,'Четверо']],prefs.n,n=>prefs.n=n);
+    radios('кат-цель',[[10,'10 ПО'],[12,'12 ПО'],[15,'15 ПО']],prefs.targetPoints,n=>prefs.targetPoints=n);
+    document.querySelector('.кат-настройки-факты').textContent=`До ${prefs.targetPoints} победных очков`;
     radios('кат-уровень',[['лёгкий','Лёгкий'],['обычный','Обычный'],['сложный','Сложный']],prefs.level,x=>prefs.level=x);
     radios('кат-число-онлайн',[[3,'Трое'],[4,'Четверо']],Number($('катан-мест-друга').value),n=>$('катан-мест-друга').value=n);
     for(const [id,n,bots]of [['кат-стол-ботов',prefs.n,true],['кат-стол-онлайн',Number($('катан-мест-друга').value),false]]){
@@ -355,7 +360,12 @@
     показатьСвязь(text){$('строка-связи').textContent=text||'';$('строка-связи').classList.toggle('скрыт',!text);},экран:screen,вМеню(){online=false;network=null;screen('экран-лобби');},идёт:()=>online
   };
   let serverDeadline=null;
-  for(const id of ['кат-настройки','экран-друга']){const root=el('div',undefined,'кат-правила-стола');$(id).querySelector(id==='кат-настройки'?'#кат-начать':'#кнопка-создать-игру').before(root);}
+  const extra=el('section',undefined,'экран');extra.id='кат-доп-настройки';
+  const extraHeader=el('header',undefined,'кат-настройки-шапка');extraHeader.append(el('small','КАТАН · НАСТРОЙКИ'),el('h1','Правила стола'));
+  extra.append(extraHeader,el('div',undefined,'кат-правила-стола'),button('Готово',back,'кнопка кнопка--главная'));
+  $('кат-настройки').after(extra);
+  const targetPanel=el('div',undefined,'кат-панель'),targets=el('div',undefined,'кат-переключатель');targets.id='кат-цель';targets.setAttribute('role','radiogroup');targets.setAttribute('aria-label','Победные очки');targetPanel.append(el('h2','Победные очки'),targets);document.querySelector('.кат-настройки-факты').before(targetPanel);
+  for(const id of ['кат-настройки','экран-друга']){$(id).querySelector(id==='кат-настройки'?'#кат-начать':'#кнопка-создать-игру').before(button('Дополнительные настройки',()=>{optionsReturn=id;tableOptions(extra.querySelector('.кат-правила-стола'));screen(extra.id);},'кнопка кат-доп-настройки-кнопка'));}
   const clockLabel=el('span',undefined,'кат-таймер');clockLabel.setAttribute('aria-label','Осталось времени на ход');$('кат-действие-текст').after(clockLabel);
   setInterval(()=>{
     if(!v||!$('экран-игры').classList.contains('экран--виден'))return;
