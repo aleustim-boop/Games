@@ -13,7 +13,7 @@ const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{me
   }
   console.log('Опубликованные код, стили и изображения совпадают с проверенными файлами.');
   try{
-    const options={friendlyRobber:true,easyStart:true,turnSeconds:120,targetPoints:10};
+    const options={harbors:'fixed',friendlyRobber:true,easyStart:true,turnSeconds:120,targetPoints:10};
     const a=await req('создать',{игра:'катан',мест:3,открытый:false,имя:'Проверка Катана 1',катанНастройки:options});players.push({код:a.код,пропуск:a.пропуск});
     for(let i=1;i<3;i++){const p=await req('войти',{код:a.код,имя:'Проверка Катана '+(i+1)});players.push({код:a.код,пропуск:p.пропуск});}
     assert.equal((await req('ход',{...players[0],действие:'начать'})).принято,true);

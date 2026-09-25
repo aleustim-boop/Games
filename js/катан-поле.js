@@ -4,6 +4,7 @@
   const xy=v=>[450+(v.x*Math.sqrt(3)/2-v.y*.5)*R,420+(v.x*.5+v.y*Math.sqrt(3)/2)*R*.9];
   function node(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
   function поле(svg,v,mode,act,prefix=''){
+    const direct=mode==='direct';
     const defs=node('defs');
     const pawnGradient=node('radialGradient',{id:prefix+'черная-фигура',cx:'.3',cy:'.2',r:'.85'});pawnGradient.append(node('stop',{offset:'0','stop-color':'#6d7d83'}),node('stop',{offset:'.4','stop-color':'#27333a'}),node('stop',{offset:'1','stop-color':'#070b0e'}));defs.append(pawnGradient);
     const water=node('pattern',{id:prefix+'океан',width:1,height:1,viewBox:'768 0 768 1024',preserveAspectRatio:'xMidYMid slice'});water.append(node('image',{href:'img/катан/материалы-v3.webp',width:1536,height:1024}));defs.append(water);
@@ -35,7 +36,7 @@
     for(const h of v.hexes){
       const geom=Г.hexes[h.id],[x,y]=xy(geom),group=node('g',{'class':'кат-гекс','data-hex':h.id});
       group.append(node('title',{},['Лес — дерево','Холмы — глина','Пастбище — шерсть','Поля — зерно','Горы — руда','Пустыня'][h.resource]+(h.number?` · бросок ${h.number}`:'')+(h.id===v.robber?' · заблокировано разбойником':'')));
-      const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.985,y+(vy-y)*.985].join(',');}).join(' ');
+      const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.95,y+(vy-y)*.95].join(',');}).join(' ');
       const path=node('polygon',{points,fill:`url(#${prefix}земля-${h.resource})`,'class':'кат-земля'});group.append(path);
       group.append(node('text',{x,y:y-36,'class':'кат-название-земли'},['Дерево','Глина','Шерсть','Зерно','Руда','Пустыня'][h.resource]));
       if(production===h.number&&h.id!==v.robber)group.append(node('polygon',{points,fill:'none','class':'кат-производство'}));
@@ -61,7 +62,7 @@
       group.append(node('title',{},port.resource<0?'Порт: любые три одинаковых ресурса за один':'Порт: '+['лес','глина','шерсть','зерно','руда'][port.resource]+' 2:1'));svg.append(group);
     }
     for(const e of Г.edges){
-      const [x1,y1]=xy(Г.vertices[e.a]),[x2,y2]=xy(Г.vertices[e.b]),owner=v.roads[e.id],enabled=mode==='road'&&v.legal.road.includes(e.id);
+      const [x1,y1]=xy(Г.vertices[e.a]),[x2,y2]=xy(Г.vertices[e.b]),owner=v.roads[e.id],enabled=(mode==='road'||direct)&&v.legal.road.includes(e.id);
       if(owner<0&&!enabled)continue;
       const line=node('line',{x1:x1+(x2-x1)*.17,y1:y1+(y2-y1)*.17,x2:x2-(x2-x1)*.17,y2:y2-(y2-y1)*.17,'class':owner>=0?`кат-дорога цвет-${owner}`:'кат-дорога доступно','data-edge':e.id});
       if(enabled){
@@ -72,7 +73,7 @@
       }else{const group=node('g',{'class':`кат-путь цвет-${owner}`});const base=line.cloneNode();base.setAttribute('class','кат-дорога-основание');base.setAttribute('transform','translate(0 3)');const shine=line.cloneNode();shine.setAttribute('class','кат-дорога-блик');shine.setAttribute('transform','translate(0 -2)');group.append(base,line,shine);svg.append(group);}
     }
     for(const vert of Г.vertices){
-      const b=v.buildings[vert.id],[x,y]=xy(vert),enabled=['city','settlement'].includes(mode)&&v.legal[mode].includes(vert.id);
+      const b=v.buildings[vert.id],[x,y]=xy(vert),type=direct?(b?'city':'settlement'):mode,enabled=['city','settlement'].includes(type)&&v.legal[type].includes(vert.id);
       if(!b&&!enabled)continue;
       const group=node('g',{transform:`translate(${x},${y})`,'data-vertex':vert.id,'class':`кат-постройка ${b?'цвет-'+b.owner:''} ${enabled?'доступно':''}`});
       if(enabled)group.append(node('circle',{r:27,fill:'transparent'}));
@@ -81,7 +82,7 @@
         group.append(node('use',{href:`#${prefix}фигура-${b.owner}-${b.level}`,x:b.level===1?-24:-29,y:b.level===1?-49:-55,width:b.level===1?48:58,height:b.level===1?58:66,'class':'кат-фигура'}));
         group.append(node('title',{},`${v.names?.[b.owner]||'Игрок '+(b.owner+1)}: ${b.level===1?'поселение, 1 очко':'город, 2 очка'}`));
       }else{group.append(node('circle',{r:9,'class':'кат-точка'}));}
-      if(enabled){group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`${mode==='city'?'Город':'Поселение'} ${vert.id}`);group.onclick=()=>act({type:mode,vertex:vert.id});group.onkeydown=e=>{if(e.key==='Enter')group.onclick();};}
+      if(enabled){group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`${type==='city'?'Город':'Поселение'} ${vert.id}`);group.onclick=()=>act({type,vertex:vert.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
       svg.append(group);
     }
   }
