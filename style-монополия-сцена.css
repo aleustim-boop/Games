@@ -16,8 +16,10 @@ body.монополия:has(.mono-lobby.экран--виден) #приложе�
   padding: 0;
 }
 body.монополия #экран-лобби.mono-lobby {
-  max-width: 760px;
-  min-height: max(760px, 100dvh);
+  width: 100%;
+  max-width: min(760px, max(390px, 85dvh));
+  min-height: max(620px, 100dvh);
+  margin-inline: auto;
   padding: calc(18px + var(--отступ-сверху, 0px)) clamp(22px, 9vw, 100px)
     calc(15px + var(--отступ-снизу, 0px));
   background: url("img/монополия/сцена-лобби-v2.webp") center center / 100% 100%;
@@ -673,6 +675,84 @@ body.монополия .кнопка--главная {
 }
 @media (min-width: 700px) and (min-height: 800px) {
   .mono-lobby .mono-hero {
-    min-height: 420px;
+    min-height: 180px;
+  }
+}
+
+/* Keep the actual controls inside Telegram's desktop viewport, including resume. */
+body.монополия #экран-лобби > #mono-resume {
+  width: min(78%, 430px);
+  margin: 0 auto 14px;
+  flex-shrink: 0;
+}
+body.монополия #экран-лобби > .mono-profile {
+  margin: 0 auto;
+}
+.mono-profile > span:nth-child(2) { min-width:0; flex:1; }
+.mono-profile strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mono-profile > b { flex:none; }
+@media(max-width:350px){
+  body.монополия #экран-лобби > :is(#mono-resume,.mono-profile) {width:100%;}
+}
+body.монополия #экран-лобби > .mono-hero {
+  min-height: 130px;
+  flex: 1 1 0;
+}
+body.монополия #экран-лобби.mono-lobby {
+  height: max(620px, 100dvh);
+  min-height: max(620px, 100dvh);
+  padding-block: calc(12px + var(--отступ-сверху, 0px))
+    calc(10px + var(--отступ-снизу, 0px));
+}
+@media (max-height: 700px) {
+  body.монополия #экран-лобби > .mono-hero {
+    min-height: 70px;
+  }
+  .mono-lobby > .mono-sub {
+    margin: 5px 0 10px;
+    font-size: 12px;
+  }
+  .mono-lobby .mono-entry {
+    min-height: 55px;
+    padding: 8px 14px !important;
+  }
+  .mono-lobby .mono-entry strong {
+    font-size: 21px;
+  }
+  .mono-lobby .mono-footer {
+    padding-top: 5px;
+    margin-top: 5px;
+  }
+  .mono-lobby .mono-footer a,
+  .mono-lobby .mono-footer button {
+    min-height: 36px;
+  }
+}
+.mono-lobby h1 {
+  font-size: clamp(34px, min(10.5vw, 8dvh), 76px);
+}
+@media (min-width: 601px) {
+  .mono-lobby > .mono-sub {
+    font-size: clamp(14px, 2.1dvh, 21px);
+    margin: 6px 0 14px;
+  }
+  .mono-lobby .mono-entry {
+    min-height: 62px;
+    padding: 10px 20px !important;
+    margin: 6px 0;
+  }
+  .mono-lobby .mono-entry strong {
+    font-size: clamp(23px, 3.4dvh, 32px);
+  }
+  .mono-lobby .mono-footer {
+    padding: 8px 0 0;
+    margin-top: 8px;
+  }
+  .mono-profile {
+    padding: 8px 14px;
+  }
+  .mono-profile .mono-portrait {
+    width: 52px;
+    height: 52px;
   }
 }

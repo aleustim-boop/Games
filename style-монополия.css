@@ -444,14 +444,39 @@ body.монополия .скрыт {
   position: relative;
   transform-style: preserve-3d;
   transform: rotateX(-12deg) rotateY(20deg);
-  filter: drop-shadow(3px 6px 4px #0007);
+  /* A filter on this 3D parent flattens its six faces into a paper-like plane. */
+  filter: none;
+}
+.mono-die-space {
+  position: relative;
+  width: 48px;
+  height: 56px;
+  flex: none;
+  perspective: 500px;
+}
+.mono-die-space .mono-die {
+  position: absolute;
+  left: 3px;
+  top: 5px;
+}
+.mono-die-shadow {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 50px;
+  height: 17px;
+  background: #0009;
+  border-radius: 50%;
+  filter: blur(4px);
+  pointer-events: none;
 }
 .mono-face {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, #fffcec, #dacfad);
   border: 1px solid #ac9c78;
-  border-radius: 7px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 3px #fff9;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   padding: 7px;
@@ -466,12 +491,15 @@ body.монополия .скрыт {
 }
 .mono-face:nth-child(3) {
   transform: rotateY(90deg) translateZ(21px);
+  background: linear-gradient(140deg, #e0cfaa, #baa078);
 }
 .mono-face:nth-child(4) {
   transform: rotateY(-90deg) translateZ(21px);
+  background: linear-gradient(140deg, #e4d2af, #c4ac83);
 }
 .mono-face:nth-child(5) {
   transform: rotateX(90deg) translateZ(21px);
+  background: linear-gradient(135deg, #fffcef, #e9dfc9);
 }
 .mono-face:nth-child(6) {
   transform: rotateX(-90deg) translateZ(21px);

@@ -256,14 +256,20 @@
       6: [0, 2, 3, 5, 6, 8],
     };
     for (const [i, value] of values.entries()) {
+      const space = el("div", undefined, "mono-die-space"),
+        shadow = el("span", undefined, "mono-die-shadow");
       const cube = el("div", undefined, "mono-die");
+      cube.dataset.value = value;
+      cube.setAttribute("aria-label", "Кубик: " + value);
+      const resting = `rotateX(-55deg) rotateY(${i ? -22 : 22}deg) rotateZ(${i ? 7 : -7}deg)`;
+      cube.style.transform = resting;
       for (const n of (() => {
         const rest = [1, 2, 3, 4, 5, 6].filter(
             (x) => x !== value && x !== 7 - value,
           ),
           a = rest[0],
           b = rest.find((x) => x !== a && x !== 7 - a);
-        return [value, 7 - value, a, 7 - a, b, 7 - b];
+        return [b, 7 - b, a, 7 - a, value, 7 - value];
       })()) {
         const face = el("span", undefined, "mono-face");
         for (let j = 0; j < 9; j++)
@@ -272,23 +278,51 @@
           );
         cube.append(face);
       }
-      tray.append(cube);
+      space.append(shadow, cube);
+      tray.append(space);
       if (
         roll &&
         roll.id !== old?.id &&
         !matchMedia("(prefers-reduced-motion: reduce)").matches
-      )
+      ) {
         cube.animate(
           [
-            { transform: "translateY(-35px) rotateX(540deg) rotateY(430deg)" },
             {
-              transform: "translateY(5px) rotateX(30deg) rotateY(50deg)",
-              offset: 0.72,
+              transform: `translate3d(${i ? 25 : -25}px,-85px,35px) rotateX(620deg) rotateY(470deg) rotateZ(-35deg)`,
+              offset: 0,
+              easing: "cubic-bezier(.55,.06,.8,.55)",
             },
-            { transform: "translateY(0) rotateX(-12deg) rotateY(20deg)" },
+            {
+              transform: `translate3d(${i ? -8 : 8}px,3px,0) rotateX(265deg) rotateY(190deg) rotateZ(17deg)`,
+              offset: 0.42,
+              easing: "cubic-bezier(.15,.65,.35,1)",
+            },
+            {
+              transform: `translate3d(${i ? -4 : 4}px,-23px,0) rotateX(130deg) rotateY(100deg) rotateZ(-13deg)`,
+              offset: 0.6,
+              easing: "cubic-bezier(.55,.05,.8,.65)",
+            },
+            {
+              transform: `translate3d(0,2px,0) rotateX(-64deg) rotateY(${i ? -31 : 31}deg) rotateZ(${i ? 11 : -11}deg)`,
+              offset: 0.78,
+              easing: "ease-out",
+            },
+            { transform: `translateY(-5px) ${resting}`, offset: 0.87 },
+            { transform: resting, offset: 1 },
           ],
-          { duration: 1250 + i * 100, easing: "cubic-bezier(.3,.05,.3,1)" },
+          { duration: 1550 + i * 130, easing: "linear" },
         );
+        shadow.animate(
+          [
+            { transform: "scale(.6)", opacity: 0.15, offset: 0 },
+            { transform: "scale(1)", opacity: 0.65, offset: 0.42 },
+            { transform: "scale(.8)", opacity: 0.3, offset: 0.6 },
+            { transform: "scale(1)", opacity: 0.65, offset: 0.78 },
+            { transform: "scale(.95)", opacity: 0.55, offset: 1 },
+          ],
+          { duration: 1550 + i * 130 },
+        );
+      }
     }
     tray.append(el("strong", String(values[0] + values[1]), "mono-dice-sum"));
     tray.title = roll

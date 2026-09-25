@@ -16672,3 +16672,14 @@ html.в-телеграме #экран-профиля-игрока #кнопка
   margin-top: 6px;
 }
 
+
+/* Ranking footer follows the complete list; it must not paint over its last line. */
+#экран-рейтинга-игроков > #рейтинг-моё-место:not(.подпись) {
+  position: relative;
+  bottom: auto;
+  margin: auto 0 0;
+}
+#экран-рейтинга-игроков > #рейтинг-таблица { margin-bottom: 24px; }
+#экран-рейтинга-игроков > #рейтинг-моё-место::before,
+#экран-рейтинга-игроков > #рейтинг-моё-место::after { content: none; }
+
