@@ -192,27 +192,6 @@ body.монополия #экран-игры {
   height: 35px;
   display: block;
 }
-.mono-lobby .mono-footer {
-  padding: 22px 0 8px;
-  margin-top: 12px;
-  border-top: 1px solid #d4af6855;
-}
-.mono-lobby .mono-footer {
-  align-items: center;
-}
-.mono-lobby .mono-footer a,
-.mono-lobby .mono-footer button {
-  font:
-    16px Georgia,
-    serif;
-  color: #ead099;
-  min-height: 44px;
-  flex: 1;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  margin: 0;
-}
 #mono-resume {
   margin: 0 auto 12px;
   width: min(100%, 430px);
@@ -570,14 +549,6 @@ body.монополия .кнопка--главная {
   .mono-lobby .mono-entry small {
     font-size: 9px;
   }
-  .mono-lobby .mono-footer {
-    padding: 12px 0 0;
-    margin-top: 12px;
-  }
-  .mono-lobby .mono-footer a,
-  .mono-lobby .mono-footer button {
-    font-size: 13px;
-  }
   .монополия .mono-players {
     gap: 7px;
     margin: 9px 0 13px;
@@ -734,14 +705,6 @@ body.монополия #экран-лобби.mono-lobby {
   .mono-lobby .mono-entry strong {
     font-size: 21px;
   }
-  .mono-lobby .mono-footer {
-    padding-top: 5px;
-    margin-top: 5px;
-  }
-  .mono-lobby .mono-footer a,
-  .mono-lobby .mono-footer button {
-    min-height: 36px;
-  }
 }
 .mono-lobby h1 {
   font-size: clamp(34px, min(10.5vw, 8dvh), 76px);
@@ -758,10 +721,6 @@ body.монополия #экран-лобби.mono-lobby {
   }
   .mono-lobby .mono-entry strong {
     font-size: clamp(23px, 3.4dvh, 32px);
-  }
-  .mono-lobby .mono-footer {
-    padding: 8px 0 0;
-    margin-top: 8px;
   }
   .mono-profile {
     padding: 8px 14px;

@@ -207,19 +207,6 @@ body.монополия .скрыт {
   margin-left: auto;
   font-size: 28px;
 }
-.mono-footer {
-  display: flex;
-  justify-content: space-around;
-  padding: 24px 0 4px;
-}
-.mono-footer a,
-.mono-footer button {
-  color: #b8c0b7;
-  text-decoration: none;
-  background: none;
-  border: 0;
-  font-size: 14px;
-}
 .mono-settings {
   max-width: 780px;
   margin: auto;
