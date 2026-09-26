@@ -69,8 +69,15 @@ const path = require('path');
 const http = require('http');
 
 /* Боевую папку данных не трогаем даже случайно: проверки однажды уже
-   стёрли настоящие данные владельца. */
-process.env.GAMES_DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'нарды-дорога-'));
+   стёрли настоящие данные владельца. Саму папку убираем по выходу
+   (process.on('exit') срабатывает и на process.exit(), и на не пойманную
+   ошибку — раньше эта папка никогда не удалялась и копилась во временной
+   директории на каждый прогон). */
+const ВРЕМЕННЫЕ_ДАННЫЕ = fs.mkdtempSync(path.join(os.tmpdir(), 'нарды-дорога-'));
+process.env.GAMES_DATA = ВРЕМЕННЫЕ_ДАННЫЕ;
+process.on('exit', function () {
+  try { fs.rmSync(ВРЕМЕННЫЕ_ДАННЫЕ, { recursive: true, force: true }); } catch (е) { /* не страшно */ }
+});
 
 const КОРЕНЬ_ПРОЕКТА = path.join(__dirname, '..');
 const робот = require(path.join(КОРЕНЬ_ПРОЕКТА, 'tests', 'браузер-робот.js'));
@@ -130,6 +137,13 @@ function подготовитьКорень() {
   }
   fs.writeFileSync(файлСети, исходный.replace(было, стало), 'utf8');
   console.log('(режим «сломать-код»: копия проекта во временной папке — ' + tmp + ')');
+  /* Убираем СВОЮ копию по выходу процесса, а не строкой в конце main —
+     если между сюда и концом main вылетит непойманная ошибка (например,
+     браузер.close() сам бросит), process.on('exit') всё равно сработает,
+     а последовательный код после try/catch — нет. */
+  process.on('exit', function () {
+    try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (е) { /* не страшно */ }
+  });
   return tmp;
 }
 
@@ -385,9 +399,8 @@ function нажать(страница, имя) {
 
   await браузер.close();
   раздача.close();
-  if (СЛОМАТЬ_КОД && КОРЕНЬ !== КОРЕНЬ_ПРОЕКТА) {
-    fs.rmSync(КОРЕНЬ, { recursive: true, force: true });
-  }
+  // Копию «сломать-код» и папку данных убирает process.on('exit') выше —
+  // он сработает и здесь, и на process.exit() ниже, и на непойманной ошибке.
 
   console.log('\n----------------------------------------');
   if (сбой) console.log('ОБОРВАЛОСЬ: ' + сбой.stack);
