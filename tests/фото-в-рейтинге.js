@@ -71,6 +71,8 @@ function ждать(мс) { return new Promise(function (r) { setTimeout(r, мс
 function путьВременногоФайла(текст, имяФайла) {
   const путь = path.join(os.tmpdir(), имяФайла);
   fs.writeFileSync(путь, текст, 'utf8');
+  /* Экран берёт игры из js/игры-реестр.js рядом с собой — кладём его к копии. */
+  fs.copyFileSync(path.join(__dirname, '..', 'js', 'игры-реестр.js'), path.join(os.tmpdir(), 'игры-реестр.js'));
   return путь;
 }
 

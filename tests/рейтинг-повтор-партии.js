@@ -99,6 +99,10 @@ function сломанныйПрогон() {
 
   const врем = fs.mkdtempSync(path.join(os.tmpdir(), 'рейтинг-повтор-партии-сломать-'));
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(врем, 'server'), { recursive: true });
+  /* server/игры/умолчания.js берёт список игр из общего js/игры-реестр.js —
+     без него копия сервера не загрузится. */
+  fs.mkdirSync(path.join(врем, 'js'), { recursive: true });
+  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'игры-реестр.js'), path.join(врем, 'js', 'игры-реестр.js'));
   const путьКРейтингу = path.join(врем, 'server', 'рейтинг.js');
 
   const исходник = fs.readFileSync(путьКРейтингу, 'utf8');

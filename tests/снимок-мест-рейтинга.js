@@ -147,6 +147,10 @@ process.on('exit', прибратьВременныеПапки);
 function подготовитьКопиюСервера() {
   const врем = новаяВременнаяПапка('снимок-мест-рейтинга-');
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(врем, 'server'), { recursive: true });
+  /* server/игры/умолчания.js берёт список игр из общего js/игры-реестр.js —
+     без него копия сервера не загрузится. */
+  fs.mkdirSync(path.join(врем, 'js'), { recursive: true });
+  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'игры-реестр.js'), path.join(врем, 'js', 'игры-реестр.js'));
   return path.join(врем, 'server', 'рейтинг.js');
 }
 

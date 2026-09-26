@@ -24,7 +24,7 @@
        скрипта готов — он дожидается загрузки страницы. -->
   <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="style-коллекция.css?v=2">
-<link rel="stylesheet" href="style-витрина.css?v=4">
+<link rel="stylesheet" href="style-витрина.css?v=5">
 <link rel="stylesheet" href="style-аватар.css?v=1"></head>
 <body>
 
@@ -126,6 +126,7 @@
         <span class="монополия-витрина__подпись">Большой город. Большие возможности.</span>
       </a>
       <a href="2048.html" class="плитка-игры" data-игра="2048" data-вид="головоломки"><span class="плитка-игры__название">2048</span></a>
+      <a href="sudoku.html" class="плитка-игры" data-игра="судоку" data-вид="головоломки"><span class="плитка-игры__название">Судоку</span></a>
       <a href="деберц.html" class="плитка-игры" data-игра="деберц" data-вид="карточные">
         <span class="плитка-игры__название">Деберц</span>
         <span class="плитка-игры__описание">Карточная классика</span>
@@ -1254,7 +1255,7 @@
 <!-- Рейтинг игроков: общая таблица с сервера. Подключается после js/сеть.js,
      потому что адрес сервера спрашивает у него (window.Сеть.адрес). Если
      сеть.js не доехал, экран не падает — он честно скажет, что адреса нет. -->
-<script src="js/рейтинг-экран.js?v=38"></script>
+<script src="js/игры-реестр.js?v=1"></script><script src="js/рейтинг-экран.js?v=39"></script>
 <script src="js/пульс.js?v=1" data-igra="дурак" defer></script>
 <!-- Экран «Профиль» по макету владельца: карточка игрока, «Ваши очки по играм»,
      «Всего», серия, дверь «Как я играю». Разметку строит сам при первом
