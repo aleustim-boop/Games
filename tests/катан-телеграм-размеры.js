@@ -36,7 +36,9 @@ const {chromium,подготовитьПодделку}=require('./браузе�
       statusFit:[...q('#кат-ход').children].filter(e=>!e.hidden&&!e.classList.contains('кат-таймер')).every(e=>{const r=rect(e);return r.top>=status.top&&r.bottom<=status.bottom;}),
       diceOverlap:!dice.hidden&&[...document.querySelectorAll('.кат-игрок,#кат-масштаб,#кат-фильтр,#кат-журнал-кнопка,#кат-общение')].some(e=>overlaps(rect(dice),rect(e))),
       offerOverlap:!offer.classList.contains('скрыт')&&[...document.querySelectorAll('.кат-игрок,#кат-ресурсы,.кат-действия')].some(e=>overlaps(rect(offer),rect(e))),
-      back:getComputedStyle(q('#экран-игры [data-back]')).visibility};
+      back:getComputedStyle(q('#экран-игры [data-back]')).visibility,
+      menu:getComputedStyle(q('#экран-игры [data-menu]')).visibility,
+      title:{top:rect(q('#экран-игры h1')).top,bottom:rect(q('#экран-игры h1')).bottom,left:rect(q('#экран-игры h1')).left,right:rect(q('#экран-игры h1')).right}};
     });
     const label=width+'×'+height+' '+phase+' player '+roller;
     assert(!result.overflow,label+' horizontal overflow');
@@ -47,13 +49,19 @@ const {chromium,подготовитьПодделку}=require('./браузе�
     assert(result.statusFit,label+' status text outside card');
     assert(!result.diceOverlap,label+' dice cover controls/cards');
     assert(!result.offerOverlap,label+' trade covers cards');
-    assert.equal(result.back,'hidden');
+    assert.equal(result.back,'hidden');assert.equal(result.menu,'hidden');
+    assert(result.title.top>=24&&result.title.bottom<=80,label+' title outside Telegram header');
+    assert(result.title.left>=96&&result.title.right<=width-96,label+' title overlaps native buttons');
     await page.screenshot({path:'tests/снимки/катан-tg-'+width+'-'+phase+'.png'});
     await page.locator('#кат-главное').scrollIntoViewIfNeeded();
     await page.screenshot({path:'tests/снимки/катан-tg-'+width+'-'+phase+'-панель.png'});
     assert(await page.locator('#кат-главное').evaluate(e=>{const r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}),label+' actions inaccessible');
    }
   }
+  await page.evaluate(()=>ПоддельныйТелеграм.вернутьОбычныйЭкран());
+  assert.equal(await page.locator('#экран-игры h1').evaluate(e=>getComputedStyle(e).position),'static');
+  await page.evaluate(()=>{ПоддельныйТелеграм.поменятьОтступы({системные:{top:30},содержимого:{top:48}});ПоддельныйТелеграм.датьПолныйЭкран();});
+  assert.equal(await page.locator('#экран-игры h1').evaluate(e=>e.getBoundingClientRect().top),30);
   assert.deepEqual(errors,[]);console.log('Telegram CATAN: 9 размеров, поворот, безопасные отступы, размер карты, кубики, обмен, текст и доступность действий — OK');
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

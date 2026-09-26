@@ -2,6 +2,22 @@
 (function(){
   const П=window.КатанПравила,Б=window.КатанБот,$=id=>document.getElementById(id);
   const KEY='catan-match-v1',PREF='catan-settings',HIST='catan-history';
+  // Только неинтерактивное название между системными кнопками полного экрана.
+  // В обычном окне заголовок остаётся внутри страницы: нативная панель вне WebView.
+  let headerTelegram=null;
+  function syncTelegramHeader(){
+    const tg=window.Telegram?.WebApp,root=$('экран-игры');
+    const systemTop=Math.max(0,Number(tg?.safeAreaInset?.top)||0);
+    const headerHeight=Math.max(0,Number(tg?.contentSafeAreaInset?.top)||0);
+    root.classList.toggle('кат-заголовок-в-телеграме',tg?.isFullscreen===true&&headerHeight>=40);
+    root.style.setProperty('--кат-система-сверху',systemTop+'px');
+    root.style.setProperty('--кат-шапка-телеграма',headerHeight+'px');
+    if(tg&&headerTelegram!==tg){
+      headerTelegram=tg;
+      for(const event of ['fullscreenChanged','safeAreaChanged','contentSafeAreaChanged'])tg.onEvent?.(event,syncTelegramHeader);
+    }
+  }
+  syncTelegramHeader();document.addEventListener('DOMContentLoaded',syncTelegramHeader);
   const ресурсы=['Дерево','Глина','Шерсть','Зерно','Руда'];
   const названия={road:'Дорога',settlement:'Поселение',city:'Город',development:'Развитие',knight:'Рыцарь',roads:'Строительство дорог',plenty:'Изобилие',monopoly:'Монополия',vp:'Победное очко'};
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};

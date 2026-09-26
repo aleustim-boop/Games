@@ -136,3 +136,18 @@
   margin-inline:auto;
  }
 }
+
+/* Меню Telegram уже содержит настройки игры; второй кнопки ⋯ не нужно. */
+.в-телеграме:not(.без-настроек) .катан .кат-верх [data-menu] { visibility:hidden; pointer-events:none; }
+.катан #экран-игры.кат-заголовок-в-телеграме.экран--виден { grid-template-rows:20px auto auto; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх { justify-content:center; min-height:0; height:20px; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх>button { display:none; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх h1 {
+ position:fixed; top:var(--кат-система-сверху); left:96px; right:96px;
+ height:var(--кат-шапка-телеграма); display:flex; align-items:center; justify-content:center;
+ margin:0; font-size:clamp(22px,6vw,30px); line-height:1; letter-spacing:.025em;
+ pointer-events:none; z-index:10;
+}
+@media(min-width:1000px) and (orientation:landscape) {
+ .катан #экран-игры.кат-заголовок-в-телеграме.экран--виден { grid-template-rows:20px auto; }
+}
