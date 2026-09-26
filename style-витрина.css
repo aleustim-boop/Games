@@ -104,3 +104,6 @@
 
 #экран-витрины [data-игра="блоки"] { --catalog-art:url('img/casual/blocks.png'); }
 #экран-витрины [data-игра="блоки"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="три-в-ряд"] { --catalog-art:url('img/casual/match3.png'); }
+#экран-витрины [data-игра="три-в-ряд"]::before { background-size:cover; background-position:center; }

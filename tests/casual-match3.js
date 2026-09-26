@@ -1,0 +1,6 @@
+'use strict';
+const assert=require('node:assert/strict'),G=require('../js/game-match3'),U=require('../js/casual-core');
+for(const mode of G.modes)for(let seed=1;seed<=60;seed++){const s=G.create(mode.id,seed),rng=U.random(seed);assert(G.validate(s));assert(G.swaps(s).length);assert(!G.act(s,{type:'swap',a:7,b:8}));while(!s.won&&!s.lost){const moves=G.swaps(s);assert(moves.length);const a=moves[Math.floor(rng()*moves.length)],score=s.score,left=s.left;assert(G.act(s,a));assert.equal(s.left,left-1);assert(s.score>=score+150);assert(G.validate(s));assert.equal(s.won,s.score>=s.goal);}assert(s.won||s.left===0);assert(!G.act(s,G.swaps(s)[0]));}
+const grid=Array.from({length:64},(_,i)=>(i%8+Math.floor(i/8))%6);grid[27]=grid[28]=grid[29]=grid[20]=grid[36]=5;assert.equal(G.matches(grid).filter(i=>[27,28,29,20,36].includes(i)).length,5);
+const invalid=G.create('calm',99),before=structuredClone(invalid);let tested=false;for(let a=0;a<63;a++)if(G.adjacent(a,a+1)&&!G.swaps(invalid).some(m=>m.a===a&&m.b===a+1)){assert(!G.act(invalid,{type:'swap',a,b:a+1}));assert.deepEqual(invalid,before);tested=true;break;}assert(tested);
+console.log('Match3: 180 completed games, cascades, legal/invalid swaps, intersections, targets and loss — OK');

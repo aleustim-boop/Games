@@ -23,3 +23,6 @@ Premium landscape 3:2 editorial game cover for Mahjong solitaire. Real tactile i
 
 ## Блоки — img/casual/blocks.png
 Premium landscape 3:2 still-life artwork for an 8x8 block puzzle game, emerald green and warm gold luxury tabletop collection. A clean square eight by eight inset board in dark green polished stone with brushed brass border. Chunky translucent amber and emerald ceramic polyomino pieces neatly placed on squares and three spare geometric pieces nearby. No text or logos. Macro photography, tactile rounded edges, warm cinematic light, dark velvet table, crisp realistic craftsmanship.
+
+## Три в ряд — img/casual/match3.png
+Landscape 3:2 premium cover for match-three jewel puzzle game. Neatly aligned rows of thick faceted gemstones in a shallow brushed-gold tray on emerald velvet: amber hexagons, emerald squares, ruby teardrops, sapphire diamonds, amethyst triangles and pearl circles. Subtle glowing dust around three matching emeralds. Luxurious tactile materials and realistic golden side lighting. No interface, text, logos, people or cheap neon.
