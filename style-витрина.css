@@ -98,3 +98,6 @@
 
 #экран-витрины [data-игра="свободная-ячейка"] { --catalog-art:url('img/casual/freecell.png'); }
 #экран-витрины [data-игра="свободная-ячейка"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="маджонг"] { --catalog-art:url('img/casual/mahjong.png'); }
+#экран-витрины [data-игра="маджонг"]::before { background-size:cover; background-position:center; }

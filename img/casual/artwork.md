@@ -17,3 +17,6 @@ Premium Klondike solitaire game cover, landscape 3:2. Photorealistic luxury card
 ## mines.png
 
 Premium Minesweeper puzzle game cover, landscape 3:2, cinematic photorealistic still life. An elegant ivory ceramic square grid board on deep emerald felt, brushed brass rim. Several revealed cells have single engraved digits 1, 2 or 3 in teal and gold, other cells are raised blank jade tiles. Two small red flags on brass poles stand on unrevealed cells. One decorative polished brass mine sphere placed beside the board, not exploding. Warm golden side light, rich shadows, luxurious tactile details, readable central composition, whole board visible. No title, no text beyond single digits, no people, no neon.
+
+## Маджонг — img/casual/mahjong.png
+Premium landscape 3:2 editorial game cover for Mahjong solitaire. Real tactile ivory mahjong tiles arranged in a small graceful layered arch on deep emerald green velvet, beveled thick ivory sides, several clear faces with traditional three red circles, green bamboo, red 中 character. No invented long text, no labels, no logos, no interface, no people. Warm brass and golden edge illumination, dark cinematic background, realistic macro still life.
