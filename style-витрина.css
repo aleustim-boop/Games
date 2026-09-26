@@ -89,3 +89,6 @@
 
 #экран-витрины [data-игра="сапёр"] { --catalog-art:url('img/casual/mines.png'); }
 #экран-витрины [data-игра="сапёр"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="косынка"] { --catalog-art:url('img/casual/klondike.png'); }
+#экран-витрины [data-игра="косынка"]::before { background-size:cover; background-position:center; }

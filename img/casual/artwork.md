@@ -1,5 +1,9 @@
 # Обложки казуальных игр
 
+## klondike.png
+
+Premium Klondike solitaire game cover, landscape 3:2. Photorealistic luxury card table on deep emerald green felt. Three ivory playing cards gracefully fanned in the foreground, an elegant black Ace of Spades clearly visible, a red King of Hearts partially behind it, and ornate dark green gold-patterned card backs stacked nearby. A slender brushed brass tray frames part of the table. Warm cinematic golden side lighting, crisp paper texture and embossed gilt card edges, moody rich shadows, sophisticated composition with breathing room, beautiful recognizable solitaire still life. No title, no logos, no extra text, no people, no neon. Correct conventional card corner indices A spade and K heart.
+
 Все обложки созданы встроенным image_gen. Игровые поля отрисовываются кодом; иллюстрации используются в лобби и каталоге.
 
 ## mines.png
