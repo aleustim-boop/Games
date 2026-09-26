@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict'),R=require('../js/nonogram-rules'),bank=require('../js/nonogram-puzzles');
+const key=a=>JSON.stringify(a),groups=a=>{const out=[];let sum=0;for(const n of [...a,0]){if(n===1)sum++;else if(sum){out.push(sum);sum=0;}}return out.length?out:[0];};
+// Exhaustive independent enumeration: compare all 512 possible 3x3 pictures.
+const counts=new Map();for(let mask=0;mask<512;mask++){const a=Array.from({length:9},(_,i)=>mask>>i&1),h={rows:[0,1,2].map(r=>groups(a.slice(r*3,r*3+3))),cols:[0,1,2].map(c=>groups([a[c],a[c+3],a[c+6]]))},k=key(h);counts.set(k,{h,count:(counts.get(k)?.count||0)+1});}
+for(const {h,count}of counts.values())assert.equal(R.solve(h,3).count,Math.min(2,count));
+assert.deepEqual(R.runs([1,1,-1,1,0]),[2,1]);assert.deepEqual(R.runs([0,0,0]),[0]);assert.deepEqual(R.patterns([0],5),[0]);assert.equal(R.solve({rows:[[1],[1]],cols:[[1],[1]]},2).count,2);
+// Independent logical solver uses enumerated line arrays, not production bitmasks.
+const cache=new Map();function variants(h,n){const k=n+':'+h;if(!cache.has(k)){const rows=[];for(let m=0;m<2**n;m++){const a=Array.from({length:n},(_,i)=>m>>i&1);if(key(groups(a))===key(h))rows.push(a);}cache.set(k,rows);}return cache.get(k);}
+function independent(h,n){const b=Array(n*n).fill(null);let changed=true;while(changed){changed=false;for(const axis of ['rows','cols'])for(let r=0;r<n;r++){const ids=Array.from({length:n},(_,c)=>axis==='rows'?r*n+c:c*n+r),options=variants(h[axis][r],n).filter(a=>ids.every((i,j)=>b[i]===null||b[i]===a[j]));assert(options.length);ids.forEach((i,j)=>{if(b[i]===null&&options.every(a=>a[j]===options[0][j])){b[i]=options[0][j];changed=true;}});}}return b;}
+assert.equal(bank.length,33);assert.equal(new Set(bank.map(p=>p.id)).size,bank.length);
+for(const p of bank){const s=R.create(p);assert.equal(R.solve(s.clues,s.n).count,1,p.id);assert(R.logicalSolve(s.clues,s.n).solved,p.id);assert.deepEqual(independent(s.clues,s.n),s.solution,p.id);assert.deepEqual(R.restore(s,bank),s);let h=R.hint(s);assert(h);assert.equal(h.value,s.solution[h.index]?1:-1);}
+const s=R.create(bank[0]);assert(!R.apply(s,[{index:-1,value:1},{index:99,value:1}]));const initial=s.board.slice();R.apply(s,[{index:0,value:1},{index:1,value:1},{index:2,value:-1}]);assert.equal(s.history.length,1);assert(R.mistakes(s).includes(0));assert.equal(R.hint(s).kind,'correction');const after=s.board.slice();assert(R.undo(s));assert.deepEqual(s.board,initial);assert(R.redo(s));assert.deepEqual(s.board,after);R.undo(s);R.apply(s,[{index:0,value:-1}]);assert.equal(s.future.length,0);
+const raw=JSON.parse(JSON.stringify(s));raw.solution=Array(25).fill(1);raw.clues={};assert.deepEqual(R.restore(raw,bank).solution,s.solution);raw.board[0]=3;assert.equal(R.restore(raw,bank),null);assert.equal(R.restore({id:'bad',version:1},bank),null);
+R.apply(s,s.solution.map((v,index)=>({index,value:v?1:0})));assert(s.completed,'Unmarked white cells must not block completion');assert(!R.undo(s));assert(!R.apply(s,[{index:0,value:1}]));assert(R.restore(s,bank).completed);
+console.log('Nonogram: exhaustive 3x3 solver comparison, 33 independently solved unique pictures, marks, grouped undo/redo, hints, completion and safe restore — OK');

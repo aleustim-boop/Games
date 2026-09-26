@@ -83,3 +83,6 @@
 
 #экран-витрины [data-игра="судоку"] { --catalog-art:url('img/sudoku/cover-v2.png'); }
 #экран-витрины [data-игра="судоку"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="японский-кроссворд"] { --catalog-art:url('img/nonogram/cover-v1.png'); }
+#экран-витрины [data-игра="японский-кроссворд"]::before { background-size:cover; background-position:center; }

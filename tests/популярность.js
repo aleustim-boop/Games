@@ -19,6 +19,8 @@ assert(stats.учесть('456','2048',event(0,0),start+2400000));
 assert.equal(stats.сводка(start+2400000).find(r=>r.game==='2048').launches,1);
 assert(stats.учесть('789','судоку',event(0,0),start+2400000));
 assert.equal(stats.сводка(start+2400000).find(r=>r.game==='судоку').launches,1);
+assert(stats.учесть('987','японский-кроссворд',event(0,0),start+2400000));
+assert.equal(stats.сводка(start+2400000).find(r=>r.game==='японский-кроссворд').launches,1);
 stats.дописать();assert.deepEqual(создать(file).сводка(start+2400000),stats.сводка(start+2400000));
 assert(stats.сводка(start+32*86400000).every(r=>r.seconds===0&&r.launches===0));
 fs.rmSync(dir,{recursive:true});
