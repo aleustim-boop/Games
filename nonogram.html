@@ -1,0 +1,27 @@
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1919"><title>Японский кроссворд — Игры с друзьями</title>
+<link rel="stylesheet" href="style-nonogram.css?v=1"><script>window.ИграСтраницы='японский-кроссворд';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+</head><body><main class="sudoku-app nonogram-app">
+<header class="topbar"><a id="back" href="index.html" aria-label="Назад">‹</a><span>ИГРЫ С ДРУЗЬЯМИ</span><button id="help" aria-label="Как играть">?</button></header>
+<section id="экран-лобби" class="экран--виден">
+ <div class="intro"><span class="eyebrow">РИСУЙТЕ ЛОГИКОЙ</span><h1>Японский<br>кроссворд<span>.</span></h1><p>От нескольких цифр —<br><em>к целой картине.</em></p></div>
+ <figure class="cover"><img src="img/nonogram/cover-v1.png" alt="Сердце из нефритовых клеток на керамической мозаике" fetchpriority="high"><figcaption>КАЖДАЯ КЛЕТКА — ЧАСТЬ ОТКРЫТИЯ.</figcaption></figure>
+ <div class="lobby-controls"><div class="section-label"><h2>Выберите масштаб</h2><span id="collection-count"></span></div>
+ <div class="levels" role="group" aria-label="Сложность"><button data-level="easy" aria-pressed="true"><strong>Лёгкий</strong><small>5 × 5</small></button><button data-level="medium" aria-pressed="false"><strong>Средний</strong><small>10 × 10</small></button><button data-level="hard" aria-pressed="false"><strong>Сложный</strong><small>15 × 15</small></button></div>
+ <p id="level-description"></p><div id="puzzle-picker" role="group" aria-label="Выбор рисунка"></div><p id="puzzle-info"></p>
+ <button id="play" class="primary">Открыть рисунок <span>↗</span></button><button id="continue" class="secondary" hidden>Продолжить партию</button><p class="save-note">Прогресс и открытые рисунки сохраняются на этом устройстве</p></div>
+</section>
+<section id="экран-игры" hidden>
+ <div class="game-heading"><h1>Японский<br>кроссворд<span>.</span></h1><span id="difficulty"></span></div>
+ <div class="status"><div><small>ВРЕМЯ</small><strong id="timer">00:00</strong></div><div><small>РИСУНОК</small><strong id="puzzle-number">01</strong></div><button id="pause" class="secondary" aria-label="Пауза">Ⅱ</button></div>
+ <div class="board-toolbar"><span id="selection-label">Числа сверху и слева — ключ к рисунку</span><button id="zoom" class="secondary" aria-label="Увеличить поле">Масштаб 100%</button></div>
+ <div class="nonogram-wrap"><div id="board-scroll"><div id="nonogram" role="group" aria-label="Поле японского кроссворда"></div></div><button id="resume" hidden><strong>Пауза</strong><span>Нажмите, чтобы продолжить</span><b>▶</b></button></div>
+ <p id="message" aria-live="polite">Закрасьте клетки по числам. Пустые помечайте крестиком.</p>
+ <div class="brushes" role="group" aria-label="Инструмент"><button data-brush="fill" aria-pressed="true"><b>■</b><span>Закрасить</span></button><button data-brush="cross" aria-pressed="false"><b>×</b><span>Пусто</span></button><button data-brush="erase" aria-pressed="false"><b>⌫</b><span>Стереть</span></button><button data-brush="pan" aria-pressed="false"><b>✥</b><span>Двигать</span></button></div>
+ <div class="tools"><button id="undo" disabled><b>↶</b><span>Отмена</span></button><button id="redo" disabled><b>↷</b><span>Повтор</span></button><button id="check"><b>✓</b><span>Проверить</span></button><button id="hint"><b>✧</b><span>Подсказка</span></button></div>
+ <div class="bottom-actions"><button id="collection" class="secondary">К рисункам</button><button id="restart" class="secondary">Начать заново</button></div>
+ <p id="save-status" class="save-note">Автосохранение · проведите по ряду, чтобы отметить несколько клеток</p>
+</section></main>
+<dialog id="dialog" aria-labelledby="dialog-title"><button id="close-dialog" aria-label="Закрыть">×</button><div id="dialog-body"></div></dialog>
+<script src="js/telegram.js?v=32"></script><script src="js/nonogram-rules.js?v=1"></script><script src="js/nonogram-puzzles.js?v=1"></script><script src="js/nonogram-ui.js?v=1"></script><script src="js/популярность.js?v=1" data-game="японский-кроссворд"></script>
+</body></html>
