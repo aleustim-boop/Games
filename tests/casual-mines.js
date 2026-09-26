@@ -1,0 +1,5 @@
+'use strict';
+const assert=require('node:assert/strict'),G=require('../js/game-mines');
+for(const mode of G.modes)for(let seed=1;seed<=100;seed++){const s=G.create(mode.id,seed),i=seed%(s.w*s.h);assert(G.validate(s));assert(G.act(s,{type:'open',i}));assert(!s.lost);assert.equal(s.bombs[i],0);assert(G.around(s,i).every(j=>!s.bombs[j]));assert.equal(s.bombs.reduce((a,b)=>a+b),s.mines);assert(G.validate(s));for(let j=0;j<s.w*s.h;j++){const r=Math.floor(j/s.w),c=j%s.w;let count=0;for(let y=Math.max(0,r-1);y<=Math.min(s.h-1,r+1);y++)for(let x=Math.max(0,c-1);x<=Math.min(s.w-1,c+1);x++)if(y!==r||x!==c)count+=s.bombs[y*s.w+x];assert.equal(G.number(s,j),count);}for(let j=0;j<s.w*s.h;j++)if(!s.bombs[j])G.act(s,{type:'open',i:j});assert(s.won);assert(!s.lost);}
+const s=G.create('easy',1);G.act(s,{type:'flag',i:0});assert(!G.act(s,{type:'open',i:0}));assert(!s.ready);G.act(s,{type:'flag',i:0});G.act(s,{type:'open',i:0});const bomb=s.bombs.indexOf(1);G.act(s,{type:'open',i:bomb});assert(s.lost);assert(!G.act(s,{type:'flag',i:20}));
+console.log('Mines: 300 deals, safe first area, exact mine counts, independent neighbor counts, flags, victory and loss — OK');

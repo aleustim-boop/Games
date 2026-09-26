@@ -1,0 +1,19 @@
+'use strict';
+(function(r,f){if(typeof module==='object'&&module.exports)module.exports=f(require('./casual-core'));else r.CasualGame=f(r.CasualCore);})(globalThis,U=>{
+ const modes=[{id:'easy',label:'Новичок',detail:'9 × 9 · 10 мин',w:9,h:9,mines:10},{id:'medium',label:'Любитель',detail:'16 × 16 · 40 мин',w:16,h:16,mines:40},{id:'hard',label:'Эксперт',detail:'30 × 16 · 99 мин',w:30,h:16,mines:99}];
+ function create(mode,seed){const m=modes.find(m=>m.id===mode)||modes[0];return {...U.base(m.id,seed),w:m.w,h:m.h,mines:m.mines,bombs:Array(m.w*m.h).fill(0),open:Array(m.w*m.h).fill(0),flags:Array(m.w*m.h).fill(0),ready:false,exploded:-1};}
+ function around(s,i){const out=[],r=Math.floor(i/s.w),c=i%s.w;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c+dc;if((dr||dc)&&rr>=0&&rr<s.h&&cc>=0&&cc<s.w)out.push(rr*s.w+cc);}return out;}
+ const number=(s,i)=>around(s,i).reduce((a,j)=>a+s.bombs[j],0);
+ function act(s,a){if(s.won||s.lost||!Number.isInteger(a.i)||a.i<0||a.i>=s.w*s.h)return false;const i=a.i;if(a.type==='flag'){if(s.open[i])return false;s.flags[i]=1-s.flags[i];return true;}if(a.type!=='open'||s.flags[i])return false;
+  if(!s.ready){const safe=new Set([i,...around(s,i)]),pool=U.shuffle(s.bombs.map((_,j)=>j).filter(j=>!safe.has(j)),U.random(s.seed));for(const j of pool.slice(0,s.mines))s.bombs[j]=1;s.ready=true;}
+  let todo=[i];if(s.open[i]){if(!number(s,i)||around(s,i).reduce((sum,j)=>sum+s.flags[j],0)!==number(s,i))return false;todo=around(s,i).filter(j=>!s.flags[j]&&!s.open[j]);if(!todo.length)return false;}
+  while(todo.length){const j=todo.pop();if(s.open[j]||s.flags[j])continue;s.open[j]=1;if(s.bombs[j]){s.lost=true;s.exploded=j;break;}if(number(s,j)===0)todo.push(...around(s,j));}
+  s.score=s.open.reduce((sum,v,j)=>sum+(v&&!s.bombs[j]?1:0),0);s.won=!s.lost&&s.score===s.w*s.h-s.mines;return true;
+ }
+ function validate(s){const m=modes.find(m=>m.id===s?.mode);return !!m&&s.w===m.w&&s.h===m.h&&s.mines===m.mines&&['bombs','open','flags'].every(k=>U.ints(s[k],m.w*m.h,0,1))&&s.bombs.reduce((a,b)=>a+b,0)===(s.ready?m.mines:0);}
+ function draw(s,api){api.board.className='game-board mines-board';api.board.style.setProperty('--cols',s.w);api.board.style.setProperty('--cell',s.w===9?'clamp(29px,9.2vw,48px)':'32px');api.board.replaceChildren();
+  const flag=api.view.flag||false;api.tool('Открывать',()=>{api.view.flag=false;api.redraw();},!flag);api.tool('⚑ Флажок',()=>{api.view.flag=true;api.redraw();},flag);api.status('МИНУС ФЛАЖКИ',s.mines-s.flags.reduce((a,b)=>a+b,0));
+  for(let i=0;i<s.w*s.h;i++){const revealed=s.open[i]||s.lost&&s.bombs[i],n=s.bombs[i]?'✹':number(s,i),b=api.cell(revealed?n||'':s.flags[i]?'⚑':'',()=>api.send({type:flag?'flag':'open',i}));b.className='mine-cell'+(revealed?' revealed':'')+(s.exploded===i?' exploded':'')+(s.flags[i]?' flagged':'');b.dataset.number=String(n);b.setAttribute('aria-label',`Строка ${Math.floor(i/s.w)+1}, столбец ${i%s.w+1}: ${revealed?s.bombs[i]?'мина':n+' мин рядом':s.flags[i]?'флажок':'закрыто'}`);b.oncontextmenu=e=>{e.preventDefault();api.send({type:'flag',i});};api.board.append(b);}
+ }
+ return {id:'mines',key:'сапёр',title:'Сапёр',tag:'ОСТОРОЖНОСТЬ — ВАША СИЛА',subtitle:'Один точный шаг.\nЦелое поле возможностей.',modes,create,act,validate,draw,around,number,undo:false,record:'time',help:['Откройте все клетки без мин. Число показывает, сколько мин в восьми соседних клетках. Первый ход и соседние клетки всегда безопасны.','Переключатель «Флажок» помечает предполагаемую мину. На компьютере можно нажать правую кнопку мыши. Флажок сам по себе не открывает клетку.','Когда возле открытой цифры стоит ровно столько флажков, сколько она показывает, нажмите цифру повторно: остальные соседи откроются. Неверный флажок при этом может привести к проигрышу.','Большое поле можно прокручивать пальцем. Победа — все безопасные клетки открыты. Классический Сапёр иногда требует вероятностного решения.']};
+});
