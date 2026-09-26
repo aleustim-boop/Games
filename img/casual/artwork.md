@@ -1,5 +1,9 @@
 # Обложки казуальных игр
 
+## freecell.png
+
+Premium FreeCell solitaire game cover, landscape 3:2. Photorealistic luxurious emerald green card table with FOUR clearly separated empty brass-outlined rectangular card slots in an orderly row near the upper edge, and a fan of ivory playing cards in the foreground showing an elegant Ace of Hearts and Ace of Spades. A polished golden key lies beside the cards, visual metaphor for freeing a cell. Warm soft golden studio sidelight, crisp fine paper and brushed brass textures, deep emerald shadows, refined composition, no text, no title, no logos, no people, no neon. Beautiful recognizable card-game still life.
+
 ## spider.png
 
 Premium Spider solitaire game cover, landscape 3:2. Luxurious photorealistic still life on emerald velvet card table. Fan of elegant ivory playing cards all with black spade symbols, clearly visible corners K Q J, ornate green and gold card backs in a small stack. A small sculptural GOLD SPIDER ornament beside the cards, tasteful jeweler craftsmanship, not a real animal, becomes the recognizable emblem of Spider solitaire. Golden frame details, warm cinematic side light, rich deep shadows, crisp ivory paper texture, balanced beautiful composition. No words, no logos, no people, no neon, no horror.

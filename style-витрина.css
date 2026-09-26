@@ -95,3 +95,6 @@
 
 #экран-витрины [data-игра="паук"] { --catalog-art:url('img/casual/spider.png'); }
 #экран-витрины [data-игра="паук"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="свободная-ячейка"] { --catalog-art:url('img/casual/freecell.png'); }
+#экран-витрины [data-игра="свободная-ячейка"]::before { background-size:cover; background-position:center; }
