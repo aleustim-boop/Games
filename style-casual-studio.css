@@ -1,0 +1,237 @@
+/* Collector's edition: the playing scene, objects and controls form one composition. */
+body[data-studio]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/jewels-room.webp');--surface:#08271f;--accent:#eac77d;background:linear-gradient(#020d0980,#020b0870),var(--scene) center/cover fixed;min-height:100dvh}
+body[data-studio] .casual-app:has(#экран-игры:not([hidden])){max-width:1180px;padding-top:calc(var(--safe-top) + 12px)}
+body[data-studio] .casual-app #экран-игры{max-width:760px}
+body[data-studio] .casual-app:has(#экран-игры:not([hidden])) .topbar{margin-bottom:4px}
+body[data-studio] .casual-app:has(#экран-игры:not([hidden])) .topbar>span{opacity:.6;font-size:8px}
+body[data-studio] .casual-app .game-heading{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:5px 12px;border:0;padding:0 42px 15px;margin:0;text-align:center}
+body[data-studio] .casual-app .game-heading h1{font:400 clamp(32px,5vw,48px)/1.12 Georgia,serif;letter-spacing:-.025em;color:#f8e5b9;text-shadow:0 2px 9px #000}
+.studio-edition{flex-basis:100%;font:9px/1.5 Onest,sans-serif;text-transform:uppercase;letter-spacing:.2em;color:#d3bc89}
+body[data-studio] .casual-app .game-heading>#difficulty{display:none}
+.studio-sound{position:absolute;right:0;top:14px;border:1px solid #b3955955;background:#0816109c;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;padding:8px;color:#d9bc7e}
+.studio-sound svg{width:100%;height:100%}
+body[data-studio] .casual-app .status{position:relative;display:grid;grid-template-columns:50px minmax(0,1fr) 78px;grid-template-rows:70px;align-items:center;gap:8px;border:1px solid #a98a47;border-radius:22px;padding:12px;margin:0 6px 16px;background:radial-gradient(ellipse at 50% 0%,#28473480,transparent 80%),linear-gradient(145deg,#0c1611ee,#040c09ee);box-shadow:inset 0 0 0 3px #04100a,inset 0 0 0 4px #c8a65b55,0 8px 18px #0006}
+body[data-studio] .casual-app .status>div:first-child{position:absolute;left:12px;bottom:7px;width:50px;text-align:center;display:block}
+body[data-studio] .casual-app .status>div:first-child small{display:none}
+body[data-studio] .casual-app .status>div:first-child strong{font:10px Onest,sans-serif;color:#cbbd97}
+body[data-studio] .casual-app .status>div:nth-child(2){grid-column:2;grid-row:1;border:0;padding:0;text-align:center;gap:0}
+body[data-studio] .casual-app .status #metric{font:400 clamp(36px,11vw,50px)/1.05 Georgia,serif;color:#fff0c9;white-space:nowrap}
+body[data-studio] .casual-app .status #metric-label{font-size:8px;color:#bfa77b;letter-spacing:.12em;margin-bottom:3px}
+body[data-studio] .casual-app .status #studio-detail{font:10px/1.6 Onest,sans-serif;color:#d3bf97;letter-spacing:0;margin-top:3px}
+body[data-studio] .casual-app .status>#pause{grid-column:1;grid-row:1;align-self:start;margin:3px 0 0;width:48px;height:48px;min-height:48px;border:2px solid #b18b45;color:#f5d58c;background:radial-gradient(ellipse at 35% 20%,#596249,#1b2419 65%);box-shadow:inset 0 0 0 3px #1f2317,inset 0 0 0 4px #d8b36660,0 4px 9px #0009;font:25px Georgia,serif}
+body[data-studio] .casual-app .status>.studio-meter{grid-column:3;grid-row:1;position:relative;width:76px;height:76px;border:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:50%;background:radial-gradient(#234033,#091910);box-shadow:0 4px 12px #0008,inset 0 0 0 1px #d3b46d50}
+.studio-meter>svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);fill:none;stroke-width:1.3;stroke:#766441}
+.studio-meter .meter-value{stroke:#f3d18a;stroke-width:2.5;stroke-linecap:round;transition:stroke-dasharray .6s}
+body[data-studio] .casual-app .studio-meter>strong{font:30px/1 Georgia,serif;color:#fff0c5}
+body[data-studio] .casual-app .studio-meter>small{font:8px/1.2 Onest,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:#d2c198;margin-top:5px}
+body[data-studio] .casual-app .game-window{border:0;background:none;padding:0;border-radius:18px;overflow:visible;box-shadow:0 22px 30px #0008;isolation:isolate}
+body[data-studio] .casual-app .game-scroll{border:20px solid transparent;border-image:url('img/casual/studio/tray.webp') 78 fill / 20px / 0 stretch;background:#072019;border-radius:18px;box-shadow:0 7px 0 #31220d,0 9px 0 #ae8942,0 14px 18px #0009;overflow:auto;max-height:none;padding:0}
+body[data-studio] .casual-app .game-board{background:none}
+body[data-studio] .casual-app .game-board:not(.solitaire-board):not(.mines-board){padding:3px;width:100%;max-width:none}
+body[data-studio] .casual-app #message{min-height:30px;max-width:none;padding:9px 8px 0;margin:5px 0 0;color:#dbccab;font-size:11px;text-shadow:0 1px 4px #000;line-height:1.45}
+body[data-studio] .casual-app .game-tools{display:flex;justify-content:center;align-items:start;gap:12px;margin:9px 0 3px;padding:8px 10px;background:linear-gradient(90deg,transparent,#0a110dbf 20%,#0a110dbf 80%,transparent);border:0}
+body[data-studio] .casual-app .game-tools>button{display:flex;flex-direction:column;justify-content:start;align-items:center;gap:7px;min-width:72px;max-width:140px;min-height:70px;border:0;border-radius:0;background:none;box-shadow:none;padding:0;color:#e3d0a5;font-size:10px;line-height:1.3}
+body[data-studio] .casual-app .game-tools>button>svg{width:46px;height:46px;padding:12px;color:#f9d887;border:1px solid #c4a265;border-radius:50%;background:radial-gradient(at 35% 20%,#48523a,#172319 70%);box-shadow:inset 0 0 0 3px #192419,0 3px 7px #0009;transition:filter .2s,scale .2s}
+body[data-studio] .casual-app .game-tools>button.active>svg{background:radial-gradient(at 30% 15%,#b9a66a,#786339);color:#fff5cc;box-shadow:inset 0 0 0 3px #5b4c2a,0 0 12px #c6a65d45}
+body[data-studio] .casual-app .game-tools>button[data-primary]>svg{background:linear-gradient(#efcf83,#94712f);color:#302818}
+body[data-studio] .casual-app .bottom-actions{display:flex;justify-content:center;align-items:center;gap:3px;border:1px solid #ab935e45;background:#09140ee6;border-radius:14px;padding:7px 8px;margin:8px auto 0;max-width:420px;box-shadow:inset 0 1px #fff0bb0c}
+body[data-studio] .casual-app .bottom-actions>button{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:0;min-height:34px;padding:4px;border:0;background:none;box-shadow:none;font-size:10px;color:#d9cbb0;white-space:nowrap}
+body[data-studio] .casual-app .bottom-actions>button+button{border-left:1px solid #99825638;border-radius:0}
+.bottom-actions svg{width:17px;height:17px;flex:none;color:#cfa55c}
+body[data-studio] .casual-app #save-status{font-size:8px;margin-top:10px;color:#a5977a}
+.studio-score-pop{position:fixed;pointer-events:none;z-index:1200;color:#fff0b0;font:700 26px Georgia,serif;text-shadow:0 2px 3px #000,0 0 10px #cfa23e;white-space:nowrap}
+.studio-spark{position:fixed;pointer-events:none;z-index:1199;width:5px;height:5px;border-radius:50%;background:#fff0a5;box-shadow:0 0 8px #ffc85c}
+/* JEWELLER: deeply inset individual sockets, large natural silhouettes. */
+body[data-studio=match3] .casual-app .match-summary,body[data-studio=match3] .casual-app .match-progress{display:none}
+body[data-studio=match3] .casual-app .jewel-grid{gap:2px;padding:2px;border:0;border-radius:9px;background:#062117;box-shadow:inset 0 3px 12px #000c;overflow:hidden}
+body[data-studio=match3] .casual-app .jewel-cell{border:1px solid #9c7d3b66;border-radius:7px;background:radial-gradient(ellipse at 50% 65%,#1c513d55,#01170fcf),url('img/casual/play/felt.webp') center/420px;box-shadow:inset 1px 2px 5px #000b,inset -1px -1px 1px #4b79544d,0 1px 1px #ad8e3b35}
+body[data-studio=match3] .casual-app .gem{filter:drop-shadow(1px 4px 1px #000c);transform:scale(1.2);transition:filter .14s}
+body[data-studio=match3] .casual-app .gem-3{transform:translateY(8%) scale(1.17)}
+body[data-studio=match3] .casual-app .gem-4{transform:translateY(6%) scale(1.2)}
+body[data-studio=match3] .casual-app .gem-5{transform:translateY(6%) scale(1.15)}
+body[data-studio=match3] .casual-app .jewel-cell.selected-item{outline:1px solid #ffe2a0!important;outline-offset:-1px;box-shadow:inset 0 0 14px #d6ad463f,0 0 12px #eac25e7f!important}
+body[data-studio=match3] .casual-app .jewel-cell.selected-item .gem{filter:brightness(1.25) drop-shadow(0 0 5px #ffe09670)}
+body[data-studio=match3] .jewel-cell{touch-action:none}
+/* Desktop: a deliberately sized object, controls within arm's reach. */
+@media(min-width:1100px){
+ body[data-studio] .casual-app #экран-игры{grid-template-columns:minmax(0,720px) 270px;max-width:1020px;gap:0 28px}
+ body[data-studio] .casual-app #экран-игры .game-heading{margin:0 0 22px;padding-bottom:0}
+ body[data-studio] .casual-app #экран-игры .status{margin:0 0 15px;padding:12px 8px;gap:4px;grid-template-columns:44px minmax(0,1fr) 72px}
+ body[data-studio] .casual-app #экран-игры .status>div:nth-child(2){padding:0}
+ body[data-studio] .casual-app #экран-игры .status #metric{font-size:32px}
+ body[data-studio] .casual-app #экран-игры .status #pause{width:42px;height:42px;min-height:42px}
+ body[data-studio] .casual-app #экран-игры .status>.studio-meter{width:70px;height:70px}
+ body[data-studio] .casual-app #экран-игры .game-tools{display:flex;flex-wrap:wrap;margin:0;padding:14px 0;gap:16px 10px}
+ body[data-studio] .casual-app #экран-игры .bottom-actions{flex-direction:column;align-items:stretch;margin-top:12px;width:100%}
+ body[data-studio] .casual-app #экран-игры .bottom-actions>button{padding:10px;justify-content:start;gap:14px;font-size:12px}
+ body[data-studio] .casual-app #экран-игры .bottom-actions>button+button{border-left:0;border-top:1px solid #99825638}
+ body[data-studio] .casual-app #экран-игры #message{text-align:center;margin-bottom:12px}
+ body[data-studio=match3] .casual-app #экран-игры{grid-template-columns:minmax(400px,min(650px,calc(100dvh - var(--safe-top) - 190px))) 270px;justify-content:center}
+ body[data-studio] .casual-app .game-board.match-board{max-width:none}
+}
+@media(max-width:599px){
+ body[data-studio] .casual-app:has(#экран-игры:not([hidden])){padding:calc(var(--safe-top) + 5px) 7px calc(var(--safe-bottom) + 12px)}
+ body[data-studio] .casual-app:has(#экран-игры:not([hidden])) .topbar{height:26px;margin:0 4px -16px}
+ body[data-studio] .casual-app:has(#экран-игры:not([hidden])) .topbar>span{visibility:hidden}
+ body[data-studio] .casual-app .game-heading{padding:0 40px 13px;pointer-events:none}
+ body[data-studio] .casual-app .game-heading h1{font-size:32px}.studio-edition{font-size:7px;letter-spacing:.15em}
+ .studio-sound{display:grid;top:-14px;right:43px;width:28px;height:28px;padding:6px;pointer-events:auto}
+ body[data-studio] .casual-app .status{margin:0 5px 12px;padding:9px;grid-template-rows:68px}
+ body[data-studio] .casual-app .game-scroll{border-width:13px;border-image-width:13px;border-radius:12px}
+ body[data-studio] .casual-app .game-tools{gap:18px;margin:7px 0 0;padding:7px 4px 0}
+ body[data-studio] .casual-app .game-tools>button{min-height:62px;min-width:68px;max-width:110px;font-size:10px;gap:5px}
+ body[data-studio] .casual-app .game-tools>button>svg{width:42px;height:42px;padding:10px}
+ body[data-studio] .casual-app .bottom-actions{margin-top:6px;padding:5px 8px}
+ body[data-studio] .casual-app .game-board:not(.solitaire-board):not(.mines-board){padding:1px}
+ body[data-studio] .casual-app #message{min-height:26px;font-size:10px;padding-top:8px}
+ body[data-studio] .casual-app #save-status{margin-top:6px;font-size:7px}
+}
+@media(prefers-reduced-motion:reduce){.studio-meter .meter-value{transition:none}.studio-score-pop,.studio-spark{display:none}}
+body[data-studio] dialog{border:1px solid #b79a5d;background:linear-gradient(#07160fed,#07150fed),var(--scene) center/cover;box-shadow:inset 0 0 0 4px #08120d,inset 0 0 0 5px #b3944c55,0 25px 80px #000c;color:#f2e6c7}
+body[data-studio] dialog h2{font:32px/1.15 Georgia,serif;color:#f8e2af;letter-spacing:-.02em}
+body[data-studio] dialog p{color:#d2c7ad;line-height:1.65}
+body[data-studio] dialog.studio-result{text-align:center;border-radius:26px;padding:35px 25px 26px}
+body[data-studio] dialog.studio-result h2{margin:12px 0 8px}
+body[data-studio] dialog.studio-result .result-art{width:130px;height:130px;margin:12px auto 0;filter:drop-shadow(0 5px 13px #cfaa3730)}
+body[data-studio] dialog.studio-result .result-art svg{display:block;width:100%;height:100%}
+body[data-studio] dialog .primary{border-radius:12px;background:linear-gradient(125deg,#f6dda5,#ae843d);box-shadow:inset 0 0 0 2px #fff0bf55,0 5px 12px #0006;color:#302913}
+
+/* MAHJONG: a quiet lacquer table, thick porcelain, light falling between tiers. */
+body[data-studio=mahjong]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/mahjong-room.webp')}
+body[data-studio=mahjong] .casual-app .game-scroll{border:10px solid #322517;border-image:none;border-radius:19px;background:radial-gradient(ellipse at 40% 10%,#345549b0,#0a2219dd),url('img/casual/play/felt.webp') center/650px;box-shadow:inset 0 0 0 2px #967044,inset 0 3px 15px #0009,0 5px 0 #17100a,0 8px 0 #886844,0 19px 25px #0009;padding:12px 8px 16px}
+body[data-studio=mahjong] .casual-app .mah-tile{background:#e8dfbf url('img/casual/studio/mahjong-tile.webp') center/100% 100%;border:0;border-radius:7px;overflow:visible;box-shadow:2px 5px 2px #071c11cc,4px 9px 8px #0007;padding:3px 4px 8px;transform:translate(calc(var(--tile-layer)*-2px),calc(var(--tile-layer)*-4px));transition:filter .2s,box-shadow .2s}
+body[data-studio=mahjong] .casual-app .mah-tile.blocked{filter:brightness(.84) saturate(.8)}
+body[data-studio=mahjong] .casual-app .mah-tile.free{filter:brightness(1.07);box-shadow:2px 5px 2px #071c11cc,4px 9px 8px #0009}
+body[data-studio=mahjong] .casual-app .mah-tile[data-layer='2']{box-shadow:3px 8px 2px #071c11cc,7px 15px 11px #0009}
+body[data-studio=mahjong] .casual-app .mah-tile.selected-item{outline:2px solid #f4d58f!important;outline-offset:1px;filter:brightness(1.15);box-shadow:2px 7px 2px #071c11cc,0 0 20px #e5be6577!important}
+body[data-studio=mahjong] .casual-app .mah-match{outline:1px solid #e6c476;outline-offset:1px}
+body[data-studio=mahjong] .mah-face{filter:drop-shadow(0 1px 0 #fff9);padding:2px}
+@media(min-width:1100px){body[data-studio=mahjong] .casual-app #экран-игры{grid-template-columns:minmax(400px,min(570px,calc((100dvh - var(--safe-top) - 200px)*.8))) 270px;justify-content:center}body[data-studio=mahjong] .casual-app .game-board.mahjong-board{max-width:none}}
+@media(max-width:599px){body[data-studio=mahjong] .casual-app .game-scroll{border-width:5px;padding:9px 4px 12px}body[data-studio=mahjong] .casual-app .mah-tile{border-radius:5px;padding:2px 2px 6px}}
+
+/* CARD TABLES: stitched leather, an engraved deck, and space to handle each stack. */
+body[data-studio=klondike]:has(#экран-игры:not([hidden])),body[data-studio=spider]:has(#экран-игры:not([hidden])),body[data-studio=freecell]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/card-room.webp')}
+body[data-studio] .casual-app:has(.solitaire-board) .game-scroll{border:10px solid #2c261c;border-image:none;border-radius:25px;background:radial-gradient(ellipse at 50% 5%,#173d29a0,#00180cc7),url('img/casual/play/felt.webp') center/650px;box-shadow:inset 0 0 0 1px #bb975577,inset 0 0 0 5px #181e12,inset 0 0 0 6px #b4925140,0 0 0 1px #a0844a66,0 8px 0 #0d130c,0 12px 24px #0009;max-height:70dvh}
+body[data-studio=spider] .casual-app .game-scroll{background:radial-gradient(ellipse at 50% 10%,#30334190,#0c101bdf),url('img/casual/play/felt.webp') center/650px}
+body[data-studio=freecell] .casual-app .game-scroll{background:radial-gradient(ellipse at 50% 10%,#24384199,#041e23dc),url('img/casual/play/felt.webp') center/650px}
+body[data-studio] .casual-app .solitaire-board{container-type:inline-size;--card-h:calc((100cqw - 48px)/7 * 1.4);--card-step:clamp(20px,4cqw,32px);--closed-step:clamp(8px,2cqw,14px);padding:24px 15px 40px;min-height:450px;touch-action:pan-y}
+body[data-studio] .casual-app .solitaire-board.freecell{--card-h:calc((100cqw - 42px)/8 * 1.4)}
+body[data-studio] .casual-app .solitaire-board.spider{--card-h:calc((100cqw - 36px)/10 * 1.4);--card-step:clamp(19px,3.5cqw,29px)}
+body[data-studio] .casual-app .solitaire-board.spider .tableau{gap:4px}
+body[data-studio] .casual-app .solitaire-board.freecell .tableau{gap:6px}
+body[data-studio] .casual-app .solitaire-board .playing-card{background:linear-gradient(110deg,#fff4dc,#ebddbd);border:1px solid #e4cca0;border-radius:5px;box-shadow:0 1px 0 #cbb78e,0 2px 0 #e9dcc0,1px 4px 5px #0009;touch-action:none}
+body[data-studio] .casual-app .solitaire-board .playing-card:after{pointer-events:none}
+body[data-studio] .casual-app .solitaire-board .playing-card.back-card{background:#153524 url('img/casual/studio/card-back.webp') center/100% 100%;color:transparent;font-size:0;border-color:#be9d54;box-shadow:0 1px #715f3e,0 2px #cfb880,1px 4px 4px #0008}
+body[data-studio] .casual-app .playing-card.back-card:after{display:none}
+body[data-studio=spider] .casual-app .back-card{filter:hue-rotate(55deg) saturate(.65)}
+body[data-studio=freecell] .casual-app .card-slot:not(.playing-card){border-radius:7px;border:1px solid #b9b99744;background:#061b2266}
+body[data-studio] .casual-app .card-slot:not(.playing-card){border:1px solid #bbad7155;background:#061b0e50;box-shadow:inset 0 3px 8px #0008;color:#cab37570;font-size:28px}
+body[data-studio] .casual-app .free-cells:before,body[data-studio] .casual-app .foundations:before{position:absolute;bottom:calc(100% + 6px);left:0;right:0;text-align:center;font:8px Onest,sans-serif;letter-spacing:.14em;color:#c5b28a}
+body[data-studio] .casual-app .free-cells,body[data-studio] .casual-app .foundations{position:relative}
+body[data-studio] .casual-app .free-cells:before{content:'СВОБОДНЫЕ ЯЧЕЙКИ'}
+body[data-studio] .casual-app .foundations:before{content:'ДОМА · ОТ ТУЗА ДО КОРОЛЯ'}
+body[data-studio] .casual-app .solitaire-top{margin-bottom:26px;margin-top:10px}
+body[data-studio] .casual-app .card-stack-label{padding:3px 3px;font-size:14px;background:linear-gradient(110deg,#fff4dc,#ebddbd)}
+body[data-studio] .casual-app .legal-destination{outline:1px solid #f1d78f;outline-offset:3px;border-radius:5px;box-shadow:0 0 16px #d4b46120}
+body[data-studio] .casual-app .drag-legal{outline:1px solid #e3ca83;outline-offset:3px;border-radius:5px}
+body[data-studio] .casual-app .drop-target{outline:2px solid #fff2b4;box-shadow:0 0 22px #edcd6555}
+.card-drag-ghost{position:fixed;pointer-events:none;z-index:1500;filter:drop-shadow(7px 12px 5px #0008);rotate:-2deg}
+.card-lifted{opacity:.18!important}
+body[data-studio=spider] .casual-app:has(.solitaire-board) .game-scroll{background:radial-gradient(ellipse at 50% 10%,#30334190,#0c101bdf),url('img/casual/play/felt.webp') center/650px}
+body[data-studio=freecell] .casual-app:has(.solitaire-board) .game-scroll{background:radial-gradient(ellipse at 50% 10%,#24384199,#041e23dc),url('img/casual/play/felt.webp') center/650px}
+@media(max-width:599px){
+ body[data-studio] .casual-app:has(.solitaire-board) .game-scroll{border-width:5px;border-radius:17px;max-height:65dvh}
+ body[data-studio] .casual-app .solitaire-board{--card-h:calc((100cqw - 18px)/7 * 1.4);--card-step:23px;--closed-step:10px;min-height:350px;padding:22px 6px 28px}
+ body[data-studio] .casual-app .solitaire-board.freecell{--card-h:calc((100cqw - 21px)/8 * 1.4)}
+ body[data-studio] .casual-app .solitaire-board.freecell .tableau{gap:3px}
+ body[data-studio] .casual-app .solitaire-board.spider{--card-h:calc((100cqw - 18px)/10 * 1.4);--card-step:20px}
+ body[data-studio] .casual-app .solitaire-board.spider .tableau{gap:2px}
+ body[data-studio] .casual-app .solitaire-board.cards-large{min-width:560px;--card-step:27px}
+ body[data-studio] .casual-app .card-stack-label{font-size:12px;padding:3px 2px}
+ body[data-studio] .casual-app .spider .card-stack-label{font-size:10px}
+ body[data-studio] .casual-app .free-cells:before,body[data-studio] .casual-app .foundations:before{font-size:6px;letter-spacing:.07em}
+ body[data-studio] .casual-app .spider .solitaire-top>.stock{width:36px}
+ body[data-studio] .casual-app .spider-complete{font:13px Georgia,serif}
+}
+
+/* MINES: an explorer's precision board, veined stone and raised brass flags. */
+body[data-studio=mines]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/mines-room.webp')}
+body[data-studio=mines] .casual-app .game-scroll{border-image:none;border:8px solid #b2914e;background:linear-gradient(135deg,#34372b,#112017);box-shadow:inset 0 0 0 2px #332f1c,0 3px 0 #654c23,0 6px 0 #c29c50,0 12px 17px #0009;max-height:65dvh;padding:4px}
+body[data-studio=mines] .casual-app .mines-board{gap:3px;padding:5px}
+body[data-studio=mines] .casual-app .mine-cell{background:#15372b url('img/casual/studio/materials.webp') var(--marble-x,0%) 25%/600% 200%;border:1px solid #b09a6355;border-radius:4px;box-shadow:inset 1px 2px 1px #dbebc975,inset -1px -2px 2px #00170cb3,0 2px 0 #998252,1px 4px 4px #0008;font:700 21px Georgia,serif;overflow:hidden}
+body[data-studio=mines] .casual-app .mine-cell:not(.revealed):not(.flagged):after{display:none}
+body[data-studio=mines] .casual-app .mine-cell.revealed{background:#e7ddc2 url('img/casual/studio/materials.webp') 50% 50%/300% 100%;box-shadow:inset 0 0 0 1px #fff7,inset 0 -2px 3px #99875d50,0 1px 1px #0005;border-color:#c0af83;color:#225a51;text-shadow:0 1px #fff9}
+body[data-studio=mines] .casual-app .mine-cell.revealed:empty{background:#13291d;box-shadow:inset 0 2px 5px #0009;border:1px solid #9c99732e}
+body[data-studio=mines] .casual-app .mine-cell.revealed[data-number='2']{color:#9a7127}
+body[data-studio=mines] .casual-app .mine-cell.revealed[data-number='3']{color:#aa382e}
+body[data-studio=mines] .casual-app .mine-cell.revealed[data-number='4']{color:#4c456c}
+body[data-studio=mines] .mine-mark{width:92%;height:92%;filter:drop-shadow(2px 3px 2px #0009)}
+@media(max-width:599px){body[data-studio=mines] .casual-app .game-scroll{border-width:6px;padding:1px}body[data-studio=mines] .casual-app .mines-board{gap:2px;padding:3px}body[data-studio=mines] .casual-app .mine-cell{font-size:20px}}
+
+/* BLOCKS: a marble cutting board with thick translucent enamel pieces. */
+body[data-studio=blocks]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/jewels-room.webp')}
+body[data-studio=blocks] .casual-app .game-scroll{border-image:none;border:9px solid #b49c63;border-radius:13px;background:#111e16;box-shadow:inset 0 0 0 2px #56462b,0 4px 0 #594321,0 7px 0 #c19e53,0 15px 25px #0009;padding:5px}
+body[data-studio=blocks] .casual-app .blocks-grid{gap:2px;padding:5px;border:1px solid #b7a46a70;background:#020d09;border-radius:6px}
+body[data-studio=blocks] .casual-app .block-cell.tone-0{background:linear-gradient(#04271c75,#03201570),url('img/casual/studio/materials.webp') 0 0/300% 100%;border:1px solid #b3a77133;border-radius:3px;box-shadow:inset 0 1px 5px #0008}
+body[data-studio=blocks] .casual-app .block-cell:not(.tone-0),body[data-studio=blocks] .casual-app .mini-block{position:relative;border-radius:5px;border:1px solid #ebd18b70;box-shadow:inset 2px 3px 3px #ffffd06e,inset -2px -3px 3px #05150bbb,0 2px 0 #6d633b,1px 4px 4px #000b!important}
+body[data-studio=blocks] .casual-app .block-cell:not(.tone-0):after,body[data-studio=blocks] .casual-app .mini-block:after{content:'';position:absolute;inset:3px;border-radius:4px;border-top:1px solid #fffbd590;border-left:1px solid #fffbd555;pointer-events:none}
+body[data-studio=blocks] .casual-app .piece-choice{border:0;background:transparent;box-shadow:none;min-height:90px;padding:8px}
+body[data-studio=blocks] .casual-app .piece-choice.selected-item{outline:1px solid #c5ab6655!important;box-shadow:inset 0 0 20px #d4a44612!important;background:#caae5910}
+body[data-studio=blocks] .casual-app .mini-block,body[data-studio=blocks] .casual-app .mini-gap{width:19px;height:19px}
+body[data-studio=blocks] .casual-app .piece-choice .mini-piece{grid-template-columns:repeat(var(--piece-width),19px)!important;grid-auto-rows:19px;gap:1px}
+body[data-studio=blocks] .casual-app .block-tray{margin:14px 0 0;gap:5px;border-top:1px solid #b59d5c50;padding-top:8px}
+body[data-studio=blocks] .casual-app .block-cell.ghost{opacity:1;outline:1px solid #ffecad;filter:brightness(1.4)}
+.block-drag-piece{position:fixed;pointer-events:none;z-index:1500;opacity:.96;filter:drop-shadow(7px 10px 4px #0009)}
+body[data-studio=blocks] .casual-app .block-cell:not(.tone-0),body[data-studio=blocks] .casual-app .mini-block{background-image:url('img/casual/studio/blocks.webp')!important;background-size:320% 213%!important}
+body[data-studio=blocks] .casual-app .tone-1{background-position:1.7% 3.5%!important}body[data-studio=blocks] .casual-app .tone-2{background-position:50% 3.5%!important}body[data-studio=blocks] .casual-app .tone-3{background-position:98.3% 3.5%!important}body[data-studio=blocks] .casual-app .tone-4{background-position:1.7% 96.5%!important}body[data-studio=blocks] .casual-app .tone-5{background-position:50% 96.5%!important}
+@media(max-width:359px){body[data-studio=blocks] .casual-app .mini-block,body[data-studio=blocks] .casual-app .mini-gap{width:15px;height:15px}body[data-studio=blocks] .casual-app .piece-choice .mini-piece{grid-template-columns:repeat(var(--piece-width),15px)!important;grid-auto-rows:15px}}
+
+/* WORDS: a warm literary desk, crisp engraved letters and uninterrupted word lines. */
+body[data-studio=wordsearch]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/word-room.webp')}
+body[data-studio=wordsearch] .casual-app .game-scroll{border-image:none;border:8px solid #aa8c4e;background:#332b19;box-shadow:inset 0 0 0 2px #3f2e14,0 4px 0 #574019,0 7px 0 #c1a061,0 17px 25px #0008;padding:5px;border-radius:10px}
+body[data-studio=wordsearch] .casual-app .word-theme{font:24px Georgia,serif;color:#f4e2b6;letter-spacing:.015em;padding:8px 0 15px}
+body[data-studio=wordsearch] .casual-app .letter-grid{position:relative;gap:3px;padding:4px;background:#514023;border-radius:4px;box-shadow:inset 0 2px 9px #0008}
+body[data-studio=wordsearch] .casual-app .letter-cell{font:600 clamp(14px,4.4vw,30px) Georgia,serif;border-radius:4px;border:1px solid #d9c8a5;background:#eee1c3 url('img/casual/studio/materials.webp') 50% 50%/300% 100%;box-shadow:inset 1px 2px 1px #fff8,inset -1px -2px 2px #a98e5b45,0 2px 1px #80643b,1px 3px 3px #0005;color:#253c2c;text-shadow:0 1px #fff8}
+body[data-studio=wordsearch] .casual-app .letter-cell.word-found{background-image:none;filter:saturate(.55);box-shadow:inset 0 1px #fff8,0 1px 2px #0004}
+.word-connections{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);pointer-events:none;z-index:2;overflow:visible}
+.word-connections line{stroke-width:78;stroke-linecap:round;opacity:.23}
+body[data-studio=wordsearch] .casual-app .word-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 5px;margin:17px 2px 7px}
+body[data-studio=wordsearch] .casual-app .word-list span{font:10px/1.2 Onest,sans-serif;padding:7px 2px;border:0;border-bottom:1px solid #b69b6266;border-radius:0;background:none;color:#e9d7af;text-align:center;letter-spacing:.04em}
+body[data-studio=wordsearch] .casual-app .word-list span.word-done{color:#a9b78e!important;background:none!important;opacity:.65}
+/* FIFTEEN: an inlaid walnut puzzle with individually bevelled porcelain sliders. */
+body[data-studio=fifteen]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/word-room.webp')}
+body[data-studio=fifteen] .casual-app .game-scroll{border-image:none;border:12px solid #6c492c;background:#402b18 url('img/casual/studio/materials.webp') 100% 50%/300% 100%;box-shadow:inset 0 0 0 2px #c7a56a,inset 0 0 0 5px #3b2817,0 4px 0 #352213,0 7px 0 #ae8248,0 18px 26px #000a;border-radius:12px;padding:6px}
+body[data-studio=fifteen] .casual-app .sliding-grid{background:linear-gradient(#182818e6,#101e13df),url('img/casual/play/felt.webp') center/400px;border:2px solid #b99c60;border-radius:5px;box-shadow:inset 3px 5px 14px #000c;touch-action:none}
+body[data-studio=fifteen] .casual-app .slide-tile{background:#eadbc0 url('img/casual/studio/materials.webp') 50% 50%/300% 100%;border:1px solid #ffebbf;border-radius:7px;color:#234934;font:400 clamp(35px,10vw,68px) Georgia,serif;text-shadow:0 1px 0 #ffffdb,0 -1px 1px #071c1266;box-shadow:inset 2px 3px 3px #fffbe2b3,inset -2px -4px 4px #98794780,0 3px 0 #b3955e,1px 5px 4px #000b;transition:box-shadow .2s}
+body[data-studio=fifteen] .casual-app .slide-tile.correct{background:#eadbc0 url('img/casual/studio/materials.webp') 50% 50%/300% 100%;color:#253b2b;box-shadow:inset 2px 3px 3px #fffbe2b3,inset -2px -4px 4px #98794780,0 3px 0 #b3955e,1px 5px 4px #000b}
+body[data-studio=fifteen] .casual-app .slide-tile.correct:after{content:'';position:absolute;right:8%;bottom:9%;width:5px;height:5px;border-radius:50%;background:radial-gradient(at 25% 25%,#fff0b3,#a88335);box-shadow:0 1px 2px #6e4d25}
+body[data-studio=fifteen] .casual-app .slide-tile.movable{outline:1px solid #ab875155;outline-offset:-6px;filter:brightness(1.04)}
+body[data-studio=fifteen] .casual-app .slide-caption{color:#f0dcaf;padding:7px 0 1px;margin:10px 0 0;font:11px Onest,sans-serif}
+/* SNAKE: jade sculpture on a polished stone inlay, gold light around the fruit. */
+body[data-studio=snake]:has(#экран-игры:not([hidden])){--scene:url('img/casual/studio/mahjong-room.webp')}
+body[data-studio=snake] .casual-app .game-scroll{border-image:none;border:9px solid #b4934f;border-radius:17px;background:#10221b;box-shadow:inset 0 0 0 2px #54401e,0 4px 0 #604a20,0 7px 0 #c5a35a,0 18px 26px #0009;padding:5px}
+body[data-studio=snake] .casual-app .snake-grid{background:linear-gradient(#05271ee0,#041d16e8),url('img/casual/studio/materials.webp') 0 50%/300% 100%;border:1px solid #bda66c;border-radius:5px;box-shadow:inset 0 4px 18px #0009;aspect-ratio:1;overflow:hidden}
+body[data-studio=snake] .casual-app .snake-caption{font:11px Onest,sans-serif;color:#e0c990;padding:4px 0 5px;margin-top:10px}
+body[data-studio=snake] .casual-app #game-tools{display:grid;grid-template-columns:repeat(3,56px);gap:3px;padding:0;background:none;margin-top:5px}
+body[data-studio=snake] .casual-app #game-tools>[data-dir]{display:grid;place-items:center;border:1px solid #ae904d;border-radius:13px;background:radial-gradient(ellipse at 40% 10%,#48553c,#17251c 75%);min-width:0;min-height:42px;height:42px;padding:0;font:24px Georgia,serif;box-shadow:inset 0 0 0 3px #122218,0 3px 0 #756032,0 5px 7px #0007;color:#e6c37b}
+@media(min-width:1100px){
+ body[data-studio=fifteen] .casual-app #экран-игры,body[data-studio=snake] .casual-app #экран-игры,body[data-studio=blocks] .casual-app #экран-игры,body[data-studio=wordsearch] .casual-app #экран-игры{grid-template-columns:minmax(390px,min(600px,calc(100dvh - var(--safe-top) - 270px))) 270px;justify-content:center}
+ body[data-studio] .casual-app .game-board.fifteen-board,body[data-studio] .casual-app .game-board.snake-board{max-width:none}
+}
+@media(max-width:599px){
+ body[data-studio=fifteen] .casual-app .game-scroll{border-width:8px;padding:3px}
+ body[data-studio=wordsearch] .casual-app .game-scroll{border-width:6px;padding:3px}
+ body[data-studio=wordsearch] .casual-app .word-theme{font-size:20px;padding:5px 0 11px}
+ body[data-studio=wordsearch] .casual-app .word-list{margin-top:12px;gap:6px 4px}
+ body[data-studio=snake] .casual-app .game-scroll{border-width:6px;padding:3px}
+}
+
+@media(min-width:1100px){body[data-studio] .casual-app #экран-игры .status #timer{font:10px Onest,sans-serif}body[data-studio]:has(#экран-игры:not([hidden])){background-size:100% 100%;background-attachment:fixed}}
+
+body[data-studio=snake] .casual-app #game-tools>[data-dir]{justify-content:center;align-content:center;min-height:48px;height:48px}
+body[data-studio=mines] .casual-app .game-scroll,body[data-studio=blocks] .casual-app .game-scroll,body[data-studio=snake] .casual-app .game-scroll{border:16px solid transparent;border-image:url('img/casual/studio/brass-frame.webp') 78 / 16px / 0 stretch;box-shadow:0 7px 0 #3c2b14,0 9px 0 #a28142,0 15px 24px #0009}
+body[data-studio=fifteen] .casual-app .game-scroll{border:19px solid transparent;border-image:url('img/casual/studio/wood-frame.webp') 90 / 19px / 0 stretch}
+body[data-studio=wordsearch] .casual-app .game-scroll{border:14px solid transparent;border-image:url('img/casual/studio/brass-frame.webp') 78 / 14px / 0 stretch}
+@media(max-width:599px){body[data-studio=mines] .casual-app .game-scroll,body[data-studio=blocks] .casual-app .game-scroll,body[data-studio=snake] .casual-app .game-scroll{border-width:10px;border-image-width:10px}body[data-studio=fifteen] .casual-app .game-scroll{border-width:12px;border-image-width:12px}body[data-studio=wordsearch] .casual-app .game-scroll{border-width:9px;border-image-width:9px}}
+
+.studio-sound:before{content:"";position:absolute;inset:-6px}
