@@ -113,3 +113,6 @@
 
 #экран-витрины [data-игра="пятнашки"] { --catalog-art:url('img/casual/fifteen.png'); }
 #экран-витрины [data-игра="пятнашки"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="змейка"] { --catalog-art:url('img/casual/snake.png'); }
+#экран-витрины [data-игра="змейка"]::before { background-size:cover; background-position:center; }

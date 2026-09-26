@@ -32,3 +32,6 @@ Premium landscape 3:2 still-life cover for a Russian word search puzzle game. Iv
 
 ## Пятнашки — img/casual/fifteen.png
 Photorealistic landscape 3:2 cover. Brass frame holding exactly four by four ivory numbered tiles. Rows: 1 2 3 4 / 5 6 7 8 / 9 10 11 12 / 13 14 [empty green slot] 15. One empty slot, no extra numbers. Dark emerald velvet, cinematic light, beveled ceramics, luxury tabletop photograph. No text, logos or people.
+
+## Змейка — img/casual/snake.png
+Premium landscape 3:2 cover for classic Snake arcade game as a tactile tabletop. A friendly emerald-green segmented snake made of rounded ceramic cubes follows a right-angled S path across a dark green grid in a brass tray. Golden eyes, one amber apple ahead, no realistic scary animal details. Warm side light, emerald velvet, luxury product still life. No text, numbers, logos or people.
