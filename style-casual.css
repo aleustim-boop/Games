@@ -12,3 +12,5 @@
 @media(max-width:599px){.solitaire-board{--card-h:73px;--card-step:24px;padding:7px}.tableau{gap:4px}.solitaire-top{gap:4px;margin-bottom:16px}.solitaire-top>.playing-card,.solitaire-top>.card-slot{width:calc((100% - 24px)/7)}.foundations{width:calc(4 * (100% - 24px)/7 + 12px);gap:4px}.free-cells{gap:4px}.card-corner{left:3px;top:3px;font-size:16px;gap:1px}.card-corner i{font-size:13px}.card-suit{font-size:27px;inset:19px 0 0}.card-mirror{font-size:8px;right:2px}.playing-card,.card-slot{border-radius:5px}.solitaire-board.freecell{min-width:355px}.solitaire-board.spider{min-width:525px;--card-h:80px}.freecell .card-corner{font-size:15px}}
 
 .mah-marks{display:grid;grid-template-columns:repeat(3,1fr);align-content:center;justify-content:center;padding:3px;gap:1px;height:100%}.mah-marks i{font-style:normal;font-size:clamp(10px,2.4vw,20px);line-height:1.1}.mah-tile.bamboo .mah-marks i{font-weight:900;text-shadow:0 2px #a49152}
+
+.casual-app .bottom-actions:has(#undo[hidden]){grid-template-columns:repeat(2,1fr)}

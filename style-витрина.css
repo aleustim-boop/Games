@@ -87,32 +87,32 @@
 #экран-витрины [data-игра="японский-кроссворд"] { --catalog-art:url('img/nonogram/cover-v1.png'); }
 #экран-витрины [data-игра="японский-кроссворд"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="сапёр"] { --catalog-art:url('img/casual/mines.png'); }
+#экран-витрины [data-игра="сапёр"] { --catalog-art:url('img/casual/mines.webp'); }
 #экран-витрины [data-игра="сапёр"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="косынка"] { --catalog-art:url('img/casual/klondike.png'); }
+#экран-витрины [data-игра="косынка"] { --catalog-art:url('img/casual/klondike.webp'); }
 #экран-витрины [data-игра="косынка"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="паук"] { --catalog-art:url('img/casual/spider.png'); }
+#экран-витрины [data-игра="паук"] { --catalog-art:url('img/casual/spider.webp'); }
 #экран-витрины [data-игра="паук"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="свободная-ячейка"] { --catalog-art:url('img/casual/freecell.png'); }
+#экран-витрины [data-игра="свободная-ячейка"] { --catalog-art:url('img/casual/freecell.webp'); }
 #экран-витрины [data-игра="свободная-ячейка"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="маджонг"] { --catalog-art:url('img/casual/mahjong.png'); }
+#экран-витрины [data-игра="маджонг"] { --catalog-art:url('img/casual/mahjong.webp'); }
 #экран-витрины [data-игра="маджонг"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="блоки"] { --catalog-art:url('img/casual/blocks.png'); }
+#экран-витрины [data-игра="блоки"] { --catalog-art:url('img/casual/blocks.webp'); }
 #экран-витрины [data-игра="блоки"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="три-в-ряд"] { --catalog-art:url('img/casual/match3.png'); }
+#экран-витрины [data-игра="три-в-ряд"] { --catalog-art:url('img/casual/match3.webp'); }
 #экран-витрины [data-игра="три-в-ряд"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="поиск-слов"] { --catalog-art:url('img/casual/wordsearch.png'); }
+#экран-витрины [data-игра="поиск-слов"] { --catalog-art:url('img/casual/wordsearch.webp'); }
 #экран-витрины [data-игра="поиск-слов"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="пятнашки"] { --catalog-art:url('img/casual/fifteen.png'); }
+#экран-витрины [data-игра="пятнашки"] { --catalog-art:url('img/casual/fifteen.webp'); }
 #экран-витрины [data-игра="пятнашки"]::before { background-size:cover; background-position:center; }
 
-#экран-витрины [data-игра="змейка"] { --catalog-art:url('img/casual/snake.png'); }
+#экран-витрины [data-игра="змейка"] { --catalog-art:url('img/casual/snake.webp'); }
 #экран-витрины [data-игра="змейка"]::before { background-size:cover; background-position:center; }

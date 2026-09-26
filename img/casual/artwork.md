@@ -35,3 +35,6 @@ Photorealistic landscape 3:2 cover. Brass frame holding exactly four by four ivo
 
 ## Змейка — img/casual/snake.png
 Premium landscape 3:2 cover for classic Snake arcade game as a tactile tabletop. A friendly emerald-green segmented snake made of rounded ceramic cubes follows a right-angled S path across a dark green grid in a brass tray. Golden eyes, one amber apple ahead, no realistic scary animal details. Warm side light, emerald velvet, luxury product still life. No text, numbers, logos or people.
+
+## Поставка в приложение
+Исходные PNG сохранены. Страницы и каталог используют WebP с теми же размерами и композицией: `img/casual/<id>.webp`. Общий вес десяти обложек уменьшен с 23,7 до 2,1 МБ. Воспроизводимая перекодировка: `node scripts/encode-casual-art.js`.
