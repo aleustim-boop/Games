@@ -42,7 +42,12 @@ const { chromium, подготовитьПодделку } = require('./брау
     await p.locator('#лобби-найти-игру').click();
     await p.getByRole('button', { name: 'Сесть', exact: true }).waitFor();
     await p.screenshot({ path: 'tests/снимки/деберц-онлайн.png' });
-    await p.locator('#открытые-столы-назад').click();
+    /* Подделка Telegram (версия 9.0 выше) даёт системную стрелку «Назад» —
+       по правилу сборника (style.css) нижняя кнопка #открытые-столы-назад
+       в этом режиме скрыта намеренно (display:none), уходят стрелкой
+       Telegram, а не кликом по ней. Тот же приём, что в
+       tests/кнопки-назад-везде.js и tests/найти-игру-в-браузере.js. */
+    await p.evaluate(() => window.ПоддельныйТелеграм.нажатьНазад());
     await p.getByRole('button', { name: /Играть с ботами/ }).click();
     assert(await p.locator('#деберц-настройки').isVisible());
     console.log('Онлайн: список, посадка, код, открытая комната 2×2 до 1001 и отдельный вход к ботам — OK');
