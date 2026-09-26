@@ -46,7 +46,11 @@ function fixtures(){
     await load(cases.buy);before=await state();await p.locator('#кат-карты').click();await p.getByRole('button',{name:'Купить карту развития',exact:true}).click();
     current=await state();assert.equal(current.deck.length,before.deck.length-1);assert.equal(current.players[0].dev.length,before.players[0].dev.length+1);
     assert.deepEqual(current.players[0].resources,before.players[0].resources.map((n,i)=>n-П.ЦЕНЫ.development[i]));
-    assert(current.players[0].dev.at(-1).bought===current.round);await p.screenshot({path:'tests/снимки/катан-v3-развитие.png'});await p.locator('#кат-закрыть').click();
+    assert(current.players[0].dev.at(-1).bought===current.round);
+    assert.equal(await p.locator('#кат-диалог-заголовок').innerText(),'Ваша новая карта');
+    assert.equal(await p.locator('.кат-новая-карта').getAttribute('data-card'),current.players[0].dev.at(-1).type);
+    assert.match(await p.locator('.кат-новая-описание').innerText(),current.players[0].dev.at(-1).type==='vp'?/Разыгрывать её не нужно/:/со следующего вашего хода/);
+    await p.screenshot({path:'tests/снимки/катан-v3-развитие.png'});await p.getByRole('button',{name:'В мои карты',exact:true}).click();assert(!(await p.locator('#кат-диалог').isVisible()));await p.locator('#кат-карты').click();assert.match(await p.locator('#кат-диалог').innerText(),/Ваша рука/);await p.locator('#кат-закрыть').click();
     await load(cases.bank);before=await state();let v=П.вид(before,0);const give=v.hand.findIndex((n,r)=>n>=v.rates[r]),want=v.bank.findIndex((n,r)=>n&&r!==give);
     await p.locator('#кат-обмен').click();await p.locator(`[data-bank-give="${give}"]`).click();await p.locator(`[data-bank-want="${want}"]`).click();await p.getByRole('button',{name:'Обменять',exact:true}).click();
     current=await state();assert.equal(current.players[0].resources[give],before.players[0].resources[give]-v.rates[give]);assert.equal(current.players[0].resources[want],before.players[0].resources[want]+1);await p.locator('#кат-закрыть').click();

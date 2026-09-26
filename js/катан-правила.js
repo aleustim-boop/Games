@@ -29,14 +29,33 @@
     return {hexes,vertices,edges};
   }
   const Г=геометрия();
-  function настройки(options={}){return {friendlyRobber:options?.friendlyRobber===true,easyStart:options?.easyStart===true,turnSeconds:[0,60,120,180].includes(options?.turnSeconds)?options.turnSeconds:0};}
+  // Вариант раскладки приложения: цепочки из трёх одинаковых земель исключены.
+  // Версии 1–2 сохраняют прежнюю случайность для воспроизведения старых партий.
+  function землиБезСкоплений(g){
+    const terrain=Array(19).fill(-1),counts=[4,3,4,4,3,1];
+    const neighbors=Г.hexes.map(h=>h.edges.flatMap(id=>Г.edges[id].hexes.filter(x=>x!==h.id)));
+    function place(id){
+      if(id===terrain.length)return true;
+      for(const resource of shuffle(g,[0,1,2,3,4,5])){
+        if(!counts[resource])continue;
+        const same=neighbors[id].filter(i=>terrain[i]===resource);
+        if(same.length>1||same.some(i=>neighbors[i].some(j=>j!==id&&terrain[j]===resource)))continue;
+        terrain[id]=resource;counts[resource]--;
+        if(place(id+1))return true;
+        counts[resource]++;terrain[id]=-1;
+      }
+      return false;
+    }
+    нужно(place(0),'Не удалось собрать остров');return terrain;
+  }
+  function настройки(options={}){return {friendlyRobber:options?.friendlyRobber===true,easyStart:options?.easyStart===true,turnSeconds:[0,60,120,180].includes(options?.turnSeconds)?options.turnSeconds:0,targetPoints:[10,12,15].includes(options?.targetPoints)?options.targetPoints:10,harbors:options?.harbors==='fixed'?'fixed':'random'};}
   function создать(n=4,seed=(Date.now()^Math.floor(Math.random()*1e9))>>>0,secure=false,rules=1,options={}){
     нужно([3,4].includes(n),'Нужно 3 или 4 игрока');
     нужно(!secure||secureRandom,'Защищённая случайность доступна на сервере');
     const g={version:1,seed:seed||1,n,turn:0,round:1,phase:'setupSettlement',bank:[19,19,19,19,19],roads:Array(72).fill(-1),buildings:Array(54).fill(null),players:Array.from({length:n},()=>({resources:нули(),dev:[],knights:0})),deck:[],log:[],serial:0,dice:null,offer:null,roadOwner:-1,armyOwner:-1,lengths:Array(n).fill(0),winner:-1,playedDev:false,discard:Array(n).fill(0),setupIndex:0,lastSettlement:-1,freeRoads:0,returnPhase:'main'};
     g.secure=Boolean(secure);
     g.options=настройки(options);
-    const terrain=shuffle(g,[0,0,0,0,1,1,1,2,2,2,2,3,3,3,3,4,4,4,5]);
+    const terrain=rules>=3?землиБезСкоплений(g):shuffle(g,[0,0,0,0,1,1,1,2,2,2,2,3,3,3,3,4,4,4,5]);
     let nums,valid=false;
     while(!valid){
       const ns=shuffle(g,[2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12]);let p=0;
@@ -47,13 +66,16 @@
     const coast=Г.edges.filter(e=>e.hexes.length===1).sort((a,b)=>{
       const p=Г.vertices[a.a],q=Г.vertices[a.b],r=Г.vertices[b.a],s=Г.vertices[b.b];return Math.atan2(p.y+q.y,p.x+q.x)-Math.atan2(r.y+s.y,r.x+s.x);
     });
-    const types=shuffle(g,[-1,-1,-1,-1,0,1,2,3,4]);
-    g.ports=[0,3,6,10,13,16,20,23,26].map((j,i)=>({edge:coast[j].id,resource:types[i]}));
+    // Классическая береговая рамка: иллюстрация A официальных правил CATAN (2020).
+    // Старые версии сохраняют и расположение, и порядок вызовов генератора.
+    const types=rules>=3&&g.options.harbors==='fixed'?[0,-1,3,4,-1,2,-1,-1,1]:shuffle(g,[-1,-1,-1,-1,0,1,2,3,4]);
+    const slots=rules>=3?[0,3,6,9,13,16,19,22,26]:[0,3,6,10,13,16,20,23,26];
+    g.ports=slots.map((j,i)=>({edge:coast[j].id,resource:types[i]}));
     g.deck=shuffle(g,[...Array(14).fill('knight'),...Array(5).fill('vp'),...Array(2).fill('roads'),...Array(2).fill('plenty'),...Array(2).fill('monopoly')]);
     g.start=Math.floor(random(g)*n);
     if(rules>=2){
       // Старые записи ходов продолжают использовать прежнюю последовательность случайности.
-      g.rules=2;g.startRolls=[];let candidates=Array.from({length:n},(_,i)=>i);
+      g.rules=rules>=3?3:2;g.startRolls=[];let candidates=Array.from({length:n},(_,i)=>i);
       while(candidates.length>1){const rolls=candidates.map(player=>({player,dice:[1+Math.floor(random(g)*6),1+Math.floor(random(g)*6)]}));g.startRolls.push(rolls);const max=Math.max(...rolls.map(x=>сумма(x.dice)));candidates=rolls.filter(x=>сумма(x.dice)===max).map(x=>x.player);}
       g.start=candidates[0];
     }
@@ -86,7 +108,7 @@
   function очки(g,p,hidden=true){return g.buildings.reduce((s,b)=>s+(b?.owner===p?b.level:0),0)+(g.roadOwner===p?2:0)+(g.armyOwner===p?2:0)+(hidden?g.players[p].dev.filter(d=>d.type==='vp').length:0);}
   function итог(g){
     g.lengths=g.players.map((_,i)=>длина(g,i));g.roadOwner=награда(g.lengths,g.roadOwner,5);g.armyOwner=награда(g.players.map(p=>p.knights),g.armyOwner,3);
-    if(g.phase!=='finished'&&!g.phase.startsWith('setup')&&очки(g,g.turn)>=10){g.winner=g.turn;g.phase='finished';g.offer=null;}
+    if(g.phase!=='finished'&&!g.phase.startsWith('setup')&&очки(g,g.turn)>=(g.options?.targetPoints||10)){g.winner=g.turn;g.phase='finished';g.offer=null;}
   }
   function хватит(h,cost){return cost.every((n,i)=>h[i]>=n);}
   function pay(g,p,cost){нужно(хватит(g.players[p].resources,cost),'Не хватает ресурсов');cost.forEach((n,i)=>{g.players[p].resources[i]-=n;g.bank[i]+=n;});}
@@ -112,28 +134,34 @@
   }
   function завершитьРазбойника(g){g.phase=g.returnPhase;g.returnPhase='main';}
   function украсть(g,p,victim){
-    const h=g.players[victim].resources;let index=Math.floor(random(g)*сумма(h));
-    for(let r=0;r<5;r++){if(index<h[r]){h[r]--;g.players[p].resources[r]++;break;}index-=h[r];}
-    событие(g,p,'steal',{victim});завершитьРазбойника(g);
+    const h=g.players[victim].resources;let index=Math.floor(random(g)*сумма(h)),rForStolen=-1;
+    for(let r=0;r<5;r++){if(index<h[r]){h[r]--;g.players[p].resources[r]++;rForStolen=r;break;}index-=h[r];}
+    событие(g,p,'steal',g.rules>=3?{victim,resource:rForStolen}:{victim});завершитьРазбойника(g);
   }
   function применить(g,p,a){
     нужно(Number.isInteger(p)&&p>=0&&p<g.n&&g.phase!=='finished','Партия недоступна');
     нужно(a&&typeof a.type==='string','Неизвестное действие');
     if(a.type==='surrender'){g.phase='finished';g.winner=-1;g.surrendered=p;g.offer=null;событие(g,p,'surrender');return;}
     if(a.type==='accept'){
-      const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&a.offer===o.id,'Предложение уже недоступно');
+      const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p)&&a.offer===o.id,'Предложение уже недоступно');
       нужно(хватит(g.players[p].resources,o.want)&&хватит(g.players[o.from].resources,o.give),'Ресурсы для обмена изменились');
       for(let r=0;r<5;r++){g.players[p].resources[r]+=o.give[r]-o.want[r];g.players[o.from].resources[r]+=o.want[r]-o.give[r];}
-      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});g.offer=null;return;
+      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});if(g.rules>=3)g.tradeStatus={type:'accepted',from:o.from,by:p};g.offer=null;return;
     }
-    if(a.type==='offer'){
+    if(a.type==='reject'){
+      const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Предложение уже недоступно');
+      (o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
+      if(o.to>=0||o.rejected.length===g.n-1){g.tradeStatus={type:'rejected',from:o.from};g.offer=null;}return;
+    }
+    if(a.type==='offer'||a.type==='counter'){
       нужно(g.phase==='main','Обмен доступен после броска');
+      if(a.type==='counter'){const o=g.offer;нужно(o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&a.to===o.from,'Предложение уже недоступно');}
       нужно(Number.isInteger(a.to)&&a.to>=-1&&a.to<g.n&&a.to!==p&&(p===g.turn||a.to===g.turn),'Обмен только с активным игроком');
       нужно(ресурсы(a.give)&&ресурсы(a.want)&&сумма(a.give)>0&&сумма(a.want)>0&&a.give.every((n,i)=>!n||!a.want[i]),'Выберите разные ресурсы с обеих сторон');
       нужно(хватит(g.players[p].resources,a.give),'У вас нет предложенных ресурсов');
-      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice()};событие(g,p,'offer');return;
+      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice()};if(g.rules>=3)g.tradeStatus=null;событие(g,p,'offer',a.type==='counter'?{counter:true}:{});return;
     }
-    if(a.type==='cancelOffer'){нужно(g.offer&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');g.offer=null;return;}
+    if(a.type==='cancelOffer'){нужно(g.offer&&(a.offer===undefined||a.offer===g.offer.id)&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');if(g.rules>=3)g.tradeStatus={type:'cancelled',from:g.offer.from};g.offer=null;return;}
     if(a.type==='discard'){
       нужно(g.phase==='discard'&&g.discard[p]>0,'Вам не нужно сбрасывать карты');
       нужно(ресурсы(a.resources)&&сумма(a.resources)===g.discard[p]&&хватит(g.players[p].resources,a.resources),'Выберите ровно половину ресурсов');
@@ -200,10 +228,25 @@
     if(a.type==='development')g.players[p].dev.push({type:g.deck.pop(),bought:g.round});
     событие(g,p,a.type,{...(Number.isInteger(a.vertex)?{vertex:a.vertex}:{}),...(Number.isInteger(a.edge)?{edge:a.edge}:{})});
   }
-  function действие(g,p,a){const draft=копия(g);применить(draft,p,a);итог(draft);Object.assign(g,draft);return g;}
+  function можноОтменить(g,p){return g.phase!=='finished'&&g.turn===p&&g._undo?.player===p&&g._undo.serial===g.serial;}
+  function действие(g,p,a){
+    if(a?.type==='undo'){
+      нужно(можноОтменить(g,p)&&a.serial===g.serial,'Это действие уже нельзя отменить');
+      const restored=копия(g._undo.before),action=g._undo.action;
+      // История остаётся последовательной: клиенты видят отдельное событие отмены.
+      restored.log=копия(g.log);restored.serial=g.serial;restored._undo=null;
+      событие(restored,p,'undo',{action});Object.assign(g,restored);return g;
+    }
+    const draft=копия({...g,_undo:null});применить(draft,p,a);итог(draft);
+    const reversible=!g.offer&&g.turn===p&&draft.turn===p&&draft.phase!=='finished'&&
+      (g.phase==='setupSettlement'&&a.type==='settlement'||g.phase==='freeRoad'&&a.type==='road'||
+       g.phase==='main'&&['road','settlement','city','bank'].includes(a.type));
+    if(reversible)draft._undo={player:p,serial:draft.serial,action:a.type,before:копия({...g,_undo:null})};
+    Object.assign(g,draft);return g;
+  }
   function вид(g,me){
     нужно(Number.isInteger(me)&&me>=0&&me<g.n,'Игрок не найден');
-    const h=g.players[me].resources,legal={road:[],settlement:[],city:[],robber:[],development:false,dev:[]},mine=me===g.turn;
+    const h=g.players[me].resources,legal={road:[],settlement:[],city:[],robber:[],development:false,dev:[],undo:можноОтменить(g,me),undoAction:можноОтменить(g,me)?g._undo.action:null},mine=me===g.turn;
     if(mine){
       if(g.phase==='robber')legal.robber=местаРазбойника(g);
       if(g.phase==='setupSettlement')legal.settlement=поселения(g,me,true);
@@ -219,7 +262,7 @@
     }
     return копия({version:1,options:настройки(g.options),n:g.n,me,turn:g.turn,actor:кто(g),round:g.round,phase:g.phase,hexes:g.hexes,ports:g.ports,roads:g.roads,buildings:g.buildings,robber:g.robber,bank:g.bank,dice:g.dice,deckCount:g.deck.length,
       players:g.players.map((p,i)=>({score:очки(g,i,i===me||g.phase==='finished'),cards:сумма(p.resources),devCount:p.dev.length,victoryCards:i===me||g.phase==='finished'?p.dev.filter(d=>d.type==='vp').length:null,knights:p.knights,pieces:фигуры(g,i),roadLength:g.lengths[i]})),hand:h,dev:g.players[me].dev,legal,
-      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log,serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
+      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,tradeStatus:g.tradeStatus||null,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log.map(e=>{if(e.type!=='steal'||e.player===me||e.victim===me)return e;const {resource,...publicEvent}=e;return publicEvent;}),serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
   }
   const api={РЕСУРСЫ,ЦЕНЫ,Г,создать,действие,вид,кто,очки,длина,поселения,дороги,курс,произвести,итог,фигуры,сумма,настройки,местаРазбойника};
   if(typeof module!=='undefined')module.exports=api;else root.КатанПравила=api;

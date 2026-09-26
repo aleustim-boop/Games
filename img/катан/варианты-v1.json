@@ -1,0 +1,32 @@
+[
+  {
+    "file": "руда-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Production game texture atlas for a premium CATAN-inspired island. A single square image, exact 2 by 2 grid of four equal square terrain texture cells, no gaps or borders. Four visibly DIFFERENT landscape compositions of ORE MOUNTAINS: upper left jagged slate peaks with silver ore veins; upper right stepped rocky quarry with scattered dark ore boulders; lower left craggy ridge around an ore scree valley; lower right two rocky spires and mineral outcrop. Same overhead isometric miniature realism as supplied reference, cool slate grey, blue grey and silver, restrained saturation, clearly distinguishable from green forest, light green pasture, terracotta clay and golden wheat. Every cell filled edge to edge with terrain, consistent overhead camera and sun from top left. No letters, labels, numbers, tokens, houses, roads, hex borders, UI or background margins. Reference is STYLE only; generate ONLY four distinct ore terrains. All four centers must have interesting visible mountainous detail. 2048 square."
+  },
+  {
+    "file": "лес-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Production single square game texture atlas, exact 2 by 2 grid of four equal square cells, NO margins gaps or frames. Four visibly different FORESTS: deep pine forest with fallen logs; mixed oak grove with broad crowns; dense fir grove around an old stump; birch copse with a woodpile. Same premium overhead isometric miniature realism as supplied reference. Palette: rich restrained emerald and deep green. Terrain fills each square edge to edge. Equal square quadrants, consistent scale and camera, sun from top left. No text, numbers, tokens, houses, roads, hex borders, UI. Reference is STYLE only. Generate ONLY these four variants; recognizable subject near each cell center. 2048 square."
+  },
+  {
+    "file": "глина-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Production single square game texture atlas, exact 2 by 2 grid of four equal square cells, NO margins gaps or frames. Four visibly different CLAY HILLS: layered terracotta canyon; ochre-red clay excavation with rough bricklike chunks; rounded red clay hills with exposed strata; cracked clay plateau and red rock outcrop. Same premium overhead isometric miniature realism as supplied reference. Palette: distinct warm reddish terracotta and rusty orange. Terrain fills each square edge to edge. Equal square quadrants, consistent scale and camera, sun from top left. No text, numbers, tokens, houses, roads, hex borders, UI. Reference is STYLE only. Generate ONLY these four variants; recognizable subject near each cell center. 2048 square."
+  },
+  {
+    "file": "пастбище-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Production single square game texture atlas, exact 2 by 2 grid of four equal square cells, NO margins gaps or frames. Four visibly different SHEEP PASTURES: open grassy slope with four clearly visible sheep; clover meadow with three sheep grouped by a shrub; rolling pasture with sheep along a narrow dirt path; bright green meadow with five sheep around wildflowers. Same premium overhead isometric miniature realism as supplied reference. Palette: light fresh yellow green grass and ivory sheep, no forest. Terrain fills each square edge to edge. Equal square quadrants, consistent scale and camera, sun from top left. No text, numbers, tokens, houses, roads, hex borders, UI. Reference is STYLE only. Generate ONLY these four variants; recognizable subject near each cell center. 2048 square."
+  },
+  {
+    "file": "зерно-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Production single square game texture atlas, exact 2 by 2 grid of four equal square cells, NO margins gaps or frames. Four visibly different WHEAT FIELDS: golden unharvested wheat with curved crop rows; sheaves of harvested wheat and stubble; dense amber wheat and a small haystack; golden wheat field with a winding harvested strip. Same premium overhead isometric miniature realism as supplied reference. Palette: muted warm golden ochre and honey, no green grass. Terrain fills each square edge to edge. Equal square quadrants, consistent scale and camera, sun from top left. No text, numbers, tokens, houses, roads, hex borders, UI. Reference is STYLE only. Generate ONLY these four variants; recognizable subject near each cell center. 2048 square."
+  },
+  {
+    "file": "разбойник-варианты-v1.webp",
+    "tool": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. One production game sprite, transparent RGBA background. A clearly recognizable hooded medieval ROBBER miniature, full body, front three-quarter view slightly from above. Charcoal dark navy cloak with readable bright slate rim highlights, face mostly in hood shadow, visible leather belt and bulging brown stolen sack held at side, sturdy boots, small round sandstone-colored miniature base. Premium hand-painted sculpted boardgame figure, strong silhouette readable at 65px high. NOT a chess pawn, NOT a knight, no horse, no sword. Warm light top left. Figure centered and fills 90 percent canvas height, fully inside frame. No text, UI, scenery, opaque backdrop, watermark. 1024 square transparent cutout."
+  }
+]

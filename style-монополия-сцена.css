@@ -777,3 +777,19 @@ html.в-телеграме .монополия #экран-игры .mono-top > 
   visibility: hidden;
   pointer-events: none;
 }
+
+.монополия .mono-cell text { font-family: Onest, system-ui, sans-serif; }
+@media (max-width: 600px) {
+  body.монополия:has(#экран-игры.экран--виден) #приложение { padding-inline: 4px; }
+  body.монополия #экран-игры { padding-inline: 0; width: 100%; }
+  .монополия #экран-игры > .mono-top,
+  .монополия #экран-игры > .mono-players { padding-inline: 6px; }
+  .монополия .mono-layout { width: 100%; }
+  .монополия .mono-board { border-width: 2px; }
+}
+@media (min-width: 601px) and (max-width: 999px) {
+  .монополия .mono-layout { max-width: min(600px, max(300px, calc(100dvh - 380px))); margin-inline: auto; }
+}
+@media (min-width: 1000px) {
+  .монополия .mono-layout { grid-template-columns: minmax(0, min(760px, calc(100dvh - 245px - var(--отступ-сверху, 0px)))) minmax(260px, 320px); justify-content: center; }
+}

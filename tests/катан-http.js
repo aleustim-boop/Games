@@ -7,7 +7,7 @@ const server=require('../server/сервер').создатьСервер(),Б=r
   const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,200,JSON.stringify(data));return data;};
   try{
     for(const n of [3,4]){
-      const options={friendlyRobber:n===4,easyStart:n===4,turnSeconds:n===4?120:0};
+      const options={harbors:n===4?'fixed':'random',friendlyRobber:n===4,easyStart:n===4,turnSeconds:n===4?120:0};
       const a=await req('создать',{игра:'катан',имя:'Анна',мест:n,катанНастройки:options}),players=[{код:a.код,пропуск:a.пропуск}];
       for(let i=1;i<n;i++){const p=await req('войти',{код:a.код,имя:`Участник ${i}`});players.push({код:a.код,пропуск:p.пропуск});}
       const turn=(i,action)=>req('ход',{...players[i],...action});assert.equal((await turn(0,{действие:'начать'})).принято,true);
@@ -15,12 +15,23 @@ const server=require('../server/сервер').создатьСервер(),Б=r
       while(count++<2000){
         const states=await Promise.all(players.map(p=>req('состояние',p))),views=states.map(s=>(s.состояние||s).катан),v=views[0];
         assert(v);assert.equal(v.names[1],'Участник 1');
-        assert.deepEqual(v.options,options);if(n===4&&v.phase!=='finished')assert(v.secondsLeft>0&&v.secondsLeft<=120);
+        assert.deepEqual(v.options,{...options,targetPoints:10});if(n===4&&v.phase!=='finished')assert(v.secondsLeft>0&&v.secondsLeft<=120);
         for(const view of views){assert.equal(view.hand.length,5);assert(!('seed'in view));assert(!('deck'in view));assert(view.players.every(p=>!('resources'in p)&&!('dev'in p)));}
         if(v.phase==='finished')break;
         const who=v.actor,move=Б.ход(views[who],'сложный');
         if(!['discard','accept','offer'].includes(move.type))assert.equal((await turn((who+1)%n,{действие:'катан',move})).принято,false);
         const answer=await turn(who,{действие:'катан',move});assert.equal(answer.принято,true,JSON.stringify({answer,move,phase:v.phase}));
+        if(count===1){
+          const state=await req('состояние',players[who]),after=(state.состояние||state).катан;
+          assert(after.legal.undo);assert(!('_undo' in after));assert(!('before' in after.legal));
+          const undo={действие:'катан',move:{type:'undo',serial:after.serial}};
+          assert.equal((await turn((who+1)%n,undo)).принято,false,'Нельзя отменить чужое действие');
+          assert.equal((await turn(who,undo)).принято,true);
+          assert.equal((await turn(who,undo)).принято,false,'Повторная отправка не отменяет ещё один ход');
+          const restored=await req('состояние',players[who]),again=(restored.состояние||restored).катан;
+          assert.equal(again.phase,'setupSettlement');assert.deepEqual(again.buildings,v.buildings);
+          assert.equal((await turn(who,{действие:'катан',move})).принято,true);
+        }
       }
       assert(count<2000,'Партия зависла');for(let i=0;i<n;i++)assert.equal((await turn(i,{действие:'ещё'})).принято,true);
       const again=await req('состояние',players[0]);assert.equal((again.состояние||again).катан.phase,'setupSettlement');

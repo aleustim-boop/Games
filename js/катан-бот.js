@@ -36,10 +36,18 @@
     return 'development';
   }
   function обмен(v){
-    const o=v.offer;if(!o||o.from===v.me||o.to>=0&&o.to!==v.me||!o.want.every((n,i)=>n<=v.hand[i]))return null;
+    const o=v.offer;if(!o||o.from===v.me||o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me)||!o.want.every((n,i)=>n<=v.hand[i]))return null;
     const cost=П.ЦЕНЫ[цель(v)],before=cost.reduce((s,n,i)=>s+Math.max(0,n-v.hand[i]),0),after=cost.reduce((s,n,i)=>s+Math.max(0,n-v.hand[i]-o.give[i]+o.want[i]),0);
     return after<before&&sum(o.want)<=sum(o.give)+1?{type:'accept',offer:o.id}:null;
   }
+  function предложение(v){
+    if(v.phase!=='main'||v.turn!==v.me||v.offer||v.log.some(e=>e.type==='offer'&&e.player===v.me&&e.id>(v.log.findLast(e=>e.type==='end')?.id||0)))return null;
+    const cost=П.ЦЕНЫ[цель(v)],want=cost.map((n,r)=>({r,need:n-v.hand[r]})).filter(x=>x.need>0).sort((a,b)=>b.need-a.need)[0];
+    if(!want||!v.players.some((p,i)=>i!==v.me&&p.cards>0))return null;
+    const give=v.hand.map((n,r)=>({r,extra:n-cost[r]})).filter(x=>x.r!==want.r&&x.extra>0).sort((a,b)=>b.extra-a.extra)[0];if(!give)return null;
+    const a=[0,0,0,0,0],b=a.slice();a[give.r]=1;b[want.r]=1;return {type:'offer',to:-1,give:a,want:b};
+  }
+  function ответНаОбмен(v){const o=v.offer;if(v.phase!=='main'||!o||o.from===v.me||o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me))return null;return обмен(v)||{type:'reject',offer:o.id};}
   function ход(v,level='обычный'){
     const plain=id=>Г.vertices[id].hexes.reduce((s,h)=>s+(v.hexes[h].number?6-Math.abs(7-v.hexes[h].number):0),0);
     const score=id=>level==='сложный'?ценность(v,id):plain(id);
@@ -50,7 +58,7 @@
       for(let i=0;i<v.discard[p];i++){const r=left.map((n,r)=>({r,w:n-cost[r]})).filter(x=>left[x.r]>0).sort((a,b)=>b.w-a.w)[0].r;left[r]--;resources[r]++;}
       return {type:'discard',resources};
     }
-    const trade=обмен(v);if(trade)return trade;
+    const trade=ответНаОбмен(v);if(trade)return trade;
     if(v.turn!==p)return null;
     if(v.phase==='setupSettlement')return {type:'settlement',vertex:level==='лёгкий'?pick(v.legal.settlement):rank(v.legal.settlement)[0]};
     if(v.phase==='setupRoad'||v.phase==='freeRoad')return {type:'road',edge:путь(v)?.edge&&v.legal.road.includes(путь(v).edge)?путь(v).edge:v.legal.road[0]};
@@ -62,6 +70,7 @@
     if(v.legal.dev.includes('knight'))return {type:'dev',card:'knight'};
     if(v.phase==='roll')return {type:'roll'};
     if(v.phase!=='main')return null;
+    if(v.offer?.from===p)return {type:'cancelOffer',offer:v.offer.id};
     if(v.legal.city.length)return {type:'city',vertex:rank(v.legal.city)[0]};
     if(v.legal.settlement.length)return {type:'settlement',vertex:rank(v.legal.settlement)[0]};
     const target=цель(v),cost=П.ЦЕНЫ[target];
@@ -77,6 +86,7 @@
     }
     if(v.legal.dev.includes('roads'))return {type:'dev',card:'roads'};
     if(v.legal.road.length&&target==='road'){const path=путь(v);return {type:'road',edge:path&&v.legal.road.includes(path.edge)?path.edge:v.legal.road[0]};}
+    const proposal=предложение(v);if(proposal)return proposal;
     for(let want=0;want<5;want++)if(v.hand[want]<cost[want]&&v.bank[want]>0){
       const give=v.hand.map((n,r)=>({r,surplus:n-cost[r]})).filter(x=>x.r!==want&&x.surplus>=v.rates[x.r]).sort((a,b)=>b.surplus-a.surplus)[0];if(give)return {type:'bank',give:give.r,want};
     }
@@ -85,5 +95,5 @@
     if(v.legal.road.length&&v.players[p].pieces.road<15&&sum(v.hand)>7)return {type:'road',edge:v.legal.road[0]};
     return {type:'end'};
   }
-  const api={ход,обмен,ценность};if(typeof module!=='undefined')module.exports=api;else root.КатанБот=api;
+  const api={ход,обмен,ответНаОбмен,предложение,ценность};if(typeof module!=='undefined')module.exports=api;else root.КатанБот=api;
 })(typeof window!=='undefined'?window:globalThis);

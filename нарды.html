@@ -209,7 +209,7 @@
          #строка-связи — не экран, а строка на #экран-игры
        ============================================================ -->
 
-  <link rel="stylesheet" href="style.css?v=94">
+  <link rel="stylesheet" href="style.css?v=97">
   <link rel="stylesheet" href="style-нарды.css?v=12">
 
   <style>
@@ -230,7 +230,7 @@
        он просто ничего не находит и не мешает. -->
   <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="style-коллекция.css?v=2">
-</head>
+<link rel="stylesheet" href="style-аватар.css?v=1"></head>
 <body>
 
 <!-- ЭТИ ИМЕНА РОВНО КАК В ШАШКАХ — так задумано (Э6 плана нард).
@@ -833,7 +833,7 @@
 </div>
 
 <!-- Общая дверь к Telegram: тема оформления и сохранение выбора. -->
-<script src="js/telegram.js?v=30"></script>
+<script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=1"></script>
 
 <!-- Правила нард. Проверены отдельно: node js/нарды-правила.js -->
 <script src="js/нарды-правила.js?v=3"></script>
@@ -851,7 +851,7 @@
 <!-- Разговор с сервером комнат: код стола, вход по коду, ходы и новости.
      Файл общий с дураком и шашками — второй дороги к серверу в проекте нет.
      Про нарды он знает одно: строку window.ИграСтраницы в шапке страницы. -->
-<script src="js/сеть.js?v=62"></script>
+<script src="js/сеть.js?v=63"></script>
 <!-- Дверь «Поделиться приложением» из лобби — общий файл с дураком и шашками,
      см. пояснение в шапке файла: порядок с js/сеть.js не важен. -->
 <script src="js/похвастаться.js?v=5"></script>
@@ -891,5 +891,5 @@
      и правила, и бот, и уже разобранная разметка. -->
 <script src="js/нарды-экран.js?v=17"></script>
 
-</body>
+<script src="js/популярность.js?v=1" data-game="нарды"></script></body>
 </html>
