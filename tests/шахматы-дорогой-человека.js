@@ -29,8 +29,15 @@ const path = require('path');
 const http = require('http');
 
 /* Боевую папку данных не трогаем даже случайно: проверки однажды уже
-   стёрли настоящие данные владельца. */
-process.env.GAMES_DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'шахматы-дорога-'));
+   стёрли настоящие данные владельца. Саму временную папку убираем по
+   выходу (process.on('exit') срабатывает и на process.exit(), и на
+   непойманную ошибку) — раньше она никогда не удалялась и копилась
+   на диске на каждый прогон. */
+const ПАПКА_ДАННЫХ = fs.mkdtempSync(path.join(os.tmpdir(), 'шахматы-дорога-'));
+process.env.GAMES_DATA = ПАПКА_ДАННЫХ;
+process.on('exit', function () {
+  try { fs.rmSync(ПАПКА_ДАННЫХ, { recursive: true, force: true, maxRetries: 3 }); } catch (е) { /* не страшно */ }
+});
 
 const КОРЕНЬ = path.join(__dirname, '..');
 const робот = require(path.join(КОРЕНЬ, 'tests', 'браузер-робот.js'));

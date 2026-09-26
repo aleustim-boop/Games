@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
-const GAMES=['нарды','шахматы','дурак','шашки','домино','морской-бой','катан','монополия','деберц'];
+const GAMES=['нарды','шахматы','дурак','шашки','домино','морской-бой','катан','монополия','деберц','2048','судоку'];
 const DAY=86400000;
 function создать(file=null){
   let days={},actors={},timer;

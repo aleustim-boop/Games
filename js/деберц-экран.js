@@ -101,18 +101,6 @@
     if (лист.открыт()) { лист.закрыть(); return; }
     отменитьТаймер(); location.href = 'index.html';
   }
-  function назад() {
-    if (диалог()) диалог().close();
-    else if (лист.открыт()) лист.закрыть();
-    else if (заСтолом) меню();
-    else if (эл('деберц-настройки').classList.contains('экран--виден')) меню();
-    else if (сетевыеЭкраны.some(id => эл(id)?.classList.contains('экран--виден'))) {
-      const кнопка = эл('экран-комнаты').classList.contains('экран--виден') ? эл('кнопка-комната-отмена')
-        : эл('экран-входа').classList.contains('экран--виден') ? эл('кнопка-вход-назад') : эл('кнопка-друг-назад');
-      кнопка.click();
-    }
-    else location.href = 'index.html';
-  }
   function карта(к, кнопка = false) {
     const узел = document.createElement(кнопка ? 'button' : 'div');
     узел.className = 'карта карта--рисованная';

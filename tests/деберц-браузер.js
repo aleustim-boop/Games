@@ -152,7 +152,10 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || '8137');
     }
     await страница.locator('#деберц-начать').click();
     assert.equal(await страница.locator('#деберц-цель-стола').textContent(), '501');
-    await страница.locator('#деберц-назад').click();
+    // «‹» (#деберц-назад) с 23.09 всегда уводит на index.html (общий список игр) —
+    // назад к лобби ДЕБЕРЦА теперь только через лист «⋯» → «В меню» (js/деберц-экран.js: кВыборуИгр/меню).
+    await страница.locator('#кнопка-игра-ещё').click();
+    await страница.locator('#кнопка-лист-игры-меню').click();
     const сохранённая = await страница.evaluate(() => localStorage.getItem('deberts_local_v1'));
     await страница.reload();
     assert.equal(await страница.evaluate(() => localStorage.getItem('deberts_local_v1')), сохранённая);
@@ -164,14 +167,17 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || '8137');
     assert(await страница.locator('#деберц-новая-партия').isVisible());
     await страница.locator('#деберц-новая-партия form button').click();
     assert.equal(await страница.evaluate(() => localStorage.getItem('deberts_local_v1')), сохранённая, 'Отмена сохраняет прежнюю партию');
-    await страница.locator('#деберц-настройки [data-путь="назад"]').click();
+    // Тот же случай: «‹» экрана настроек тоже привязана к кВыборуИгр (index.html).
+    await страница.locator('#деберц-настройки-ещё').click();
+    await страница.locator('#кнопка-лист-игры-меню').click();
     await страница.locator('#деберц-продолжить').click();
     assert.equal(await страница.locator('#деберц-цель-стола').textContent(), '501');
     await страница.locator('#кнопка-игра-ещё').click();
     await страница.locator('#кнопка-лист-игры-правила').click();
     assert(await страница.locator('#деберц-справка').isVisible());
     await страница.getByRole('button', { name: 'Понятно', exact: true }).click();
-    await страница.locator('#деберц-назад').click();
+    await страница.locator('#кнопка-игра-ещё').click();
+    await страница.locator('#кнопка-лист-игры-меню').click();
     assert(await страница.locator('#деберц-продолжить').isVisible());
     await страница.locator('#деберц-продолжить').click();
     // Ускоряем только паузы бота, действия игрока — настоящие нажатия.

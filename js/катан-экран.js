@@ -2,6 +2,22 @@
 (function(){
   const П=window.КатанПравила,Б=window.КатанБот,$=id=>document.getElementById(id);
   const KEY='catan-match-v1',PREF='catan-settings',HIST='catan-history';
+  // Только неинтерактивное название между системными кнопками полного экрана.
+  // В обычном окне заголовок остаётся внутри страницы: нативная панель вне WebView.
+  let headerTelegram=null;
+  function syncTelegramHeader(){
+    const tg=window.Telegram?.WebApp,root=$('экран-игры');
+    const systemTop=Math.max(0,Number(tg?.safeAreaInset?.top)||0);
+    const headerHeight=Math.max(0,Number(tg?.contentSafeAreaInset?.top)||0);
+    root.classList.toggle('кат-заголовок-в-телеграме',tg?.isFullscreen===true&&headerHeight>=40);
+    root.style.setProperty('--кат-система-сверху',systemTop+'px');
+    root.style.setProperty('--кат-шапка-телеграма',headerHeight+'px');
+    if(tg&&headerTelegram!==tg){
+      headerTelegram=tg;
+      for(const event of ['fullscreenChanged','safeAreaChanged','contentSafeAreaChanged'])tg.onEvent?.(event,syncTelegramHeader);
+    }
+  }
+  syncTelegramHeader();document.addEventListener('DOMContentLoaded',syncTelegramHeader);
   const ресурсы=['Дерево','Глина','Шерсть','Зерно','Руда'];
   const названия={road:'Дорога',settlement:'Поселение',city:'Город',development:'Развитие',knight:'Рыцарь',roads:'Строительство дорог',plenty:'Изобилие',monopoly:'Монополия',vp:'Победное очко'};
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};
@@ -150,7 +166,7 @@
     if($('экран-лобби').classList.contains('экран--виден'))location.href='index.html';
     else screen('экран-лобби');
   }
-  function zoom(on){const map=document.querySelector('.кат-карта');map.classList.toggle('увеличена',on);$('кат-масштаб').textContent=on?'Готово ↙':'Увеличить ↗';if(on)requestAnimationFrame(()=>{const w=$('кат-окно-карты');w.scrollLeft=(w.scrollWidth-w.clientWidth)/2;w.scrollTop=(w.scrollHeight-w.clientHeight)/2;});}
+  function zoom(on){const map=document.querySelector('.кат-карта');map.classList.toggle('увеличена',on);$('кат-масштаб').textContent=on?'Готово ↙':'Увеличить ↗';$('кат-масштаб').setAttribute('aria-label',on?'Вернуть обычный размер поля':'Увеличить поле');$('кат-масштаб').title=on?'Вернуть обычный размер поля':'Увеличить поле';if(on)requestAnimationFrame(()=>{const w=$('кат-окно-карты');w.scrollLeft=(w.scrollWidth-w.clientWidth)/2;w.scrollTop=(w.scrollHeight-w.clientHeight)/2;});}
   function fresh(){
     clearPresentation();selected=null;online=false;network=null;mode=null;lastResult='';busy=false;lastSerial=null;
     const seed=crypto.getRandomValues(new Uint32Array(1))[0]||1;
@@ -269,7 +285,7 @@
   }
   function positionDice(){
     const dice=$('кат-кубики');dice.hidden=!v.dice;if(!v.dice)return;const scene=document.querySelector('.кат-сцена'),roll=v.log.findLast(e=>e.type==='roll'),card=$('кат-игроки').querySelector('[data-player="'+(roll?.player??v.turn)+'"]');if(!card)return;if(dice.parentElement!==scene)scene.append(dice);
-    const base=scene.getBoundingClientRect(),r=card.getBoundingClientRect(),bottom=r.y>base.y+base.height/2;dice.style.left=Math.max(0,Math.min(base.width-dice.offsetWidth,r.left-base.left))+'px';dice.style.top=(bottom?r.top-base.top-dice.offsetHeight-45:r.bottom-base.top+5)+'px';dice.dataset.player=roll?.player??v.turn;
+    const base=scene.getBoundingClientRect(),r=card.getBoundingClientRect(),bottom=r.y>base.y+base.height/2;dice.style.left=Math.max(0,Math.min(base.width-dice.offsetWidth,r.left-base.left))+'px';dice.style.top=(bottom?r.top-base.top-dice.offsetHeight-44:r.bottom-base.top+5)+'px';dice.dataset.player=roll?.player??v.turn;
   }
   window.addEventListener('resize',()=>{if(v&&$('экран-игры').classList.contains('экран--виден'))requestAnimationFrame(positionDice);});
   function chooseResources(title,limit,count,done){
