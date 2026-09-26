@@ -20,3 +20,6 @@ Premium Minesweeper puzzle game cover, landscape 3:2, cinematic photorealistic s
 
 ## Маджонг — img/casual/mahjong.png
 Premium landscape 3:2 editorial game cover for Mahjong solitaire. Real tactile ivory mahjong tiles arranged in a small graceful layered arch on deep emerald green velvet, beveled thick ivory sides, several clear faces with traditional three red circles, green bamboo, red 中 character. No invented long text, no labels, no logos, no interface, no people. Warm brass and golden edge illumination, dark cinematic background, realistic macro still life.
+
+## Блоки — img/casual/blocks.png
+Premium landscape 3:2 still-life artwork for an 8x8 block puzzle game, emerald green and warm gold luxury tabletop collection. A clean square eight by eight inset board in dark green polished stone with brushed brass border. Chunky translucent amber and emerald ceramic polyomino pieces neatly placed on squares and three spare geometric pieces nearby. No text or logos. Macro photography, tactile rounded edges, warm cinematic light, dark velvet table, crisp realistic craftsmanship.

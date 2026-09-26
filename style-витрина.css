@@ -101,3 +101,6 @@
 
 #экран-витрины [data-игра="маджонг"] { --catalog-art:url('img/casual/mahjong.png'); }
 #экран-витрины [data-игра="маджонг"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="блоки"] { --catalog-art:url('img/casual/blocks.png'); }
+#экран-витрины [data-игра="блоки"]::before { background-size:cover; background-position:center; }
