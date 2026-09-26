@@ -3,7 +3,7 @@
 <head>
  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
  <meta name="theme-color" content="#0c1518"><title>2048 — Игры с друзьями</title>
- <link rel="stylesheet" href="style-2048.css?v=1"><link rel="stylesheet" href="style-аватар.css?v=1">
+ <link rel="stylesheet" href="style-2048.css?v=2"><link rel="stylesheet" href="style-аватар.css?v=1">
  <script>window.ИграСтраницы='2048';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 </head>
 <body>
@@ -13,18 +13,24 @@
    <div class="intro"><span class="eyebrow">ЛОГИКА · ОДИН ИГРОК</span><h1>2048<span class="title-dot">.</span></h1><p>Маленький ход.<br><em>Большое число.</em></p></div>
    <figure class="cover"><img src="img/2048/cover-v1.png" alt="Объёмные плитки 128, 512 и золотая 2048" fetchpriority="high"><figcaption><span>СОЕДИНЯЙ. ПРОДУМЫВАЙ. ПОБЕЖДАЙ.</span></figcaption></figure>
    <div class="lobby-bottom">
+    <div class="mode-picker" role="group" aria-label="Вариант игры">
+     <button data-mode="classic" aria-pressed="true"><span class="mode-art classic-art" aria-hidden="true"><b>2</b><b>4</b><b>8</b><b>16</b></span><strong>Классика</strong><small>Свайпы · поле 4 × 4</small></button>
+     <button data-mode="falling" aria-pressed="false"><span class="mode-art falling-art" aria-hidden="true"><b>4</b><i>↓</i><b>4</b></span><strong>Падающие числа</strong><small>Лови момент · поле 5 × 7</small></button>
+    </div>
     <div class="personal"><span class="avatar" data-my-avatar aria-hidden="true">◈</span><div><strong id="player-name">Ваш личный вызов</strong><span>Рекорд на этом устройстве</span></div><b id="lobby-best">0</b></div>
     <button id="play" class="primary">Начать игру <span>↗</span></button>
-    <div class="lobby-links"><button id="how">Как играть <span>?</span></button><span>4 × 4 · без таймера</span></div>
+    <div class="lobby-links"><button id="how">Как играть <span>?</span></button><span id="mode-description">4 × 4 · без таймера</span></div>
    </div>
   </section>
   <section id="экран-игры" class="screen" hidden>
    <div class="game-heading"><div><span class="eyebrow">СЛЕДУЮЩИЙ ХОД — ВАШ</span><h1>2048<span class="title-dot">.</span></h1></div><button class="icon-button" id="game-help" aria-label="Как играть">?</button></div>
-   <div class="scores"><div><span>СЧЁТ</span><strong id="score">0</strong><b id="score-gain" aria-hidden="true"></b></div><div><span>ЛИЧНЫЙ РЕКОРД</span><strong id="best">0</strong></div><div><span>ХОДЫ</span><strong id="moves">0</strong></div></div>
+   <div class="scores"><div><span>СЧЁТ</span><strong id="score">0</strong><b id="score-gain" aria-hidden="true"></b></div><div><span>ЛИЧНЫЙ РЕКОРД</span><strong id="best">0</strong></div><div><span id="moves-label">ХОДЫ</span><strong id="moves">0</strong></div></div>
    <div class="journey"><div><span>Путь к <b>2048</b></span><strong id="milestone">2 / 2048</strong></div><div class="progress" role="progressbar" aria-label="Прогресс к плитке 2048" aria-valuemin="0" aria-valuemax="11" aria-valuenow="1"><i id="progress-fill"></i></div></div>
+   <div id="falling-toolbar" hidden><span>Далее <b id="next-number">2</b></span><strong id="falling-status">Падающие числа</strong><button id="pause" class="secondary" aria-label="Пауза">Ⅱ</button></div>
    <div id="board" class="board" tabindex="0" role="group" aria-label="Поле 2048. Свайпайте или используйте стрелки клавиатуры.">
-    <div id="cells" class="board-layer" aria-hidden="true"></div><div id="tiles" class="board-layer"></div><div id="particles" aria-hidden="true"></div>
+    <div id="cells" class="board-layer" aria-hidden="true"></div><div id="tiles" class="board-layer"></div><div id="falling-layer" class="board-layer" hidden></div><div id="particles" aria-hidden="true"></div><button id="resume" class="pause-cover" hidden><span>Пауза</span><small>Нажмите, чтобы продолжить</small><b>▶</b></button>
    </div>
+   <div id="falling-controls" hidden><button data-fall-dir="left" class="secondary" aria-label="Блок влево">←</button><button id="drop" class="primary">Сбросить блок ↓</button><button data-fall-dir="right" class="secondary" aria-label="Блок вправо">→</button></div>
    <p class="hint" id="hint">Смахните в любую сторону. Одинаковые числа складываются.</p>
    <div class="game-actions"><button id="undo" class="secondary" disabled>↶ <span>Отменить ход</span></button><button id="new" class="secondary">↻ <span>Новая игра</span></button></div>
    <div class="direction-pad" aria-label="Кнопки направления"><button data-dir="left" aria-label="Влево">←</button><button data-dir="up" aria-label="Вверх">↑</button><button data-dir="down" aria-label="Вниз">↓</button><button data-dir="right" aria-label="Вправо">→</button></div>
@@ -33,5 +39,5 @@
   </section>
  </main>
  <dialog id="dialog" aria-labelledby="dialog-title"><button class="dialog-close icon-button" id="close-dialog" aria-label="Закрыть">×</button><div id="dialog-content"></div></dialog>
- <script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=1"></script><script src="js/2048-rules.js?v=1"></script><script src="js/2048-ui.js?v=1"></script><script src="js/популярность.js?v=1" data-game="2048"></script>
+ <script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=1"></script><script src="js/2048-rules.js?v=1"></script><script src="js/2048-falling.js?v=1"></script><script src="js/2048-ui.js?v=2"></script><script src="js/популярность.js?v=1" data-game="2048"></script>
 </body></html>
