@@ -47,6 +47,11 @@ const externalDomains = [
 ];
 
 // Функция для сбора подключений из списка файлов и функции получения содержимого
+//
+// Номер версии нужен только у настоящих подключений файла: <script src="...">
+// и <link rel="stylesheet" href="...">. Обычная ссылка <a href="страница.html">
+// или <link rel="icon" href="data:..."> — это не подключение файла, версия
+// там не нужна и её отсутствие не считаем ошибкой.
 function собратьПодключения(файлы, получитьСодержимое) {
   const connections = {};
 
@@ -54,12 +59,28 @@ function собратьПодключения(файлы, получитьСод
     const content = получитьСодержимое(htmlFile);
     if (!content) continue;
 
-    const regex = /(?:href|src)="([^"]+)"/g;
-    let match;
+    const тегRegex = /<(script|link)\b[^>]*>/gi;
+    let тегMatch;
+    const найденныеUrl = [];
 
-    while ((match = regex.exec(content)) !== null) {
-      const fullUrl = match[1];
+    while ((тегMatch = тегRegex.exec(content)) !== null) {
+      const тег = тегMatch[0];
+      const имяТега = тегMatch[1].toLowerCase();
 
+      if (имяТега === 'script') {
+        const srcMatch = тег.match(/\bsrc="([^"]+)"/);
+        if (srcMatch) найденныеUrl.push(srcMatch[1]);
+      } else {
+        // link — версия нужна только у подключения стилей, не у иконок и прочего
+        const relMatch = тег.match(/\brel="([^"]+)"/i);
+        const этоСтили = relMatch && relMatch[1].toLowerCase() === 'stylesheet';
+        if (!этоСтили) continue;
+        const hrefMatch = тег.match(/\bhref="([^"]+)"/);
+        if (hrefMatch) найденныеUrl.push(hrefMatch[1]);
+      }
+    }
+
+    for (const fullUrl of найденныеUrl) {
       let isExternal = false;
       for (const domain of externalDomains) {
         if (fullUrl.startsWith(domain)) {
