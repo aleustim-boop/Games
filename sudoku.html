@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1919">
+<title>Судоку — Игры с друзьями</title><link rel="stylesheet" href="style-sudoku.css?v=1">
+<script>window.ИграСтраницы='судоку';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+</head><body>
+<main class="sudoku-app">
+ <header class="topbar"><a id="back" href="index.html" aria-label="Назад">‹</a><span>ИГРЫ С ДРУЗЬЯМИ</span><button id="help" aria-label="Как играть">?</button></header>
+ <section id="экран-лобби" class="экран--виден">
+  <div class="intro"><span class="eyebrow">ВРЕМЯ ДЛЯ СЕБЯ</span><h1>Судоку<span>.</span></h1><p>Девять цифр.<br><em>Всё на своих местах.</em></p></div>
+  <figure class="cover"><img src="img/sudoku/cover-v2.png" alt="Керамические плитки судоку на изумрудном сукне" fetchpriority="high"><figcaption>ПОРЯДОК В ЦИФРАХ. ЯСНОСТЬ В МЫСЛЯХ.</figcaption></figure>
+  <div class="lobby-controls"><div class="section-label"><h2>Выберите свой ритм</h2><span>4 уровня</span></div>
+   <div class="levels" role="group" aria-label="Сложность">
+    <button data-level="easy" aria-pressed="true"><span>01</span><strong>Лёгкий</strong><small>Первый шаг</small></button>
+    <button data-level="medium" aria-pressed="false"><span>02</span><strong>Средний</strong><small>Найдите связь</small></button>
+    <button data-level="hard" aria-pressed="false"><span>03</span><strong>Сложный</strong><small>Думайте глубже</small></button>
+    <button data-level="expert" aria-pressed="false"><span>04</span><strong>Эксперт</strong><small>Настоящий вызов</small></button>
+   </div><p id="level-description"></p>
+   <button id="play" class="primary">Начать игру <span>↗</span></button><button id="continue" class="secondary" hidden>Продолжить партию</button>
+   <div class="lobby-record"><span>Лучшее время без подсказок</span><strong id="record">—</strong></div><p class="save-note">Ваш прогресс сохраняется на этом устройстве</p>
+  </div>
+ </section>
+ <section id="экран-игры" hidden>
+  <div class="game-heading"><h1>Судоку<span>.</span></h1><span id="difficulty"></span></div>
+  <div class="status"><div><small>ВРЕМЯ</small><strong id="timer">00:00</strong></div><div><small>ЗАПОЛНЕНО</small><strong id="progress">0 / 81</strong></div><button id="pause" class="secondary" aria-label="Пауза">Ⅱ</button></div>
+  <div class="progress-track"><i id="progress-fill"></i></div>
+  <div class="board-wrap"><div id="board" role="group" aria-label="Поле судоку, 9 строк и 9 столбцов"></div><button id="resume" hidden><strong>Пауза</strong><span>Нажмите, чтобы продолжить</span><b>▶</b></button></div>
+  <p id="message" aria-live="polite">Выберите клетку и цифру</p>
+  <div class="tools"><button id="undo" disabled><b>↶</b><span>Отмена</span></button><button id="erase"><b>⌫</b><span>Стереть</span></button><button id="notes" aria-pressed="false"><b>✎</b><span>Заметки</span></button><button id="hint"><b>✧</b><span>Подсказка</span></button></div>
+  <div id="keypad" aria-label="Ввод цифр"></div>
+  <div class="bottom-actions"><button id="check" class="secondary">Проверить</button><button id="new" class="secondary">Новая игра</button></div>
+  <p id="save-status" class="save-note">Автосохранение · цифры 1–9 · N — заметки · Delete — стереть</p>
+ </section>
+</main>
+<dialog id="dialog" aria-labelledby="dialog-title"><button id="close-dialog" aria-label="Закрыть">×</button><div id="dialog-body"></div></dialog>
+<script src="js/telegram.js?v=32"></script><script src="js/sudoku-rules.js?v=1"></script><script src="js/sudoku-puzzles.js?v=1"></script><script src="js/sudoku-ui.js?v=1"></script><script src="js/популярность.js?v=1" data-game="судоку"></script>
+</body></html>
