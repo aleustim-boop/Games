@@ -150,7 +150,7 @@
     if($('экран-лобби').classList.contains('экран--виден'))location.href='index.html';
     else screen('экран-лобби');
   }
-  function zoom(on){const map=document.querySelector('.кат-карта');map.classList.toggle('увеличена',on);$('кат-масштаб').textContent=on?'Готово ↙':'Увеличить ↗';if(on)requestAnimationFrame(()=>{const w=$('кат-окно-карты');w.scrollLeft=(w.scrollWidth-w.clientWidth)/2;w.scrollTop=(w.scrollHeight-w.clientHeight)/2;});}
+  function zoom(on){const map=document.querySelector('.кат-карта');map.classList.toggle('увеличена',on);$('кат-масштаб').textContent=on?'Готово ↙':'Увеличить ↗';$('кат-масштаб').setAttribute('aria-label',on?'Вернуть обычный размер поля':'Увеличить поле');$('кат-масштаб').title=on?'Вернуть обычный размер поля':'Увеличить поле';if(on)requestAnimationFrame(()=>{const w=$('кат-окно-карты');w.scrollLeft=(w.scrollWidth-w.clientWidth)/2;w.scrollTop=(w.scrollHeight-w.clientHeight)/2;});}
   function fresh(){
     clearPresentation();selected=null;online=false;network=null;mode=null;lastResult='';busy=false;lastSerial=null;
     const seed=crypto.getRandomValues(new Uint32Array(1))[0]||1;
@@ -269,7 +269,7 @@
   }
   function positionDice(){
     const dice=$('кат-кубики');dice.hidden=!v.dice;if(!v.dice)return;const scene=document.querySelector('.кат-сцена'),roll=v.log.findLast(e=>e.type==='roll'),card=$('кат-игроки').querySelector('[data-player="'+(roll?.player??v.turn)+'"]');if(!card)return;if(dice.parentElement!==scene)scene.append(dice);
-    const base=scene.getBoundingClientRect(),r=card.getBoundingClientRect(),bottom=r.y>base.y+base.height/2;dice.style.left=Math.max(0,Math.min(base.width-dice.offsetWidth,r.left-base.left))+'px';dice.style.top=(bottom?r.top-base.top-dice.offsetHeight-45:r.bottom-base.top+5)+'px';dice.dataset.player=roll?.player??v.turn;
+    const base=scene.getBoundingClientRect(),r=card.getBoundingClientRect(),bottom=r.y>base.y+base.height/2;dice.style.left=Math.max(0,Math.min(base.width-dice.offsetWidth,r.left-base.left))+'px';dice.style.top=(bottom?r.top-base.top-dice.offsetHeight-44:r.bottom-base.top+5)+'px';dice.dataset.player=roll?.player??v.turn;
   }
   window.addEventListener('resize',()=>{if(v&&$('экран-игры').classList.contains('экран--виден'))requestAnimationFrame(positionDice);});
   function chooseResources(title,limit,count,done){
