@@ -15,7 +15,12 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
     }
     const [a,c]=pages;await a.locator('#лобби-найти-игру').click();await a.locator('#открытые-столы-создать').click();
     await a.locator('#кат-число-онлайн').getByRole('radio',{name:'Трое'}).click();
-    await a.locator('#экран-друга').getByRole('checkbox',{name:/Дружелюбный/}).check();await a.locator('#экран-друга').getByRole('checkbox',{name:/Мягкий/}).check();await a.locator('#экран-друга').getByRole('combobox',{name:'Время на ход'}).selectOption('120');
+    // С 26.09 «Дружелюбный разбойник», «Мягкий старт» и «Время на ход» спрятаны за
+    // кнопку «Дополнительные настройки» — она уводит на отдельный экран #кат-доп-настройки,
+    // «Готово» возвращает на #экран-друга (см. js/катан-экран.js, back() и optionsReturn).
+    await a.locator('#экран-друга .кат-доп-настройки-кнопка').click();await a.locator('#кат-доп-настройки').waitFor();
+    await a.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Дружелюбный/}).check();await a.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Мягкий/}).check();await a.locator('#кат-доп-настройки').getByRole('combobox',{name:'Время на ход'}).selectOption('120');
+    await a.locator('#кат-доп-настройки').getByRole('button',{name:'Готово'}).click();await a.locator('#экран-друга').waitFor();
     const creating=a.waitForResponse(r=>decodeURIComponent(new URL(r.url()).pathname)==='/создать');await a.locator('#кнопка-создать-игру').click();const ticket=await(await creating).json();
     await a.locator('#комната').waitFor();assert.equal(await a.locator('#комната-стол button').count(),3);assert.match(await a.locator('#комната-правила').innerText(),/Катан/);
     assert.match(await a.locator('#комната-правила').innerText(),/Дружелюбный разбойник/);assert.match(await a.locator('#комната-правила').innerText(),/120 с/);
@@ -28,15 +33,25 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
     for(const p of pages)await p.locator('#экран-игры').waitFor();
     await c.reload();await c.evaluate(()=>{const original=window.ИграПоСети.показатьВид;window.ИграПоСети.показатьВид=function(v){window.__publicView=v.катан;return original(v);};});await c.locator('#кнопка-вернуться-в-игру').click();await c.locator('#экран-игры').waitFor();
     let steps=0;
-    while(steps++<2000){
+    // Реальная торговля между игроками (предложения/отказы) требует заметно больше
+    // шагов, чем простая застройка — прогоны с рабочим обменом доигрывали партию
+    // за 4-5.5 тысяч шагов (кости случайны, разброс есть), поэтому бюджет поднят
+    // с 2000 до 8000 с запасом (проверено диагностикой).
+    while(steps++<8000){
       if(await a.evaluate(()=>window.__publicView?.phase==='finished'))break;
       for(const p of pages){
         const view=await p.evaluate(()=>window.__publicView);if(!view||view.phase==='finished')continue;
-        const action=Б.ход(view,'сложный');if(action){await ход(p,view,action);await p.waitForFunction(serial=>window.__publicView.serial!==serial,view.serial);assert.equal(await p.locator('#кат-ошибка').innerText(),'');}
+        const action=Б.ход(view,'сложный');if(action){
+          // ход() возвращает true, если действие пропущено как устаревшее (кто-то другой
+          // уже разрешил то же предложение обмена, пока мы решали) — тогда serial не
+          // меняется и ждать его смены не нужно, иначе это пустой таймаут на 30 секунд.
+          const пропущено=await ход(p,view,action);
+          if(!пропущено){await p.waitForFunction(serial=>window.__publicView.serial!==serial,view.serial);assert.equal(await p.locator('#кат-ошибка').innerText(),'');}
+        }
       }
       await a.waitForTimeout(60);if(steps%50===0)console.log('Онлайн: шаг',steps);
     }
-    assert(steps<2000);for(const p of pages)await p.locator('#кат-диалог').waitFor();await a.screenshot({path:'tests/снимки/катан-онлайн-победа.png'});assert.deepEqual(errors,[]);
+    assert(steps<8000);for(const p of pages)await p.locator('#кат-диалог').waitFor();await a.screenshot({path:'tests/снимки/катан-онлайн-победа.png'});assert.deepEqual(errors,[]);
     console.log('Катан онлайн: два независимых браузера, стол, бот, возврат и полная партия — OK');
     await fetch(base+'/выйти',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({код:ticket.код,пропуск:ticket.пропуск})});
   }finally{await b.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
