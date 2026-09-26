@@ -29,3 +29,6 @@ Landscape 3:2 premium cover for match-three jewel puzzle game. Neatly aligned ro
 
 ## Поиск слов — img/casual/wordsearch.png
 Premium landscape 3:2 still-life cover for a Russian word search puzzle game. Ivory letter tiles in a tidy square grid set into a slim brushed brass frame on deep emerald velvet. Five central ivory tiles spell exactly СЛОВО in dark ink; other tiles softly out of focus. Brass magnifying glass and gold pencil, cinematic desk lighting, realistic tactile ceramics. No extra titles, logos, people or interface.
+
+## Пятнашки — img/casual/fifteen.png
+Photorealistic landscape 3:2 cover. Brass frame holding exactly four by four ivory numbered tiles. Rows: 1 2 3 4 / 5 6 7 8 / 9 10 11 12 / 13 14 [empty green slot] 15. One empty slot, no extra numbers. Dark emerald velvet, cinematic light, beveled ceramics, luxury tabletop photograph. No text, logos or people.
