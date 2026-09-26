@@ -11,7 +11,14 @@
    порты берёт свободные. */
 
 const fs = require('fs'), os = require('os'), path = require('path'), http = require('http');
-process.env.GAMES_DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'дорога-'));
+const ПАПКА_ДАННЫХ = fs.mkdtempSync(path.join(os.tmpdir(), 'дорога-'));
+process.env.GAMES_DATA = ПАПКА_ДАННЫХ;
+/* Убираем свою временную папку данных по любому выходу процесса —
+   process.on('exit') срабатывает и на process.exit(), и на непойманную
+   ошибку. Раньше эта папка никогда не удалялась и копилась на диске. */
+process.on('exit', function () {
+  try { fs.rmSync(ПАПКА_ДАННЫХ, { recursive: true, force: true, maxRetries: 3 }); } catch (е) { /* не страшно */ }
+});
 const К = path.join(__dirname, '..');
 const робот = require(path.join(К, 'tests', 'браузер-робот.js'));
 const сервера = require(path.join(К, 'server', 'сервер.js'));

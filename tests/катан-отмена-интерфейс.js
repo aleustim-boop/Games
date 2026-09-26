@@ -31,8 +31,10 @@ const {chromium,безTelegram}=require('./браузер-робот');
  assert.match(await page.locator('#кат-поле .кат-постройка.цвет-0 .кат-фигура').first().evaluate(e=>getComputedStyle(e).filter),/hue-rotate/);
  for(const [width,height]of [[320,740],[390,844],[768,1024],[1024,768],[1366,768],[1440,900],[1920,1080]]){
   await page.setViewportSize({width,height});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await page.locator('#кат-главное').scrollIntoViewIfNeeded();
   const boxes=await page.locator('#кат-главное,#кат-вернуть').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}}));
   assert(boxes[0].right<=boxes[1].left+1,'Кнопки перекрываются');assert(boxes.every(r=>r.left>=0&&r.right<=width&&r.bottom<=height+1),'Кнопки не помещаются');
+  await page.locator('#кат-фильтр').scrollIntoViewIfNeeded();
   const layout=await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.кат-игрок')].map(e=>e.getBoundingClientRect());
     return ['кат-фильтр','кат-журнал-кнопка'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect();return {clear:cards.every(c=>r.right<=c.left||r.left>=c.right||r.bottom<=c.top||r.top>=c.bottom),hit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))};});
