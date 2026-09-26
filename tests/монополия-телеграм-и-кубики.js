@@ -37,7 +37,7 @@ const assert = require("node:assert/strict"),
             "#экран-лобби",
             "#mono-resume",
             "#mono-profile",
-            ".mono-footer",
+            ".нижние-вкладки",
             "#mono-bots",
           ].map((s) => {
             const r = document.querySelector(s).getBoundingClientRect();
@@ -56,8 +56,8 @@ const assert = require("node:assert/strict"),
       );
       if (height >= 640)
         assert(
-          boxes[".mono-footer"].bottom <= height - 19,
-          `Лобби ${width}×${height}: низ ${boxes[".mono-footer"].bottom}`,
+          boxes[".нижние-вкладки"].bottom <= height - 19,
+          `Лобби ${width}×${height}: низ ${boxes[".нижние-вкладки"].bottom}`,
         );
       assert(
         await p.evaluate(
