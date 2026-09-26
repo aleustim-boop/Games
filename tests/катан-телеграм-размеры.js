@@ -31,7 +31,7 @@ const {chromium,подготовитьПодделку}=require('./браузе�
      const dice=q('#кат-кубики'),offer=q('#кат-предложение');
      const mapPoint=q('#кат-поле').createSVGPoint();mapPoint.x=450;mapPoint.y=420;
      const matrix=q('#кат-поле').getScreenCTM();
-     return {boardWidth:board.width,boardHeight:board.height,sceneWidth:scene.width,scale:matrix.a,
+     return {boardLeft:board.left,boardRight:board.right,boardWidth:board.width,boardHeight:board.height,sceneWidth:scene.width,scale:matrix.a,
       overflow:document.documentElement.scrollWidth>innerWidth+1,
       statusFit:[...q('#кат-ход').children].filter(e=>!e.hidden&&!e.classList.contains('кат-таймер')).every(e=>{const r=rect(e);return r.top>=status.top&&r.bottom<=status.bottom;}),
       diceOverlap:!dice.hidden&&[...document.querySelectorAll('.кат-игрок,#кат-масштаб,#кат-фильтр,#кат-журнал-кнопка,#кат-общение')].some(e=>overlaps(rect(dice),rect(e))),
@@ -40,6 +40,8 @@ const {chromium,подготовитьПодделку}=require('./браузе�
     });
     const label=width+'×'+height+' '+phase+' player '+roller;
     assert(!result.overflow,label+' horizontal overflow');
+    if(width<=699&&height>width){assert(Math.abs(result.boardLeft)<1,label+' left edge');assert(Math.abs(result.boardRight-width)<1,label+' right edge');}
+    if(width>=700&&height>width)assert(result.boardWidth<width-20,label+' tablet should retain margins');
     assert(result.boardHeight>=result.sceneWidth*.90,label+' collapsed board '+JSON.stringify(result));
     assert(result.scale>=result.sceneWidth/900*.95,label+' tiny SVG');
     assert(result.statusFit,label+' status text outside card');
