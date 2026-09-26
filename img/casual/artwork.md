@@ -1,5 +1,9 @@
 # Обложки казуальных игр
 
+## spider.png
+
+Premium Spider solitaire game cover, landscape 3:2. Luxurious photorealistic still life on emerald velvet card table. Fan of elegant ivory playing cards all with black spade symbols, clearly visible corners K Q J, ornate green and gold card backs in a small stack. A small sculptural GOLD SPIDER ornament beside the cards, tasteful jeweler craftsmanship, not a real animal, becomes the recognizable emblem of Spider solitaire. Golden frame details, warm cinematic side light, rich deep shadows, crisp ivory paper texture, balanced beautiful composition. No words, no logos, no people, no neon, no horror.
+
 ## klondike.png
 
 Premium Klondike solitaire game cover, landscape 3:2. Photorealistic luxury card table on deep emerald green felt. Three ivory playing cards gracefully fanned in the foreground, an elegant black Ace of Spades clearly visible, a red King of Hearts partially behind it, and ornate dark green gold-patterned card backs stacked nearby. A slender brushed brass tray frames part of the table. Warm cinematic golden side lighting, crisp paper texture and embossed gilt card edges, moody rich shadows, sophisticated composition with breathing room, beautiful recognizable solitaire still life. No title, no logos, no extra text, no people, no neon. Correct conventional card corner indices A spade and K heart.

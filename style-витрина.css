@@ -92,3 +92,6 @@
 
 #экран-витрины [data-игра="косынка"] { --catalog-art:url('img/casual/klondike.png'); }
 #экран-витрины [data-игра="косынка"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="паук"] { --catalog-art:url('img/casual/spider.png'); }
+#экран-витрины [data-игра="паук"]::before { background-size:cover; background-position:center; }
