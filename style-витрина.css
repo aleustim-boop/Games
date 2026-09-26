@@ -107,3 +107,6 @@
 
 #экран-витрины [data-игра="три-в-ряд"] { --catalog-art:url('img/casual/match3.png'); }
 #экран-витрины [data-игра="три-в-ряд"]::before { background-size:cover; background-position:center; }
+
+#экран-витрины [data-игра="поиск-слов"] { --catalog-art:url('img/casual/wordsearch.png'); }
+#экран-витрины [data-игра="поиск-слов"]::before { background-size:cover; background-position:center; }

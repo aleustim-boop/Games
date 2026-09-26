@@ -26,3 +26,6 @@ Premium landscape 3:2 still-life artwork for an 8x8 block puzzle game, emerald g
 
 ## Три в ряд — img/casual/match3.png
 Landscape 3:2 premium cover for match-three jewel puzzle game. Neatly aligned rows of thick faceted gemstones in a shallow brushed-gold tray on emerald velvet: amber hexagons, emerald squares, ruby teardrops, sapphire diamonds, amethyst triangles and pearl circles. Subtle glowing dust around three matching emeralds. Luxurious tactile materials and realistic golden side lighting. No interface, text, logos, people or cheap neon.
+
+## Поиск слов — img/casual/wordsearch.png
+Premium landscape 3:2 still-life cover for a Russian word search puzzle game. Ivory letter tiles in a tidy square grid set into a slim brushed brass frame on deep emerald velvet. Five central ivory tiles spell exactly СЛОВО in dark ink; other tiles softly out of focus. Brass magnifying glass and gold pencil, cinematic desk lighting, realistic tactile ceramics. No extra titles, logos, people or interface.

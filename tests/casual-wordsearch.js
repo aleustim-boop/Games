@@ -1,0 +1,3 @@
+'use strict';
+const assert=require('node:assert/strict'),G=require('../js/game-wordsearch');
+const themes=new Set();for(const mode of G.modes)for(let seed=100;seed<200;seed++){const s=G.create(mode.id,seed*1299709);assert(G.validate(s));themes.add(s.theme);assert(!G.act(s,{type:'find',a:0,b:0}));for(const w of s.words){assert(G.act(s,{type:'find',a:w.path.at(-1),b:w.path[0]}));assert(!G.act(s,{type:'find',a:w.path[0],b:w.path.at(-1)}));assert(G.validate(s));}assert(s.won);assert.equal(s.score,s.words.reduce((n,w)=>n+w.word.length*10,0));}assert.equal(themes.size,4);console.log('Wordsearch: 300 complete puzzles, four themes, all words placed, reverse selection and duplicate protection — OK');
