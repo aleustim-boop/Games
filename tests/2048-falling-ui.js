@@ -20,6 +20,13 @@ const base=process.env.GAME2048_BASE||'http://127.0.0.1:8137';
  await page.addInitScript(s=>{const fixture=sessionStorage.getItem('falling-test');if(fixture){localStorage.setItem('game-2048-falling-v1',fixture);sessionStorage.removeItem('falling-test');}},null);
  const fixture=F.create(15);fixture.board[32]=4;fixture.board[27]=2;fixture.active={x:2,y:0,value:2};
  await page.evaluate(s=>sessionStorage.setItem('falling-test',JSON.stringify(s)),fixture);await page.reload();await page.locator('#play').click();await page.locator('#resume').click();await page.locator('#drop').click();await page.clock.runFor(180);assert.equal((await saved()).score,12);assert.match(await page.locator('#falling-status').innerText(),/Цепочка × 2/);assert(await page.locator('.spark').count()>0);
+ for(const [neighbors,expected,blocks]of [[{31:8,33:8},32,3],[{26:8,28:8,31:2,32:8,33:4},64,4]]){
+  const bonus=F.create(15);bonus.board.fill(0);for(const [i,n]of Object.entries(neighbors))bonus.board[i]=n;bonus.active={x:2,y:0,value:8};
+  await page.evaluate(s=>sessionStorage.setItem('falling-test',JSON.stringify(s)),bonus);await page.reload();await page.locator('#play').click();await page.locator('#resume').click();await page.locator('#drop').click();await page.clock.runFor(180);
+  assert.equal((await saved()).board[32],expected);assert.equal((await saved()).score,expected);assert.equal(await page.locator('#merge-bonus').innerText(),`БОНУС! ${blocks} × 8 → ${expected}`);assert(await page.locator('#merge-bonus').isVisible());
+  await page.screenshot({path:`tests/снимки/2048-бонус-${expected}.png`,fullPage:true,animations:'disabled'});
+  await page.locator('#undo').click();assert.equal((await saved()).score,0);assert(await page.locator('#merge-bonus').isHidden());
+ }
  await page.locator('#pause').click();await page.locator('#resume').click();
  for(const [width,height]of [[320,740],[390,844],[430,932],[768,1024],[1024,768],[1440,900]]){
   await page.setViewportSize({width,height});await page.clock.runFor(50);await page.screenshot({path:`tests/снимки/2048-падение-${width}.png`,fullPage:true,animations:'disabled'});

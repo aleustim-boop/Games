@@ -7,7 +7,7 @@
  function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
  let state=R.restore(read(KEY,null)),best=read(BEST,0),prefs={effects:true,sound:false,haptic:true,...read(PREF,{})};
  if(!Number.isSafeInteger(best)||best<0)best=0;
- let playing=false,busy=false,animationTimer=null,audio=null,pointer=null,resultShown=false,paused=false,telegramActive=true,nextFall=0;
+ let playing=false,busy=false,animationTimer=null,audio=null,pointer=null,resultShown=false,paused=false,telegramActive=true,nextFall=0,bonusTimer=null;
  const fallDelay=()=>Math.max(350,850-Math.floor((state?.moves||0)/20)*50);
  const colors=[['#e0e1cd','#c8d3c1','#283d35'],['#e8dabb','#ceb88f','#3b3020'],['#91c8b2','#4a997f','#082f29'],['#53aaa4','#2c7576','#efffee'],['#527e98','#315571','#edf7ff'],['#7c789e','#534d79','#f7efff'],['#c89263','#9e6439','#fff7dd'],['#d9b974','#b58c44','#2f240e'],['#e8c168','#bd902e','#2c230b'],['#f1cf7d','#c49b40','#312206'],['#ffe3a0','#d5a33d','#332406']];
  const effects=()=>prefs.effects&&!reduced.matches;
@@ -46,13 +46,14 @@
  }
  configureMode();
  function paint(event){
+  clearTimeout(bonusTimer);$('merge-bonus').hidden=true;
   $('tiles').replaceChildren();
   state.board.forEach((value,i)=>{if(value)$('tiles').append(tile(value,i,effects()&&event?.merged?.includes(i)?'merged':effects()&&event?.spawned===i?'born':''));});
   paintFalling();
   $('score').textContent=fmt(state.score);$('best').textContent=fmt(best);$('moves').textContent=fmt(state.moves);$('undo').disabled=!state.previous;
   const largest=Math.max(2,...state.board),progress=Math.min(11,Math.log2(largest));
   $('milestone').textContent=fmt(largest)+(largest<2048?' / 2048':' · дальше — больше');$('progress-fill').style.width=progress/11*100+'%';document.querySelector('.progress').setAttribute('aria-valuenow',progress);
-  if(mode==='falling'){$('hint').textContent='← → двигать · ↓ ускорить · пробел или кнопка — сбросить';$('falling-status').textContent=event?.chains>1?'Цепочка × '+event.chains:'Падающие числа';}
+  if(mode==='falling'){$('hint').textContent='← → двигать · ↓ ускорить · пробел или кнопка — сбросить';const bonus=event?.bonuses?.at(-1);$('falling-status').textContent=bonus?`Бонус: ${bonus.blocks} × ${bonus.input} → ${bonus.value}`:event?.chains>1?'Цепочка × '+event.chains:'Падающие числа';}
   else $('hint').textContent=state.moves?'Стрелки, свайпы или кнопки ниже — выбирайте удобный способ.':'Смахните в любую сторону. Одинаковые числа складываются.';
  }
  function sound(merged){
@@ -71,6 +72,7 @@
   clearTimeout(animationTimer);animationTimer=null;busy=false;if(mode==='falling')$('falling-layer').replaceChildren();paint(result);
   if(result){sparks(result.merged);if(result.gain){$('score-gain').textContent='+'+fmt(result.gain);if(effects())$('score-gain').animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-22px)'}],{duration:700,fill:'forwards'});else $('score-gain').textContent='';}}
   $('announce').textContent=`Счёт ${state.score}. Самая большая плитка ${Math.max(...state.board)}.${state.over?' Ходов больше нет.':''}`;
+  const bonus=result?.bonuses?.at(-1);if(bonus){const notice=$('merge-bonus');notice.textContent=`БОНУС! ${bonus.blocks} × ${bonus.input} → ${bonus.value}`;notice.hidden=false;$('announce').textContent+=` Бонус: ${bonus.blocks} блока по ${bonus.input} дали ${bonus.value}.`;if(effects()){notice.animate([{opacity:0,transform:'translateY(10px) scale(.85)'},{opacity:1,transform:'translateY(0) scale(1)',offset:.3},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:600,easing:'ease-out'});sparks(result.merged);}bonusTimer=setTimeout(()=>notice.hidden=true,1800);}
   if(playing&&!$('dialog').open)showResult();
  }
  function move(direction){
@@ -115,7 +117,7 @@
   else if(state.previous)button(body,'Отменить последний ход',()=>{close();undo();});
   button(body,'Новая игра',()=>{close();start(true);},win?'secondary':'primary');
  }
- function help(){const body=modal('Как играть');if(mode==='falling'){text(body,'Числа падают сверху на поле 5 × 7. Двигайте текущий блок стрелками ← → или свайпами. Касание столбца перемещает блок туда, если путь свободен. Контур показывает место приземления.');text(body,'Кнопка «Сбросить блок», пробел или свайп вниз сразу опускают блок. Стрелка ↓ ускоряет падение на одну клетку. После приземления равные числа рядом по вертикали и горизонтали сливаются попарно. Блоки над пустотами падают — так возникают цепочки. Линии не удаляются.');text(body,'Соберите 2048 и продолжайте дальше. Партия заканчивается, когда заблокировано место появления блока вверху по центру. Скорость постепенно растёт; есть пауза и возврат последнего блока.');button(body,'Понятно',close);return;}text(body,'Сдвигайте плитки свайпом или стрелками. Два одинаковых числа объединяются в одно: 2 + 2 = 4. За слияние вы получаете столько очков, сколько написано на новой плитке.');const example=document.createElement('div');example.className='rule-example';example.innerHTML='<b>2</b><span>+</span><b>2</b><span>→</span><b>4</b>';body.append(example);text(body,'После успешного хода появляется 2 или 4. Каждая плитка объединяется только один раз за ход. Соберите 2048 — и при желании играйте дальше. Если свободных клеток и слияний нет, партия завершена.');text(body,'Подсказка: держите самое большое число в одном углу и старайтесь не заполнять всё поле. Доступна отмена одного последнего хода.');button(body,'Понятно',close);}
+ function help(){const body=modal('Как играть');if(mode==='falling'){text(body,'Числа падают сверху на поле 5 × 7. Двигайте текущий блок стрелками ← → или свайпами. Касание столбца перемещает блок туда, если путь свободен. Контур показывает место приземления.');text(body,'Кнопка «Сбросить блок», пробел или свайп вниз сразу опускают блок. Стрелка ↓ ускоряет падение на одну клетку. После приземления блок одновременно забирает всех равных соседей, которых касается стороной. Каждый сосед удваивает число: падающая 8 + одна 8 = 16; + две 8 = 32; + три 8 = 64. По диагонали слияния нет. Блоки над пустотами падают — так возникают цепочки. Линии не удаляются.');text(body,'Соберите 2048 и продолжайте дальше. Партия заканчивается, когда заблокировано место появления блока вверху по центру. Скорость постепенно растёт; есть пауза и возврат последнего блока.');button(body,'Понятно',close);return;}text(body,'Сдвигайте плитки свайпом или стрелками. Два одинаковых числа объединяются в одно: 2 + 2 = 4. За слияние вы получаете столько очков, сколько написано на новой плитке.');const example=document.createElement('div');example.className='rule-example';example.innerHTML='<b>2</b><span>+</span><b>2</b><span>→</span><b>4</b>';body.append(example);text(body,'После успешного хода появляется 2 или 4. Каждая плитка объединяется только один раз за ход. Соберите 2048 — и при желании играйте дальше. Если свободных клеток и слияний нет, партия завершена.');text(body,'Подсказка: держите самое большое число в одном углу и старайтесь не заполнять всё поле. Доступна отмена одного последнего хода.');button(body,'Понятно',close);}
  function applyPrefs(){document.body.classList.toggle('no-effects',!prefs.effects||reduced.matches);}
  function settings(){const body=modal('Ваш ритм игры');for(const [key,label]of [['effects','Анимации и искры'],['sound','Звук слияния'],['haptic','Вибрация в Telegram']]){const row=document.createElement('label'),span=document.createElement('span'),input=document.createElement('input');row.className='setting-row';span.textContent=label;input.type='checkbox';input.checked=prefs[key];input.onchange=()=>{prefs[key]=input.checked;write(PREF,prefs);applyPrefs();};row.append(span,input);body.append(row);}text(body,'Если на устройстве включено уменьшение движения, анимации автоматически отключаются.');button(body,'Готово',close);}
  $('dialog').addEventListener('close',()=>{if(state?.won&&!state.continued&&resultShown){state=R.continueGame(state);resultShown=false;save();}});

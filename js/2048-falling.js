@@ -13,24 +13,40 @@
  function create(seed){const s={version:1,mode:'falling',seed:(seed>>>0)||1,board:Array(COLS*ROWS).fill(0),score:0,moves:0,next:2,active:null,over:false,won:false,continued:false,previous:null};s.next=number(s);spawn(s);return s;}
  function landing(s){if(!s.active)return null;let y=s.active.y;while(free(s,s.active.x,y+1))y++;return {x:s.active.x,y,value:s.active.value};}
  function gravity(board){
-  for(let x=0;x<COLS;x++){const values=[];for(let y=ROWS-1;y>=0;y--)if(board[y*COLS+x])values.push(board[y*COLS+x]);for(let y=ROWS-1;y>=0;y--)board[y*COLS+x]=values[ROWS-1-y]||0;}
+  const positions=new Map();
+  for(let x=0;x<COLS;x++){const values=[];for(let y=ROWS-1;y>=0;y--)if(board[y*COLS+x])values.push({value:board[y*COLS+x],from:y*COLS+x});for(let y=ROWS-1;y>=0;y--){const entry=values[ROWS-1-y];board[y*COLS+x]=entry?.value||0;if(entry)positions.set(entry.from,y*COLS+x);}}
+  return positions;
  }
- function settle(board){
-  let gain=0,chains=0;const merged=[];
-  // Равные соседи объединяются снизу вверх; сначала вертикальная пара,
-  // затем горизонтальная. После каждой пары незакреплённые блоки падают.
-  gravity(board);
+ function neighbors(board,i){
+  if(i===undefined||!board[i])return [];
+  const x=i%COLS,y=Math.floor(i/COLS);
+  return [y<ROWS-1?i+COLS:-1,x>0?i-1:-1,x<COLS-1?i+1:-1,y>0?i-COLS:-1].filter(j=>j>=0&&board[j]===board[i]);
+ }
+ function settle(board,focus){
+  let gain=0,chains=0,merged=[];const bonuses=[];
+  // Сначала приземлившийся блок забирает ВСЕХ касающихся его равных соседей.
+  // Каждый сосед удваивает результат: 8 + две соседние 8 -> 32.
+  // Только после одновременного слияния применяется гравитация и новая цепочка.
+  focus=gravity(board).get(focus);
   while(true){
-   let pair=null;
-   for(let y=ROWS-1;y>=0&&!pair;y--)for(let x=0;x<COLS&&!pair;x++){
-    const i=y*COLS+x;if(!board[i])continue;
-    if(y>0&&board[i]===board[i-COLS])pair=[i,i-COLS];
-    else if(x<COLS-1&&board[i]===board[i+1])pair=[i,i+1];
+   let touching=neighbors(board,focus);
+   if(!touching.length){
+    // Другие пары, возникшие после падения, тоже продолжают цепочку.
+    // Узел с большим числом соседей имеет приоритет над отдельной парой.
+    for(let y=ROWS-1;y>=0;y--)for(let x=0;x<COLS;x++){
+     const i=y*COLS+x,candidates=neighbors(board,i);
+     if(candidates.length>touching.length){focus=i;touching=candidates;}
+    }
    }
-   if(!pair)break;
-   board[pair[0]]*=2;gain+=board[pair[0]];board[pair[1]]=0;chains++;merged.push(pair[0]);gravity(board);
+   if(!touching.length)break;
+   const input=board[focus],value=input*2**touching.length;
+   if(touching.length>1)bonuses.push({input,blocks:touching.length+1,value});
+   board[focus]=value;for(const i of touching)board[i]=0;
+   gain+=value;chains++;merged.push(focus);
+   const positions=gravity(board);focus=positions.get(focus);
+   merged=merged.flatMap(i=>positions.has(i)?[positions.get(i)]:[]);
   }
-  return {gain,chains,merged:[...new Set(merged)]};
+  return {gain,chains,merged:[...new Set(merged)],bonuses};
  }
  function action(state,direction){
   if(!state.active||state.over||(state.won&&!state.continued))return {state,changed:false};
@@ -41,7 +57,7 @@
   if(!['down','drop'].includes(direction))return {state,changed:false};
   if(direction==='down'&&free(s,s.active.x,s.active.y+1)){s.active.y++;return {state:s,changed:true,locked:false};}
   const landed=landing(s);s.board[landed.y*COLS+landed.x]=landed.value;
-  const result=settle(s.board);s.score+=result.gain;s.moves++;s.won=s.won||s.board.some(n=>n>=2048);
+  const result=settle(s.board,landed.y*COLS+landed.x);s.score+=result.gain;s.moves++;s.won=s.won||s.board.some(n=>n>=2048);
   s.previous=state.turnStart?copy(state.turnStart):copy(state);spawn(s);
   return {state:s,changed:true,locked:true,landed,...result};
  }
