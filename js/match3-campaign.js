@@ -1,0 +1,19 @@
+'use strict';
+(()=>{
+ const G=window.CasualGame,key='match3-collection-v1',lobby=document.querySelector('.lobby-controls');
+ let records={};try{const raw=JSON.parse(localStorage.getItem(key));if(raw&&typeof raw==='object'&&!Array.isArray(raw))records=raw;}catch{}
+ const heading=lobby.querySelector('.section-label');heading.querySelector('h2').textContent='Ваша коллекция';heading.querySelector('span').textContent='12 уровней';
+ const intro=document.createElement('p');intro.className='campaign-intro';intro.textContent='Собирайте драгоценности, разбивайте лёд и соединяйте бонусы. Каждый уровень — новая задача.';
+ const map=document.createElement('div');map.className='level-map';map.setAttribute('role','group');map.setAttribute('aria-label','Уровни коллекции');
+ const stars=n=>'<span class="earned">'+'★'.repeat(n)+'</span>'+'☆'.repeat(3-n);
+ for(const level of G.levels){const b=document.createElement('button');b.dataset.mode=level.id;b.setAttribute('aria-pressed','false');b.innerHTML=`<span class="level-number">${level.level}</span><strong>${level.name}</strong><span class="level-stars">${stars(0)}</span>`;map.append(b);}
+ const brief=document.createElement('div');brief.className='level-brief';brief.setAttribute('aria-live','polite');
+ const mapTitle=document.createElement('h3');mapTitle.className='campaign-intro';mapTitle.textContent='Выберите уровень · можно играть в любом порядке';
+ heading.after(intro,brief,document.getElementById('play'),document.getElementById('continue'),mapTitle,map);const classicHeading=document.createElement('h3');classicHeading.textContent='Или партия на очки';classicHeading.className='campaign-intro';lobby.querySelector('.levels').before(classicHeading);
+ const goalText=g=>g.type==='color'?G.names[g.color]+' × '+g.target:g.type==='ice'?'❄ Слои льда × '+g.target:g.target.toLocaleString('ru-RU')+' очков';
+ G.onLobby=mode=>{const m=G.modes.find(m=>m.id===mode);brief.replaceChildren();const title=document.createElement('h3');title.textContent=m.label;const goals=document.createElement('p');goals.className='brief-goals';goals.textContent=(m.objectives||[{type:'score',target:m.goal}]).map(goalText).join(' · ')+' · '+m.turns+' ходов';const tip=document.createElement('p');tip.textContent=m.tip||'Свободная партия на очки: все бонусы доступны, льда нет.';brief.append(title,goals,tip);for(const l of G.levels){const n=Number.isInteger(records[l.id]?.stars)?Math.max(0,Math.min(3,records[l.id].stars)):0;map.querySelector(`[data-mode="${l.id}"] .level-stars`).innerHTML=stars(n);} };
+ const earned=s=>{const m=G.levels.find(m=>m.id===s.mode);return s.won?1+(s.left/m.turns>=.15?1:0)+(s.left/m.turns>=.3?1:0):0;};
+ G.onFinish=s=>{if(!s.won||!G.levels.some(m=>m.id===s.mode))return;const old=records[s.mode]||{};records[s.mode]={stars:Math.max(old.stars||0,earned(s)),score:Math.max(old.score||0,s.score)};try{localStorage.setItem(key,JSON.stringify(records));}catch{document.getElementById('save-status').textContent='Не удалось сохранить звёзды: хранилище устройства недоступно.';}};
+ G.result=(s,api)=>{const m=G.levels.find(m=>m.id===s.mode);if(!m)return;if(s.won){const badge=document.createElement('div');badge.className='campaign-result';badge.textContent='★'.repeat(earned(s))+'☆'.repeat(3-earned(s));badge.setAttribute('aria-label',earned(s)+' из 3 звёзд');api.body.append(badge);api.text(api.body,m.name+' — все цели выполнены.');const next=G.levels[m.level];if(next)api.button(api.body,'Следующий уровень · '+next.level,()=>api.startMode(next.id));else api.text(api.body,'Коллекция пройдена! Можно вернуться к любому уровню и собрать три звезды.');}else{api.text(api.body,'Осталось: '+G.objectives(s).filter(g=>g.current<g.target).map(g=>goalText({...g,target:g.target-g.current})).join(' · '));}};
+ G.startMessage=s=>G.levels.find(m=>m.id===s.mode)?.tip||'Четыре в ряд — молния, пять — радуга, Т или Г — взрыв. Соединяйте соседние бонусы.';
+})();

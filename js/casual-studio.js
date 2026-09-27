@@ -23,7 +23,7 @@ window.CasualStudio=(()=>{
  function paintSound(){const b=$('studio-sound');b.innerHTML=svg(muted?'mute':'sound');b.setAttribute('aria-label',muted?'Включить звук':'Выключить звук');b.setAttribute('aria-pressed',String(!muted));}
  function update(G,s){init(G);let number=s.moves,unit='ходов',detail='',ratio=0;
   switch(G.id){
-   case 'match3':number=s.left;unit='ходов';detail='Цель '+s.goal.toLocaleString('ru-RU');ratio=s.score/s.goal;break;
+   case 'match3':number=s.left;unit='ходов';detail=G.levels?.find(m=>m.id===s.mode)?.name||'Цель '+s.goal.toLocaleString('ru-RU');ratio=G.progress?G.progress(s):s.score/s.goal;break;
    case 'mahjong':{const gone=s.tiles.filter(t=>t.gone).length;number=gone/2;unit='пар';detail=G.pairs(s).length+' свободных пар';ratio=gone/s.tiles.length;break;}
    case 'klondike':case 'freecell':{const n=s.foundations.reduce((n,p)=>n+p.length,0);number=s.moves;unit='ходов';detail='из 52 карт';ratio=n/52;break;}
    case 'spider':number=s.moves;unit='ходов';detail='8 последовательностей';ratio=s.finished.length/8;break;
