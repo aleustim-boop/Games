@@ -14,15 +14,35 @@
   if(a.to.area!=='piles')return false;const top=dst.at(-1);if(top?(!top.up||rank(top)!==rank(c)+1||(s.kind!=='spider'&&red(top)===red(c))):(s.kind==='klondike'&&rank(c)!==13))return false;
   if(s.kind==='freecell'){const empty=s.piles.filter(p=>!p.length).length-(dst.length?0:1),capacity=(s.cells.filter(p=>!p.length).length+1)*2**empty;if(cards.length>capacity)return false;}return true;
  }
- function settle(s){for(const p of s.piles){if(p.length)p.at(-1).up=true;if(s.kind==='spider'&&p.length>=13){const tail=p.slice(-13);if(rank(tail[0])===13&&sequence(s,tail)){s.finished.push(p.splice(-13));if(p.length)p.at(-1).up=true;}}}s.score=s.kind==='spider'?s.finished.length*100:s.foundations.reduce((sum,p)=>sum+p.length,0)*10;s.won=s.kind==='spider'?s.finished.length===8:s.foundations.every(p=>p.length===13);}
- function act(s,a){if(s.won||s.lost)return false;if(a.type==='draw'){
+ function settle(s){
+  for(const p of s.piles){
+   if(p.length)p.at(-1).up=true;
+   while(s.kind==='spider'&&p.length>=13){const tail=p.slice(-13);if(rank(tail[0])!==13||!sequence(s,tail))break;s.finished.push(p.splice(-13));if(p.length)p.at(-1).up=true;}
+  }
+  s.score=s.kind==='spider'?s.finished.length*100:s.foundations.reduce((sum,p)=>sum+p.length,0)*10;
+  s.won=s.kind==='spider'?s.finished.length===8:s.foundations.every(p=>p.length===13);
+ }
+ function foundationMove(s,from){
+  if(s.kind==='spider')return null;
+  const sources=from?[from]:[...s.piles.flatMap((p,pile)=>p.length?[{area:'piles',pile,index:p.length-1}]:[]),...(s.waste.length?[{area:'waste',pile:0,index:s.waste.length-1}]:[]),...s.cells.flatMap((p,pile)=>p.length?[{area:'cells',pile,index:0}]:[])];
+  for(const src of sources){const card=source(s,src)?.[src.index];if(!card)continue;const a={type:'move',from:src,to:{area:'foundations',pile:suit(card)}};if(legal(s,a))return a;}return null;
+ }
+ // Offer collection only after proving that legal foundation moves finish the
+ // entire position. No hidden cards are revealed and no tactical move is guessed.
+ function finishPlan(s){
+  if(s.kind==='spider'||s.won||s.lost||s.stock.length||s.piles.some(p=>p.some(c=>!c.up)))return [];
+  const copy=U.clone(s),plan=[];
+  for(let n=0;n<52&&!copy.won;n++){const move=foundationMove(copy);if(!move)return [];plan.push(move);const src=source(copy,move.from);source(copy,move.to).push(...src.splice(move.from.index));settle(copy);}
+  return copy.won?plan:[];
+ }
+ function act(s,a){if(s.won||s.lost)return false;if(a.type==='autofinish'){const plan=finishPlan(s);if(!plan.length)return false;for(const move of plan){source(s,move.to).push(...source(s,move.from).splice(move.from.index));settle(s);}return true;}if(a.type==='draw'){
    if(s.kind==='freecell')return false;if(s.kind==='spider'){if(!s.stock.length||s.piles.some(p=>!p.length))return false;for(const p of s.piles){const c=s.stock.pop();c.up=true;p.push(c);}}
    else if(s.stock.length){for(let i=0;i<Number(s.mode)&&s.stock.length;i++){const c=s.stock.pop();c.up=true;s.waste.push(c);}}else if(s.waste.length){s.stock=s.waste.reverse();s.stock.forEach(c=>c.up=false);s.waste=[];}else return false;
   }else if(legal(s,a)){const from=source(s,a.from),to=source(s,a.to);to.push(...from.splice(a.from.index));}else return false;settle(s);return true;
  }
- function moves(s){const result=[];for(const area of ['piles','waste','cells']){const piles=area==='waste'?[s.waste]:s[area];piles.forEach((p,pile)=>p.forEach((_,index)=>{if(area!=='piles'&&index!==p.length-1)return;const from={area,pile,index};for(const toArea of ['foundations','piles','cells'])s[toArea].forEach((__,dest)=>{const a={type:'move',from,to:{area:toArea,pile:dest}};if(legal(s,a))result.push(a);});}));}if(s.kind==='klondike'&&(s.stock.length||s.waste.length)||s.kind==='spider'&&s.stock.length&&s.piles.every(p=>p.length))result.push({type:'draw'});return result;}
+ function moves(s){const result=[];for(const area of ['piles','waste','cells','foundations']){const piles=area==='waste'?[s.waste]:s[area];piles.forEach((p,pile)=>p.forEach((_,index)=>{if(area!=='piles'&&index!==p.length-1)return;const from={area,pile,index};for(const toArea of ['foundations','piles','cells'])s[toArea].forEach((__,dest)=>{const a={type:'move',from,to:{area:toArea,pile:dest}};if(legal(s,a))result.push(a);});}));}if(s.kind==='klondike'&&(s.stock.length||s.waste.length)||s.kind==='spider'&&s.stock.length&&s.piles.every(p=>p.length))result.push({type:'draw'});return result;}
  function validate(s){if(!s||!['klondike','spider','freecell'].includes(s.kind)||!Array.isArray(s.piles)||s.piles.length!==(s.kind==='spider'?10:s.kind==='freecell'?8:7)||!Array.isArray(s.stock)||!Array.isArray(s.waste)||!Array.isArray(s.foundations)||s.foundations.length!==4||!Array.isArray(s.cells)||s.cells.length!==4||!Array.isArray(s.finished))return false;
   const piles=[...s.piles,s.stock,s.waste,...s.foundations,...s.cells,...s.finished];if(piles.some(p=>!Array.isArray(p)))return false;const cards=piles.flat(),count=s.kind==='spider'?104:52;if(cards.length!==count||new Set(cards.map(c=>c?.id)).size!==count)return false;return cards.every(c=>Number.isInteger(c.id)&&c.id>=0&&c.id<count&&typeof c.up==='boolean'&&c.suit===(s.kind==='spider'?Math.floor(c.id/13)%Number(s.mode):Math.floor(c.id/13)))&&s.cells.every(p=>p.length<=1);
  }
- return {rank,suit,red,create,source,sequence,legal,act,moves,validate};
+ return {rank,suit,red,create,source,sequence,legal,settle,foundationMove,finishPlan,act,moves,validate};
 });
