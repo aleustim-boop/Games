@@ -9,6 +9,7 @@
  const bits=m=>Array.from({length:9},(_,i)=>i+1).filter(n=>m&(1<<(n-1)));
  const valid=b=>Array.isArray(b)&&b.length===81&&b.every(n=>Number.isInteger(n)&&n>=0&&n<=9);
  const conflicts=b=>b.map((v,i)=>v&&peers[i].some(j=>b[j]===v)?i:-1).filter(i=>i>=0);
+ const mistakes=s=>s.board.flatMap((v,i)=>v&&!s.puzzle[i]&&v!==s.solution[i]?[i]:[]);
  const candidates=(b,i)=>b[i]?0:peers[i].reduce((m,j)=>b[j]?m&~(1<<(b[j]-1)):m,ALL);
  function solve(input,limit=2){
   if(!valid(input)||conflicts(input).length)return {count:0,solution:null};
@@ -49,7 +50,7 @@
  function enter(s,i,n,note=false){if(s.completed||!Number.isInteger(i)||i<0||i>80||!Number.isInteger(n)||n<0||n>9||s.puzzle[i]||(note&&s.board[i]))return false;
   if(!note&&s.board[i]===n&&!s.notes[i])return false;
   s.history.push(snapshot(s));if(s.history.length>200)s.history.shift();
-  if(note&&n)s.notes[i]^=1<<(n-1);else{s.board[i]=n;s.notes[i]=0;if(n)for(const j of peers[i])s.notes[j]&=~(1<<(n-1));}
+  if(note&&n)s.notes[i]^=1<<(n-1);else{s.board[i]=n;s.notes[i]=0;if(n&&n===s.solution[i])for(const j of peers[i])s.notes[j]&=~(1<<(n-1));}
   s.completed=s.board.every((v,j)=>v===s.solution[j]);return true;
  }
  function undo(s){if(s.completed||!s.history.length)return false;const prev=s.history.pop();s.board=prev.board;s.notes=prev.notes;return true;}
@@ -64,5 +65,5 @@
   s.history=Array.isArray(raw.history)?raw.history.slice(-200).filter(h=>valid(h?.board)&&notesOK(h.notes)&&!s.puzzle.some((v,i)=>v&&h.board[i]!==v)).map(h=>({board:h.board.slice(),notes:h.notes.slice()})):[];
   s.completed=s.board.every((v,i)=>v===s.solution[i]);return s;
  }
- return {levels,units,peers,bits,conflicts,candidates,solve,logic,generate,create,enter,undo,hint,restore};
+ return {levels,units,peers,bits,conflicts,mistakes,candidates,solve,logic,generate,create,enter,undo,hint,restore};
 });
