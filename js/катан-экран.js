@@ -21,10 +21,10 @@
   const ресурсы=['Дерево','Глина','Шерсть','Зерно','Руда'];
   const названия={road:'Дорога',settlement:'Поселение',city:'Город',development:'Развитие',knight:'Рыцарь',roads:'Строительство дорог',plenty:'Изобилие',monopoly:'Монополия',vp:'Победное очко'};
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};
-  let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true};
+  let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true},билетБота=null;
   let lastSerial=null,audio=null,selected=null,presentationTimer=null,presenting=false,boardFilter='all';
   let refreshTrade=null,robberMove=null,pendingLoot=null;
-  const seenOffers=new Set();let offerQueued=false;let cardSerial=0,victimPrompt='';
+  const seenOffers=new Set();let offerQueued=false;let cardSerial=0,victimPrompt='',tradeSelection=null;
   let production=null,productionStage='',botOfferWait=null;
   const shownHand=()=>v.hand.map((n,r)=>Math.max(0,n-(production?.gains?.[v.me]?.[r]||0)));
   const playerColor=i=>v?.colors?.[i]??i;
@@ -172,7 +172,9 @@
   function fresh(){
     clearPresentation();selected=null;online=false;network=null;mode=null;lastResult='';busy=false;lastSerial=null;
     const seed=crypto.getRandomValues(new Uint32Array(1))[0]||1;
-    record={version:1,rules:3,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,options:{...prefs.options,targetPoints:prefs.targetPoints},actions:[]};g=П.создать(record.n,seed,false,record.rules,record.options);record.clock=window.КатанЧасы.обновить({},g);save();screen('экран-игры');render();
+    record={version:1,rules:3,id:crypto.randomUUID(),seed,n:prefs.n,level:prefs.level,options:{...prefs.options,targetPoints:prefs.targetPoints},actions:[]};
+    билетБота=window.ОчкиРейтинга&&window.ОчкиРейтинга.взятьБилет('катан',prefs.level);// билет только для новой партии, «продолжить» его не запрашивает
+    g=П.создать(record.n,seed,false,record.rules,record.options);record.clock=window.КатанЧасы.обновить({},g);save();screen('экран-игры');render();
   }
   function local(player,action){if(action.type==='undo'&&window.КатанЧасы.остаток(record.clock)<=0)throw Error('Время хода истекло');П.действие(g,player,action);record.clock=window.КатанЧасы.обновить(record.clock||{},g);record.actions.push({player,action});save();}
   async function act(action){
@@ -223,6 +225,7 @@
     clearTimeout(timer);timer=null;if(!online&&g)v=П.вид(g,0);
     if(!v||!$('экран-игры').classList.contains('экран--виден'))return;setColors();
     if(dialogKind==='trade'&&$('кат-диалог').open)refreshTrade?.();
+    if(dialogKind==='offer'&&$('кат-диалог').open&&!v.offer){$('кат-диалог').close();dialogKind='';refreshTrade=null;}
     if(dialogKind==='offer'&&$('кат-диалог').open&&$('кат-диалог-тело').dataset.offerSerial!==[v.serial,v.offer?.id,v.tradeStatus?.type].join(':')){showOffer();$('кат-диалог-тело').dataset.offerSerial=[v.serial,v.offer?.id,v.tradeStatus?.type].join(':');}
     document.querySelector('.кат-карта').classList.toggle('загрузка',!artReady);
     const mine=v.phase==='discard'?v.discard[v.me]>0:v.turn===v.me,active=v.phase!=='finished';
@@ -362,7 +365,6 @@
     const root=el('div',undefined,'кат-сделка'),left=el('div'),right=el('div');left.append(el('h3',from),el('small','Отдаёт'),resourceCards(give));right.append(el('h3',to),el('small','Отдаёт'),resourceCards(want));root.append(left,el('span','⇄','кат-сделка-стрелка'),right);return root;
   }
   function tradeInventory(){const box=el('div',undefined,'кат-торговля-запас'),stock=el('div',undefined,'кат-торговля-ресурсы');box.append(el('b','У вас на руках'),stock);v.hand.forEach((n,r)=>{const item=el('span');item.dataset.resource=r;item.setAttribute('aria-label',`${ресурсы[r]}: ${n}`);item.append(picture(r),el('strong',n));stock.append(item);});return box;}
-  function tradeHistory(body){const trades=v.log.filter(e=>e.type==='trade'||e.type==='bank').slice(-3).reverse();if(!trades.length)return;const box=el('section',undefined,'кат-торговля-история');box.append(el('h3','Последние обмены'));for(const e of trades){if(e.type==='trade')box.append(dealCards(name(e.player),name(e.other),e.give,e.want));else{const give=[0,0,0,0,0],want=give.slice();give[e.give]=e.rate;want[e.want]=1;box.append(dealCards(name(e.player),'Банк / порт',give,want));}}body.append(box);}
   function trade(bankChoice,counter){
     const body=modal('Торговля','trade');
     if(v.phase!=='main'){body.append(el('p','Торговля доступна после броска кубиков и завершения действий разбойника.'));return;}
@@ -386,40 +388,54 @@
       bankPanel.append(el('h3','Отдаю'),giveRow,el('h3','Получаю'),wantRow,summary,exchange);bankUpdate();
     }
     body.append(bankPanel,peoplePanel);tab(v.turn===v.me&&!counter);
-    const inventory=tradeInventory();peoplePanel.append(inventory,el('p','Карта — добавить. Выбранная карта — убрать.','кат-обмен-инструкция'));
+    const inventory=tradeInventory();peoplePanel.append(inventory,el('p','Карта — добавить. Выбранная карта — убрать. Выберите только «Получаю», чтобы найти ресурс и получить предложения.','кат-обмен-инструкция'));
     const target=el('select');target.setAttribute('aria-label','Кому предложить обмен');if(v.turn===v.me){const o=el('option','Всем игрокам');o.value=-1;target.append(o);}v.players.forEach((_,i)=>{if(i!==v.me&&(v.turn===v.me||i===v.turn)){const o=el('option',name(i));o.value=i;target.append(o);}});peoplePanel.append(target);
-    const give=counter?counter.want.slice():[0,0,0,0,0],want=counter?counter.give.slice():[0,0,0,0,0];if(counter)target.value=counter.from;
+    const give=counter?counter.want.slice():[0,0,0,0,0],want=counter?counter.give.slice():[0,0,0,0,0];if(counter){target.value=counter.from;target.disabled=true;}
     const notice=el('p',undefined,'кат-обмен-инструкция');notice.setAttribute('role','status');
-    const confirm=button(counter?'Отправить встречное предложение':'Предложить обмен',async()=>{if(validTurn()&&await act({type:counter?'counter':'offer',offer:counter?.id,to:Number(target.value),give:give.slice(),want:want.slice()}))showOffer();},'кнопка кнопка--главная');
+    const confirm=button(counter?'Отправить встречное предложение':'Предложить обмен',async()=>{if(validTurn()&&await act({type:counter?(counter.request?'quote':'counter'):'offer',offer:counter?.id,to:Number(target.value),give:give.slice(),want:want.slice(),confirmation:true})){if(counter?.request)close();else showOffer();}},'кнопка кнопка--главная');
     const pickers=[];
     const update=()=>{
       bankUpdate();inventory.replaceChildren(...tradeInventory().childNodes);
-      for(const {values,other,palette,basket,side}of pickers){[...palette.children].forEach((b,i)=>{const limit=values===give?v.hand[i]:19;b.disabled=other[i]>0||values[i]>=limit||busy;b.setAttribute('aria-pressed',String(values[i]>0));b.querySelector('small').textContent=values===give?'У вас '+v.hand[i]:'Выбрано '+values[i];b.title=other[i]>0?'Этот ресурс уже выбран с другой стороны':'';});basket.replaceChildren();if(П.сумма(values))basket.append(resourceCards(values,r=>{values[r]=Math.max(0,values[r]-1);update();}));else basket.append(el('span',side==='give'?'Выберите, что отдаёте':'Выберите, что получите'));}
+      for(const {values,other,palette,basket,side}of pickers){[...palette.children].forEach((b,i)=>{const limit=values===give?v.hand[i]:19;b.disabled=other[i]>0||values[i]>=limit||busy;b.setAttribute('aria-pressed',String(values[i]>0));b.querySelector('small').textContent=values===give?'У вас '+v.hand[i]:'Выбрано '+values[i];b.title=other[i]>0?'Этот ресурс уже выбран с другой стороны':'';});basket.replaceChildren();if(П.сумма(values))basket.append(resourceCards(values,r=>{values[r]=Math.max(0,values[r]-1);update();}));else basket.append(el('span',side==='give'?'Можно не выбирать — другие игроки предложат цену':'Выберите, что получите'));}
       const stale=counter&&v.offer?.id!==counter.id;notice.textContent=stale?'Это предложение уже изменилось или закрыто. Откройте актуальное предложение.':give.some((n,i)=>n>v.hand[i])?'Для такого обмена не хватает ресурсов. Уберите лишние карты.':'';
-      confirm.disabled=busy||stale||v.phase!=='main'||v.turn!==turn||!П.сумма(give)||!П.сумма(want)||give.some((n,i)=>n>v.hand[i]||n&&want[i]);
+      confirm.textContent=counter?(counter.request?'Отправить свой вариант':'Отправить встречное предложение'):!П.сумма(give)&&П.сумма(want)?'Искать ресурс':'Предложить обмен';
+      confirm.disabled=busy||stale||v.phase!=='main'||v.turn!==turn||!!counter&&!П.сумма(give)||!П.сумма(want)||counter?.request&&counter.want.some((n,i)=>give[i]<n)||give.some((n,i)=>n>v.hand[i]||n&&want[i]);
     };refreshTrade=update;
     for(const [side,title,values,other]of [['give','Отдаю',give,want],['want','Получаю',want,give]]){
       const section=el('section',undefined,'кат-набор-ресурсов'),head=el('div',undefined,'кат-набор-шапка'),palette=el('div',undefined,'кат-выбор-карт'),basket=el('div',undefined,'кат-выбраны-карты');basket.dataset.basket=side;head.append(el('h3',title),button('Очистить',()=>{values.fill(0);update();}));
       ресурсы.forEach((r,i)=>{const b=button('',()=>{values[i]++;update();});b.dataset.tradeSide=side;b.dataset.resource=i;b.setAttribute('aria-label',`Добавить ${title.toLowerCase()}: ${r}`);b.append(cardPicture(i),el('b',r),el('small'));palette.append(b);});section.append(head,palette,basket);peoplePanel.append(section);pickers.push({values,other,palette,basket,side});
     }
-    confirm.classList.add('кат-подтвердить-обмен');peoplePanel.append(notice,confirm);tradeHistory(body);update();
+    confirm.classList.add('кат-подтвердить-обмен');peoplePanel.append(notice,confirm);update();
   }
   function showOffer(){
-    const o=v.offer,body=modal('Торговое предложение','offer');
-    if(!o){body.append(el('p',v.tradeStatus?.type==='accepted'?'Обмен состоялся. Ресурсы получены.':v.tradeStatus?.type==='rejected'?'Предложение отклонено.':v.tradeStatus?.type==='cancelled'?'Предложение отменено.':'Предложение больше не действует.'));tradeHistory(body);body.append(button('Готово',close));return;}
-    seenOffers.add(offerKey(o));body.dataset.offer=o.id;body.append(el('h3',o.from===v.me?'Ваше предложение':name(o.from)+' предлагает'),dealCards(name(o.from),o.to<0?'Любой игрок':name(o.to),o.give,o.want),tradeInventory());
-    const status=el('div',undefined,'кат-статус-торгов');status.setAttribute('aria-live','polite');v.players.forEach((_,i)=>{if(i===o.from||o.to>=0&&o.to!==i)return;status.append(el('p',name(i)+(o.rejected?.includes(i)?' · отказ':' · ожидаем ответа')));});body.append(status);
-    if(o.from!==v.me&&(o.to===-1||o.to===v.me)&&!o.rejected?.includes(v.me)){
-      const accept=button('Принять обмен',async()=>{if(await act({type:'accept',offer:o.id}))showOffer();},'кнопка кнопка--главная');accept.disabled=busy||o.want.some((n,r)=>n>v.hand[r]);body.append(accept,button('Предложить свой вариант',()=>trade(null,o)),button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))showOffer();}));if(accept.disabled)body.append(el('small','Для принятия не хватает ресурсов. Можно предложить другой вариант.'));
+    const o=v.offer;if(!o){close();return;}const body=modal(o.request?'Поиск ресурса':'Торговое предложение','offer'),key=offerKey(o);
+    seenOffers.add(key);if(o.from===v.me)seenOffers.add(key+':ready:'+responseKey(o));
+    if(tradeSelection?.key!==key)tradeSelection={key,partner:null};
+    if(!o.accepted?.includes(tradeSelection.partner)||o.request&&o.quotes.find(q=>q.player===tradeSelection.partner)?.id!==tradeSelection.quote)tradeSelection.partner=null;
+    body.dataset.offer=o.id;if(o.request)body.append(el('h3',(o.from===v.me?'Вы ищете':name(o.from)+' ищет')+' · '+resourceText(o.want)),resourceCards(o.want),el('p',o.from===v.me?'Игроки предложат свою цену. Выберите подходящий вариант.':'Предложите искомый ресурс и выберите, что хотите взамен.','кат-обмен-инструкция'),tradeInventory());else body.append(el('h3',o.from===v.me?'Ваше предложение':name(o.from)+' предлагает'),dealCards(name(o.from),o.to<0?'Любой игрок':name(o.to),o.give,o.want),tradeInventory());
+    const status=el('div',undefined,'кат-статус-торгов');status.setAttribute('aria-live','polite');
+    v.players.forEach((_,i)=>{if(i===o.from||o.to>=0&&o.to!==i)return;const ready=o.accepted?.includes(i);
+      if(o.from===v.me&&ready){const quote=o.quotes?.find(q=>q.player===i);if(quote)status.append(dealCards(name(i),'Вы',quote.give,quote.want));const choice=button(name(i)+' · готов к обмену',()=>{tradeSelection.partner=i;tradeSelection.quote=quote?.id;showOffer();},'кнопка кат-кандидат-обмена');choice.dataset.partner=i;choice.setAttribute('aria-pressed',String(tradeSelection.partner===i));choice.setAttribute('aria-label','Выбрать '+name(i));status.append(choice);}
+      else status.append(el('p',name(i)+(ready?' · согласен, ждёт подтверждения':o.rejected?.includes(i)?' · отказ':' · ожидаем ответа')));
+    });body.append(status);
+    if(o.from===v.me){
+      body.append(el('p','Выберите, с кем обменяться, и подтвердите. До подтверждения ресурсы остаются у игроков.','кат-обмен-инструкция'));
+      const confirm=button(tradeSelection.partner===null?'Выберите игрока для обмена':'Обменяться с '+name(tradeSelection.partner),async()=>{if(await act({type:'confirmTrade',offer:o.id,partner:tradeSelection.partner,quote:tradeSelection.quote}))close();},'кнопка кнопка--главная');confirm.dataset.confirmTrade='';confirm.disabled=busy||tradeSelection.partner===null||(o.request?o.quotes.find(q=>q.player===tradeSelection.partner)?.want||[]:o.give).some((n,r)=>n>v.hand[r]);body.append(confirm);
+    }else if((o.to===-1||o.to===v.me)&&!o.rejected?.includes(v.me)){
+      if(o.request&&!o.accepted?.includes(v.me)){const reply=button('Предложить свой вариант',()=>trade(null,o),'кнопка кнопка--главная');reply.disabled=o.want.some((n,r)=>n>v.hand[r]);body.append(reply,button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))close();}));if(reply.disabled)body.append(el('small','У вас пока нет искомого ресурса.'));}
+      else if(o.accepted?.includes(v.me)){const quote=o.quotes?.find(q=>q.player===v.me);if(quote)body.append(dealCards('Вы',name(o.from),quote.give,quote.want));body.append(el('p',(o.request?'Ваш вариант отправлен. ':'Вы согласились. ')+name(o.from)+' выбирает, с кем обменяться.'),button(o.request?'Отозвать свой вариант':'Отозвать согласие',async()=>{if(await act({type:'withdrawTrade',offer:o.id}))close();}));}
+      else {const accept=button('Согласиться на обмен',async()=>{if(await act({type:'agree',offer:o.id}))close();},'кнопка кнопка--главная');accept.disabled=busy||o.want.some((n,r)=>n>v.hand[r]);body.append(accept,button('Предложить свой вариант',()=>trade(null,o)),button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))close();}));if(accept.disabled)body.append(el('small','Для обмена не хватает ресурсов. Можно предложить другой вариант.'));}
     }
-    if(o.from===v.me||v.turn===v.me)body.append(button('Отменить предложение',async()=>{if(await act({type:'cancelOffer',offer:o.id}))showOffer();}));
+    if(o.from===v.me||v.turn===v.me)body.append(button('Отменить предложение',async()=>{if(await act({type:'cancelOffer',offer:o.id}))close();}));
     body.append(button('Свернуть',close));bot();
   }
+  const responseKey=o=>(o.accepted||[]).map(i=>i+'-'+(o.quotes?.find(q=>q.player===i)?.id||0)).join(',');
   const offerKey=o=>`${online?network?.код:record?.id}:${network?.сыграноПартий||0}:${o.id}:${o.from}`;
   function offer(){
     const root=$('кат-предложение'),o=v.offer;root.classList.toggle('скрыт',!o);root.replaceChildren();if(!o)return;
-    const b=button('',showOffer,'кат-ссылка');b.append(el('b',o.from===v.me?'Ваше предложение':name(o.from)+' предлагает обмен'),el('span',resourceText(o.give)+' → '+resourceText(o.want)));root.append(b);
-    if(!offerQueued&&!presenting&&!busy&&!$('кат-диалог').open&&o.from!==v.me&&(o.to===-1||o.to===v.me)&&!o.rejected?.includes(v.me)&&!seenOffers.has(offerKey(o))){offerQueued=true;queueMicrotask(()=>{offerQueued=false;if(v.offer?.id===o.id&&!$('кат-диалог').open&&!presenting)showOffer();});}
+    const b=button('',showOffer,'кат-ссылка');b.append(el('b',o.request?(o.from===v.me?'Вы ищете ресурс':name(o.from)+' ищет ресурс'):o.from===v.me?'Ваше предложение':name(o.from)+' предлагает обмен'),el('span',' · '+(o.request?resourceText(o.want):resourceText(o.give)+' → '+resourceText(o.want))+(o.accepted?.length?' · Согласны: '+o.accepted.map(name).join(', '):'')));root.append(b);
+    const incoming=o.from!==v.me&&(o.to===-1||o.to===v.me)&&!o.rejected?.includes(v.me)&&!o.accepted?.includes(v.me),ready=o.from===v.me&&o.accepted?.length,noticeKey=offerKey(o)+(ready?':ready:'+responseKey(o):'');
+    if(!offerQueued&&!presenting&&!busy&&!$('кат-диалог').open&&(incoming||ready)&&!seenOffers.has(noticeKey)){offerQueued=true;queueMicrotask(()=>{offerQueued=false;if(v.offer?.id===o.id&&!$('кат-диалог').open&&!presenting)showOffer();});}
   }
   function logText(e){
     const n=name(e.player);
@@ -430,12 +446,17 @@
     if(e.type==='dev')return `${n}: ${названия[e.card]}`;
     if(e.type==='discard')return `${n}: сброшено ${e.count} ресурсов`;
     if(e.type==='undo')return `${n}: отменено — ${e.action==='bank'?'обмен с банком':названия[e.action]||e.action}`;
-    return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',robber:'разбойник перемещён'}[e.type]||e.type}`;
+    return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',tradeQuote:'предложил вариант обмена',tradeReady:'согласен на обмен — ждёт подтверждения',tradeWithdraw:'отозвал согласие на обмен',robber:'разбойник перемещён'}[e.type]||e.type}`;
   }
   function journal(){const body=modal('Журнал ходов','log');if(!v?.log.length)body.append(el('p','Здесь появятся броски кубиков, постройки и обмены.'));else v.log.slice().reverse().forEach(e=>{const entry=el('div',logText(e),'кат-журнал цвет-'+playerColor(e.player));if(e.type==='trade')entry.append(dealCards(name(e.player),name(e.other),e.give,e.want));if(e.type==='bank'){const give=[0,0,0,0,0],want=give.slice();give[e.give]=e.rate;want[e.want]=1;entry.append(dealCards(name(e.player),'Банк / порт',give,want));}body.append(entry);});if(v?.startRolls?.length){body.append(el('h3','Кто начинает'));v.startRolls.forEach((rolls,i)=>body.append(el('p',`Бросок ${i+1}: `+rolls.map(r=>`${name(r.player)} — ${r.dice.join(' + ')} = ${П.сумма(r.dice)}`).join('; '))));body.append(el('p','Начинает: '+name(v.start)));}}
   function saveResult(){
     if(online||record.resultSaved)return;
     try{let history=JSON.parse(localStorage.getItem(HIST))||[];if(!Array.isArray(history))history=[];if(!history.some(x=>x.id===record.id))history.unshift({id:record.id,date:Date.now(),win:v.winner===0,scores:v.players.map(p=>p.score),level:record.level});localStorage.setItem(HIST,JSON.stringify(history.slice(0,30)));record.resultSaved=true;save();}catch(_){}
+    // Билет на партию с ботом сдаём один раз: победил игрок (место 0) — победа,
+    // иначе поражение (в том числе если завершили досрочно кнопкой «Завершить» —
+    // она ставит surrendered и показывает итог, это настоящий конец партии, а не
+    // «уход в меню» без результата — тот вообще не доводит фазу до finished).
+    if(билетБота){window.ОчкиРейтинга.сдать(билетБота,v.winner===0?'победа':'поражение');билетБота=null;}
   }
   function results(){
     const body=modal(v.winner<0?'Партия завершена':v.winner===v.me?'Вы победили!':`Победитель: ${name(v.winner)}`,'result');

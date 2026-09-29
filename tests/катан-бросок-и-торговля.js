@@ -58,7 +58,7 @@ function fixtures(){
     await p.locator('#кат-обмен').click();await p.getByRole('button',{name:'С игроками',exact:true}).click();await p.getByRole('combobox',{name:'Кому предложить обмен'}).selectOption(String(o.to));await p.locator(`[data-trade-side=give][data-resource="${o.give}"]`).click();await p.locator(`[data-trade-side=want][data-resource="${o.want}"]`).click();await p.screenshot({path:'tests/снимки/катан-v3-торговля.png'});await p.getByRole('button',{name:'Предложить обмен',exact:true}).click();
     current=await state();assert(current.offer);const serial=current.serial;
     await p.clock.fastForward(1500);assert.equal((await state()).serial,serial,'Бот ответил раньше паузы');
-    await p.clock.fastForward(1600);current=await state();assert.equal(current.offer,null);assert.equal(current.players[0].resources[o.give],before.players[0].resources[o.give]-1);assert.equal(current.players[0].resources[o.want],before.players[0].resources[o.want]+1);
+    await p.clock.fastForward(1600);current=await state();assert(current.offer.accepted.includes(o.to));assert.deepEqual(current.players[0].resources,before.players[0].resources);await p.locator(`[data-partner="${o.to}"]`).click();await p.locator('[data-confirm-trade]').click();current=await state();assert.equal(current.offer,null);assert.equal(current.players[0].resources[o.give],before.players[0].resources[o.give]-1);assert.equal(current.players[0].resources[o.want],before.players[0].resources[o.want]+1);
     assert.deepEqual(errors,[]);console.log('Катан: подтверждение постройки, видимые реальные кубики, пауза 2,8 с, покупка развития, банк и обмен с ботом — OK');
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

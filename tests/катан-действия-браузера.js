@@ -31,15 +31,18 @@ async function ход(page,v,a){
     await page.locator('#кат-карты').click();await dialog.getByRole('button',{name:new RegExp('^'+names[a.card]+' ×')}).click();
     if(a.card==='plenty'){for(let r=0;r<5;r++)await dialog.getByRole('spinbutton',{name:resources[r],exact:true}).fill(String(a.resources[r]));await dialog.getByRole('button',{name:'Подтвердить'}).click();}
     if(a.card==='monopoly')await dialog.getByRole('button',{name:resources[a.resource],exact:true}).click();
-  }else if(['accept','reject','cancelOffer'].includes(a.type)){
+  }else if(['accept','agree','confirmTrade','withdrawTrade','reject','cancelOffer'].includes(a.type)){
     // Пока бот считал ответ на предложение, другой игрок (или серверный бот на третьем
     // месте — он ходит своим таймером мимо браузера) мог уже принять/отклонить/отменить
     // тот же обмен: наш view() у решающего игрока устарел. Это нормальная гонка живой
     // партии, а не поломка — банер #кат-предложение уже пуст, действие просто пропускаем.
     if(await page.evaluate(id=>window.__publicView?.offer?.id!==id,a.offer))return true;
-    if(a.type==='accept'){await page.locator('#кат-предложение button').click();await dialog.getByRole('button',{name:'Принять'}).click();}
-    else if(a.type==='reject'){await page.locator('#кат-предложение button').click();await dialog.getByRole('button',{name:'Отказаться',exact:true}).click();}
-    else{await page.locator('#кат-предложение button').click();await dialog.getByRole('button',{name:'Отменить предложение',exact:true}).click();}
+    if(!(await dialog.isVisible()))await page.locator('#кат-предложение button').click();
+    if(a.type==='accept'||a.type==='agree')await dialog.getByRole('button',{name:'Согласиться на обмен',exact:true}).click();
+    else if(a.type==='confirmTrade'){await dialog.locator(`[data-partner="${a.partner}"]`).click();await dialog.locator('[data-confirm-trade]').click();}
+    else if(a.type==='withdrawTrade')await dialog.getByRole('button',{name:'Отозвать согласие',exact:true}).click();
+    else if(a.type==='reject')await dialog.getByRole('button',{name:'Отказаться',exact:true}).click();
+    else await dialog.getByRole('button',{name:'Отменить предложение',exact:true}).click();
   }
   else if(a.type==='offer'){
     // Своё предложение обмена: #кат-обмен → вкладка «С игроками» → кому → сколько отдаю/получаю → «Предложить обмен».

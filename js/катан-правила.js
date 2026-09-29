@@ -142,6 +142,29 @@
     нужно(Number.isInteger(p)&&p>=0&&p<g.n&&g.phase!=='finished','Партия недоступна');
     нужно(a&&typeof a.type==='string','Неизвестное действие');
     if(a.type==='surrender'){g.phase='finished';g.winner=-1;g.surrendered=p;g.offer=null;событие(g,p,'surrender');return;}
+    if(a.type==='quote'){
+      const o=g.offer;нужно(g.phase==='main'&&o?.request&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Поиск ресурса уже недоступен');
+      нужно(ресурсы(a.give)&&ресурсы(a.want)&&сумма(a.give)>0&&сумма(a.want)>0&&a.give.every((n,i)=>!n||!a.want[i])&&o.want.every((n,i)=>a.give[i]>=n),'Предложите искомый ресурс и укажите цену');
+      нужно(хватит(g.players[p].resources,a.give),'У вас нет предложенных ресурсов');
+      o.quotes=(o.quotes||[]).filter(q=>q.player!==p);o.quotes.push({player:p,id:g.serial+1,give:a.give.slice(),want:a.want.slice()});if(!o.accepted.includes(p))o.accepted.push(p);событие(g,p,'tradeQuote',{other:o.from,offer:o.id});return;
+    }
+    if(a.type==='agree'||a.type==='accept'&&g.offer?.confirmation){
+      const o=g.offer;нужно(g.phase==='main'&&o&&!o.request&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p)&&!o.accepted?.includes(p),'Предложение уже недоступно');
+      нужно(хватит(g.players[p].resources,o.want)&&хватит(g.players[o.from].resources,o.give),'Ресурсы для обмена изменились');
+      o.confirmation=true;(o.accepted||=[]).push(p);событие(g,p,'tradeReady',{other:o.from,offer:o.id});return;
+    }
+    if(a.type==='withdrawTrade'){
+      const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&o.accepted?.includes(p),'Ваш ответ уже недоступен');
+      o.accepted=o.accepted.filter(i=>i!==p);if(o.quotes)o.quotes=o.quotes.filter(q=>q.player!==p);событие(g,p,'tradeWithdraw',{other:o.from,offer:o.id});return;
+    }
+    if(a.type==='confirmTrade'){
+      const o=g.offer,q=a.partner;нужно(g.phase==='main'&&o&&o.from===p&&a.offer===o.id&&Number.isInteger(q)&&q!==p&&o.accepted?.includes(q)&&!o.rejected?.includes(q)&&(o.to===-1||o.to===q),'Выберите согласившегося игрока');
+      const quote=o.request?o.quotes.find(x=>x.player===q):null;нужно(!o.request||quote&&quote.id===a.quote,'Условия обмена изменились. Выберите вариант заново');
+      const give=quote?quote.want:o.give,want=quote?quote.give:o.want;
+      нужно(хватит(g.players[p].resources,give)&&хватит(g.players[q].resources,want),'Ресурсы для обмена изменились');
+      for(let r=0;r<5;r++){g.players[q].resources[r]+=give[r]-want[r];g.players[p].resources[r]+=want[r]-give[r];}
+      событие(g,q,'trade',{other:p,give:want,want:give});g.tradeStatus={type:'accepted',from:p,by:q};g.offer=null;return;
+    }
     if(a.type==='accept'){
       const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p)&&a.offer===o.id,'Предложение уже недоступно');
       нужно(хватит(g.players[p].resources,o.want)&&хватит(g.players[o.from].resources,o.give),'Ресурсы для обмена изменились');
@@ -150,16 +173,16 @@
     }
     if(a.type==='reject'){
       const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Предложение уже недоступно');
-      (o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
+      if(o.accepted)o.accepted=o.accepted.filter(i=>i!==p);if(o.quotes)o.quotes=o.quotes.filter(q=>q.player!==p);(o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
       if(o.to>=0||o.rejected.length===g.n-1){g.tradeStatus={type:'rejected',from:o.from};g.offer=null;}return;
     }
     if(a.type==='offer'||a.type==='counter'){
       нужно(g.phase==='main','Обмен доступен после броска');
-      if(a.type==='counter'){const o=g.offer;нужно(o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&a.to===o.from,'Предложение уже недоступно');}
+      if(a.type==='counter'){const o=g.offer;нужно(o&&!o.request&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&a.to===o.from,'Предложение уже недоступно');}
       нужно(Number.isInteger(a.to)&&a.to>=-1&&a.to<g.n&&a.to!==p&&(p===g.turn||a.to===g.turn),'Обмен только с активным игроком');
-      нужно(ресурсы(a.give)&&ресурсы(a.want)&&сумма(a.give)>0&&сумма(a.want)>0&&a.give.every((n,i)=>!n||!a.want[i]),'Выберите разные ресурсы с обеих сторон');
+      нужно(ресурсы(a.give)&&ресурсы(a.want)&&(сумма(a.give)>0||a.type==='offer'&&a.confirmation===true)&&сумма(a.want)>0&&a.give.every((n,i)=>!n||!a.want[i]),'Выберите разные ресурсы с обеих сторон');
       нужно(хватит(g.players[p].resources,a.give),'У вас нет предложенных ресурсов');
-      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice()};if(g.rules>=3)g.tradeStatus=null;событие(g,p,'offer',a.type==='counter'?{counter:true}:{});return;
+      g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice(),...(a.confirmation?{confirmation:true,accepted:[],...(сумма(a.give)===0?{request:true,quotes:[]}: {})}: {})};if(g.rules>=3)g.tradeStatus=null;событие(g,p,'offer',a.type==='counter'?{counter:true}:{});return;
     }
     if(a.type==='cancelOffer'){нужно(g.offer&&(a.offer===undefined||a.offer===g.offer.id)&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');if(g.rules>=3)g.tradeStatus={type:'cancelled',from:g.offer.from};g.offer=null;return;}
     if(a.type==='discard'){

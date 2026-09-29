@@ -90,3 +90,17 @@
  .кат-сцена .кат-карта:not(.увеличена){inset:76px 0 130px}
  .кат-сцена .кат-карта:not(.увеличена) .кат-карта-низ{bottom:-36px}
 }
+
+.кат-кандидат-обмена{width:100%;margin:4px 0;text-align:left}.кат-кандидат-обмена[aria-pressed=true]{background:#67502b!important;border-color:#f1cd80!important;color:#fff1cc!important}
+
+.катан #кат-диалог[data-kind=offer]{padding:16px}
+.катан #кат-диалог[data-kind=offer] header{margin-bottom:10px}
+.катан #кат-диалог[data-kind=offer] #кат-диалог-тело{gap:8px}
+.катан #кат-диалог[data-kind=offer] h3,.катан #кат-диалог[data-kind=offer] p{margin:3px 0}
+.катан #кат-диалог[data-kind=offer] .кат-статус-торгов{padding:6px 8px}
+.катан #кат-диалог[data-kind=offer] .кат-сделка{margin:6px 0;padding:8px;gap:6px}
+.катан #кат-диалог[data-kind=offer] .кат-сделка h3{font-size:13px}
+.катан #кат-диалог[data-kind=offer] .кат-обмен-фишка{width:40px;font-size:10px}
+.катан #кат-диалог[data-kind=offer] .кат-обмен-фишка strong{font-size:14px;bottom:16px;min-width:20px}
+.катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы{gap:4px}
+.катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы .кат-рисунок{width:22px;height:22px}

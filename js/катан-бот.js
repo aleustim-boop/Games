@@ -36,18 +36,24 @@
     return 'development';
   }
   function обмен(v){
-    const o=v.offer;if(!o||o.from===v.me||o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me)||!o.want.every((n,i)=>n<=v.hand[i]))return null;
+    const o=v.offer;if(!o||o.from===v.me||o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me)||o.accepted?.includes(v.me)||!o.want.every((n,i)=>n<=v.hand[i]))return null;
     const cost=П.ЦЕНЫ[цель(v)],before=cost.reduce((s,n,i)=>s+Math.max(0,n-v.hand[i]),0),after=cost.reduce((s,n,i)=>s+Math.max(0,n-v.hand[i]-o.give[i]+o.want[i]),0);
-    return after<before&&sum(o.want)<=sum(o.give)+1?{type:'accept',offer:o.id}:null;
+    return after<before&&sum(o.want)<=sum(o.give)+1?{type:'agree',offer:o.id}:null;
   }
   function предложение(v){
     if(v.phase!=='main'||v.turn!==v.me||v.offer||v.log.some(e=>e.type==='offer'&&e.player===v.me&&e.id>(v.log.findLast(e=>e.type==='end')?.id||0)))return null;
     const cost=П.ЦЕНЫ[цель(v)],want=cost.map((n,r)=>({r,need:n-v.hand[r]})).filter(x=>x.need>0).sort((a,b)=>b.need-a.need)[0];
     if(!want||!v.players.some((p,i)=>i!==v.me&&p.cards>0))return null;
     const give=v.hand.map((n,r)=>({r,extra:n-cost[r]})).filter(x=>x.r!==want.r&&x.extra>0).sort((a,b)=>b.extra-a.extra)[0];if(!give)return null;
-    const a=[0,0,0,0,0],b=a.slice();a[give.r]=1;b[want.r]=1;return {type:'offer',to:-1,give:a,want:b};
+    const a=[0,0,0,0,0],b=a.slice();a[give.r]=1;b[want.r]=1;return {type:'offer',to:-1,give:a,want:b,confirmation:true};
   }
-  function ответНаОбмен(v){const o=v.offer;if(v.phase!=='main'||!o||o.from===v.me||o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me))return null;return обмен(v)||{type:'reject',offer:o.id};}
+  function ответНаОбмен(v){
+    const o=v.offer;if(v.phase!=='main'||!o)return null;
+    if(o.from===v.me){const partners=(o.accepted||[]).filter(i=>!o.rejected?.includes(i));if(partners.length){const partner=partners.sort((a,b)=>v.players[a].score-v.players[b].score)[0];return {type:'confirmTrade',offer:o.id,partner,quote:o.quotes?.find(q=>q.player===partner)?.id};}return null;}
+    if(o.to>=0&&o.to!==v.me||o.rejected?.includes(v.me)||o.accepted?.includes(v.me))return null;
+    if(o.request){const cost=П.ЦЕНЫ[цель(v)];if(o.want.some((n,r)=>v.hand[r]-n<cost[r]))return {type:'reject',offer:o.id};const r=cost.findIndex((n,r)=>n>v.hand[r]&&!o.want[r]);if(r<0)return {type:'reject',offer:o.id};const want=[0,0,0,0,0];want[r]=1;return {type:'quote',offer:o.id,give:o.want.slice(),want};}
+    return обмен(v)||{type:'reject',offer:o.id};
+  }
   function ход(v,level='обычный'){
     const plain=id=>Г.vertices[id].hexes.reduce((s,h)=>s+(v.hexes[h].number?6-Math.abs(7-v.hexes[h].number):0),0);
     const score=id=>level==='сложный'?ценность(v,id):plain(id);
