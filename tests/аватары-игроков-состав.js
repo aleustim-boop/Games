@@ -1,0 +1,5 @@
+"use strict";
+const assert=require('node:assert/strict'),R=require('../server/комнаты');R.оснасткаФото({умею:()=>true,ключДляНомера:n=>require('node:crypto').createHash('sha256').update('test-'+n).digest('hex').slice(0,24)});
+for(const game of ['дурак','шахматы','шашки','нарды','деберц','домино','морской-бой','катан','монополия']){
+ const room=R.создатьКомнату('avatar-test-'+game,{игра:game,мест:game==='катан'?3:2,имя:'Первый',телеграм:900000001});assert(room.ок,game);const joined=R.войтиВКомнату(room.код,{имя:'Второй',телеграм:900000002});assert(joined.ок,game);const who=R.найтиИгрока(room.код,room.пропуск),v=R.показатьИгроку(who.комната,who.ктоЯ);assert.equal(v.аватары.length,2,game);assert(v.аватары.every(p=>/^[a-f0-9]{24}$/.test(p.фото)));assert.notEqual(v.аватары[0].фото,v.аватары[1].фото);assert.equal(v.аватары[0].этоЯ,true);assert.equal(v.аватары[1].этоЯ,false);assert(!JSON.stringify(v).includes('900000001'));assert(!JSON.stringify(v).includes(room.пропуск));R.удалитьКомнату(room.код);console.log(game+': private avatar keys for both players — OK');
+}

@@ -4,7 +4,7 @@
   const xy=v=>[450+(v.x*Math.sqrt(3)/2-v.y*.5)*R,420+(v.x*.5+v.y*Math.sqrt(3)/2)*R*.9];
   function node(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
   function поле(svg,v,mode,act,prefix=''){
-    const direct=mode==='direct';
+    const direct=mode==='direct';svg.classList.toggle('кат-выбор-разбойника-активен',mode==='robber'&&v.turn===v.me);
     const color=i=>v.colors?.[i]??i,variants=[0,0,0,0,0,0],variantOffset=v.hexes.reduce((s,h)=>s+h.number*(h.id+1),0)%4;
     const defs=node('defs');
     const pawnGradient=node('radialGradient',{id:prefix+'черная-фигура',cx:'.3',cy:'.2',r:'.85'});pawnGradient.append(node('stop',{offset:'0','stop-color':'#6d7d83'}),node('stop',{offset:'.4','stop-color':'#27333a'}),node('stop',{offset:'1','stop-color':'#070b0e'}));defs.append(pawnGradient);
@@ -48,8 +48,8 @@
         group.append(node('text',{x,y:y+26,'class':[6,8].includes(h.number)?'кат-номер кат-красный':'кат-номер'},h.number));
         group.append(node('text',{x,y:y+40,'class':'кат-вероятность'},'•'.repeat(6-Math.abs(7-h.number))));
       }
-      if(h.id===v.robber){group.classList.add('кат-заблокирован');group.append(robberFigure(x,y));}
-      if(mode==='robber'&&v.turn===v.me&&(v.legal.robber||v.hexes.filter(h=>h.id!==v.robber).map(h=>h.id)).includes(h.id)){path.classList.add('доступно');group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`Разбойник: гекс ${h.id+1}`);group.onclick=()=>act({type:'robber',hex:h.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
+      if(h.id===v.robber){group.classList.add('кат-заблокирован');}
+      if(mode==='robber'&&v.turn===v.me&&(v.legal.robber||v.hexes.filter(h=>h.id!==v.robber).map(h=>h.id)).includes(h.id)){path.classList.add('доступно');group.classList.add('кат-разбойник-доступно');group.append(node('polygon',{points,'class':'кат-разбойник-доступный-контур'}),node('circle',{cx:x,cy:y-32,r:12,'class':'кат-разбойник-цель'}),node('text',{x,y:y-27,'class':'кат-разбойник-плюс'},'+'));group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`Разбойник: гекс ${h.id+1}`);group.onclick=()=>act({type:'robber',hex:h.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
       svg.append(group);
     }
     for(const port of v.ports){
@@ -88,9 +88,10 @@
       if(enabled){group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`${type==='city'?'Город':'Поселение'} ${vert.id}`);group.onclick=()=>act({type,vertex:vert.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
       svg.append(group);
     }
+    const [rx,ry]=xy(Г.hexes[v.robber]),piece=robberFigure(rx,ry);piece.dataset.robberHex=v.robber;svg.append(piece);
   }
   function robberFigure(x,y,preview=false){const g=node('g',{'class':'кат-разбойник'+(preview?' кат-разбойник-превью':'')});g.append(node('ellipse',{cx:x,cy:y-3,rx:34,ry:13,'class':'кат-разбойник-основание'}),node('image',{href:'img/катан/разбойник-v2.webp',x:x-47,y:y-100,width:94,height:103,preserveAspectRatio:'xMidYMax meet'}),node('title',{},'Разбойник: производство заблокировано'));return g;}
-  function preview(svg,from,to){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),g=node('g',{'class':'кат-маршрут-разбойника','aria-hidden':'true'});g.append(node('path',{d:`M${a[0]} ${a[1]-35} Q${(a[0]+b[0])/2} ${Math.min(a[1],b[1])-110} ${b[0]} ${b[1]-35}`}),robberFigure(b[0],b[1],true));svg.append(g);for(const id of Г.hexes[to].vertices)svg.querySelector(`[data-vertex="${id}"]`)?.classList.add('кат-под-угрозой');}
-  async function move(svg,from,to,animated){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),piece=svg.querySelector(`[data-hex="${to}"] .кат-разбойник`);if(!piece)return;if(!animated){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');return;}const home=piece.parentNode;svg.append(piece);piece.classList.add('кат-разбойник-переезжает');try{await piece.animate([{transform:`translate(${a[0]-b[0]}px,${a[1]-b[1]}px)`,opacity:1},{transform:`translate(${(a[0]-b[0])/2}px,${(a[1]-b[1])/2-35}px)`,opacity:1,offset:.5},{transform:'translate(0,0)',opacity:1}],{duration:animated?1250:1,easing:'ease-in-out',fill:'both'}).finished;svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');await new Promise(r=>setTimeout(r,animated?650:100));}finally{piece.classList.remove('кат-разбойник-переезжает');if(home.isConnected)home.append(piece);}}
+  function preview(svg,from,to){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-выбран');const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),g=node('g',{'class':'кат-маршрут-разбойника','aria-hidden':'true'});g.append(node('path',{d:`M${a[0]} ${a[1]-35} Q${(a[0]+b[0])/2} ${Math.min(a[1],b[1])-110} ${b[0]} ${b[1]-35}`}),robberFigure(b[0],b[1],true));svg.append(g);for(const id of Г.hexes[to].vertices)svg.querySelector(`[data-vertex="${id}"]`)?.classList.add('кат-под-угрозой');}
+  async function move(svg,from,to,animated){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),piece=svg.querySelector(`.кат-разбойник[data-robber-hex="${to}"]`);if(!piece)return;if(!animated){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');return;}const home=piece.parentNode;svg.append(piece);piece.classList.add('кат-разбойник-переезжает');try{await piece.animate([{transform:`translate(${a[0]-b[0]}px,${a[1]-b[1]}px)`,opacity:1},{transform:`translate(${(a[0]-b[0])/2}px,${(a[1]-b[1])/2-35}px)`,opacity:1,offset:.5},{transform:'translate(0,0)',opacity:1}],{duration:animated?1250:1,easing:'ease-in-out',fill:'both'}).finished;svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');await new Promise(r=>setTimeout(r,animated?650:100));}finally{piece.classList.remove('кат-разбойник-переезжает');if(home.isConnected)home.append(piece);}}
   window.КатанПоле={рисовать:поле,предпросмотрРазбойника:preview,переместитьРазбойника:move};
 })();

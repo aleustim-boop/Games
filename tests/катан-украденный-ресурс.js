@@ -1,0 +1,13 @@
+"use strict";
+const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+(async()=>{const b=await chromium.launch();try{for(const [me,resource] of [[0,0],[0,1],[0,2],[0,3],[0,4],[1,0],[2,0]]){
+ const g=P.создать(3,42,false,3);while(g.phase.startsWith('setup'))P.действие(g,g.turn,B.ход(P.вид(g,g.turn)));g.phase='robber';g.turn=1;g.returnPhase='main';g.players[0].resources=[0,0,0,0,0];g.players[0].resources[resource]=1;
+ const dest=P.Г.hexes.find(h=>h.id!==g.robber&&h.vertices.some(i=>g.buildings[i]?.owner===0)&&!h.vertices.some(i=>g.buildings[i]?.owner===2));assert(dest);
+ const p=await b.newPage({viewport:{width:390,height:844}});await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.CATAN_TEST_URL||'http://127.0.0.1:8137/катан.html');
+ await p.evaluate(({g,me})=>{window.lootGame=g;window.lootMe=me;window.lootVersion=0;window.pushLoot=()=>{const view=КатанПравила.вид(lootGame,lootMe);view.names=['Игрок','Бот 1','Игрок 3'];ИграПоСети.показатьВид({код:'loot-test',версия:++lootVersion,катан:view,застолом:[{номер:1},{номер:2,этоБот:true},{номер:3}]});};pushLoot();},{g,me});
+ await p.evaluate(dest=>{КатанПравила.действие(lootGame,1,{type:'robber',hex:dest});pushLoot();},dest.id);
+ assert(!(await p.locator('#кат-диалог[open][data-kind=loot]').count()),'Card must wait for robber movement');await p.locator('.кат-разбойник-переезжает').waitFor({state:'detached'});
+ if(me!==2){await p.locator('#кат-диалог[open][data-kind=loot]').waitFor();assert.equal(await p.locator('.кат-добыча').getAttribute('data-resource'),String(resource));assert.match(await p.locator('#кат-диалог').innerText(),me===0?/У вас украли ресурс/:/Вы получили ресурс/);if(me===0){assert.match(await p.locator('#кат-диалог').innerText(),/Бот 1 забрал у вас/);assert.equal(await p.evaluate(()=>lootGame.players[0].resources.reduce((a,b)=>a+b,0)),0);}await p.screenshot({path:`tests/снимки/катан-кража-${me}-${resource}.png`});await p.getByRole('button',{name:me===0?'Понятно':'В мою руку',exact:true}).click();await p.evaluate(()=>pushLoot());assert(!(await p.locator('#кат-диалог[open][data-kind=loot]').count()),'Must not repeat on polling');}
+ else{assert(!(await p.locator('#кат-диалог[open][data-kind=loot]').count()));assert.equal(await p.evaluate(()=>КатанПравила.вид(lootGame,2).log.findLast(e=>e.type==='steal').resource),undefined);}
+ assert.deepEqual(errors,[]);await p.close();console.log(`Theft: viewer ${me}, resource ${resource} — OK`);
+ }}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

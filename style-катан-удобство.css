@@ -110,3 +110,15 @@
 .катан #комната>.комната__начать:disabled{opacity:1;color:#bfc5c9;box-shadow:none}
 .катан #комната>.комната__код{position:static;flex-shrink:0;margin-block:8px}
 .катан #комната>.комната__подсказка{margin-top:0}
+
+/* Выбор соты для разбойника остаётся заметным поверх любой текстуры. */
+.кат-разбойник-доступный-контур{fill:#f6d88916;stroke:#ffe4a0;stroke-width:4;stroke-linejoin:round;pointer-events:none;filter:drop-shadow(0 1px 2px #000)}
+.кат-разбойник-цель{fill:#173d36;stroke:#ffe4a0;stroke-width:2;pointer-events:none}.кат-разбойник-плюс{fill:#fff1c7;font:bold 19px sans-serif;text-anchor:middle;pointer-events:none}
+.кат-выбор-разбойника-активен .кат-гекс:not(.кат-разбойник-доступно){opacity:.42}.кат-выбор-разбойника-активен .кат-разбойник-доступно{opacity:1;cursor:pointer}
+.кат-разбойник-выбран .кат-разбойник-доступный-контур{stroke:#fff9dc;stroke-width:7;fill:#ffe1a044}.кат-разбойник-доступно:focus .кат-разбойник-доступный-контур{stroke:#fff;stroke-width:7}
+.кат-сброс-прогресс{font-size:20px;font-weight:700;color:#f4d48e}.кат-сброс-карты{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:20px 0}.кат-выбор-карт-ресурс{min-width:0;text-align:center;display:grid;gap:6px}.кат-выбор-карт-ресурс>b{font-size:13px}.кат-выбор-карт-ресурс>small{font-size:11px;color:#c0c9c0}.кат-выбор-карты{position:relative;padding:0;background:none;border:2px solid #ba9658;border-radius:10px;overflow:hidden;min-height:80px;cursor:pointer}.кат-выбор-карты .кат-ресурс-карта{width:100%;height:auto;aspect-ratio:2/3;display:block}.кат-выбор-карты strong{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:#102b26ed;color:#ffe1a0;border-radius:20px;min-width:28px;font-size:22px}.кат-выбор-минус{min-height:44px;border:1px solid #9b8551;border-radius:10px;background:#25362c;color:#f4d48e;font-size:26px}.кат-выбор-минус:disabled{opacity:.35}.кат-выбор-карты:disabled{opacity:.8;filter:none}.кат-выбор-карты:active{transform:scale(.95)}
+@media(max-width:360px){.кат-сброс-карты{gap:4px}.кат-выбор-карт-ресурс>b{font-size:11px}.кат-выбор-карт-ресурс>small{font-size:10px}}
+
+.катан #кат-диалог .кат-выбор-карты{padding:0;background:#142720;min-width:0}.катан #кат-диалог .кат-выбор-минус{padding:0}.кат-сброс-карты .кат-ресурс-карта{max-width:none}
+
+.кат-обмен-выполнен{position:fixed;inset:auto auto max(18px,env(safe-area-inset-bottom)) 50%;transform:translateX(-50%);width:min(90vw,420px);box-sizing:border-box;padding:16px 20px;margin:0;border:1px solid #e7c77e;border-radius:18px;background:#173b30f5;color:#f7e6c2;box-shadow:0 10px 40px #0009;z-index:10000;pointer-events:none;font:15px/1.5 sans-serif}.кат-обмен-выполнен b,.кат-обмен-выполнен span{display:block}.кат-обмен-выполнен b{font-size:19px;color:#ffe0a0}

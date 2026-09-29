@@ -2,7 +2,7 @@
 // Единый аватар владельца: фото Telegram, затем защищённый серверный резерв.
 (function(){
  const T=window.Телеграм;if(!T)return;
- const direct=T.фотоИгрока.bind(T),selector='#лобби-профиль .аватар,#лобби-профиль .фото-лобби__аватар,#кат-аватар,#mono-profile .mono-portrait,#строка-меня .аватар,.строка-игрока--я .аватар,[data-my-avatar],.профиль-карточка__аватар,.рассадка__место--я > img';
+ const direct=T.фотоИгрока.bind(T),selector='#лобби-профиль .аватар,#лобби-профиль .фото-лобби__аватар,#кат-аватар,#mono-profile .mono-portrait,#строка-меня .аватар,.строка-игрока--я .аватар,[data-my-avatar],.профиль-карточка__аватар,.рассадка__место--я > img,.рассадка__место--я > .аватар';
  let resolved='',loaded='',loading='',fallbackTried=false,queued=false;
  T.фотоИгрока=()=>loaded||direct()||resolved;
  function paint(){
@@ -27,5 +27,20 @@
  function queue(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;paint();});}
  new MutationObserver(queue).observe(document.body,{childList:true,subtree:true});
  window.addEventListener('load',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});refresh();
- window.МойАватар={обновить:refresh};
+ let состав=[];
+ function игрок(e,person={}){
+   if(person.этоБот){if(e.dataset.playerAvatar){e.replaceChildren();delete e.dataset.playerAvatar;delete e.dataset.playerPhoto;delete e.dataset.tgAvatar;e.classList.remove('тг-аватар');e.style.removeProperty('background-image');e.style.removeProperty('background-color');}delete e.dataset.myAvatar;return e;}
+   if(person.этоЯ)e.dataset.myAvatar='';else delete e.dataset.myAvatar;
+   const base=window.Сеть?.адрес?.()||location.origin,key=person.фото;
+   const url=person.этоЯ?(T.фотоИгрока()||(/^[0-9a-f]{24}$/.test(key||'')?base.replace(/[/]$/,'')+'/фото/'+key:'')):(/^[0-9a-f]{24}$/.test(key||'')?base.replace(/[/]$/,'')+'/фото/'+key:'');
+   e.classList.add('тг-аватар');e.style.backgroundImage='none';e.style.backgroundColor='#243536';
+   if(e.dataset.playerPhoto===url&&e.dataset.playerAvatar==='yes')return e;
+   e.dataset.playerAvatar='yes';e.dataset.playerPhoto=url;e.replaceChildren();
+   const fallback=document.createElement('span');fallback.innerHTML='<svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true"><circle cx="20" cy="13" r="7" fill="currentColor"/><path d="M6 38v-5c0-16 28-16 28 0v5" fill="currentColor"/></svg>';fallback.setAttribute('aria-hidden','true');fallback.style.cssText='display:grid;place-items:center;width:100%;height:100%;font-size:24px;color:#c9d4d4';e.append(fallback);
+   if(url){const photo=new Image();photo.alt='';photo.className='тг-аватар-фото';photo.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:inherit';photo.onload=()=>{if(e.dataset.playerPhoto===url)e.replaceChildren(photo);};photo.src=url;}
+   return e;
+ }
+ function комната(){document.querySelectorAll('#комната-стол .рассадка__место').forEach(e=>{const seat=Number(e.style.getPropertyValue('--номер-места')),person=состав.find(p=>p.номер===seat),avatar=e.querySelector('.аватар');if(person&&avatar)игрок(avatar,person);else if(avatar?.dataset.playerAvatar)игрок(avatar,{этоБот:true});});}
+ const observer=new MutationObserver(()=>комната());observer.observe(document.body,{childList:true,subtree:true});
+ window.МойАватар={обновить:refresh,игрок,состав(state){состав=state?.аватары||[];комната();}};
 })();

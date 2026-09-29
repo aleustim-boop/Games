@@ -49,6 +49,7 @@
     e.style.setProperty("--px", (i % 3) * 50 + "%");
     e.style.setProperty("--py", Math.floor(i / 3) * 100 + "%");
     e.setAttribute("aria-hidden", "true");
+    window.МойАватар?.игрок?.(e,online?(network?.портреты?.[i]||{этоЯ:i===v?.me,этоБот:!!network?.застолом?.[i]?.этоБот}):{этоЯ:i===v?.me,этоБот:i!==v?.me});
     return e;
   }
   function art(id) {

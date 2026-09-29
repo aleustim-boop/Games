@@ -173,6 +173,7 @@
     }
     if(a.type==='reject'){
       const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Предложение уже недоступно');
+      const signature=o.give.join(',')+'>'+o.want.join(',');const memory=(g.tradeRejections||=[])[o.from]||=[];let declined=memory.find(x=>x.signature===signature);if(!declined){declined={signature,count:0};memory.push(declined);if(memory.length>12)memory.shift();}if(declined.offer!==o.id){declined.count++;declined.round=g.round;declined.offer=o.id;}
       if(o.accepted)o.accepted=o.accepted.filter(i=>i!==p);if(o.quotes)o.quotes=o.quotes.filter(q=>q.player!==p);(o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
       if(o.to>=0||o.rejected.length===g.n-1){g.tradeStatus={type:'rejected',from:o.from};g.offer=null;}return;
     }
@@ -285,7 +286,7 @@
     }
     return копия({version:1,options:настройки(g.options),n:g.n,me,turn:g.turn,actor:кто(g),round:g.round,phase:g.phase,hexes:g.hexes,ports:g.ports,roads:g.roads,buildings:g.buildings,robber:g.robber,bank:g.bank,dice:g.dice,deckCount:g.deck.length,
       players:g.players.map((p,i)=>({score:очки(g,i,i===me||g.phase==='finished'),cards:сумма(p.resources),devCount:p.dev.length,victoryCards:i===me||g.phase==='finished'?p.dev.filter(d=>d.type==='vp').length:null,knights:p.knights,pieces:фигуры(g,i),roadLength:g.lengths[i]})),hand:h,dev:g.players[me].dev,legal,
-      rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,tradeStatus:g.tradeStatus||null,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log.map(e=>{if(e.type!=='steal'||e.player===me||e.victim===me)return e;const {resource,...publicEvent}=e;return publicEvent;}),serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
+      tradeRejections:g.tradeRejections?.[me]||[],rates:РЕСУРСЫ.map((_,r)=>курс(g,me,r)),discard:g.discard,offer:g.offer,tradeStatus:g.tradeStatus||null,roadOwner:g.roadOwner,armyOwner:g.armyOwner,winner:g.winner,surrendered:g.surrendered??-1,log:g.log.map(e=>{if(e.type!=='steal'||e.player===me||e.victim===me)return e;const {resource,...publicEvent}=e;return publicEvent;}),serial:g.serial,victims:g.phase==='steal'&&mine?жертвы(g,me):[],freeRoads:g.freeRoads,start:g.start,startRolls:g.startRolls||[],setupRound:g.setupIndex<g.n?1:2});
   }
   const api={РЕСУРСЫ,ЦЕНЫ,Г,создать,действие,вид,кто,очки,длина,поселения,дороги,курс,произвести,итог,фигуры,сумма,настройки,местаРазбойника};
   if(typeof module!=='undefined')module.exports=api;else root.КатанПравила=api;
