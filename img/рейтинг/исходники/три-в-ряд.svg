@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <!-- приглушённый зелёный — ниже насыщенность, чем в первой версии -->
+    <linearGradient id="самоцвет" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b9d99a"/>
+      <stop offset="55%" stop-color="#7fab55"/>
+      <stop offset="100%" stop-color="#4f7a35"/>
+    </linearGradient>
+    <!-- та же мягкая тень, что у остальных значков (было — странное свечение снизу) -->
+    <filter id="тень" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2"/>
+    </filter>
+  </defs>
+  <!-- рисуем в исходной сетке 96×96, поле значка увеличено вдвое до 192×192 -->
+  <g transform="scale(2)">
+    <!-- мягкая тень под рядом самоцветов — как у блоков и змейки -->
+    <ellipse cx="48" cy="84" rx="30" ry="6" fill="#000" opacity="0.28" filter="url(#тень)"/>
+
+    <!-- три одинаковых ромба-самоцвета в ряд, грани матовее -->
+    <g>
+      <polygon points="22,32 34,50 22,68 10,50" fill="url(#самоцвет)" stroke="#3c5a2a" stroke-width="1.6"/>
+      <polygon points="14,44 22,32 22,50 14,50" fill="#ffffff" opacity="0.16"/>
+    </g>
+    <g>
+      <polygon points="48,32 60,50 48,68 36,50" fill="url(#самоцвет)" stroke="#3c5a2a" stroke-width="1.6"/>
+      <polygon points="40,44 48,32 48,50 40,50" fill="#ffffff" opacity="0.16"/>
+    </g>
+    <g>
+      <polygon points="74,32 86,50 74,68 62,50" fill="url(#самоцвет)" stroke="#3c5a2a" stroke-width="1.6"/>
+      <polygon points="66,44 74,32 74,50 66,50" fill="#ffffff" opacity="0.16"/>
+    </g>
+  </g>
+</svg>

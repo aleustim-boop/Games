@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <!-- приглушённый тёплый золотой — матовая керамика, не глянец -->
+    <linearGradient id="золото" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8d2a0"/>
+      <stop offset="55%" stop-color="#cda85a"/>
+      <stop offset="100%" stop-color="#a17a3a"/>
+    </linearGradient>
+    <!-- мягкий рассеянный свет вместо жёсткого кнопочного блика -->
+    <radialGradient id="мягкийСвет" cx="35%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="тень" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2"/>
+    </filter>
+    <filter id="мягкоеРазмытие" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <!-- лёгкая шумовая фактура — керамика, не пластик -->
+    <filter id="керамика" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="шум"/>
+      <feColorMatrix in="шум" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0"/>
+    </filter>
+    <clipPath id="контурПлитки">
+      <rect x="15" y="17" width="66" height="58" rx="13"/>
+    </clipPath>
+  </defs>
+  <!-- рисуем в исходной сетке 96×96, поле значка увеличено вдвое до 192×192 -->
+  <g transform="scale(2)">
+    <!-- мягкая тень под плиткой -->
+    <ellipse cx="48" cy="80" rx="27" ry="6" fill="#000" opacity="0.26" filter="url(#тень)"/>
+    <!-- сама плитка: единственный объект игры — квадратная плитка со скруглёнными углами -->
+    <rect x="15" y="17" width="66" height="58" rx="13" fill="url(#золото)" stroke="#6e5730" stroke-width="2"/>
+    <!-- фактура керамики поверх матовой заливки -->
+    <rect x="15" y="17" width="66" height="58" clip-path="url(#контурПлитки)" filter="url(#керамика)"/>
+    <!-- мягкий рассеянный свет сверху-слева -->
+    <ellipse cx="35" cy="32" rx="26" ry="18" fill="url(#мягкийСвет)" filter="url(#мягкоеРазмытие)"/>
+    <!-- фаска по краю: светлая грань сверху-слева, тёмная снизу-справа -->
+    <line x1="26" y1="19.5" x2="70" y2="19.5" stroke="#f3e6c4" stroke-width="1.4" opacity="0.45" stroke-linecap="round"/>
+    <line x1="16.5" y1="28" x2="16.5" y2="64" stroke="#f3e6c4" stroke-width="1.4" opacity="0.45" stroke-linecap="round"/>
+    <line x1="26" y1="74.5" x2="70" y2="74.5" stroke="#5a4322" stroke-width="1.4" opacity="0.4" stroke-linecap="round"/>
+    <line x1="79.5" y1="28" x2="79.5" y2="64" stroke="#5a4322" stroke-width="1.4" opacity="0.4" stroke-linecap="round"/>
+    <!-- число — оставлено как было -->
+    <text x="48" y="54" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="21" fill="#6e4009">2048</text>
+  </g>
+</svg>
