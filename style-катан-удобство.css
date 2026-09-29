@@ -104,3 +104,9 @@
 .катан #кат-диалог[data-kind=offer] .кат-обмен-фишка strong{font-size:14px;bottom:16px;min-width:20px}
 .катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы{gap:4px}
 .катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы .кат-рисунок{width:22px;height:22px}
+
+/* Комната ожидания: код, состояние и выход идут последовательно, без липких перекрытий. */
+.катан #комната>.комната__начать,.катан #комната>#кнопка-комната-отмена{position:static;flex-shrink:0;margin-top:0;box-shadow:none}
+.катан #комната>.комната__начать:disabled{opacity:1;color:#bfc5c9;box-shadow:none}
+.катан #комната>.комната__код{position:static;flex-shrink:0;margin-block:8px}
+.катан #комната>.комната__подсказка{margin-top:0}

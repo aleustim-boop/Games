@@ -126,7 +126,7 @@
   prefs.options=П.настройки(prefs.options);
   prefs.targetPoints=[10,12,15].includes(prefs.targetPoints)?prefs.targetPoints:10;
   let optionsReturn='кат-настройки';
-  window.КатанНастройкиСтола=()=>({...prefs.options});
+  window.КатанНастройкиСтола=()=>({...prefs.options,targetPoints:prefs.targetPoints});
   function colorChoices(root){
     root.append(el('h3','Цвет ваших фишек'));
     const row=el('div',undefined,'кат-выбор-цвета');row.setAttribute('role','group');row.setAttribute('aria-label','Цвет фишек');
@@ -490,12 +490,12 @@
     document.querySelectorAll('.кат-правила-стола').forEach(tableOptions);
     function radios(id,values,current,change){$(id).replaceChildren(...values.map(([value,label])=>{const b=button(label,()=>{change(value);save();settings();});b.setAttribute('role','radio');b.setAttribute('aria-checked',String(value===current));return b;}));}
     radios('кат-число',[[3,'Трое'],[4,'Четверо']],prefs.n,n=>prefs.n=n);
-    radios('кат-цель',[[10,'10 ПО'],[12,'12 ПО'],[15,'15 ПО']],prefs.targetPoints,n=>prefs.targetPoints=n);
+    for(const id of ['кат-цель','кат-цель-онлайн'])radios(id,[[10,'10 ПО'],[12,'12 ПО'],[15,'15 ПО']],prefs.targetPoints,n=>prefs.targetPoints=n);
     document.querySelector('.кат-настройки-факты').textContent=`До ${prefs.targetPoints} победных очков`;
     radios('кат-уровень',[['лёгкий','Лёгкий'],['обычный','Обычный'],['сложный','Сложный']],prefs.level,x=>prefs.level=x);
     radios('кат-число-онлайн',[[3,'Трое'],[4,'Четверо']],Number($('катан-мест-друга').value),n=>$('катан-мест-друга').value=n);
     for(const [id,n,bots]of [['кат-стол-ботов',prefs.n,true],['кат-стол-онлайн',Number($('катан-мест-друга').value),false]]){
-      const root=$(id);root.style.setProperty('--мест',n);root.replaceChildren();
+      const root=$(id);if(!root)continue;root.style.setProperty('--мест',n);root.replaceChildren();
       const preview=document.createElementNS('http://www.w3.org/2000/svg','svg');preview.classList.add('кат-превью');preview.setAttribute('aria-hidden','true');
       window.КатанПоле.рисовать(preview,П.вид(П.создать(n,1729),0),null,null,id+'-');root.append(preview);
       for(let i=0;i<n;i++){
@@ -541,6 +541,7 @@
   extra.append(extraHeader,el('div',undefined,'кат-правила-стола'),button('Готово',back,'кнопка кнопка--главная'));
   $('кат-настройки').after(extra);
   const targetPanel=el('div',undefined,'кат-панель'),targets=el('div',undefined,'кат-переключатель');targets.id='кат-цель';targets.setAttribute('role','radiogroup');targets.setAttribute('aria-label','Победные очки');targetPanel.append(el('h2','Победные очки'),targets);document.querySelector('.кат-настройки-факты').before(targetPanel);
+  const onlineTargetPanel=el('div',undefined,'кат-панель'),onlineTargets=el('div',undefined,'кат-переключатель');onlineTargets.id='кат-цель-онлайн';onlineTargets.setAttribute('role','radiogroup');onlineTargets.setAttribute('aria-label','Победные очки онлайн');onlineTargetPanel.append(el('h2','До скольких ПО играем?'),onlineTargets);$('кат-число-онлайн').after(onlineTargetPanel);
   for(const id of ['кат-настройки','экран-друга']){$(id).querySelector(id==='кат-настройки'?'#кат-начать':'#кнопка-создать-игру').before(button('Дополнительные настройки',()=>{optionsReturn=id;tableOptions(extra.querySelector('.кат-правила-стола'));screen(extra.id);},'кнопка кат-доп-настройки-кнопка'));}
   const clockLabel=el('span',undefined,'кат-таймер');clockLabel.setAttribute('aria-label','Осталось времени на ход');$('кат-действие-текст').after(clockLabel);
   setInterval(()=>{
