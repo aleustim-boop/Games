@@ -70,6 +70,11 @@ body.монополия #экран-игры {
     0 4px 8px #0009;
   color: #ffdda0;
 }
+.mono-top button svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
 .mono-lobby h1 {
   font-size: clamp(34px, 10.5vw, 88px);
   font-weight: 500;
@@ -733,6 +738,16 @@ body.монополия #экран-лобби.mono-lobby {
 
 /* Telegram provides its own back button; preserve the title's alignment. */
 html.в-телеграме .монополия #экран-игры .mono-top > [data-back] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Пункт «Настройки» Telegram (кнопкаНастроек в js/лист-ещё.js) уже
+   открывает тот же лист «⋯» на экранах из экраныСЛистом — второй вход
+   через «⋯» в шапке не нужен. На лобби всю .mono-top прячет
+   style-монополия.css (html.в-телеграме … #экран-лобби > .mono-top),
+   поэтому здесь скрываем «⋯» только там, где строка остаётся видимой. */
+html.в-телеграме .монополия #экран-игры .mono-top > [data-more] {
   visibility: hidden;
   pointer-events: none;
 }

@@ -9,7 +9,7 @@
     <title>Монополия — Игры с друзьями</title>
     <link rel="stylesheet" href="style.css?v=100" />
     <link rel="stylesheet" href="style-монополия.css?v=4" />
-    <link rel="stylesheet" href="style-монополия-сцена.css?v=7" />
+    <link rel="stylesheet" href="style-монополия-сцена.css?v=8" />
     <link rel="preload" as="image" href="img/монополия/обложка-v3.webp" />
     <link rel="preload" as="image" href="img/монополия/город-v2.webp" />
     <link rel="preload" as="image" href="img/монополия/фишки.webp" />
@@ -24,7 +24,29 @@
       <section id="экран-лобби" class="экран экран--виден mono-lobby">
         <div class="mono-top">
           <button data-back aria-label="Назад">‹</button><span></span
-          ><button data-rules aria-label="Правила">?</button>
+          ><button data-rules aria-label="Правила">?</button
+          ><button
+            data-more
+            type="button"
+            aria-label="Ещё"
+            aria-haspopup="dialog"
+            aria-controls="лист-игры"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+              <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
         </div>
         <h1>Монополия</h1>
         <p class="mono-sub">Ваш город. Ваши правила успеха.</p>
@@ -175,6 +197,28 @@
             <small id="mono-round"></small>
           </div>
           <button data-rules aria-label="Правила">?</button>
+          <button
+            data-more
+            type="button"
+            aria-label="Ещё"
+            aria-haspopup="dialog"
+            aria-controls="лист-игры"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+              <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
         </div>
         <div id="mono-players" class="mono-players"></div>
         <div class="mono-layout">
@@ -352,7 +396,7 @@
     <script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script>
     <script src="js/лист-ещё.js?v=6"></script>
     <script src="js/нижние-вкладки.js?v=10"></script>
-    <script src="js/игры-реестр.js?v=20260929d"></script><script src="js/рейтинг-экран.js?v=43"></script>
+    <script src="js/игры-реестр.js?v=20260929b"></script><script src="js/рейтинг-экран.js?v=44"></script>
     <script src="js/профиль-экран.js?v=3"></script>
 <script src="js/друзья-экран.js?v=4"></script>
     <script src="js/монополия-данные.js?v=1"></script>
@@ -370,8 +414,8 @@
     <script src="js/деберц-знаки.js?v=1"></script>
     <script src="js/деберц-сказать.js?v=7"></script>
     <script src="js/онлайн-лобби.js?v=1"></script>
-    <script src="js/очки-рейтинга.js?v=2"></script><script src="js/монополия-экран.js?v=emotions-20260929"></script>
-    <script src="js/дурак-комната.js?v=poker-20260929"></script>
+    <script src="js/очки-рейтинга.js?v=2"></script><script src="js/монополия-экран.js?v=20260929"></script>
+    <script src="js/дурак-комната.js?v=20260929c"></script>
     <script src="js/сеть.js?v=poker-20260929"></script>
     <script src="js/открытые-столы.js?v=poker-20260929"></script>
     <script src="js/подбор-экран.js?v=1"></script>
