@@ -6,6 +6,18 @@ const P = require("../../js/монополия-правила"),
    что у шашек, нард, домино и деберца: владелец просил «эмоции как
    в дураке». Своего каталога у монополии никогда не было. */
 const Знаки = require("../../js/деберц-знаки.js");
+/* Обычная Error из правил (throw Error('текст')) уже написана по-русски —
+   показываем как есть. Техническую ошибку JS (TypeError, RangeError,
+   ReferenceError, SyntaxError, а то и не Error вовсе) игрок видеть не
+   должен, даже если в её тексте случайно есть русские буквы (утечка вида
+   «Cannot read properties of undefined (reading 'флоты')»). Такую ошибку —
+   со стеком — пишем в журнал сервера; обычный отказ правил в журнал не
+   пишем, иначе он забьётся частыми отказами и потеряется настоящий сбой. */
+function понятнаяПричина(e, где) {
+  if (e instanceof Error && e.constructor === Error) return e.message;
+  console.error(где + ": сбой хода", e);
+  return "Такой ход не принят";
+}
 function раздать(_, settings = {}) {
   const игроки = (settings.игроки || []).slice();
   if (
@@ -30,8 +42,14 @@ function сделатьХод(p, key, a = {}) {
   if (!p || i < 0 || p.завершена)
     return { принято: false, причина: "Партия недоступна" };
   try {
+    if (!a || typeof a !== "object") throw Error("Ход не разобран");
     if (!["монополия", "сдаться"].includes(a.действие))
       throw Error("Неизвестное действие");
+    if (
+      a.действие === "монополия" &&
+      (!a.move || typeof a.move !== "object" || typeof a.move.type !== "string")
+    )
+      throw Error("Не хватает данных хода");
     P.action(
       p.игра,
       i,
@@ -44,7 +62,7 @@ function сделатьХод(p, key, a = {}) {
     }
     return { принято: true, событие: a.move?.type || a.действие };
   } catch (e) {
-    return { принято: false, причина: e.message };
+    return { принято: false, причина: понятнаяПричина(e, "монополия") };
   }
 }
 function ходЗаБота(p, key) {
