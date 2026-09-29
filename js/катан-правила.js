@@ -268,7 +268,9 @@
     if(g.rules>=3&&g.offer&&g.offer.id!==draft.offer?.id){
       const traded=draft.log.some(e=>e.id>g.serial&&e.type==='trade');
       if(!traded){const reason=a.type==='reject'?'rejected':a.type==='cancelOffer'?'cancelled':draft.phase==='finished'?'finished':a.type==='end'?'turnEnded':draft.offer?'replaced':'changed';
-        событие(draft,p,'tradeClosed',{offer:g.offer.id,from:g.offer.from,to:g.offer.to,reason});
+        // Итог относится к тому же действию: не сдвигаем serial старых
+        // сохранений, где следующие ходы уже содержат номера предложений.
+        draft.log.push({id:draft.serial,player:p,type:'tradeClosed',offer:g.offer.id,from:g.offer.from,to:g.offer.to,reason});if(draft.log.length>100)draft.log.shift();
       }
     }
     const reversible=!g.offer&&g.turn===p&&draft.turn===p&&draft.phase!=='finished'&&

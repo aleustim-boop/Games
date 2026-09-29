@@ -211,10 +211,13 @@
     timer=setTimeout(()=>{try{if(g.serial!==serial){render();return;}local(who,action);render();}catch(e){$('кат-ошибка').textContent='Ошибка хода бота: '+e.message;}},delay);
   }
   const phaseText={setupSettlement:'Поставьте поселение на подсвеченное перекрестье',setupRoad:'Проложите дорогу от нового поселения',roll:'Бросьте кубики, чтобы получить ресурсы',main:'Стройте, обменивайтесь или завершите ход',discard:'Сбросьте половину ресурсов',robber:'Выберите другой гекс для разбойника',steal:'Выберите, у кого забрать ресурс',freeRoad:'Проложите бесплатную дорогу',finished:'Партия завершена'};
+  let lastTradeClosed=null;
   function feedback(){
-    const first=lastSerial===null;if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;const awards={road:v.roadOwner,army:v.armyOwner};if(!first&&previousAwards)for(const kind of ['road','army'])if(awards[kind]!==previousAwards[kind]){const old=previousAwards[kind],owner=awards[kind];notices.push(()=>showAward(kind,owner,old));}previousAwards=awards;if(first)return;
+    const first=lastSerial===null,closed=v.log.findLast(e=>e.type==='tradeClosed'),closedKey=closed?closed.offer+':'+closed.reason:null;
+    if(!first&&closedKey&&closedKey!==lastTradeClosed&&(closed.from===v.me||closed.to===v.me||closed.to===-1))showExchange(closed);lastTradeClosed=closedKey;
+    if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;const awards={road:v.roadOwner,army:v.armyOwner};if(!first&&previousAwards)for(const kind of ['road','army'])if(awards[kind]!==previousAwards[kind]){const old=previousAwards[kind],owner=awards[kind];notices.push(()=>showAward(kind,owner,old));}previousAwards=awards;if(first)return;
     const event=v.log.at(-1);if(!event)return;
-    for(const exchange of v.log.filter(e=>e.id>previous&&(e.type==='bank'&&e.player===v.me||e.type==='trade'||e.type==='tradeClosed'&&(e.from===v.me||e.to===v.me||e.to===-1))))showExchange(exchange);
+    for(const exchange of v.log.filter(e=>e.id>previous&&(e.type==='bank'&&e.player===v.me||e.type==='trade')))showExchange(exchange);
     for(const played of v.log.filter(e=>e.id>previous&&e.type==='dev'&&e.player!==v.me))notices.push(()=>showPlayedCard(played));
     const roll=v.log.filter(e=>e.id>previous&&e.type==='roll').at(-1);if(roll)showRoll(roll);
     const moved=v.log.findLast(e=>e.id>previous&&e.type==='robber');if(moved){const from=Number($('кат-поле').dataset.robber);if(Number.isInteger(from)&&from!==moved.hex){clearPresentation();robberMove={from,to:moved.hex,player:moved.player,id:moved.id,started:false};presenting=true;productionStage=name(moved.player)+' перемещает разбойника';}}
