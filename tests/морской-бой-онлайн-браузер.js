@@ -1,40 +1,375 @@
 'use strict';
-const assert = require('node:assert/strict'), os = require('node:os'), path = require('node:path');
-process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'sea-browser-' + process.pid);
-const server = require('../server/сервер').создатьСервер();
-const { chromium, безTelegram } = require('./браузер-робот'), Б = require('../js/морской-бой-бот');
-(async () => {
-  await new Promise(r => server.listen(0, '127.0.0.1', r));
-  const b = await chromium.launch({ headless: true });
+
+/* =====================================================================
+   МОРСКОЙ БОЙ ОНЛАЙН — ТО, ЧЕГО НЕ ПРОВЕРЯЕТ tests/морской-бой-как-дурак-браузер.js
+   (штаб/план-онлайн-как-дурак.md, этап Э8; сверка тестировщика 29.09).
+
+   Раньше этот файл гонял морской бой по СТАРОМУ пути (#экран-друга,
+   #кнопка-создать-игру) — тот путь больше не участвует в игре: морской-бой.html
+   и js/морской-бой-экран.js создают стол через общий модуль ОнлайнЛобби
+   (js/онлайн-лобби.js — ОнлайнЛобби.создатьСтол()), а комната — комната-05
+   дурака (js/дурак-комната.js), в точности как в
+   tests/морской-бой-как-дурак-браузер.js. Старые селекторы #экран-друга/
+   #кнопка-создать-игру этот файл больше не трогает.
+
+   tests/морской-бой-как-дурак-браузер.js уже проверяет: создание стола
+   новым путём, вход по коду, «Начать» у хозяина, расстановку у обоих,
+   что знак «Сказать» не блокирует выстрел, закрытие вкладки → плашка
+   «Вернуться к игре» в лобби. Здесь — только то, чего там НЕТ, а у
+   морского боя (в отличие от нард/шашек) есть своя фаза «расстановка»
+   с черновиком, живущим в sessionStorage, и бой, который можно доиграть
+   до конца:
+
+     1. Черновик расстановки переживает ПЕРЕЗАГРУЗКУ СТРАНИЦЫ ДО того, как
+        игрок нажал «Готов к бою» (js/морской-бой-экран.js, ключЧерновика,
+        sessionStorage.setItem/getItem).
+     2. ПЕРЕЗАГРУЗКА ПОСЕРЕДИНЕ БОЯ (не после конца партии, а во время
+        неё) — «Вернуться к игре» приводит обратно в #море-бой, а не
+        в расстановку и не в пустое лобби.
+     3. Полный бой ботовским алгоритмом ДО КОНЦА — оба игрока видят
+        диалог #море-результат (в …-как-дурак-браузер.js сделан только
+        ОДИН выстрел, до конца бой там не доигрывается).
+     4. Реванш: оба жмут «Ещё бой» — у обоих ЧИСТАЯ расстановка
+        (0 кораблей на поле), а не остаток черновика прошлого боя.
+
+   СТЕНД: свой файловый сервер (tests/локальный-сервер.js, порт 8991) и
+   свой сервер комнат (server/сервер.js модулем в этом процессе, порт
+   8861) — оба поднимаются и гасятся этим файлом, к боевому 8790 и общему
+   стенду на 8137 файл не обращается (правило tests: копии серверов на
+   свободных портах, поднимать и гасить самим).
+
+   ЛОМАЮЩИЙ ПРОГОН (--сломать): полная копия нужных частей проекта во
+   временной папке; из копии js/морской-бой-экран.js вырезана ровно та
+   строка, что кладёт черновик в sessionStorage при игре по сети. Прогон
+   обязан покраснеть именно на проверке №1 (метка [черновик-после-reload]),
+   остальные шаги к этой строке не чувствительны. Файлы проекта не трогаются.
+
+   Запуск:
+       node tests/морской-бой-онлайн-браузер.js
+       node tests/морской-бой-онлайн-браузер.js --сломать
+       node tests/морской-бой-онлайн-браузер.js --корень <папка-с-копией>
+
+   Перед запуском (отдельной командой): node штаб/браузер-занят.js --ждать
+   ===================================================================== */
+
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { spawn, spawnSync } = require('child_process');
+
+const ПРОЕКТ = path.basename(__dirname) === 'tests' ? path.join(__dirname, '..') : 'D:\\Claud\\Games';
+const ТЕСТЫ = path.join(ПРОЕКТ, 'tests');
+const { chromium, безTelegram } = require(path.join(ТЕСТЫ, 'браузер-робот.js'));
+
+const ПОРТ_ФАЙЛОВ = 8991;
+const ПОРТ_КОМНАТ = 8861;
+const АДРЕС_ФАЙЛОВ = 'http://127.0.0.1:' + ПОРТ_ФАЙЛОВ + '/';
+const АДРЕС_КОМНАТ = 'http://127.0.0.1:' + ПОРТ_КОМНАТ;
+const АДРЕС_МОРЯ = АДРЕС_ФАЙЛОВ + 'морской-бой.html?server=' + encodeURIComponent(АДРЕС_КОМНАТ);
+const МЕТКА_ЧЕРНОВИКА = '[черновик-после-reload]';
+const СТРОКА_ЧЕРНОВИКА =
+  "if (поСети && сетевой && вид?.фаза === 'расстановка') sessionStorage.setItem(ключЧерновика(сетевой), JSON.stringify(черновик));";
+
+let всегоПроверок = 0;
+let провалов = 0;
+function проверить(условие, слова) {
+  всегоПроверок++;
+  if (условие) console.log('  ок   — ' + слова);
+  else { провалов++; console.log('  ПЛОХО— ' + слова); }
+  return условие;
+}
+
+/* ---------- Два сервера стенда (тот же приём, что в …-как-дурак-браузер.js) ---------- */
+
+function поднятьФайловыйСервер(корень) {
+  const сервер = spawn('node', [path.join(ТЕСТЫ, 'локальный-сервер.js'), String(ПОРТ_ФАЙЛОВ)], {
+    env: Object.assign({}, process.env, { КОРЕНЬ_СЕРВЕРА: корень }),
+    stdio: 'pipe'
+  });
+  return new Promise(function (готово, беда) {
+    let вывод = '';
+    const таймаут = setTimeout(function () { беда(new Error('Файловый сервер не поднялся за 5 секунд')); }, 5000);
+    сервер.stdout.on('data', function (д) {
+      вывод += д.toString();
+      if (вывод.includes('запущен')) { clearTimeout(таймаут); готово(сервер); }
+    });
+    сервер.stderr.on('data', function (д) { console.log('  ошибка файлового сервера: ' + д.toString().trim()); });
+    сервер.on('error', function (е) { clearTimeout(таймаут); беда(е); });
+  });
+}
+
+function поднятьСерверКомнат(корень) {
+  process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'морской-бой-онлайн-' + process.pid);
+  const сервер = require(path.join(корень, 'server', 'сервер.js')).создатьСервер();
+  return new Promise(function (готово, беда) {
+    сервер.once('error', беда);
+    сервер.listen(ПОРТ_КОМНАТ, '127.0.0.1', function () { готово(сервер); });
+  });
+}
+
+/* ---------- Мелкие помощники страницы ---------- */
+
+async function нажать(страница, id) {
+  return страница.evaluate(function (id) {
+    const у = document.getElementById(id);
+    if (!у) return false;
+    у.click();
+    return true;
+  }, id);
+}
+
+async function ждать(страница, функция, довод, мс) {
+  try { await страница.waitForFunction(функция, довод, { timeout: мс || 8000 }); return true; }
+  catch (сбой) { return false; }
+}
+
+async function новыйИгрок(браузер) {
+  const страница = await браузер.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const ошибки = [];
+  страница.on('pageerror', function (о) { ошибки.push('исключение: ' + о.message); });
+  страница.on('console', function (с) {
+    if (с.type() === 'error' && !/Failed to load resource/.test(с.text())) ошибки.push('консоль: ' + с.text());
+  });
+  await безTelegram(страница);
+  return { страница: страница, ошибки: ошибки };
+}
+
+async function кораблейНаПоле(страница) {
+  return страница.locator('#море-поле-расстановки [data-состояние="корабль"]').evaluateAll(function (es) {
+    return es.map(function (e) { return e.dataset.клетка; });
+  });
+}
+
+/* ---------- Сценарий: то, чего нет в …-как-дурак-браузер.js ---------- */
+
+async function сценарий(браузер, Б, папкаСнимков) {
+  const хозяин = await новыйИгрок(браузер);
+  const гость = await новыйИгрок(браузер);
   try {
-    const pages = await Promise.all([b.newPage({ viewport: { width: 390, height: 844 } }), b.newPage({ viewport: { width: 390, height: 844 } })]);
-    const errors = []; for (const p of pages) { p.on('pageerror', e => errors.push(e.message)); await безTelegram(p); await p.goto(`http://127.0.0.1:8137/морской-бой.html?server=http://127.0.0.1:${server.address().port}`); }
-    const [a, c] = pages;
-    await a.locator('#лобби-найти-игру').click(); await a.locator('#открытые-столы-создать').click(); await a.locator('#кнопка-создать-игру').click();
-    await a.waitForFunction(() => /^[A-Z0-9]{4,6}$/.test(document.getElementById('код-комнаты').textContent.trim()));
-    const код = (await a.locator('#код-комнаты').textContent()).trim();
-    await c.locator('#лобби-найти-игру').click(); await c.locator('#открытые-столы-код').click(); await c.locator('#поле-кода').fill(код); await c.locator('#кнопка-войти').click();
-    await c.locator('#море-случайно').click();
-    const draft = await c.locator('#море-поле-расстановки [data-состояние="корабль"]').evaluateAll(es => es.map(e => e.dataset.клетка));
-    await c.reload(); await c.locator('#кнопка-вернуться-в-игру').click();
-    await c.locator('#море-расстановка').waitFor();
-    assert.deepEqual(await c.locator('#море-поле-расстановки [data-состояние="корабль"]').evaluateAll(es => es.map(e => e.dataset.клетка)), draft);
-    await c.locator('#море-готов').click(); await a.locator('#море-случайно').click(); await a.locator('#море-готов').click();
-    await a.locator('#море-бой').waitFor(); await c.locator('#море-бой').waitFor();
-    await c.reload(); await c.locator('#кнопка-вернуться-в-игру').click(); await c.locator('#море-бой').waitFor();
+    console.log('\n=== Подготовка: стол новым путём (ОнлайнЛобби), вход по коду, старт партии ===');
+    await хозяин.страница.goto(АДРЕС_МОРЯ);
+    await хозяин.страница.waitForTimeout(500);
+    проверить(await нажать(хозяин.страница, 'лобби-найти-игру'), 'хозяин: «Играть онлайн» нажалась');
+    await хозяин.страница.waitForTimeout(300);
+    проверить(await нажать(хозяин.страница, 'открытые-столы-создать'), 'хозяин: «Создать игру» нажалась (ОнлайнЛобби.создатьСтол)');
+    await ждать(хозяин.страница, function () {
+      return /^[A-Z0-9]{4,6}$/.test(((document.getElementById('код-комнаты') || {}).textContent || '').trim());
+    }, null, 8000);
+    const код = (await хозяин.страница.locator('#код-комнаты').textContent()).trim();
+    проверить(/^[A-Z0-9]{4,6}$/.test(код), 'код стола получен: «' + код + '»');
+
+    await гость.страница.goto(АДРЕС_МОРЯ);
+    await гость.страница.waitForTimeout(500);
+    проверить(await нажать(гость.страница, 'лобби-найти-игру'), 'гость: «Играть онлайн» нажалась');
+    await гость.страница.waitForTimeout(300);
+    проверить(await нажать(гость.страница, 'открытые-столы-код'), 'гость: «Есть код? Войти» нажалась');
+    await гость.страница.waitForTimeout(200);
+    await гость.страница.fill('#поле-кода', код);
+    проверить(await нажать(гость.страница, 'кнопка-войти'), 'гость: «Войти в игру» нажалась');
+
+    const можноНачать = await ждать(хозяин.страница, function () {
+      const н = document.getElementById('комната-начать');
+      return Boolean(н && !н.disabled);
+    }, null, 8000);
+    проверить(можноНачать, 'хозяин: «Начать» открылась, когда гость сел');
+    проверить(await нажать(хозяин.страница, 'комната-начать'), 'хозяин нажал «Начать»');
+    const [аРасст, бРасст] = await Promise.all([
+      ждать(хозяин.страница, function () { const б = document.getElementById('море-расстановка'); return Boolean(б && !б.hidden); }, null, 8000),
+      ждать(гость.страница, function () { const б = document.getElementById('море-расстановка'); return Boolean(б && !б.hidden); }, null, 8000)
+    ]);
+    проверить(аРасст && бРасст, 'у обоих открылась расстановка кораблей');
+
+    console.log('\n=== 1. Черновик расстановки переживает reload ДО «Готов» ' + МЕТКА_ЧЕРНОВИКА + ' ===');
+    проверить(await нажать(гость.страница, 'море-случайно'), 'гость: «Случайно» расставила флот');
+    const черновикДоReload = (await кораблейНаПоле(гость.страница)).sort();
+    проверить(черновикДоReload.length > 0, 'у гостя есть расставленные корабли перед перезагрузкой (клеток: ' + черновикДоReload.length + ')');
+    await гость.страница.reload();
+    await гость.страница.waitForTimeout(500);
+    const плашкаЕсть = await ждать(гость.страница, function () {
+      const п = document.getElementById('кнопка-вернуться-в-игру');
+      return Boolean(п && !п.classList.contains('скрыт'));
+    }, null, 8000);
+    проверить(плашкаЕсть, 'гость: после reload в лобби видна плашка «Вернуться к игре»');
+    проверить(await нажать(гость.страница, 'кнопка-вернуться-в-игру'), 'гость нажал «Вернуться к игре»');
+    const вернулисьВРасстановку = await ждать(гость.страница, function () {
+      const б = document.getElementById('море-расстановка');
+      return Boolean(б && !б.hidden);
+    }, null, 8000);
+    проверить(вернулисьВРасстановку, 'гость: после возврата снова видна расстановка ' + МЕТКА_ЧЕРНОВИКА);
+    // Экран «Вернуться к игре» открывается СРАЗУ, локально, ещё до того как
+    // подъедет настоящий сетевой вид с восстановленным черновиком (это видно
+    // по перехвату показатьВид() при разборе находки — блок расстановки
+    // на долю секунды показывается пустым). Ждём не просто видимость блока,
+    // а что клетки на поле действительно заполнились — иначе проверка сама
+    // ловит гонку своего же ожидания, а не поведение игры.
+    await ждать(гость.страница, function (ожидаемо) {
+      return document.querySelectorAll('#море-поле-расстановки [data-состояние="корабль"]').length >= ожидаемо;
+    }, черновикДоReload.length, 8000);
+    const черновикПослеReload = (await кораблейНаПоле(гость.страница)).sort();
+    проверить(
+      JSON.stringify(черновикПослеReload) === JSON.stringify(черновикДоReload),
+      'гость: черновик после reload — те же клетки, что и до него ' + МЕТКА_ЧЕРНОВИКА +
+      ' (было ' + черновикДоReload.length + ', стало ' + черновикПослеReload.length + ')'
+    );
+
+    console.log('\n=== Оба готовы — начинается бой ===');
+    проверить(await нажать(хозяин.страница, 'море-случайно'), 'хозяин: «Случайно» расставила флот');
+    проверить(await нажать(хозяин.страница, 'море-готов'), 'хозяин нажал «Готов к бою»');
+    проверить(await нажать(гость.страница, 'море-готов'), 'гость нажал «Готов к бою»');
+    const [аБой, бБой] = await Promise.all([
+      ждать(хозяин.страница, function () { const б = document.getElementById('море-бой'); return Boolean(б && !б.hidden); }, null, 8000),
+      ждать(гость.страница, function () { const б = document.getElementById('море-бой'); return Boolean(б && !б.hidden); }, null, 8000)
+    ]);
+    проверить(аБой && бБой, 'у обоих начался бой (#море-бой)');
+
+    console.log('\n=== 2. Reload ПОСЕРЕДИНЕ боя — «Вернуться к игре» приводит в бой, не в расстановку ===');
+    await гость.страница.reload();
+    await гость.страница.waitForTimeout(500);
+    const плашкаВБою = await ждать(гость.страница, function () {
+      const п = document.getElementById('кнопка-вернуться-в-игру');
+      return Boolean(п && !п.classList.contains('скрыт'));
+    }, null, 8000);
+    проверить(плашкаВБою, 'гость: после reload посреди боя в лобби видна плашка «Вернуться к игре»');
+    проверить(await нажать(гость.страница, 'кнопка-вернуться-в-игру'), 'гость нажал «Вернуться к игре» (посреди боя)');
+    const бойСнова = await ждать(гость.страница, function () {
+      const бой = document.getElementById('море-бой');
+      const расст = document.getElementById('море-расстановка');
+      return Boolean(бой && !бой.hidden) && Boolean(расст && расст.hidden);
+    }, null, 8000);
+    проверить(бойСнова, 'гость: после возврата открылся именно бой, а не расстановка заново');
+
+    console.log('\n=== 3. Полный бой ботовским алгоритмом — оба доходят до результата ===');
+    const обе = [хозяин.страница, гость.страница];
     for (let n = 0; n < 200; n++) {
-      if (await a.locator('#море-результат').isVisible()) break;
-      let p;
-      for (const candidate of pages) if (await candidate.locator('#море-очередь').textContent() === 'Ваш ход') p = candidate;
-      if (!p) { await a.waitForTimeout(50); n--; continue; }
-      const map = await p.locator('#море-поле-врага > button').evaluateAll(es => es.map(e => e.dataset.состояние));
-      const cell = Б.выстрел(map, 'сложный');
-      await p.locator(`#море-поле-врага [data-клетка="${cell}"]`).click(); await p.locator('#море-выстрел').click();
-      await p.waitForFunction(n => document.querySelector(`#море-поле-врага [data-клетка="${n}"]`).dataset.состояние !== 'неизвестно', cell);
+      if (await хозяин.страница.locator('#море-результат').isVisible()) break;
+      let ходящий = null;
+      for (const п of обе) {
+        if (await п.locator('#море-очередь').textContent() === 'Ваш ход') { ходящий = п; break; }
+      }
+      if (!ходящий) { await хозяин.страница.waitForTimeout(50); continue; }
+      const map = await ходящий.locator('#море-поле-врага > button').evaluateAll(function (es) { return es.map(function (e) { return e.dataset.состояние; }); });
+      const клетка = Б.выстрел(map, 'сложный');
+      await ходящий.locator('#море-поле-врага [data-клетка="' + клетка + '"]').click();
+      await ходящий.locator('#море-выстрел').click();
+      await ждать(ходящий, function (n) {
+        const кл = document.querySelector('#море-поле-врага [data-клетка="' + n + '"]');
+        return Boolean(кл) && кл.dataset.состояние !== 'неизвестно';
+      }, клетка, 5000);
     }
-    assert(await a.locator('#море-результат').isVisible()); await c.locator('#море-результат').waitFor();
-    await a.locator('#море-реванш').click(); await c.locator('#море-реванш').click();
-    for (const p of pages) { await p.locator('#море-расстановка').waitFor(); assert.equal(await p.locator('#море-поле-расстановки [data-состояние="корабль"]').count(), 0); }
-    assert.deepEqual(errors, []); console.log('Два браузера: создание, вход по коду, готовность второго первым, перезагрузка, полный бой и взаимный реванш — OK');
-  } finally { await b.close(); server.closeAllConnections(); await new Promise(r => server.close(r)); }
-})().catch(e => { console.error(e); process.exitCode = 1; });
+    проверить(await хозяин.страница.locator('#море-результат').isVisible(), 'хозяин: бой доигран до конца, #море-результат виден');
+    const гостьВидитРезультат = await ждать(гость.страница, function () {
+      const д = document.getElementById('море-результат');
+      return Boolean(д && д.open);
+    }, null, 8000);
+    проверить(гостьВидитРезультат, 'гость: тоже видит #море-результат');
+    const снимокРезультата = path.join(папкаСнимков, 'морской-бой-онлайн-результат-390.png');
+    await хозяин.страница.screenshot({ path: снимокРезультата });
+    console.log('  снимок: ' + снимокРезультата);
+
+    console.log('\n=== 4. Реванш — у обоих чистая расстановка, не остаток прошлого боя ===');
+    проверить(await нажать(хозяин.страница, 'море-реванш'), 'хозяин нажал «Ещё бой»');
+    проверить(await нажать(гость.страница, 'море-реванш'), 'гость нажал «Ещё бой»');
+    const [аЧистая, бЧистая] = await Promise.all([
+      ждать(хозяин.страница, function () { const б = document.getElementById('море-расстановка'); return Boolean(б && !б.hidden); }, null, 8000),
+      ждать(гость.страница, function () { const б = document.getElementById('море-расстановка'); return Boolean(б && !б.hidden); }, null, 8000)
+    ]);
+    проверить(аЧистая && бЧистая, 'после реванша у обоих снова расстановка');
+    const кораблейХозяин = (await кораблейНаПоле(хозяин.страница)).length;
+    const кораблейГость = (await кораблейНаПоле(гость.страница)).length;
+    проверить(кораблейХозяин === 0, 'хозяин: после реванша расстановка пустая (клеток с кораблём: ' + кораблейХозяин + ')');
+    проверить(кораблейГость === 0, 'гость: после реванша расстановка пустая (клеток с кораблём: ' + кораблейГость + ')');
+
+    проверить(хозяин.ошибки.length === 0, 'у хозяина красных ошибок в консоли нет' + (хозяин.ошибки.length ? ' — ' + хозяин.ошибки.join(' | ') : ''));
+    проверить(гость.ошибки.length === 0, 'у гостя красных ошибок в консоли нет' + (гость.ошибки.length ? ' — ' + гость.ошибки.join(' | ') : ''));
+  } finally {
+    await хозяин.страница.close();
+    await гость.страница.close();
+  }
+}
+
+/* ---------- Ломающий прогон ---------- */
+
+function сделатьКопиюПроекта(папка) {
+  for (const часть of ['server', 'js', 'img', 'шрифты']) {
+    const откуда = path.join(ПРОЕКТ, часть);
+    if (!fs.existsSync(откуда)) continue;
+    fs.cpSync(откуда, path.join(папка, часть), {
+      recursive: true,
+      filter: function (ф) { const имя = path.basename(ф); return имя !== 'данные' && имя !== 'node_modules'; }
+    });
+  }
+  for (const файл of fs.readdirSync(ПРОЕКТ)) {
+    if (файл.endsWith('.html') || файл.endsWith('.css')) fs.copyFileSync(path.join(ПРОЕКТ, файл), path.join(папка, файл));
+  }
+}
+
+function ломать() {
+  console.log('=== Ломающий прогон: копия js/морской-бой-экран.js без строки sessionStorage.setItem(черновик) — обязан покраснеть на ' + МЕТКА_ЧЕРНОВИКА + ' ===');
+  const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'морской-бой-онлайн-лом-'));
+  try {
+    сделатьКопиюПроекта(папка);
+    const файл = path.join(папка, 'js', 'морской-бой-экран.js');
+    const текст = fs.readFileSync(файл, 'utf8');
+    if (текст.indexOf(СТРОКА_ЧЕРНОВИКА) === -1) {
+      console.log('ПРОВАЛ: в копии js/морской-бой-экран.js не нашлось строки «' + СТРОКА_ЧЕРНОВИКА + '» — портить нечего (приём порчи устарел)');
+      process.exitCode = 1;
+      return;
+    }
+    fs.writeFileSync(файл, текст.split(СТРОКА_ЧЕРНОВИКА).join(''), 'utf8');
+    console.log('Порченая копия: ' + папка);
+
+    const прогон = spawnSync(process.execPath, [__filename, '--корень', папка], { encoding: 'utf8', timeout: 180000 });
+    console.log('\n----- вывод ломающего прогона -----\n' + (прогон.stdout || '') + (прогон.stderr ? '\nstderr: ' + прогон.stderr : ''));
+    console.log('------------------------------------');
+    const покраснелНаЧерновике = прогон.status === 1 &&
+      (прогон.stdout || '').split('\n').some(function (с) { return с.indexOf('ПЛОХО') !== -1 && с.indexOf(МЕТКА_ЧЕРНОВИКА) !== -1; });
+    console.log(покраснелНаЧерновике
+      ? 'ЛОМАЮЩИЙ ПРОГОН ПОКРАСНЕЛ на проверке ' + МЕТКА_ЧЕРНОВИКА + ', как и должен.'
+      : 'ПРОВАЛ: ломающий прогон не покраснел на ' + МЕТКА_ЧЕРНОВИКА + ' (код ' + прогон.status + ') — проверка не ловит поломку!');
+    console.log('\nИтого проверок: 1, провалов: ' + (покраснелНаЧерновике ? 0 : 1));
+    process.exitCode = покраснелНаЧерновике ? 0 : 1;
+  } finally {
+    fs.rmSync(папка, { recursive: true, force: true });
+    console.log('Временная копия убрана: ' + папка);
+  }
+}
+
+/* ---------- Обычный прогон ---------- */
+
+async function прогнать(корень) {
+  const этоПроект = path.resolve(корень).toLowerCase() === path.resolve(ПРОЕКТ).toLowerCase();
+  const папкаСнимков = этоПроект ? path.join(ТЕСТЫ, 'снимки') : path.join(корень, '_снимки-ломающего-прогона');
+  fs.mkdirSync(папкаСнимков, { recursive: true });
+  console.log('=== Морской бой онлайн — то, чего не проверяет …-как-дурак-браузер.js ===');
+  console.log('корень: ' + корень + '\nфайлы: ' + АДРЕС_ФАЙЛОВ + ', комнаты: ' + АДРЕС_КОМНАТ + ' (не боевой 8790, не общий стенд 8137)');
+
+  const Б = require(path.join(корень, 'js', 'морской-бой-бот.js'));
+  const файловый = await поднятьФайловыйСервер(корень);
+  const серверКомнат = await поднятьСерверКомнат(корень);
+  let браузер = null;
+  try {
+    браузер = await chromium.launch({ headless: true });
+    await сценарий(браузер, Б, папкаСнимков);
+  } finally {
+    if (браузер) await браузер.close();
+    файловый.kill();
+    серверКомнат.close();
+    console.log('\nФайловый сервер погашен по PID ' + файловый.pid + ', сервер комнат (' + ПОРТ_КОМНАТ + ') закрыт.');
+  }
+  console.log('\nИтого проверок: ' + всегоПроверок + ', провалов: ' + провалов);
+  process.exit(провалов > 0 ? 1 : 0);
+}
+
+function доводПосле(имя) {
+  const где = process.argv.indexOf(имя);
+  return где !== -1 ? process.argv[где + 1] : null;
+}
+
+if (process.argv.includes('--сломать')) {
+  ломать();
+} else {
+  прогнать(path.resolve(доводПосле('--корень') || ПРОЕКТ)).catch(function (е) {
+    console.error('ПРОВАЛ ЗАПУСКА: ' + (е && е.stack || е));
+    process.exit(1);
+  });
+}
