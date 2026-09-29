@@ -23,7 +23,7 @@
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};
   let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true},билетБота=null;
   let lastSerial=null,audio=null,selected=null,presentationTimer=null,presenting=false,boardFilter='all';
-  let refreshTrade=null,robberMove=null,pendingLoot=null;const notices=[];let previousAwards=null;
+  let refreshTrade=null,robberMove=null,pendingLoot=null,robberAttack=null;const notices=[];let previousAwards=null;
   const seenOffers=new Set();let offerQueued=false;let cardSerial=0,victimPrompt='',tradeSelection=null;
   let production=null,productionStage='',botOfferWait=null;
   const shownHand=()=>v.hand.map((n,r)=>Math.max(0,n-(production?.gains?.[v.me]?.[r]||0)));
@@ -65,7 +65,7 @@
     choices('Темп ботов в одиночной игре',[[2800,'Обычный'],[4500,'Спокойный'],[6500,'Медленный']],display.pace,x=>display.pace=x);
     colorChoices(body);body.append(button('Готово',close,'кнопка кнопка--главная'));
   }
-  function clearPresentation(){robberMove=null;pendingLoot=null;clearTimeout(presentationTimer);presentationTimer=null;presenting=false;production=null;productionStage='';document.querySelectorAll('.кат-летящий-ресурс,.кат-получено').forEach(e=>e.remove());$('кат-бросок').hidden=true;$('кат-кубики').classList.remove('кат-кубики-погасли');}
+  function clearPresentation(){robberMove=null;pendingLoot=null;robberAttack=null;clearTimeout(presentationTimer);presentationTimer=null;presenting=false;production=null;productionStage='';document.querySelectorAll('.кат-летящий-ресурс,.кат-получено').forEach(e=>e.remove());$('кат-бросок').hidden=true;$('кат-кубики').classList.remove('кат-кубики-погасли');}
   function distribute(event){
     $('кат-бросок').hidden=true;$('кат-кубики').classList.add('кат-кубики-погасли');productionStage='Ресурсы игрокам';
     const allocations=[];
@@ -221,7 +221,7 @@
     for(const played of v.log.filter(e=>e.id>previous&&e.type==='dev'&&e.player!==v.me))notices.push(()=>showPlayedCard(played));
     const roll=v.log.filter(e=>e.id>previous&&e.type==='roll').at(-1);if(roll)showRoll(roll);
     const moved=v.log.findLast(e=>e.id>previous&&e.type==='robber');if(moved){const from=Number($('кат-поле').dataset.robber);if(Number.isInteger(from)&&from!==moved.hex){clearPresentation();robberMove={from,to:moved.hex,player:moved.player,id:moved.id,started:false};presenting=true;productionStage=name(moved.player)+' перемещает разбойника';}}
-    const stolen=v.log.findLast(e=>e.id>previous&&e.type==='steal')||(moved?.noSteal?moved:null);if(stolen){if(robberMove)pendingLoot=stolen;else queueMicrotask(()=>showLoot(stolen));}
+    const stolen=v.log.findLast(e=>e.id>previous&&e.type==='steal')||(moved?.noSteal?moved:null);if(stolen){if(robberMove)pendingLoot=stolen;else queueMicrotask(()=>beginAttack(stolen));}
     if(motion()){
       const target=Number.isInteger(event.vertex)?$(`кат-поле`).querySelector(`[data-vertex="${event.vertex}"]`):Number.isInteger(event.edge)?$(`кат-поле`).querySelector(`[data-edge="${event.edge}"]`):null;
       target?.animate([{opacity:.15},{opacity:1,offset:.5},{opacity:.5,offset:.7},{opacity:1}],{duration:1200});
@@ -256,7 +256,7 @@
       const hidden=i===v.me?(p.victoryCards||0):0,score=el('strong',p.score-hidden);if(hidden){score.dataset.hiddenPoints=hidden;const extra=el('span',' +'+hidden,'кат-скрытые-очки');extra.title='Победные карты: скрыто от соперников';score.append(extra);score.setAttribute('aria-label',`${p.score-hidden} открытых + ${hidden} скрытых ПО, всего ${p.score}`);}card.append(avatar,title,score,stats,status);card.setAttribute('aria-label',`${name(i)}: ${p.score} очков. ${values.map(([,count,label])=>label+': '+count).join(', ')}${acting?', '+(i===v.me?'Ваш ход':'Соперник думает'):''}`);return card;
     }));
     if(selected&&(selected.type!==mode||(selected.type==='robber'?!v.legal.robber.includes(selected.hex):!(selected.type==='road'?v.legal.road:v.legal[selected.type]||[]).includes(selected.edge??selected.vertex))))selected=null;
-    if(!robberMove?.started)window.КатанПоле.рисовать($('кат-поле'),v,busy||presenting?null:mode||((mine&&v.phase==='main')?'direct':null),selectPlace);
+    if(!robberMove?.started&&!robberAttack?.started)window.КатанПоле.рисовать($('кат-поле'),v,busy||presenting?null:mode||((mine&&v.phase==='main')?'direct':null),selectPlace);
     if(selected){const target=$('кат-поле').querySelector(selected.type==='robber'?`[data-hex="${selected.hex}"]`:selected.type==='road'?`[data-edge="${selected.edge}"][role=button]`:`[data-vertex="${selected.vertex}"][role=button]`);target?.classList.add('кат-выбрано');}
     if(selected?.type==='robber')window.КатанПоле.предпросмотрРазбойника($('кат-поле'),v.robber,selected.hex);
     const robberChoice=$('кат-выбор-разбойника');robberChoice.hidden=selected?.type!=='robber';robberChoice.replaceChildren();if(selected?.type==='robber'){const h=v.hexes[selected.hex],owners=[...new Set(П.Г.hexes[h.id].vertices.map(id=>v.buildings[id]?.owner).filter(i=>i!==undefined))];robberChoice.append(el('p',`Выбрано: ${ресурсы[h.resource]||'Пустыня'}${h.number?' · '+h.number:''}. Блокирует: ${owners.length?owners.map(name).join(', '):'пока ничьи постройки'}.`),button('Переместить сюда',()=>act(selected),'кнопка кнопка--главная'));}
@@ -267,7 +267,7 @@
     $('кат-награды').textContent=`Дорога: ${v.roadOwner<0?'от 5 участков':name(v.roadOwner)} · Армия: ${v.armyOwner<0?'от 3 рыцарей':name(v.armyOwner)}`;
     $('кат-шаги').hidden=!v.phase.startsWith('setup');$('кат-шаги').children[0].classList.toggle('текущий',v.phase==='setupSettlement');$('кат-шаги').children[2].classList.toggle('текущий',v.phase==='setupRoad');
     $('кат-действие-текст').textContent=!active?'Партия завершена':busy?'Отправляем ход…':presenting?productionStage:mine&&v.phase.startsWith('setup')?'Ваш ход · расстановка':mine?'Ваш ход':`Ходит ${name(v.actor)}`;
-    $('кат-подсказка').textContent=mode&&v.phase==='main'?`Выберите место: ${названия[mode].toLowerCase()}`:mine&&v.phase==='setupSettlement'?`Поселение бесплатно · круг ${v.setupRound}/2${v.setupRound===2?' · получите соседние ресурсы':''}`:mine?phaseText[v.phase]:({setupSettlement:'Выбирает место для поселения',setupRoad:'Прокладывает дорогу',roll:'Готовится бросить кубики',main:'Строит и обменивается',discard:'Ждём сброса ресурсов',robber:'Перемещает разбойника',steal:'Выбирает соперника',freeRoad:'Прокладывает бесплатную дорогу',finished:'Партия завершена'}[v.phase]);
+    $('кат-подсказка').textContent=robberAttack?'Украдена 1 карта · постройка сохраняется':mode&&v.phase==='main'?`Выберите место: ${названия[mode].toLowerCase()}`:mine&&v.phase==='setupSettlement'?`Поселение бесплатно · круг ${v.setupRound}/2${v.setupRound===2?' · получите соседние ресурсы':''}`:mine?phaseText[v.phase]:({setupSettlement:'Выбирает место для поселения',setupRoad:'Прокладывает дорогу',roll:'Готовится бросить кубики',main:'Строит и обменивается',discard:'Ждём сброса ресурсов',robber:'Перемещает разбойника',steal:'Выбирает соперника',freeRoad:'Прокладывает бесплатную дорогу',finished:'Партия завершена'}[v.phase]);
     $('кат-ход').classList.toggle('ваш',mine&&active);$('кат-ход').classList.toggle('ожидание',!mine&&active);
     if(selected?.type==='robber'){
       const h=v.hexes[selected.hex],owners=[...new Set(П.Г.hexes[h.id].vertices.map(id=>v.buildings[id]?.owner).filter(i=>i!==undefined))],victims=owners.filter(i=>i!==v.me&&v.players[i].cards>0&&(!v.options.friendlyRobber||v.players[i].score>2));
@@ -291,13 +291,14 @@
     $('кат-вернуть').classList.toggle('скрыт',!active||!$('кат-отмена').classList.contains('скрыт'));
     $('кат-вернуть').disabled=busy||presenting||!v.legal.undo;
     $('кат-вернуть').title=v.legal.undo?'Вернуть последнее действие: '+(v.legal.undoAction==='bank'?'обмен с банком':названия[v.legal.undoAction]):'Доступно после своего строительства или обмена с банком, до следующего действия';
-    $('кат-главное').textContent=!active?'Результаты':presenting?(robberMove?'Перемещаем разбойника…':'Смотрим бросок…'):selected?({road:'Проложить дорогу',settlement:'Поставить поселение',city:'Построить город',robber:'Переместить разбойника'}[selected.type]):v.phase==='roll'?'Бросить кубики':v.phase==='discard'&&mine?`Сбросить ${v.discard[v.me]}`:v.phase==='steal'&&mine?'Выбрать соперника':v.phase==='main'&&mine?'Завершить ход':mine?'Выберите место':'Ждём хода';
+    $('кат-главное').textContent=!active?'Результаты':presenting?(robberMove?'Перемещаем разбойника…':robberAttack?'Атака разбойника…':'Смотрим бросок…'):selected?({road:'Проложить дорогу',settlement:'Поставить поселение',city:'Построить город',robber:'Переместить разбойника'}[selected.type]):v.phase==='roll'?'Бросить кубики':v.phase==='discard'&&mine?`Сбросить ${v.discard[v.me]}`:v.phase==='steal'&&mine?'Выбрать соперника':v.phase==='main'&&mine?'Завершить ход':mine?'Выберите место':'Ждём хода';
     $('кат-главное').disabled=busy||presenting||active&&(!mine||!selected&&!['roll','main','discard','steal'].includes(v.phase));
     syncAutoRoll();
     $('кат-строить').disabled=busy||presenting||!mine||v.phase!=='main';
     $('кат-обмен').disabled=busy||presenting;$('кат-карты').disabled=busy||presenting;$('кат-карты').textContent=`Развитие${v.dev.length?' · '+v.dev.length:''}`;
     offer();
-    if(robberMove&&!robberMove.started){const move=robberMove;move.started=true;const bounds=$('кат-окно-карты').getBoundingClientRect();if(bounds.top<0||bounds.bottom>innerHeight)$('кат-окно-карты').scrollIntoView({block:'center',behavior:'instant'});window.КатанПоле.переместитьРазбойника($('кат-поле'),move.from,move.to,motion()).finally(()=>{if(robberMove!==move)return;robberMove=null;presenting=false;productionStage='';const loot=pendingLoot;pendingLoot=null;render();if(loot)showLoot(loot);else if(v.phase==='steal'&&v.turn===v.me)showVictims();});}
+    if(robberMove&&!robberMove.started){const move=robberMove;move.started=true;const bounds=$('кат-окно-карты').getBoundingClientRect();if(bounds.top<0||bounds.bottom>innerHeight)$('кат-окно-карты').scrollIntoView({block:'center',behavior:'instant'});window.КатанПоле.переместитьРазбойника($('кат-поле'),move.from,move.to,motion()).finally(()=>{if(robberMove!==move)return;robberMove=null;presenting=false;productionStage='';const loot=pendingLoot;pendingLoot=null;if(loot)beginAttack(loot);else{render();if(v.phase==='steal'&&v.turn===v.me)showVictims();}});}
+    if(robberAttack&&!robberAttack.started){const attack=robberAttack;attack.started=true;window.КатанПоле.атаковатьПостройку($('кат-поле'),attack.view,attack.event,motion()).finally(()=>{if(robberAttack!==attack)return;robberAttack=null;presenting=false;productionStage='';showLoot(attack.event);render();});}
     if(!presenting&&!$('кат-диалог').open&&notices.length)queueMicrotask(()=>{if(!presenting&&!$('кат-диалог').open)notices.shift()?.();});
     if(!presenting&&v.phase==='steal'&&mine&&victimPrompt!==v.serial+':'+v.robber&&!$('кат-диалог').open)queueMicrotask(()=>{if(v.phase==='steal'&&!presenting&&!$('кат-диалог').open)showVictims();});
     if(!active){saveResult();const key=`${network?.код||record?.id}:${network?.сыграноПартий||0}`;if(lastResult!==key){lastResult=key;results();}}
@@ -353,6 +354,13 @@
   }
   function showPlayedCard(event){
     const body=modal(name(event.player)+' играет карту','played-development'),frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=event.card;frame.append(picture(['knight','roads','plenty','monopoly'].indexOf(event.card)),el('b',названия[event.card]));body.append(frame,el('p',описания[event.card]),button('Понятно',close,'кнопка кнопка--главная'));
+  }
+  function beginAttack(event){
+    if(!v||!$('экран-игры').classList.contains('экран--виден'))return;
+    if(event.noSteal){showLoot(event);render();return;}
+    if($('кат-диалог').open){if(dialogKind==='victim'){$('кат-диалог').close();dialogKind='';}else{notices.push(()=>beginAttack(event));return;}}
+    robberAttack={event,view:v,started:false};presenting=true;productionStage='Атака: '+name(event.player)+' → '+name(event.victim);clearTimeout(timer);
+    const bounds=$('кат-окно-карты').getBoundingClientRect();if(bounds.top<0||bounds.bottom>innerHeight)$('кат-окно-карты').scrollIntoView({block:'center',behavior:'instant'});render();
   }
   function showLoot(event){
     if(!v)return;

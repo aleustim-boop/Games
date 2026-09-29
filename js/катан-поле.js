@@ -93,5 +93,28 @@
   function robberFigure(x,y,preview=false){const g=node('g',{'class':'кат-разбойник'+(preview?' кат-разбойник-превью':'')});g.append(node('ellipse',{cx:x,cy:y-3,rx:34,ry:13,'class':'кат-разбойник-основание'}),node('image',{href:'img/катан/разбойник-v2.webp',x:x-47,y:y-100,width:94,height:103,preserveAspectRatio:'xMidYMax meet'}),node('title',{},'Разбойник: производство заблокировано'));return g;}
   function preview(svg,from,to){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-выбран');const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),g=node('g',{'class':'кат-маршрут-разбойника','aria-hidden':'true'});g.append(node('path',{d:`M${a[0]} ${a[1]-35} Q${(a[0]+b[0])/2} ${Math.min(a[1],b[1])-110} ${b[0]} ${b[1]-35}`}),robberFigure(b[0],b[1],true));svg.append(g);for(const id of Г.hexes[to].vertices)svg.querySelector(`[data-vertex="${id}"]`)?.classList.add('кат-под-угрозой');}
   async function move(svg,from,to,animated){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),piece=svg.querySelector(`.кат-разбойник[data-robber-hex="${to}"]`);if(!piece)return;if(!animated){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');return;}const home=piece.parentNode;svg.append(piece);piece.classList.add('кат-разбойник-переезжает');try{await piece.animate([{transform:`translate(${a[0]-b[0]}px,${a[1]-b[1]}px)`,opacity:1},{transform:`translate(${(a[0]-b[0])/2}px,${(a[1]-b[1])/2-35}px)`,opacity:1,offset:.5},{transform:'translate(0,0)',opacity:1}],{duration:animated?1250:1,easing:'ease-in-out',fill:'both'}).finished;svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');await new Promise(r=>setTimeout(r,animated?650:100));}finally{piece.classList.remove('кат-разбойник-переезжает');if(home.isConnected)home.append(piece);}}
-  window.КатанПоле={рисовать:поле,предпросмотрРазбойника:preview,переместитьРазбойника:move};
+  async function attack(svg,v,event,animated){
+    const targets=Г.hexes[v.robber].vertices.filter(id=>v.buildings[id]?.owner===event.victim).sort((a,b)=>v.buildings[b].level-v.buildings[a].level||a-b);
+    if(!targets.length)return;
+    const vertex=targets[0],building=v.buildings[vertex],[x,y]=xy(Г.vertices[vertex]),[rx,ry]=xy(Г.hexes[v.robber]);
+    const layer=node('g',{'class':'кат-атака', 'data-victim':event.victim,'data-vertex-target':vertex,'data-level':building.level,role:'img','aria-label':`Разбойник атакует ${building.level===2?'город':'поселение'} игрока ${v.names?.[event.victim]||event.victim+1}. Украдена одна карта.`});
+    const highlighted=targets.map(id=>svg.querySelector(`.кат-постройка[data-vertex="${id}"]`)).filter(Boolean);highlighted.forEach(e=>e.classList.add('кат-цель-атаки'));
+    const ring=node('ellipse',{cx:x,cy:y,rx:39,ry:20,'class':'кат-атака-кольцо'}),slash=node('path',{d:`M${x-34} ${y-64} Q${x+45} ${y-46} ${x+18} ${y+7}`,'class':'кат-атака-удар'});
+    const route=node('path',{d:`M${rx} ${ry-20} Q${(rx+x)/2} ${(ry+y)/2-50} ${x} ${y-15}`,'class':'кат-атака-путь'});
+    const label=node('g',{transform:`translate(${Math.max(175,Math.min(725,x))},${Math.min(790,y+57)})`,'class':'кат-атака-подпись'});
+    label.append(node('rect',{x:-170,y:-27,width:340,height:54,rx:16}),node('text',{x:0,y:5},`${building.level===2?'Город':'Поселение'} · −1 карта`));
+    const card=node('g',{'class':'кат-атака-карта'});card.append(node('rect',{x:x-15,y:y-56,width:30,height:42,rx:5}),node('text',{x,y:y-28},'−1'));
+    layer.append(route,ring,slash,label,card);svg.append(layer);
+    const piece=svg.querySelector('.кат-разбойник[data-robber-hex]'),animations=[];
+    try{
+      if(animated){
+        if(piece){svg.append(piece);animations.push(piece.animate([{transform:'translate(0,0)'},{transform:`translate(${(x-rx)*.58}px,${(y-ry)*.58}px)`,offset:.4},{transform:`translate(${(x-rx)*.48}px,${(y-ry)*.48-8}px)`,offset:.56},{transform:'translate(0,0)'}],{duration:1900,easing:'ease-in-out'}));}
+        animations.push(ring.animate([{opacity:.4,strokeWidth:3},{opacity:1,strokeWidth:9},{opacity:.5,strokeWidth:3}],{duration:650,iterations:3}));
+        animations.push(slash.animate([{opacity:0,strokeDashoffset:150},{opacity:1,strokeDashoffset:0,offset:.7},{opacity:0,strokeDashoffset:0}],{duration:700,delay:550,fill:'both'}));
+        animations.push(card.animate([{opacity:0,transform:'translate(0,0)'},{opacity:1,transform:'translate(0,-12px)',offset:.2},{opacity:1,transform:`translate(${rx-x}px,${ry-y-35}px)`,offset:.85},{opacity:0,transform:`translate(${rx-x}px,${ry-y-35}px)`}],{duration:1100,delay:800,fill:'both'}));
+        await Promise.all(animations.map(a=>a.finished.catch(()=>{})));
+      }else{slash.setAttribute('visibility','hidden');await new Promise(r=>setTimeout(r,650));}
+    }finally{animations.forEach(a=>a.cancel());layer.remove();highlighted.forEach(e=>e.classList.remove('кат-цель-атаки'));}
+  }
+  window.КатанПоле={рисовать:поле,предпросмотрРазбойника:preview,переместитьРазбойника:move,атаковатьПостройку:attack};
 })();
