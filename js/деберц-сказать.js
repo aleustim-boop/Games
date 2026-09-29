@@ -9,7 +9,9 @@
     const сообщение = document.createElement('p'); сообщение.className = 'деберц-тихо'; сообщение.setAttribute('role', 'status');
     const закрыть = document.createElement('button'); закрыть.id = 'кнопка-эмоции-назад'; закрыть.className = 'кнопка кнопка--мелкая'; закрыть.textContent = 'Закрыть'; закрыть.onclick = () => окно.close();
     окно.append(заголовок, вкладки, ряд, сообщение, закрыть); document.body.append(окно);
-    const полка = document.createElement('div'); полка.id = 'знаки-внимания'; полка.className = 'знаки-внимания'; полка.setAttribute('role', 'status'); document.getElementById('экран-игры').append(полка);
+    const полка = document.createElement('div'); полка.id = 'знаки-внимания'; полка.className = 'знаки-внимания'; полка.setAttribute('role', 'status');
+    // Нет узла «#экран-игры» (страница без стола дурака/нард, например шахматы) — кладём в body, вызов не падает.
+    (document.getElementById('экран-игры') || document.body).append(полка);
     let последний = '', отправляется = false, последнееНажатие = 0;
     function попадание(ключ, x, y) {
       const всплеск = document.createElement('div'); всплеск.className = 'деберц-попадание'; всплеск.dataset.предмет = ключ;
