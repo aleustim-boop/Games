@@ -25,11 +25,24 @@
  }
  function message(text){const wrong=state&&playing?R.mistakes(state).length:0;$('message').classList.toggle('has-errors',!!wrong);$('message').textContent=(wrong&&!text.startsWith('Неверных клеток:')?`Неверных клеток: ${wrong}. Они выделены красным. `:'')+text;}
  function select(i,focus=false){if(!canPlay())return;selected=i;checked.clear();render();if(focus)$('board').children[i].focus({preventScroll:true});message(state.puzzle[i]?'Исходная цифра · выберите пустую клетку':noteMode?'Заметки: отметьте возможные цифры':'Введите цифру от 1 до 9');}
- function complete(){document.body.classList.add('complete');if(!state.hints){const prev=records[state.level];if(!Number.isFinite(prev)||state.seconds<prev){records[state.level]=Math.floor(state.seconds);write(BEST,records);}}
+ /* Рейтинг по лучшему времени (план штаб/план-рейтинг-бот-и-счёт.md, Э4.8).
+    Билет берётся один на головоломку: пока в памяти тот же объект партии,
+    второй не просим (выход в лобби и «Продолжить» — та же партия). После
+    перезагрузки страницы партия — новый объект, билет берётся заново, а
+    накопленные секунды могут оказаться больше прошедшего от билета — тогда
+    сервер честно откажет; время мы не занижаем. Таймер стоит на паузе,
+    в свёрнутом окне и при открытом окне диалога, поэтому секунды никогда
+    не больше настоящего времени от билета. Нет Telegram или сервера —
+    дверь js/очки-рейтинга.js тихо ничего не делает. */
+ let билетПартии=null;
+ function взятьБилетРейтинга(){if(!state||state.completed||(билетПартии&&билетПартии.партия===state))return;const дверь=window.ОчкиРейтинга;let ручка=null;try{ручка=дверь&&typeof дверь.взятьБилетСчёта==='function'?дверь.взятьБилетСчёта('судоку',state.level):null;}catch{ручка=null;}билетПартии={партия:state,ручка};}
+ // Сдаём только честное решение — без подсказок, как и рекорд на устройстве. Ручку сразу забираем: сдача одна.
+ function сдатьВремяРейтинга(){if(!билетПартии||билетПартии.партия!==state||!билетПартии.ручка||state.hints)return;const ручка=билетПартии.ручка;билетПартии.ручка=null;try{window.ОчкиРейтинга.сдатьСчёт(ручка,{секунд:Math.floor(state.seconds)});}catch{}}
+ function complete(){document.body.classList.add('complete');сдатьВремяРейтинга();if(!state.hints){const prev=records[state.level];if(!Number.isFinite(prev)||state.seconds<prev){records[state.level]=Math.floor(state.seconds);write(BEST,records);}}
   window.Телеграм?.отклик?.('взятка');const body=modal('Всё на своих местах!'),symbol=document.createElement('div');symbol.className='win-symbol';symbol.textContent='✦';body.append(symbol);paragraph(body,`${labels[state.level]} · ${time(state.seconds)} · подсказок: ${state.hints}. Судоку решено правильно.`);action(body,'Ещё одна задача',()=>{close();start(true);});action(body,'Выбрать сложность',()=>{close();back();},'secondary');
  }
  function input(n){if(!canPlay())return;if(selected<0){message('Сначала выберите клетку на поле');return;}if(state.puzzle[selected]){message('Исходные цифры изменять нельзя');return;}if(R.enter(state,selected,n,noteMode&&n!==0)){checked.clear();save();render();window.Телеграм?.отклик?.('карта');const bad=R.mistakes(state);message(bad.length?'Исправьте цифру или нажмите «Отмена».':noteMode&&n!==0?'Заметка сохранена':'Ход сохранён');if(state.completed)complete();}}
- function start(fresh=false){if(fresh||!state||state.completed){state=R.create(level,window.SudokuPuzzles,crypto.getRandomValues(new Uint32Array(1))[0]);noteMode=false;}level=state.level;selected=state.board.indexOf(0);checked.clear();document.body.classList.remove('complete');screens(true);setPaused(false);render();save();message('Выберите клетку и цифру');}
+ function start(fresh=false){if(fresh||!state||state.completed){state=R.create(level,window.SudokuPuzzles,crypto.getRandomValues(new Uint32Array(1))[0]);noteMode=false;}level=state.level;взятьБилетРейтинга();selected=state.board.indexOf(0);checked.clear();document.body.classList.remove('complete');screens(true);setPaused(false);render();save();message('Выберите клетку и цифру');}
  function newGame(){if(state&&!state.completed){const body=modal('Начать новую задачу?');paragraph(body,'Сохранённая партия будет заменена. Лучшее время сохранится.');action(body,'Начать новую',()=>{close();start(true);});action(body,'Продолжить текущую',()=>{close();start(false);},'secondary');}else start(true);}
  function back(){if($('dialog').open){close();return;}if(playing){save();screens(false);lobby();}else location.href='index.html';}
  function hint(){if(!canPlay())return;const h=R.hint(state,selected);if(!h)return;const body=modal('Подсказка'),position=`строка ${Math.floor(h.index/9)+1}, столбец ${h.index%9+1}`;
