@@ -23,7 +23,7 @@
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};
   let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true},билетБота=null;
   let lastSerial=null,audio=null,selected=null,presentationTimer=null,presenting=false,boardFilter='all';
-  let refreshTrade=null,robberMove=null,pendingLoot=null;const notices=[];
+  let refreshTrade=null,robberMove=null,pendingLoot=null;const notices=[];let previousAwards=null;
   const seenOffers=new Set();let offerQueued=false;let cardSerial=0,victimPrompt='',tradeSelection=null;
   let production=null,productionStage='',botOfferWait=null;
   const shownHand=()=>v.hand.map((n,r)=>Math.max(0,n-(production?.gains?.[v.me]?.[r]||0)));
@@ -212,7 +212,7 @@
   }
   const phaseText={setupSettlement:'Поставьте поселение на подсвеченное перекрестье',setupRoad:'Проложите дорогу от нового поселения',roll:'Бросьте кубики, чтобы получить ресурсы',main:'Стройте, обменивайтесь или завершите ход',discard:'Сбросьте половину ресурсов',robber:'Выберите другой гекс для разбойника',steal:'Выберите, у кого забрать ресурс',freeRoad:'Проложите бесплатную дорогу',finished:'Партия завершена'};
   function feedback(){
-    const first=lastSerial===null;if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;if(first)return;
+    const first=lastSerial===null;if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;const awards={road:v.roadOwner,army:v.armyOwner};if(!first&&previousAwards)for(const kind of ['road','army'])if(awards[kind]!==previousAwards[kind]){const old=previousAwards[kind],owner=awards[kind];notices.push(()=>showAward(kind,owner,old));}previousAwards=awards;if(first)return;
     const event=v.log.at(-1);if(!event)return;
     for(const exchange of v.log.filter(e=>e.id>previous&&(e.type==='bank'&&e.player===v.me||e.type==='trade'&&(e.player===v.me||e.other===v.me))))showExchange(exchange);
     for(const played of v.log.filter(e=>e.id>previous&&e.type==='dev'&&e.player!==v.me))notices.push(()=>showPlayedCard(played));
@@ -247,10 +247,10 @@
       const avatar=playerAvatar(i);
       const stats=el('span',undefined,'кат-показатели');
       const values=[['resources',Math.max(0,p.cards-П.сумма(production?.gains?.[i]||[])),'Ресурсы в руке'],['development',p.devCount,'Карты развития в руке'],['knights',p.knights,'Сыгранные рыцари'],['road',p.roadLength,'Самая длинная непрерывная дорога'],['settlement',p.pieces.settlement,'Поселения на поле'],['city',p.pieces.city,'Города на поле']];
-      for(const [kind,count,label]of values){const stat=el('span',undefined,'кат-показатель');stat.dataset.stat=kind;stat.title=`${label}: ${count}`;stat.setAttribute('aria-label',stat.title);stat.append(statIcon(kind),el('span',count));stats.append(stat);}
+      for(const [kind,count,label]of values){const stat=el('span',undefined,'кат-показатель');stat.dataset.stat=kind;stat.title=`${label}: ${count}`;stat.setAttribute('aria-label',stat.title);stat.append(statIcon(kind),el('span',count));if(kind==='road'&&v.roadOwner===i||kind==='knights'&&v.armyOwner===i){const award=el('em','+2','кат-бонус-очки');award.title=kind==='road'?'Самая длинная дорога: +2 ПО':'Самая большая армия: +2 ПО';stat.append(award);stat.setAttribute('aria-label',stat.title+'. '+award.title);}stats.append(stat);}
       const acting=active&&(v.phase==='discard'?v.discard[i]>0:i===v.actor),status=el('span',undefined,'кат-игрок-статус');
       if(acting){if(i!==v.me){const clock=el('span',undefined,'кат-думает-часы');clock.setAttribute('role','img');clock.setAttribute('aria-label','Соперник думает');status.append(clock);}status.append(document.createTextNode(i===v.me?'● Ваш ход':v.phase==='discard'?'Сбрасывает карты':'Думает…'));}
-      card.append(avatar,title,el('strong',p.score),stats,status);card.setAttribute('aria-label',`${name(i)}: ${p.score} очков. ${values.map(([,count,label])=>label+': '+count).join(', ')}${acting?', '+(i===v.me?'Ваш ход':'Соперник думает'):''}`);return card;
+      const hidden=i===v.me?(p.victoryCards||0):0,score=el('strong',p.score-hidden);if(hidden){score.dataset.hiddenPoints=hidden;const extra=el('span',' +'+hidden,'кат-скрытые-очки');extra.title='Победные карты: скрыто от соперников';score.append(extra);score.setAttribute('aria-label',`${p.score-hidden} открытых + ${hidden} скрытых ПО, всего ${p.score}`);}card.append(avatar,title,score,stats,status);card.setAttribute('aria-label',`${name(i)}: ${p.score} очков. ${values.map(([,count,label])=>label+': '+count).join(', ')}${acting?', '+(i===v.me?'Ваш ход':'Соперник думает'):''}`);return card;
     }));
     if(selected&&(selected.type!==mode||(selected.type==='robber'?!v.legal.robber.includes(selected.hex):!(selected.type==='road'?v.legal.road:v.legal[selected.type]||[]).includes(selected.edge??selected.vertex))))selected=null;
     if(!robberMove?.started)window.КатанПоле.рисовать($('кат-поле'),v,busy||presenting?null:mode||((mine&&v.phase==='main')?'direct':null),selectPlace);
@@ -343,6 +343,9 @@
       if(fly){const animation=fly.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${to.left+to.width/2-from.left-from.width/2}px,${to.top+to.height/2-from.top-from.height/2}px) scale(.12)`,opacity:.2}],{duration:450,easing:'ease-in',fill:'forwards'});animation.finished.catch(()=>{}).finally(()=>fly.remove());}
     };
     body.append(frame,details,button(v.phase==='finished'?'Посмотреть результат':'В мои карты',putAway,'кнопка кнопка--главная'));
+  }
+  function showAward(kind,owner,old){
+    const title=kind==='road'?'Самая длинная дорога':'Самая большая армия',body=modal(owner===v.me?'Ваш бонус: +2 ПО':owner>=0?name(owner)+' получает +2 ПО':'Бонус больше не принадлежит игроку','award'),symbol=statIcon(kind==='road'?'road':'knights');symbol.classList.add('кат-бонус-рисунок');body.append(symbol,el('h3',title),el('p',owner>=0?(owner===v.me?'Вы получаете':name(owner)+' получает')+' 2 победных очка. Они уже учтены в счёте.':name(old)+' теряет 2 победных очка.'));if(old>=0&&owner>=0)body.append(el('p',(old===v.me?'Вы теряете':name(old)+' теряет')+' этот бонус и 2 очка.'));body.append(button('Понятно',close,'кнопка кнопка--главная'));
   }
   function showPlayedCard(event){
     const body=modal(name(event.player)+' играет карту','played-development'),frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=event.card;frame.append(picture(['knight','roads','plenty','monopoly'].indexOf(event.card)),el('b',названия[event.card]));body.append(frame,el('p',описания[event.card]),button('Понятно',close,'кнопка кнопка--главная'));

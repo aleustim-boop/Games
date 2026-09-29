@@ -45,7 +45,7 @@
     const cost=П.ЦЕНЫ[цель(v)],want=cost.map((n,r)=>({r,need:n-v.hand[r]})).filter(x=>x.need>0).sort((a,b)=>b.need-a.need)[0];
     if(!want||!v.players.some((p,i)=>i!==v.me&&p.cards>0))return null;
     const give=v.hand.map((n,r)=>({r,extra:n-cost[r]})).filter(x=>x.r!==want.r&&x.extra>0).sort((a,b)=>b.extra-a.extra)[0];if(!give)return null;
-    const a=[0,0,0,0,0],b=a.slice();a[give.r]=1;b[want.r]=1;const signature=a.join(',')+'>'+b.join(',');const declined=v.tradeRejections?.find(x=>x.signature===signature);if(declined&&v.round-declined.round<v.players.length*Math.min(4,declined.count+1))return null;return {type:'offer',to:-1,give:a,want:b,confirmation:true};
+    const a=[0,0,0,0,0],b=a.slice();a[give.r]=1;b[want.r]=1;const signature=a.join(',')+'>'+b.join(',');const declined=v.tradeRejections?.find(x=>x.signature===signature);if(declined&&v.round-declined.round<v.players.length*Math.min(4,declined.count+1))return null;a[give.r]=Math.min(3,give.extra,1+(declined?.count||0));return {type:'offer',to:-1,give:a,want:b,confirmation:true};
   }
   function ответНаОбмен(v){
     const o=v.offer;if(v.phase!=='main'||!o)return null;

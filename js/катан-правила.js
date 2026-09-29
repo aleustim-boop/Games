@@ -133,6 +133,9 @@
     return actual;
   }
   function завершитьРазбойника(g){g.phase=g.returnPhase;g.returnPhase='main';}
+  const подписьОбмена=o=>o.give.map(n=>Number(n>0)).join(',')+'>'+o.want.map(n=>Number(n>0)).join(',');
+  function запомнитьОтказ(g,o){const signature=подписьОбмена(o),memory=(g.tradeRejections||=[])[o.from]||=[];let declined=memory.find(x=>x.signature===signature);if(!declined){declined={signature,count:0};memory.push(declined);if(memory.length>12)memory.shift();}if(declined.offer!==o.id){declined.count++;declined.round=g.round;declined.offer=o.id;}}
+  function забытьОтказы(g,o){if(g.tradeRejections?.[o.from])g.tradeRejections[o.from]=g.tradeRejections[o.from].filter(x=>x.signature!==подписьОбмена(o));}
   function украсть(g,p,victim){
     const h=g.players[victim].resources;let index=Math.floor(random(g)*сумма(h)),rForStolen=-1;
     for(let r=0;r<5;r++){if(index<h[r]){h[r]--;g.players[p].resources[r]++;rForStolen=r;break;}index-=h[r];}
@@ -163,17 +166,17 @@
       const give=quote?quote.want:o.give,want=quote?quote.give:o.want;
       нужно(хватит(g.players[p].resources,give)&&хватит(g.players[q].resources,want),'Ресурсы для обмена изменились');
       for(let r=0;r<5;r++){g.players[q].resources[r]+=give[r]-want[r];g.players[p].resources[r]+=want[r]-give[r];}
-      событие(g,q,'trade',{other:p,give:want,want:give});g.tradeStatus={type:'accepted',from:p,by:q};g.offer=null;return;
+      событие(g,q,'trade',{other:p,give:want,want:give});g.tradeStatus={type:'accepted',from:p,by:q};забытьОтказы(g,o);g.offer=null;return;
     }
     if(a.type==='accept'){
       const o=g.offer;нужно(g.phase==='main'&&o&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p)&&a.offer===o.id,'Предложение уже недоступно');
       нужно(хватит(g.players[p].resources,o.want)&&хватит(g.players[o.from].resources,o.give),'Ресурсы для обмена изменились');
       for(let r=0;r<5;r++){g.players[p].resources[r]+=o.give[r]-o.want[r];g.players[o.from].resources[r]+=o.want[r]-o.give[r];}
-      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});if(g.rules>=3)g.tradeStatus={type:'accepted',from:o.from,by:p};g.offer=null;return;
+      событие(g,p,'trade',{other:o.from,give:o.want,want:o.give});if(g.rules>=3)g.tradeStatus={type:'accepted',from:o.from,by:p};забытьОтказы(g,o);g.offer=null;return;
     }
     if(a.type==='reject'){
       const o=g.offer;нужно(g.phase==='main'&&o&&a.offer===o.id&&p!==o.from&&(o.to===-1||o.to===p)&&!o.rejected?.includes(p),'Предложение уже недоступно');
-      const signature=o.give.join(',')+'>'+o.want.join(',');const memory=(g.tradeRejections||=[])[o.from]||=[];let declined=memory.find(x=>x.signature===signature);if(!declined){declined={signature,count:0};memory.push(declined);if(memory.length>12)memory.shift();}if(declined.offer!==o.id){declined.count++;declined.round=g.round;declined.offer=o.id;}
+      запомнитьОтказ(g,o);
       if(o.accepted)o.accepted=o.accepted.filter(i=>i!==p);if(o.quotes)o.quotes=o.quotes.filter(q=>q.player!==p);(o.rejected||=[]).push(p);событие(g,p,'reject',{other:o.from});
       if(o.to>=0||o.rejected.length===g.n-1){g.tradeStatus={type:'rejected',from:o.from};g.offer=null;}return;
     }
@@ -185,7 +188,7 @@
       нужно(хватит(g.players[p].resources,a.give),'У вас нет предложенных ресурсов');
       g.offer={id:g.serial+1,from:p,to:a.to,give:a.give.slice(),want:a.want.slice(),...(a.confirmation?{confirmation:true,accepted:[],...(сумма(a.give)===0?{request:true,quotes:[]}: {})}: {})};if(g.rules>=3)g.tradeStatus=null;событие(g,p,'offer',a.type==='counter'?{counter:true}:{});return;
     }
-    if(a.type==='cancelOffer'){нужно(g.offer&&(a.offer===undefined||a.offer===g.offer.id)&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');if(g.rules>=3)g.tradeStatus={type:'cancelled',from:g.offer.from};g.offer=null;return;}
+    if(a.type==='cancelOffer'){нужно(g.offer&&(a.offer===undefined||a.offer===g.offer.id)&&(g.offer.from===p||g.turn===p),'Нельзя отменить чужой обмен');if(!g.offer.accepted?.length)запомнитьОтказ(g,g.offer);if(g.rules>=3)g.tradeStatus={type:'cancelled',from:g.offer.from};g.offer=null;return;}
     if(a.type==='discard'){
       нужно(g.phase==='discard'&&g.discard[p]>0,'Вам не нужно сбрасывать карты');
       нужно(ресурсы(a.resources)&&сумма(a.resources)===g.discard[p]&&хватит(g.players[p].resources,a.resources),'Выберите ровно половину ресурсов');
