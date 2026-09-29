@@ -491,11 +491,12 @@
     if(e.type==='bank')return `${n}: ${ресурсы[e.give]} × ${e.rate} → ${ресурсы[e.want]} × 1`;
     if(e.type==='trade')return `${n} и ${name(e.other)}: ${resourceText(e.give)} ↔ ${resourceText(e.want)}`;
     if(e.type==='steal')return Number.isInteger(e.resource)&&e.resource>=0?`${n} забирает ${ресурсы[e.resource]} × 1 у ${name(e.victim)}`:`${n} забирает случайный ресурс у ${name(e.victim)}`;
+    if(e.type==='reject')return `${n}: отклонено предложение обмена${Number.isInteger(e.other)?' от «'+name(e.other)+'»':''}`;
     if(e.type==='dev')return `${n}: ${названия[e.card]}`;
     if(e.type==='discard')return `${n}: сброшено ${e.count} ресурсов`;
     if(e.type==='tradeClosed')return `${name(e.from)}: обмен не состоялся — ${({rejected:'все отказались',cancelled:'предложение отменено',turnEnded:'ход завершён',finished:'партия завершена',replaced:'условия изменены',changed:'выполнено другое действие'})[e.reason]||'предложение закрыто'}`;
     if(e.type==='undo')return `${n}: отменено — ${e.action==='bank'?'обмен с банком':названия[e.action]||e.action}`;
-    return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',tradeQuote:'предложил вариант обмена',tradeReady:'согласен на обмен — ждёт подтверждения',tradeWithdraw:'отозвал согласие на обмен',robber:'разбойник перемещён'}[e.type]||e.type}`;
+    return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',tradeQuote:'предложил вариант обмена',tradeReady:'согласен на обмен — ждёт подтверждения',tradeWithdraw:'отозвано согласие на обмен',cancelOffer:'предложение обмена отменено',surrender:'партия завершена досрочно',robber:'разбойник перемещён'}[e.type]||'игровое действие'}`;
   }
   function journal(){const body=modal('Журнал ходов','log');if(!v?.log.length)body.append(el('p','Здесь появятся броски кубиков, постройки и обмены.'));else v.log.slice().reverse().forEach(e=>{const entry=el('div',logText(e),'кат-журнал цвет-'+playerColor(e.player));if(e.type==='trade')entry.append(dealCards(name(e.player),name(e.other),e.give,e.want));if(e.type==='bank'){const give=[0,0,0,0,0],want=give.slice();give[e.give]=e.rate;want[e.want]=1;entry.append(dealCards(name(e.player),'Банк / порт',give,want));}body.append(entry);});if(v?.startRolls?.length){body.append(el('h3','Кто начинает'));v.startRolls.forEach((rolls,i)=>body.append(el('p',`Бросок ${i+1}: `+rolls.map(r=>`${name(r.player)} — ${r.dice.join(' + ')} = ${П.сумма(r.dice)}`).join('; '))));body.append(el('p','Начинает: '+name(v.start)));}}
   function saveResult(){
