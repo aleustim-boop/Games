@@ -14,3 +14,10 @@
 .mah-marks{display:grid;grid-template-columns:repeat(3,1fr);align-content:center;justify-content:center;padding:3px;gap:1px;height:100%}.mah-marks i{font-style:normal;font-size:clamp(10px,2.4vw,20px);line-height:1.1}.mah-tile.bamboo .mah-marks i{font-weight:900;text-shadow:0 2px #a49152}
 
 .casual-app .bottom-actions:has(#undo[hidden]){grid-template-columns:repeat(2,1fr)}
+/* Ссылка «Рейтинг» в лобби (блоки/три в ряд/змейка) — тот же класс
+   secondary, что у кнопки «Продолжить», но это <a>, а не <button>: без
+   этих трёх строк ссылка осталась бы строчной, с подчёркиванием и не во
+   всю ширину, хотя по цвету и отступам уже одета как кнопка (.secondary
+   в style-sudoku.css). Цвет и отступы не трогаем — только форма. */
+a.secondary{display:block;width:100%;text-align:center;text-decoration:none}
+#рейтинг-ссылка{margin-top:10px}

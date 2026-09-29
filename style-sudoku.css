@@ -18,3 +18,10 @@
 }
 
 #message.has-errors{color:#ffd0b7;background:#522c263d;border-radius:10px;padding:10px 12px;margin-top:8px}
+/* Ссылка «Рейтинг» в лобби — тот же класс secondary, что у кнопки
+   «Продолжить», но это <a>, а не <button>: без этих строк она осталась
+   бы строчной, с подчёркиванием и не во всю ширину (та же правка, что
+   в style-casual.css и style-2048.css, — .lobby-controls в судоку не
+   grid/flex на мобильном, ссылка идёт в обычном потоке, как #continue). */
+a.secondary{display:block;width:100%;text-align:center;text-decoration:none}
+#рейтинг-ссылка{margin-top:10px}
