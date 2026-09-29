@@ -34,3 +34,11 @@ html.в-телеграме .покер .pk-top>[data-back],html.в-телегр�
 @media(orientation:landscape) and (max-height:600px) and (min-width:600px){
  .покер .pk-table{container-type:size}.pk-center{left:20%;right:20%;top:43%;display:flex;align-items:center;justify-content:center;gap:8px}.pk-center>p,.pk-pot small{display:none}.pk-pot{flex:none;min-width:30px}.pk-pot strong{font-size:18px}.pk-board{flex:none;width:calc(73.333cqh + 12px);max-width:calc(100% - 40px);margin:0}.pk-board .pk-card-rank{font-size:13px}.pk-board .pk-card-suit{font-size:20px}.pk-board .pk-card-corner{font-size:8px}
 }
+
+/* У исходных фигур собственные поля: показываем крупно сам рисунок. */
+.pk-card.face{container-type:inline-size}
+.pk-card.face .pk-face-art{position:absolute;inset:5% 4% 5% 25%;overflow:hidden;border-radius:2px;pointer-events:none}
+.pk-card.face .pk-face-art img{position:absolute;inset:auto;left:-34%;top:-16.5%;width:168%;height:133%;max-width:none;object-fit:fill;opacity:1}
+.pk-card.face .pk-card-rank{left:5%;top:5%;font-size:min(30cqw,23px);z-index:2}
+.pk-card.face .pk-card-suit{left:4%;right:auto;top:25%;font-size:min(28cqw,22px);line-height:1;z-index:2}
+.pk-card.face .pk-card-corner{z-index:2;padding:1px 2px;border-radius:2px;background:#f7efd9;font-size:min(19cqw,12px);right:3%;bottom:2%}

@@ -22,7 +22,7 @@
    if(c==null){e.setAttribute('aria-label',c===null?'Закрытая карта':'Карта ещё не открыта');return e;}
    const r=P.rank(c),s=P.suit(c),rank=r<11?String(r):['J','Q','K','A'][r-11],suit=['♣','♦','♥','♠'][s];e.dataset.card=c;e.setAttribute('aria-label',rank+' '+['треф','бубен','червей','пик'][s]);
    e.append(el('span',rank,'pk-card-rank'),el('span',suit,'pk-card-suit'),el('span',rank+suit,'pk-card-corner'));
-   if(r>=11&&r<=13){e.classList.add('face');const img=el('img');img.src='img/дурак/'+['валет','дама','король'][r-11]+'-'+['трефы','бубны','черви','пики'][s]+'.jpg';img.alt='';e.append(img);}
+   if(r>=11&&r<=13){e.classList.add('face');const img=el('img');img.src='img/дурак/'+['валет','дама','король'][r-11]+'-'+['трефы','бубны','черви','пики'][s]+'.jpg';img.alt='';const art=el('span',undefined,'pk-face-art');art.append(img);e.append(art);}
    if(winning)e.classList.add('winning');return e;
  }
  function avatar(i){const e=el('span',undefined,'pk-avatar');const person=online?(network?.портреты?.[i]||{этоЯ:i===v.me,этоБот:!!v.bots?.[i]}):{этоЯ:i===0,этоБот:i!==0};if(person.этоБот){e.classList.add('pk-bot-avatar');e.style.setProperty('--px',(i%3)*50+'%');e.style.setProperty('--py',Math.floor(i/3)*100+'%');e.title='Бот';}window.МойАватар?.игрок(e,person);return e;}
