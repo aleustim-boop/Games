@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict'), { execFileSync } = require('node:child_process');
 const commit = process.argv[2] || 'HEAD';
-const site = 'https://aleustim-boop.github.io/Games/', backend = 'https://amongst-hunting-idaho-blocks.trycloudflare.com';
+const site = 'https://igra.medart.com.ua/', backend = 'https://igra.medart.com.ua';
 (async () => {
   const paths = ['домино.html','style-домино.css','js/домино-правила.js','js/домино-бот.js','js/домино-память.js','js/домино-кости.js','js/домино-экран.js','index.html','js/сеть.js','js/game.js','js/telegram.js','js/дурак-комната.js','js/рейтинг-экран.js'];
   for (const file of paths) {
