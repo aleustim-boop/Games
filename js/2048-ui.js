@@ -73,6 +73,7 @@
   if(result){sparks(result.merged);if(result.gain){$('score-gain').textContent='+'+fmt(result.gain);if(effects())$('score-gain').animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-22px)'}],{duration:700,fill:'forwards'});else $('score-gain').textContent='';}}
   $('announce').textContent=`Счёт ${state.score}. Самая большая плитка ${Math.max(...state.board)}.${state.over?' Ходов больше нет.':''}`;
   const bonus=result?.bonuses?.at(-1);if(bonus){const notice=$('merge-bonus');notice.textContent=`БОНУС! ${bonus.blocks} × ${bonus.input} → ${bonus.value}`;notice.hidden=false;$('announce').textContent+=` Бонус: ${bonus.blocks} блока по ${bonus.input} дали ${bonus.value}.`;if(effects()){notice.animate([{opacity:0,transform:'translateY(10px) scale(.85)'},{opacity:1,transform:'translateY(0) scale(1)',offset:.3},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:600,easing:'ease-out'});sparks(result.merged);}bonusTimer=setTimeout(()=>notice.hidden=true,1800);}
+  if(state.over)сдатьСчётПартии();
   if(playing&&!$('dialog').open)showResult();
  }
  function move(direction){
@@ -88,16 +89,32 @@
   animationTimer=setTimeout(()=>finishMove(result),130);
  }
  function seed(){const values=new Uint32Array(1);crypto.getRandomValues(values);return values[0]||1;}
+ /* Рейтинг по лучшему счёту (js/очки-рейтинга.js). Билет берётся в начале
+    свежей партии: сервер сверяет по нему, что счёт набран после старта и не
+    быстрее разумного. Ручка своя у каждого режима, иначе после смены режима
+    в лобби счёт одной партии ушёл бы по билету другой. Сдача одна на партию:
+    ручку забираем до отправки, повтор невозможен. Нет файла, Telegram или
+    сервера — дверь молчит, игра идёт как раньше. */
+ const ручкиСчёта={classic:null,falling:null};
+ function взятьБилетСчёта(){
+  try{ручкиСчёта[mode]=window.ОчкиРейтинга?.взятьБилетСчёта('2048',mode)||null;}catch{ручкиСчёта[mode]=null;}
+ }
+ function сдатьСчётПартии(){
+  const ручка=ручкиСчёта[mode],счёт=state?.score||0;
+  if(!ручка||счёт<=0)return;
+  ручкиСчёта[mode]=null;
+  try{window.ОчкиРейтинга?.сдатьСчёт(ручка,{счёт});}catch{}
+ }
  function start(fresh=false){
   const returning=!!state&&!fresh;
-  if(fresh||!state)state=R.create(seed());resultShown=false;playing=true;configureMode();
+  if(fresh||!state){state=R.create(seed());взятьБилетСчёта();}resultShown=false;playing=true;configureMode();
   setPaused(mode==='falling'&&returning);
   $('экран-лобби').hidden=true;$('экран-лобби').classList.remove('экран--виден');$('экран-игры').hidden=false;$('экран-игры').classList.add('экран--виден');
   save();paint();window.scrollTo(0,0);$('board').focus({preventScroll:true});showResult();
  }
  function back(){
   if($('dialog').open){close();return;}
-  if(playing){playing=false;if(busy)finishMove();$('экран-игры').hidden=true;$('экран-игры').classList.remove('экран--виден');$('экран-лобби').hidden=false;$('экран-лобби').classList.add('экран--виден');save();window.scrollTo(0,0);return;}
+  if(playing){playing=false;if(busy)finishMove();сдатьСчётПартии();$('экран-игры').hidden=true;$('экран-игры').classList.remove('экран--виден');$('экран-лобби').hidden=false;$('экран-лобби').classList.add('экран--виден');save();window.scrollTo(0,0);return;}
   location.href='index.html';
  }
  function modal(title){
