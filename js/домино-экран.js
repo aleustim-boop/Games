@@ -3,6 +3,11 @@
   const П = window.ДоминоПравила, Б = window.ДоминоБот, К = window.ДоминоКости, $ = id => document.getElementById(id);
   const KEY = 'домино-партия-v1', PREF = 'домино-настройки', HIST = 'домино-история';
   let игра = null, запись = null, вид = null, поСети = false, сетевой = null, selected = null, timer = null, busy = false, resultKey = '', lastKey = '', audio;
+  // Ручка очков рейтинга за партию с ботом (js/очки-рейтинга.js): берётся
+  // в «новая()», сдаётся один раз в «сохранитьИтог()». Выход в меню
+  // посреди партии билет не сдаёт — как у дурака, результат просто не
+  // запишется, ручку забывает следующий вызов «новая()».
+  let ручкаРейтинга = null;
   let настройки = { мест: 2, цель: 100, уровень: 'обычный', звук: true };
   try { const p = JSON.parse(localStorage.getItem(PREF)); if (p && [2, 3, 4].includes(p.мест) && [50, 100, 150].includes(p.цель) && ['лёгкий', 'обычный', 'сложный'].includes(p.уровень)) настройки = p; } catch (_) {}
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) { игра = window.ДоминоПамять.восстановить(s); запись = s; } } catch (_) { $('дом-память').textContent = 'Сохранение повреждено. Можно начать новую партию.'; }
@@ -40,6 +45,7 @@
     поСети = false; сетевой = null; selected = null; busy = false; resultKey = ''; lastKey = '';
     const deck = П.колода(); игра = П.создать(настройки.мест, настройки.цель, deck);
     запись = { версия: 1, id: Date.now().toString(36) + Math.random().toString(36).slice(2), мест: настройки.мест, цель: настройки.цель, уровень: настройки.уровень, колода: deck, журнал: [] };
+    ручкаРейтинга = window.ОчкиРейтинга ? window.ОчкиРейтинга.взятьБилет('домино', настройки.уровень) : null;
     сохранить(); экран('экран-игры'); рисовать();
   }
   function локально(who, action) {
@@ -58,6 +64,10 @@
   }
   function сохранитьИтог() {
     if (поСети || запись.итогЗаписан || игра.фаза !== 'конец') return;
+    if (ручкаРейтинга) {
+      window.ОчкиРейтинга.сдать(ручкаРейтинга, игра.победители.includes(0) ? 'победа' : 'поражение');
+      ручкаРейтинга = null;
+    }
     try {
       let a = JSON.parse(localStorage.getItem(HIST)) || []; if (!Array.isArray(a)) a = [];
       if (!a.some(x => x.id === запись.id)) { a.unshift({ id: запись.id, дата: Date.now(), победа: игра.победители.includes(0), счёт: игра.счёт, цель: игра.цель, уровень: запись.уровень }); localStorage.setItem(HIST, JSON.stringify(a.slice(0, 30))); }
