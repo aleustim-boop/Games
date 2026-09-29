@@ -26,7 +26,7 @@ function exchangeFixture(){
     await page.locator('#кат-продолжить').click();await page.locator('#кат-обмен').click();
     const before=await page.evaluate(()=>localStorage.getItem('catan-match-v1'));await page.clock.fastForward(60000);
     assert.equal(await page.evaluate(()=>localStorage.getItem('catan-match-v1')),before,'Бот изменил позицию во время ввода обмена');
-    assert(await page.locator('#кат-диалог').getByRole('spinbutton',{name:'Отдаю: Дерево',exact:true}).isVisible());
+    assert(await page.locator('#кат-диалог').locator('[data-trade-side=give][data-resource="0"]').isVisible());
     await page.screenshot({path:'tests/снимки/катан-обмен-v2.png'});
     await page.keyboard.press('Escape');await page.clock.fastForward(3000);
     assert.notEqual(await page.evaluate(()=>localStorage.getItem('catan-match-v1')),before,'Бот не продолжил после закрытия окна');

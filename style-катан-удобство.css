@@ -1,0 +1,73 @@
+/* Readable island and touch-first trading. */
+.катан #экран-игры .кат-верх{position:static;min-height:30px;height:auto;margin:0 0 8px}
+.катан #экран-игры .кат-титул{padding:3px 0;line-height:1.4}
+.катан #экран-игры .кат-титул h1{display:none!important}
+.катан #экран-игры #кат-раунд{font-size:14px;color:#ecd2a2}
+.катан #экран-игры .кат-гекс[data-resource="0"] .кат-земля{filter:saturate(.86) brightness(.82);stroke:#4d6742}
+.катан #экран-игры .кат-гекс[data-resource="2"] .кат-земля{filter:saturate(.72) brightness(1.06);stroke:#afc882}
+.катан #экран-игры[data-terrain=soft] .кат-гекс[data-resource="2"] .кат-земля{filter:saturate(.55) brightness(.94)}
+.катан #экран-игры[data-terrain=bright] .кат-гекс[data-resource="0"] .кат-земля{filter:saturate(.95) brightness(.9)}
+.катан #экран-игры .кат-гекс.кат-приглушён .кат-земля{filter:saturate(.15) brightness(.42)}
+.кат-разбойник{filter:drop-shadow(0 0 2px #fff0be) drop-shadow(1px 4px 3px #000b)}
+.кат-разбойник-основание{fill:#201605b0;stroke:#f3cf79;stroke-width:3}
+.кат-разбойник-превью{opacity:.68}.кат-маршрут-разбойника{pointer-events:none}.кат-маршрут-разбойника>path{fill:none;stroke:#fff1a9;stroke-width:5;stroke-dasharray:10 8;filter:drop-shadow(0 2px 2px #201a0b)}
+.кат-под-угрозой{filter:drop-shadow(0 0 6px #ffbf54)}
+.кат-разбойник-прибыл .кат-земля{stroke:#ffd36e!important;stroke-width:8!important}
+.кат-разбойник-переезжает{will-change:transform}
+.кат-выбор-разбойника{position:relative;z-index:2;padding:12px;border:1px solid #dabc79;border-radius:15px;background:#152d2bea;color:#ffe6af;display:grid;gap:9px;margin:8px 0}
+.кат-выбор-разбойника[hidden]{display:none}.кат-выбор-разбойника p{margin:0;font-size:13px;line-height:1.5}.кат-выбор-разбойника button{width:100%;min-height:44px}
+.кат-ресурсы-обмена{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.кат-обмен-фишка{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;color:#f2dfb8;font-size:11px;line-height:1.2}
+.кат-обмен-фишка .кат-ресурс-карта{width:100%;height:auto;aspect-ratio:347/474;display:block}
+.кат-обмен-фишка strong{position:absolute;bottom:20px;right:1px;min-width:25px;padding:3px;border:1px solid #e3c77e;border-radius:8px;background:#102824;color:#fff5d9;text-align:center;font-size:17px}
+.кат-сделка{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;padding:14px;border:1px solid #bb9c5e66;background:#152924;border-radius:16px;margin:12px 0;align-items:center}
+.кат-сделка h3{font-size:14px;margin:0 0 9px;overflow-wrap:anywhere}.кат-сделка small{display:block;color:#c5cdbc;font-size:11px;margin-bottom:8px}.кат-сделка-стрелка{font-size:26px;color:#edca80}
+.кат-сделка .кат-ресурсы-обмена{justify-content:center}.кат-сделка>div{text-align:center;min-width:0}
+.кат-набор-ресурсов{margin:16px 0}.кат-набор-шапка{display:flex;justify-content:space-between;align-items:center;gap:8px}.кат-набор-шапка h3{margin:5px 0;font-size:18px}
+.кат-набор-шапка button{font-size:12px;padding:8px;min-height:40px;background:transparent;color:#ddc898;border:0}
+.кат-выбор-карт{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.кат-выбор-карт button{position:relative;min-width:0;padding:7px 3px;border:1px solid #c6ad6655;border-radius:11px;background:#122c28;color:#f4dfb4;display:grid;gap:4px;justify-items:center;cursor:pointer;touch-action:manipulation}
+.кат-выбор-карт .кат-ресурс-карта{display:block;width:100%;max-width:75px;aspect-ratio:347/474;height:auto}
+.кат-выбор-карт b{font-size:11px}.кат-выбор-карт small{font-size:11px;color:#c5d3c2}.кат-выбор-карт button:disabled{opacity:.28;filter:grayscale(.8);cursor:default}
+.кат-выбраны-карты{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:58px;padding:9px;border:1px dashed #c7aa6166;border-radius:11px;margin-top:8px;background:#091b1855}
+.кат-выбраны-карты>span{font-size:12px;color:#b9c7bb}.кат-выбраны-карты button{padding:4px;min-height:44px;min-width:44px;border:1px solid #dfc580;border-radius:8px;background:#293c2f;color:#f2dfb8}
+.кат-выбраны-карты .кат-обмен-фишка{width:45px}.кат-выбраны-карты .кат-обмен-фишка strong{bottom:17px;font-size:14px}.кат-обмен-инструкция{font-size:13px;line-height:1.5;color:#c9d4c6}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта .кат-ресурс-карта{width:100%;max-width:80px;height:auto;aspect-ratio:347/474}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта{padding:8px 3px}
+.кат-торговля-история{border-top:1px solid #cfb27966;margin-top:16px;padding-top:10px}.кат-торговля-история h3{font-size:15px}
+.кат-торговля-история .кат-обмен-фишка{width:40px;font-size:10px}.кат-торговля-история .кат-обмен-фишка strong{font-size:13px;bottom:16px}
+.кат-жертвы{display:grid;gap:10px}.кат-жертва{display:flex;align-items:center;gap:12px;min-height:70px;text-align:left}.кат-жертва span{display:grid;gap:5px}.кат-жертва small{color:#c7d4c7}.кат-жертва .кат-портрет{width:48px;height:48px;flex:none}
+@media(max-width:450px){.кат-выбор-карт{gap:4px}.кат-сделка{gap:6px;padding:10px}.кат-обмен-фишка{width:49px}.кат-сделка h3{font-size:13px}.кат-набор-ресурсов{margin:12px 0}.кат-выбор-карт b{font-size:10px}}
+.катан #кат-диалог .кат-набор-шапка .кнопка{width:auto;padding:5px 10px;min-height:36px;font-size:12px;background:transparent;border:0;flex:none}
+.катан #кат-диалог .кат-выбор-карт .кнопка{padding:5px 2px;min-width:0;min-height:88px;font-size:11px;line-height:1.2;gap:3px}
+.катан #кат-диалог .кат-выбор-карт .кат-ресурс-карта{width:38px;max-width:100%;height:52px;aspect-ratio:auto}
+.катан #кат-диалог .кат-выбраны-карты{min-height:48px;padding:5px;margin-top:5px}
+.катан #кат-диалог .кат-выбраны-карты .кнопка{width:auto;padding:3px 7px;min-height:44px}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка{display:grid;grid-template-columns:24px auto;width:auto;gap:5px;align-items:center}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка .кат-ресурс-карта{width:24px;height:33px}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка>span{display:none}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка strong{position:static;min-width:20px;padding:2px;font-size:16px}
+.катан #кат-диалог .кат-набор-ресурсов{min-width:0;margin:4px 0}
+.катан #кат-диалог[data-kind=trade] #кат-диалог-тело{min-width:0;gap:10px}
+.катан #кат-диалог[data-kind=trade] .кат-форма-обмена{min-width:0;gap:8px}
+.катан #кат-диалог[data-kind=trade] select{width:100%;min-width:0;max-width:100%}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-история{min-width:0}
+.катан #кат-диалог .кат-сделка{min-width:0}.катан #кат-диалог .кат-сделка>div{min-width:0}
+.катан #кат-диалог .кат-подтвердить-обмен{position:sticky;bottom:0;z-index:4;box-shadow:0 -8px 16px #17221df2;margin-top:4px}
+.катан #экран-игры .кат-выбор-разбойника .кнопка--главная{background:linear-gradient(#e1c487,#b58d46);border-color:#f3d699;color:#221a10}
+.катан #кат-диалог[data-kind=trade] .кат-переключатель button[aria-pressed=true]{background:linear-gradient(#e1c487,#b58d46);color:#221a10;border-color:#e7c985}
+.катан #кат-диалог .кат-выбор-карт button[aria-pressed=true]{border-color:#e7c985;box-shadow:inset 0 0 9px #d9ad5740}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта[aria-pressed=true]{border-color:#e7c985;background:#51462a;box-shadow:0 0 9px #d9ad5730}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-запас{padding:5px 8px;position:static}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-запас>b{display:none}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-ресурсы .кат-рисунок{width:22px;height:22px}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-ресурсы strong{font-size:16px}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-инструкция{margin:0;font-size:12px;line-height:1.4}
+.катан #кат-диалог[data-kind=trade] .кат-выбор-карт .кнопка{min-height:76px}
+.катан #кат-диалог[data-kind=trade] .кат-выбор-карт .кат-ресурс-карта{height:43px;width:32px}
+.кат-заблокирован .кат-земля{stroke:#d6af69!important;stroke-width:3!important}
+.катан #кат-диалог[data-kind=trade]{padding:14px}
+.катан #кат-диалог[data-kind=trade] header{margin-bottom:10px}
+.катан #кат-диалог[data-kind=trade] #кат-диалог-тело{gap:7px}
+.катан #кат-диалог[data-kind=trade] .кат-форма-обмена{gap:5px}
+.катан #кат-диалог .кат-подтвердить-обмен{position:static;box-shadow:none}

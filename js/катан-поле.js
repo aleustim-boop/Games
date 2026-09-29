@@ -23,34 +23,32 @@
     }
     for(let r=0;r<6;r++){const p=node('pattern',{id:`${prefix}ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
     const shadows=node('filter',{id:prefix+'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
-    ['лес','глина','пастбище','зерно','руда'].forEach((name,r)=>{for(let i=0;i<4;i++){const p=node('pattern',{id:`${prefix}вариант-${r}-${i}`,width:1,height:1,viewBox:`${i%2*627} ${Math.floor(i/2)*627} 627 627`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:`img/катан/${name}-варианты-v1.webp`,width:1254,height:1254}));defs.append(p);}});
-    const sand=node('pattern',{id:prefix+'песок',width:24,height:24,patternUnits:'userSpaceOnUse'});sand.append(node('rect',{width:24,height:24,fill:'#dabb84'}));for(let i=0;i<18;i++)sand.append(node('circle',{cx:(i*7)%24,cy:(i*11)%24,r:i%3===0?.65:.35,fill:i%2?'#94713f':'#f7e2b6',opacity:.6}));defs.append(sand);
+    ['лес','глина','пастбище','зерно','руда'].forEach((name,r)=>{for(let i=0;i<4;i++){const p=node('pattern',{id:`${prefix}вариант-${r}-${i}`,width:1,height:1,viewBox:`${i%2*627} ${Math.floor(i/2)*627} 627 627`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:`img/катан/${name}-варианты-${r===2?'v2':'v1'}.webp`,width:1254,height:1254}));defs.append(p);}});
+    const sand=node('pattern',{id:prefix+'песок',width:24,height:24,patternUnits:'userSpaceOnUse'});sand.append(node('rect',{width:24,height:24,fill:'#e7c792'}));for(let i=0;i<18;i++)sand.append(node('circle',{cx:(i*7)%24,cy:(i*11)%24,r:i%3===0?.65:.35,fill:i%2?'#94713f':'#f7e2b6',opacity:.6}));defs.append(sand);
     for(const axis of ['x','y']){const gradient=node('linearGradient',{id:prefix+'край-'+axis,x1:0,y1:0,x2:axis==='x'?1:0,y2:axis==='y'?1:0});for(const [offset,color]of [[0,'black'],[.085,'white'],[.915,'white'],[1,'black']])gradient.append(node('stop',{offset,'stop-color':color}));defs.append(gradient);const mask=node('mask',{id:prefix+'переход-'+axis,maskUnits:'userSpaceOnUse',x:0,y:0,width:900,height:840});mask.append(node('rect',{width:900,height:840,fill:`url(#${prefix}край-${axis})`}));defs.append(mask);}
     const existing=svg.querySelector('defs');
     if(existing){for(const child of [...svg.children])if(child!==existing)child.remove();}else svg.replaceChildren(defs);
-    svg.setAttribute('viewBox','0 0 900 840');
+    svg.setAttribute('viewBox','0 0 900 840');svg.dataset.robber=v.robber;
     const surroundings=node('g',{mask:`url(#${prefix}переход-y)`});surroundings.append(node('image',{href:'img/катан/окружение-v4.webp',x:0,y:0,width:900,height:840,preserveAspectRatio:'none',mask:`url(#${prefix}переход-x)`,'aria-hidden':'true'}));svg.append(surroundings);
     // Единый контур берега: вода, прибой и толщина острова под игровыми гексами.
     const coast=Г.edges.filter(e=>e.hexes.length===1),outline=[coast[0].a];let at=coast[0].b,prev=coast[0].id;
     while(at!==outline[0]){outline.push(at);const next=coast.find(e=>e.id!==prev&&(e.a===at||e.b===at));if(!next)break;at=next.a===at?next.b:next.a;prev=next.id;}
     const shore=outline.map(id=>xy(Г.vertices[id]).join(',')).join(' ');
     svg.append(node('polygon',{points:shore,transform:'translate(0 9)',fill:'#8b613d',stroke:'#493624','stroke-width':8,'stroke-linejoin':'round'}));
-    svg.append(node('polygon',{points:shore,fill:`url(#${prefix}песок)`,stroke:'#e9cc96','stroke-width':6,'stroke-linejoin':'round'}));
+    svg.append(node('polygon',{points:shore,fill:`url(#${prefix}песок)`,stroke:'#e9cc96','stroke-width':8,'stroke-linejoin':'round'}));
     const lastRoll=v.log.slice().reverse().find(e=>e.type==='roll'),production=lastRoll&&v.dice&&lastRoll.id===v.serial?П.сумма(v.dice):0;
     for(const h of v.hexes){
       const variant=(variants[h.resource]++ + variantOffset)%4,geom=Г.hexes[h.id],[x,y]=xy(geom),group=node('g',{'class':'кат-гекс','data-hex':h.id,'data-resource':h.resource,'data-variant':variant,style:`--ресурс-цвет:${['#598852','#b95f38','#a6ba58','#d6ad4e','#899da8','#d6bb84'][h.resource]}`});
       group.append(node('title',{},['Лес — дерево','Холмы — глина','Пастбище — шерсть','Поля — зерно','Горы — руда','Пустыня'][h.resource]+(h.number?` · бросок ${h.number}`:'')+(h.id===v.robber?' · заблокировано разбойником':'')));
-      const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.95,y+(vy-y)*.95].join(',');}).join(' ');
+      const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.91,y+(vy-y)*.91].join(',');}).join(' ');
       const path=node('polygon',{points,fill:`url(#${prefix}${h.resource<5?'вариант-'+h.resource+'-'+variant:'земля-5'})`,'class':'кат-земля'});group.append(path);
-      if(h.resource<5)group.append(node('circle',{cx:x,cy:y-23,r:15,fill:`url(#${prefix}ресурс-${h.resource})`,'class':'кат-значок-земли'}));
-      group.append(node('text',{x,y:y-46,'class':'кат-название-земли'},['Дерево','Глина','Шерсть','Зерно','Руда','Пустыня'][h.resource]));
       if(production===h.number&&h.id!==v.robber)group.append(node('polygon',{points,fill:'none','class':'кат-производство'}));
       if(h.number){
         group.append(node('circle',{cx:x,cy:y+22,r:25,'class':'кат-номер-фон'}));
         group.append(node('text',{x,y:y+26,'class':[6,8].includes(h.number)?'кат-номер кат-красный':'кат-номер'},h.number));
         group.append(node('text',{x,y:y+40,'class':'кат-вероятность'},'•'.repeat(6-Math.abs(7-h.number))));
       }
-      if(h.id===v.robber){const robber=node('g',{'class':'кат-разбойник'});robber.append(node('image',{href:'img/катан/разбойник-варианты-v1.webp',x:x-34,y:y-75,width:68,height:78,preserveAspectRatio:'xMidYMax meet'}),node('title',{},'Разбойник: производство заблокировано'));group.append(robber);}
+      if(h.id===v.robber){group.classList.add('кат-заблокирован');group.append(robberFigure(x,y));}
       if(mode==='robber'&&v.turn===v.me&&(v.legal.robber||v.hexes.filter(h=>h.id!==v.robber).map(h=>h.id)).includes(h.id)){path.classList.add('доступно');group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`Разбойник: гекс ${h.id+1}`);group.onclick=()=>act({type:'robber',hex:h.id});group.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();group.onclick();}};}
       svg.append(group);
     }
@@ -91,5 +89,8 @@
       svg.append(group);
     }
   }
-  window.КатанПоле={рисовать:поле};
+  function robberFigure(x,y,preview=false){const g=node('g',{'class':'кат-разбойник'+(preview?' кат-разбойник-превью':'')});g.append(node('ellipse',{cx:x,cy:y-3,rx:34,ry:13,'class':'кат-разбойник-основание'}),node('image',{href:'img/катан/разбойник-v2.webp',x:x-47,y:y-100,width:94,height:103,preserveAspectRatio:'xMidYMax meet'}),node('title',{},'Разбойник: производство заблокировано'));return g;}
+  function preview(svg,from,to){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),g=node('g',{'class':'кат-маршрут-разбойника','aria-hidden':'true'});g.append(node('path',{d:`M${a[0]} ${a[1]-35} Q${(a[0]+b[0])/2} ${Math.min(a[1],b[1])-110} ${b[0]} ${b[1]-35}`}),robberFigure(b[0],b[1],true));svg.append(g);for(const id of Г.hexes[to].vertices)svg.querySelector(`[data-vertex="${id}"]`)?.classList.add('кат-под-угрозой');}
+  async function move(svg,from,to,animated){const a=xy(Г.hexes[from]),b=xy(Г.hexes[to]),piece=svg.querySelector(`[data-hex="${to}"] .кат-разбойник`);if(!piece)return;if(!animated){svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');return;}const home=piece.parentNode;svg.append(piece);piece.classList.add('кат-разбойник-переезжает');try{await piece.animate([{transform:`translate(${a[0]-b[0]}px,${a[1]-b[1]}px)`,opacity:1},{transform:`translate(${(a[0]-b[0])/2}px,${(a[1]-b[1])/2-35}px)`,opacity:1,offset:.5},{transform:'translate(0,0)',opacity:1}],{duration:animated?1250:1,easing:'ease-in-out',fill:'both'}).finished;svg.querySelector(`[data-hex="${to}"]`)?.classList.add('кат-разбойник-прибыл');await new Promise(r=>setTimeout(r,animated?650:100));}finally{piece.classList.remove('кат-разбойник-переезжает');if(home.isConnected)home.append(piece);}}
+  window.КатанПоле={рисовать:поле,предпросмотрРазбойника:preview,переместитьРазбойника:move};
 })();

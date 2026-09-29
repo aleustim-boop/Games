@@ -22,7 +22,7 @@ async function ход(page,v,a){
   }else if(['roll','end','discard','steal'].includes(a.type)){
     await page.locator('#кат-главное').click();
     if(a.type==='discard'){for(let r=0;r<5;r++)await dialog.getByRole('spinbutton',{name:resources[r],exact:true}).fill(String(a.resources[r]));await dialog.getByRole('button',{name:'Подтвердить'}).click();}
-    if(a.type==='steal')await dialog.getByRole('button',{name:new RegExp((v.names?.[a.victim]||'Бот '+a.victim)+' ·')}).click();
+    if(a.type==='steal')await dialog.getByRole('button',{name:'Забрать ресурс у '+(v.names?.[a.victim]||'Бот '+a.victim),exact:true}).click();
   }else if(a.type==='robber'){await page.locator(`#кат-поле [data-hex="${a.hex}"][role=button]`).click();await page.locator('#кат-главное').click();}
   else if(a.type==='development'){await page.locator('#кат-карты').click();await dialog.getByRole('button',{name:'Купить карту развития',exact:true}).click();await page.locator('#кат-закрыть').click();}
   else if(a.type==='bank'){
@@ -48,8 +48,7 @@ async function ход(page,v,a){
     await page.locator('#кат-обмен').click();
     await dialog.getByRole('button',{name:'С игроками',exact:true}).click();
     await dialog.getByRole('combobox',{name:'Кому предложить обмен'}).selectOption(String(a.to));
-    await dialog.getByRole('spinbutton',{name:`Отдаю: ${resources[giveIndex]}`,exact:true}).fill(String(a.give[giveIndex]));
-    await dialog.getByRole('spinbutton',{name:`Получаю: ${resources[wantIndex]}`,exact:true}).fill(String(a.want[wantIndex]));
+    for(const [side,values] of [['give',a.give],['want',a.want]])for(let r=0;r<5;r++)for(let n=0;n<values[r];n++)await dialog.locator(`[data-trade-side=${side}][data-resource="${r}"]`).click();
     await dialog.getByRole('button',{name:'Предложить обмен',exact:true}).click();
   }else throw Error('Нет браузерного действия '+JSON.stringify(a));
 }
