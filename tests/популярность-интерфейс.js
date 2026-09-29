@@ -13,7 +13,7 @@ const {chromium,подготовитьПодделку}=require('./браузе�
  await p.goto('http://127.0.0.1:8137/index.html');
  await p.waitForFunction(()=>document.querySelector('.витрина__плитки').firstElementChild.dataset.игра==='катан');
  assert.equal(events.length,0,'catalogue is not a Durak launch');
- await p.locator('[data-фильтр="карточные"]').click();assert.equal(await p.locator('.плитка-игры:visible').count(),2);
+ await p.locator('[data-фильтр="карточные"]').click();assert.equal(await p.locator('.плитка-игры:visible').count(),6);
  await p.goto('http://127.0.0.1:8137/монополия.html');await p.clock.runFor(1100);assert(events.some(e=>e.игра==='монополия'));
  await p.evaluate(()=>{document.querySelector('#экран-лобби').classList.remove('экран--виден');document.querySelector('#экран-игры').classList.add('экран--виден');});
  await p.clock.runFor(32000);assert(events.some(e=>e.каталог.секунд>=29));
