@@ -120,6 +120,9 @@
 @media(max-width:360px){.кат-сброс-карты{gap:4px}.кат-выбор-карт-ресурс>b{font-size:11px}.кат-выбор-карт-ресурс>small{font-size:10px}}
 
 .катан #кат-диалог .кат-выбор-карты{padding:0;background:#142720;min-width:0}.катан #кат-диалог .кат-выбор-минус{padding:0}.кат-сброс-карты .кат-ресурс-карта{max-width:none}
+.катан #кат-диалог .кат-выбор-минус{font-size:clamp(10px,2.7vw,14px);line-height:1.2;white-space:normal;padding:4px 2px}
+.кат-обмен-выполнен button{pointer-events:auto;display:block;margin:10px 0 0 auto;padding:7px 16px;border:1px solid #e7c77e;border-radius:10px;background:#234b3d;color:#ffe0a0;font:inherit;cursor:pointer}
+.кат-кража-маршрут{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0 18px}.кат-кража-маршрут>div{display:grid;justify-items:center;gap:6px;min-width:0;flex:1;text-align:center}.кат-кража-маршрут .кат-аватар{width:46px;height:46px;flex:none}.кат-кража-маршрут b{max-width:100%;overflow-wrap:anywhere}.кат-кража-маршрут small{color:#c4cbbc}.кат-кража-маршрут>strong{font-size:30px;color:#e7c77e}
 
 .кат-обмен-выполнен{position:fixed;inset:auto auto max(18px,env(safe-area-inset-bottom)) 50%;transform:translateX(-50%);width:min(90vw,420px);box-sizing:border-box;padding:16px 20px;margin:0;border:1px solid #e7c77e;border-radius:18px;background:#173b30f5;color:#f7e6c2;box-shadow:0 10px 40px #0009;z-index:10000;pointer-events:none;font:15px/1.5 sans-serif}.кат-обмен-выполнен b,.кат-обмен-выполнен span{display:block}.кат-обмен-выполнен b{font-size:19px;color:#ffe0a0}
 

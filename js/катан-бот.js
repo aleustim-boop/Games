@@ -2,6 +2,7 @@
 (function(root){
   const П=typeof module!=='undefined'?require('./катан-правила'):root.КатанПравила,Г=П.Г;
   const sum=П.сумма;
+  const открытыеОчки=(v,i)=>v.players[i].score-(v.players[i].victoryCards||0);
   function ценность(v,id){
     const income=[0,0,0,0,0];
     for(const [i,b] of v.buildings.entries())if(b?.owner===v.me)for(const h of Г.vertices[i].hexes){const t=v.hexes[h];if(t.resource<5)income[t.resource]+=(6-Math.abs(7-t.number))*b.level;}
@@ -54,6 +55,17 @@
     if(o.request){const cost=П.ЦЕНЫ[цель(v)];if(o.want.some((n,r)=>v.hand[r]-n<cost[r]))return {type:'reject',offer:o.id};const r=cost.findIndex((n,r)=>n>v.hand[r]&&!o.want[r]);if(r<0)return {type:'reject',offer:o.id};const want=[0,0,0,0,0];want[r]=1;return {type:'quote',offer:o.id,give:o.want.slice(),want};}
     return обмен(v)||{type:'reject',offer:o.id};
   }
+  function полезенРыцарь(v){
+    const p=v.me;
+    const allowed=v.hexes.filter(h=>h.id!==v.robber&&(!v.options?.friendlyRobber||Г.hexes[h.id].vertices.every(id=>!v.buildings[id]||открытыеОчки(v,v.buildings[id].owner)>2)));
+    if(!allowed.length)return false;
+    // Сохраняем карту, если нельзя ни освободить доход, ни помешать сопернику.
+    const freesOwn=v.hexes[v.robber].resource<5&&Г.hexes[v.robber].vertices.some(id=>v.buildings[id]?.owner===p);
+    const usefulTarget=allowed.some(h=>Г.hexes[h.id].vertices.some(id=>{const b=v.buildings[id];return b&&b.owner!==p&&(h.resource<5||v.players[b.owner].cards>0);})&&!Г.hexes[h.id].vertices.some(id=>v.buildings[id]?.owner===p));
+    // Третий (или обгоняющий лидера) рыцарь полезен ради реальных +2 ПО.
+    const earnsArmy=v.armyOwner!==p&&v.players[p].knights+1>=3&&v.players.every((x,i)=>i===p||v.players[p].knights+1>x.knights);
+    return freesOwn||usefulTarget||earnsArmy;
+  }
   function ход(v,level='обычный'){
     const plain=id=>Г.vertices[id].hexes.reduce((s,h)=>s+(v.hexes[h].number?6-Math.abs(7-v.hexes[h].number):0),0);
     const score=id=>level==='сложный'?ценность(v,id):plain(id);
@@ -69,11 +81,13 @@
     if(v.phase==='setupSettlement')return {type:'settlement',vertex:level==='лёгкий'?pick(v.legal.settlement):rank(v.legal.settlement)[0]};
     if(v.phase==='setupRoad'||v.phase==='freeRoad')return {type:'road',edge:путь(v)?.edge&&v.legal.road.includes(путь(v).edge)?путь(v).edge:v.legal.road[0]};
     if(v.phase==='robber'){
-      const score=h=>Г.hexes[h.id].vertices.reduce((s,id)=>{const b=v.buildings[id];return s+(!b?0:b.owner===p?-20:b.level*(2+v.players[b.owner].score));},0)*(h.number?6-Math.abs(7-h.number):.2);
-      return {type:'robber',hex:v.hexes.filter(h=>(v.legal.robber||v.hexes.filter(t=>t.id!==v.robber).map(t=>t.id)).includes(h.id)).sort((a,b)=>score(b)-score(a))[0].id};
+      const strength=h=>{const buildings=Г.hexes[h.id].vertices.map(id=>v.buildings[id]).filter(Boolean),enemies=buildings.filter(b=>b.owner!==p&&(!v.options?.friendlyRobber||открытыеОчки(v,b.owner)>2)),victims=enemies.filter(b=>v.players[b.owner].cards>0);
+        return [Math.max(-1,...victims.map(b=>открытыеОчки(v,b.owner))),Math.max(-1,...enemies.map(b=>открытыеОчки(v,b.owner))),-buildings.filter(b=>b.owner===p).reduce((s,b)=>s+b.level,0),enemies.reduce((s,b)=>s+b.level,0)*(h.number?6-Math.abs(7-h.number):0)];};
+      const compare=(a,b)=>{const x=strength(a),y=strength(b);for(let i=0;i<x.length;i++)if(x[i]!==y[i])return y[i]-x[i];return a.id-b.id;};
+      return {type:'robber',hex:v.hexes.filter(h=>(v.legal.robber||v.hexes.filter(t=>t.id!==v.robber).map(t=>t.id)).includes(h.id)).sort(compare)[0].id};
     }
-    if(v.phase==='steal')return {type:'steal',victim:v.victims.slice().sort((a,b)=>v.players[b].score-v.players[a].score)[0]};
-    if(v.legal.dev.includes('knight'))return {type:'dev',card:'knight'};
+    if(v.phase==='steal')return {type:'steal',victim:v.victims.slice().sort((a,b)=>открытыеОчки(v,b)-открытыеОчки(v,a))[0]};
+    if(v.legal.dev.includes('knight')&&полезенРыцарь(v))return {type:'dev',card:'knight'};
     if(v.phase==='roll')return {type:'roll'};
     if(v.phase!=='main')return null;
     if(v.offer?.from===p)return {type:'cancelOffer',offer:v.offer.id};

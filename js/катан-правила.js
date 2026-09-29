@@ -222,7 +222,7 @@
     }
     if(g.phase==='robber'){
       нужно(a.type==='robber'&&Number.isInteger(a.hex)&&местаРазбойника(g).includes(a.hex),'Выберите доступный гекс: дружелюбный разбойник не блокирует игроков с 2 очками');
-      g.robber=a.hex;событие(g,p,'robber',{hex:a.hex});const victims=жертвы(g,p);
+      g.robber=a.hex;const victims=жертвы(g,p);событие(g,p,'robber',{hex:a.hex,...(g.rules>=3?{noSteal:victims.length===0}:{})});
       if(victims.length===1)украсть(g,p,victims[0]);else if(victims.length>1)g.phase='steal';else завершитьРазбойника(g);return;
     }
     if(g.phase==='steal'){нужно(a.type==='steal'&&жертвы(g,p).includes(a.victim),'Выберите соседа разбойника');украсть(g,p,a.victim);return;}
@@ -265,6 +265,12 @@
       событие(restored,p,'undo',{action});Object.assign(g,restored);return g;
     }
     const draft=копия({...g,_undo:null});применить(draft,p,a);итог(draft);
+    if(g.rules>=3&&g.offer&&g.offer.id!==draft.offer?.id){
+      const traded=draft.log.some(e=>e.id>g.serial&&e.type==='trade');
+      if(!traded){const reason=a.type==='reject'?'rejected':a.type==='cancelOffer'?'cancelled':draft.phase==='finished'?'finished':a.type==='end'?'turnEnded':draft.offer?'replaced':'changed';
+        событие(draft,p,'tradeClosed',{offer:g.offer.id,from:g.offer.from,to:g.offer.to,reason});
+      }
+    }
     const reversible=!g.offer&&g.turn===p&&draft.turn===p&&draft.phase!=='finished'&&
       (g.phase==='setupSettlement'&&a.type==='settlement'||g.phase==='freeRoad'&&a.type==='road'||
        g.phase==='main'&&['road','settlement','city','bank'].includes(a.type));

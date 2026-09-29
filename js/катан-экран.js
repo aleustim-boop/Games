@@ -88,7 +88,7 @@
     selected=action;render();
   }
   function statIcon(kind){
-    const paths={resources:'M7 3h12v16H7z M4 6H2v16h12v-2 M10 7h6 M10 10h6 M10 13h4',development:'M5 2h14v20H5z M12 6l1.5 3 3.5.5-2.5 2.5.5 3.5-3-1.5-3 1.5.5-3.5L7 9.5l3.5-.5z',knights:'M6 21h13l-1-5 1-5-4-8-5-1 1 4-6 6 4 2 4-3-3 6-4 1z',road:'M3 17l15-9 3 4-15 9z M5 16l3 4 M10 13l3 4 M15 10l3 4',settlement:'M3 11l9-9 9 9 M5 9v13h14V9 M10 22v-7h4v7',city:'M2 22V9h4V4h5v5h4V2h5v20z M6 13v3 M11 13v3 M16 7v3 M16 14v3'};
+    const paths={resources:'M7 3h12v16H7z M4 6H2v16h12v-2 M10 7h6 M10 10h6 M10 13h4',development:'M5 2h14v20H5z M12 6l1.5 3 3.5.5-2.5 2.5.5 3.5-3-1.5-3 1.5.5-3.5L7 9.5l3.5-.5z',knights:'M6 21h13l-1-5 1-5-4-8-5-1 1 4-6 6 4 2 4-3-3 6-4 1z',road:'M7 2L3 22 M17 2l4 20 M12 3v3 M12 10v4 M12 18v3',settlement:'M3 11l9-9 9 9 M5 9v13h14V9 M10 22v-7h4v7',city:'M2 22V9h4V4h5v5h4V2h5v20z M6 13v3 M11 13v3 M16 7v3 M16 14v3'};
     const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),path=document.createElementNS(ns,'path');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');path.setAttribute('d',paths[kind]);svg.append(path);return svg;
   }
   function showBuilds(){const body=modal('Что построим?','build');body.append(el('p','Выберите постройку. Затем укажите подсвеченное место на острове.'),$('кат-стройки'));}
@@ -139,7 +139,7 @@
   }
   function tableOptions(root){
     root.replaceChildren(el('small','ПРАВИЛА ВАШЕГО ОСТРОВА'),el('h2','Как будем играть?'));colorChoices(root);
-    for(const [key,title,description]of [['friendlyRobber','Дружелюбный разбойник','Не блокирует земли игроков с 2 очками и не крадёт у них ресурсы.'],['easyStart','Мягкий старт','Семёрки перебрасываются в первые два хода каждого игрока.']]){
+    for(const [key,title,description]of [['friendlyRobber','Дружелюбный разбойник','Рыцаря играть можно. Игроки с 2 открытыми ПО защищены от блокировки и кражи.'],['easyStart','Мягкий старт','Семёрки перебрасываются в первые два хода каждого игрока.']]){
       const row=el('label',undefined,'кат-правило'),input=el('input'),text=el('span');input.type='checkbox';input.checked=prefs.options[key];input.onchange=()=>{prefs.options[key]=input.checked;save();document.querySelectorAll('.кат-правила-стола').forEach(tableOptions);};text.append(el('b',title),el('small',description));row.append(text,input);root.append(row);
     }
     const harborRow=el('label',undefined,'кат-правило'),harborText=el('span'),harbors=el('select');harbors.setAttribute('aria-label','Гавани');harborText.append(el('b','Гавани'),el('small','Закреплённые — классическая схема. Случайные — типы гаваней перемешиваются перед партией.'));
@@ -214,11 +214,11 @@
   function feedback(){
     const first=lastSerial===null;if(lastSerial===v.serial)return;const previous=lastSerial;lastSerial=v.serial;const awards={road:v.roadOwner,army:v.armyOwner};if(!first&&previousAwards)for(const kind of ['road','army'])if(awards[kind]!==previousAwards[kind]){const old=previousAwards[kind],owner=awards[kind];notices.push(()=>showAward(kind,owner,old));}previousAwards=awards;if(first)return;
     const event=v.log.at(-1);if(!event)return;
-    for(const exchange of v.log.filter(e=>e.id>previous&&(e.type==='bank'&&e.player===v.me||e.type==='trade'&&(e.player===v.me||e.other===v.me))))showExchange(exchange);
+    for(const exchange of v.log.filter(e=>e.id>previous&&(e.type==='bank'&&e.player===v.me||e.type==='trade'||e.type==='tradeClosed'&&(e.from===v.me||e.to===v.me||e.to===-1))))showExchange(exchange);
     for(const played of v.log.filter(e=>e.id>previous&&e.type==='dev'&&e.player!==v.me))notices.push(()=>showPlayedCard(played));
     const roll=v.log.filter(e=>e.id>previous&&e.type==='roll').at(-1);if(roll)showRoll(roll);
     const moved=v.log.findLast(e=>e.id>previous&&e.type==='robber');if(moved){const from=Number($('кат-поле').dataset.robber);if(Number.isInteger(from)&&from!==moved.hex){clearPresentation();robberMove={from,to:moved.hex,player:moved.player,id:moved.id,started:false};presenting=true;productionStage=name(moved.player)+' перемещает разбойника';}}
-    const stolen=v.log.findLast(e=>e.id>previous&&e.type==='steal'&&(e.player===v.me||e.victim===v.me)&&Number.isInteger(e.resource));if(stolen){if(robberMove)pendingLoot=stolen;else queueMicrotask(()=>showLoot(stolen));}
+    const stolen=v.log.findLast(e=>e.id>previous&&e.type==='steal')||(moved?.noSteal?moved:null);if(stolen){if(robberMove)pendingLoot=stolen;else queueMicrotask(()=>showLoot(stolen));}
     if(motion()){
       const target=Number.isInteger(event.vertex)?$(`кат-поле`).querySelector(`[data-vertex="${event.vertex}"]`):Number.isInteger(event.edge)?$(`кат-поле`).querySelector(`[data-edge="${event.edge}"]`):null;
       target?.animate([{opacity:.15},{opacity:1,offset:.5},{opacity:.5,offset:.7},{opacity:1}],{duration:1200});
@@ -314,8 +314,8 @@
     const confirm=button('Подтвердить',async()=>{confirm.disabled=true;if(await done(values.slice()))closeAction();else update();},'кнопка кнопка--главная'),controls=[];
     const update=()=>{const total=П.сумма(values);summary.textContent=`Выбрано ${total} из ${count}`+(total<count?` · ещё ${count-total}`:' · можно подтвердить');confirm.disabled=total!==count||busy;confirm.textContent=v.phase==='discard'?`Сбросить ${count} карт`:'Получить карты';controls.forEach(({add,minus,badge,left},i)=>{add.disabled=values[i]>=limit[i]||total>=count;minus.disabled=!values[i];badge.textContent=String(values[i]);left.textContent=discarding?`Останется ${limit[i]-values[i]}`:`Будет ${v.hand[i]+values[i]}`;add.setAttribute('aria-label',`${ресурсы[i]}: выбрано ${values[i]}, в руке ${v.hand[i]}`);add.title=!discarding&&!limit[i]?'Ресурс сейчас недоступен':'';});};
     if(!discarding)body.append(tradeInventory());
-    body.append(el('p',v.phase==='discard'?'Нажимайте на карты, которые хотите отдать. Минус возвращает выбранную карту.':'Нажимайте на нужные ресурсы.'),summary,grid);
-    ресурсы.forEach((text,i)=>{const item=el('div',undefined,'кат-выбор-карт-ресурс'),add=button('',()=>{if(П.сумма(values)<count&&values[i]<limit[i]){values[i]++;update();}},'кат-выбор-карты'),badge=el('strong','0'),left=el('small'),minus=button('−',()=>{if(values[i]){values[i]--;update();}},'кат-выбор-минус');add.dataset.selectResource=i;minus.dataset.removeResource=i;minus.setAttribute('aria-label','Вернуть: '+text);add.append(cardPicture(i),badge);item.append(add,el('b',text),left,minus);grid.append(item);controls.push({add,minus,badge,left});});
+    body.append(el('p',v.phase==='discard'?'Нажимайте на карты, которые хотите сбросить. «Вернуть 1» отменяет выбор одной карты.':'Нажимайте на нужные ресурсы.'),summary,grid);
+    ресурсы.forEach((text,i)=>{const item=el('div',undefined,'кат-выбор-карт-ресурс'),add=button('',()=>{if(П.сумма(values)<count&&values[i]<limit[i]){values[i]++;update();}},'кат-выбор-карты'),badge=el('strong','0'),left=el('small'),minus=button(discarding?'Вернуть 1':'Убрать 1',()=>{if(values[i]){values[i]--;update();}},'кат-выбор-минус');add.dataset.selectResource=i;minus.dataset.removeResource=i;minus.setAttribute('aria-label','Вернуть: '+text);add.append(cardPicture(i),badge);item.append(add,el('b',text),left,minus);grid.append(item);controls.push({add,minus,badge,left});});
     body.append(button('Сбросить выбор',()=>{values.fill(0);update();},'кнопка'),confirm);update();
   }
   function playerInfo(i){
@@ -352,10 +352,15 @@
     const body=modal(name(event.player)+' играет карту','played-development'),frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=event.card;frame.append(picture(['knight','roads','plenty','monopoly'].indexOf(event.card)),el('b',названия[event.card]));body.append(frame,el('p',описания[event.card]),button('Понятно',close,'кнопка кнопка--главная'));
   }
   function showLoot(event){
-    if(!v||(event.player!==v.me&&event.victim!==v.me)||!Number.isInteger(event.resource)||event.resource<0)return;
+    if(!v)return;
     if($('кат-диалог').open){notices.push(()=>showLoot(event));return;}
+    if(event.noSteal){const body=modal('Разбойник перемещён','robber-result');body.append(el('p',name(event.player)+' переместил разбойника. Ресурс не украден: на этой соте нет доступной жертвы.'),button('Понятно',close,'кнопка кнопка--главная'));return;}
+    const involved=event.player===v.me||event.victim===v.me;
+    if(!involved||!Number.isInteger(event.resource)||event.resource<0){const body=modal('Украдена 1 карта','robber-result');body.append(theftRoute(event),el('p',name(event.player)+' забрал 1 карту ресурса у '+name(event.victim)+'. Вид карты скрыт от остальных игроков.'),button('Понятно',close,'кнопка кнопка--главная'));return;}
     const lost=event.victim===v.me,body=modal(lost?'У вас украли ресурс':'Вы получили ресурс','loot'),card=el('div',undefined,'кат-добыча');card.dataset.resource=event.resource;card.dataset.direction=lost?'lost':'received';card.append(cardPicture(event.resource),el('h3',ресурсы[event.resource]),el('strong',lost?'−1 карта':'+1 карта'));body.append(card,el('p',lost?name(event.player)+' забрал у вас 1 ресурс. Карта уже убрана из вашей руки.':'Разбойник забрал 1 ресурс у '+name(event.victim)+'.'),button(lost?'Понятно':'В мою руку',close,'кнопка кнопка--главная'));
+    body.prepend(theftRoute(event));
   }
+  function theftRoute(event){const row=el('div',undefined,'кат-кража-маршрут');for(const [j,i]of [event.victim,event.player].entries()){if(j)row.append(el('strong','→'));const who=el('div');who.append(playerAvatar(i),el('b',name(i)),el('small',j?'Получил карту':'Потерял карту'));row.append(who);}return row;}
   function development(){
     const body=modal('Карты развития','development');
     const purchase=button('Купить карту развития',()=>act({type:'development'}),'кнопка кнопка--главная');purchase.disabled=!v.legal.development||busy||presenting;
@@ -384,10 +389,17 @@
   let exchangeNotice=null,exchangeNoticeTimer=null;
   function showExchange(event){
     if(!exchangeNotice){exchangeNotice=el('div',undefined,'кат-обмен-выполнен');exchangeNotice.id='кат-обмен-выполнен';exchangeNotice.setAttribute('role','status');exchangeNotice.setAttribute('popover','manual');document.body.append(exchangeNotice);}
-    let give,want;if(event.type==='bank'){give=[0,0,0,0,0];want=give.slice();give[event.give]=event.rate;want[event.want]=1;}else{give=event.player===v.me?event.give:event.want;want=event.player===v.me?event.want:event.give;}
-    exchangeNotice.replaceChildren(el('b','✓ Обмен выполнен'),el('span','Отдали: '+resourceText(give)),el('span','Получили: '+resourceText(want)));
+    if(event.type==='tradeClosed'){
+      const reasons={rejected:'Все приглашённые игроки отказались.',cancelled:name(event.player)+' отменяет предложение.',turnEnded:'Ход завершён, предложение закрыто.',finished:'Партия завершена.',replaced:'Предложение заменено новыми условиями.',changed:'Игрок выполнил другое действие, предложение закрыто.'};
+      exchangeNotice.replaceChildren(el('b','Обмен не состоялся'),el('span',reasons[event.reason]||'Предложение закрыто.'),el('span','Ресурсы по этому предложению не переданы.'));
+    }else{
+      let give,want;if(event.type==='bank'){give=[0,0,0,0,0];want=give.slice();give[event.give]=event.rate;want[event.want]=1;}else{give=event.player===v.me?event.give:event.want;want=event.player===v.me?event.want:event.give;}
+      const mine=event.type==='bank'||event.player===v.me||event.other===v.me;
+      exchangeNotice.replaceChildren(el('b','✓ Обмен выполнен'),...(mine?[el('span',event.type==='bank'?'Банк / порт':'С '+name(event.player===v.me?event.other:event.player)),el('span','Отдали: '+resourceText(give)),el('span','Получили: '+resourceText(want))]:[el('span',name(event.player)+' → '+name(event.other)+': '+resourceText(event.give)),el('span',name(event.other)+' → '+name(event.player)+': '+resourceText(event.want))]));
+    }
+    exchangeNotice.append(button('Понятно',()=>{clearTimeout(exchangeNoticeTimer);exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;}));
     exchangeNotice.hidden=false;if(exchangeNotice.showPopover)exchangeNotice.showPopover();else ($('кат-диалог').open?$('кат-диалог-тело'):document.body).append(exchangeNotice);
-    clearTimeout(exchangeNoticeTimer);exchangeNoticeTimer=setTimeout(()=>{exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;},5500);
+    clearTimeout(exchangeNoticeTimer);exchangeNoticeTimer=setTimeout(()=>{exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;},9000);
   }
   function tradeInventory(){const box=el('div',undefined,'кат-торговля-запас'),stock=el('div',undefined,'кат-торговля-ресурсы');box.append(el('b','У вас на руках'),stock);v.hand.forEach((n,r)=>{const item=el('span');item.dataset.resource=r;item.setAttribute('aria-label',`${ресурсы[r]}: ${n}`);item.append(picture(r),el('strong',n));stock.append(item);});return box;}
   function trade(bankChoice,counter){
@@ -470,6 +482,7 @@
     if(e.type==='steal')return Number.isInteger(e.resource)&&e.resource>=0?`${n} забирает ${ресурсы[e.resource]} × 1 у ${name(e.victim)}`:`${n} забирает случайный ресурс у ${name(e.victim)}`;
     if(e.type==='dev')return `${n}: ${названия[e.card]}`;
     if(e.type==='discard')return `${n}: сброшено ${e.count} ресурсов`;
+    if(e.type==='tradeClosed')return `${name(e.from)}: обмен не состоялся — ${({rejected:'все отказались',cancelled:'предложение отменено',turnEnded:'ход завершён',finished:'партия завершена',replaced:'условия изменены',changed:'выполнено другое действие'})[e.reason]||'предложение закрыто'}`;
     if(e.type==='undo')return `${n}: отменено — ${e.action==='bank'?'обмен с банком':названия[e.action]||e.action}`;
     return `${n}: ${названия[e.type]||{end:'ход завершён',offer:'предложен обмен',tradeQuote:'предложил вариант обмена',tradeReady:'согласен на обмен — ждёт подтверждения',tradeWithdraw:'отозвал согласие на обмен',robber:'разбойник перемещён'}[e.type]||e.type}`;
   }
