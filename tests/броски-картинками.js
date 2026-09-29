@@ -113,8 +113,15 @@ function достатьСтаруюИгру() {
 
   /* ---------------- ЧАСТЬ 2 ---------------- */
   console.log('\n=== 2. В браузере: панель, картинки, цель, полёт ===');
-  const { chromium, подготовитьПодделку } = require(path.join(__dirname, 'браузер-робот.js'));
+  const { chromium, подготовитьПодделку, перехватить: перехватитьФон } = require(path.join(__dirname, 'браузер-робот.js'));
   const { сестьЗаСтол } = require(path.join(__dirname, 'сесть-за-стол.js'));
+  // Страница без ?сервер= стучится на боевой 127.0.0.1:8790 (js/популярность.js,
+  // рейтинг) и получает ERR_CONNECTION_REFUSED — к предмету проверки это
+  // не относится, перехватываем весь адрес и отвечаем пустышкой.
+  const АДРЕС_ФОНОВОГО_СЕРВЕРА = /^http:\/\/127\.0\.0\.1:8790\//;
+  function пустойОтветФона(route) {
+    return route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body: JSON.stringify({ ок: false }) });
+  }
   if (!fs.existsSync(ПАПКА_СНИМКОВ)) fs.mkdirSync(ПАПКА_СНИМКОВ);
   const браузер = await chromium.launch();
   const окно = await браузер.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
@@ -130,6 +137,7 @@ function достатьСтаруюИгру() {
   страница.on('pageerror', (о) => красные.push('падение: ' + о.message));
   страница.on('response', (о) => { if (о.status() >= 400) плохиеОтветы.push(о.status() + ' ' + decodeURIComponent(о.url())); });
   await подготовитьПодделку(страница, { версия: '8.0', полныйЭкран: 'дают' });
+  await перехватитьФон(страница, АДРЕС_ФОНОВОГО_СЕРВЕРА, (путь) => пустойОтветФона(путь));
   await страница.goto(АДРЕС);
   await страница.waitForFunction(() => typeof настройкиИгрыСБотами !== 'undefined');
   await страница.waitForTimeout(500);
@@ -256,7 +264,12 @@ function достатьСтаруюИгру() {
   });
   стр3.on('pageerror', (о) => красные3.push('падение: ' + о.message));
   await подготовитьПодделку(стр3, { версия: '8.0', полныйЭкран: 'дают' });
-  await перехватить(стр3, /\/img\/бросок\//, (путь) => { непущено++; путь.abort(); });
+  // Один route на обе двери сразу (img/бросок и фон 8790) — два отдельных
+  // route() на одну страницу ломают друг друга (см. шапку браузер-робот.js).
+  await перехватить(стр3, /\/img\/бросок\/|^http:\/\/127\.0\.0\.1:8790\//, (путь, запрос, адрес) => {
+    if (/\/img\/бросок\//.test(адрес)) { непущено++; путь.abort(); return; }
+    пустойОтветФона(путь);
+  });
   await стр3.goto(АДРЕС);
   await стр3.waitForFunction(() => typeof настройкиИгрыСБотами !== 'undefined');
   await стр3.waitForTimeout(500);

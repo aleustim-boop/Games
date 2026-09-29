@@ -41,7 +41,7 @@
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
-const { chromium, подготовитьПодделку } = require('./браузер-робот.js');
+const { chromium, подготовитьПодделку, перехватить } = require('./браузер-робот.js');
 
 const ПОРТ = 8899;
 const АДРЕС = 'http://127.0.0.1:' + ПОРТ + '/index.html';
@@ -184,6 +184,12 @@ async function основной() {
     });
 
     await подготовитьПодделку(страница, {});
+    // Страница без ?сервер= стучится на боевой 127.0.0.1:8790 (статистика,
+    // рейтинг) и получает ERR_CONNECTION_REFUSED — к делу проверки это не
+    // относится. Перехватываем весь адрес пустышкой (исключение для
+    // telegram.org ниже не трогаем, оно про другое).
+    await перехватить(страница, /^http:\/\/127\.0\.0\.1:8790\//, (путь) =>
+      путь.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body: JSON.stringify({ ок: false }) }));
 
     console.log('Открываю ' + АДРЕС + '…');
     await страница.goto(АДРЕС, { waitUntil: 'load' });
