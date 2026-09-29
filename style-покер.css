@@ -9,6 +9,8 @@
 .pk-flying-chips{position:absolute;left:0;top:0;width:48px;height:34px;object-fit:contain;pointer-events:none;z-index:8;mix-blend-mode:lighten;mask-image:radial-gradient(ellipse,black 45%,transparent 73%);animation:pk-chip-flight .75s ease-in-out both}.pk-public{display:flex!important;align-items:center;gap:10px;font-size:14px}.pk-public input{width:22px;height:22px;accent-color:#d8ba78}
 .pk-table{overflow:clip}
 .pk-mini-hand .pk-card{animation:none}
+@media(orientation:landscape) and (max-height:600px) and (min-width:600px){.покер .pk-self #pk-self-info{display:flex;align-items:center;justify-content:center;gap:5px}.покер .pk-self .pk-avatar{display:block;width:22px;height:22px;margin:0}}
+.pk-network-parked #кнопка-вернуться-в-игру{display:none!important}.pk-hand.folded{opacity:.45}.pk-showdown-cards{display:flex;gap:8px;justify-content:center;margin:12px 0}.pk-showdown-cards .pk-card{width:clamp(30px,calc((94vw - 90px)/5),54px);flex:none;animation:none}.pk-showdown-row{padding:12px 0;border-top:1px solid #b49c6544;text-align:center}.pk-showdown-row small{display:block;margin-top:5px}.pk-dock>.pk-result{margin:0 0 8px;font-size:13px;overflow-wrap:anywhere}.pk-dock>#pk-showdown{margin:0 0 10px;padding:8px;min-height:40px}#pk-lobby-error:empty{display:none}#pk-lobby-error{color:#efb0a2;line-height:1.5}
 @keyframes pk-chip-flight{from{transform:translate(calc(var(--from-x) - 24px),calc(var(--from-y) - 17px)) scale(1);opacity:1}80%{opacity:1}to{transform:translate(calc(var(--to-x) - 24px),calc(var(--to-y) - 17px)) scale(.5);opacity:0}}
 @media(max-width:760px){.покер #экран-игры{padding:4px 0 16px}}
 @media(max-width:760px){.pk-hand .pk-card{width:57px}}
@@ -27,3 +29,8 @@
 .покер .экран{padding-top:calc(16px + var(--отступ-сверху,0px));padding-left:calc(16px + var(--отступ-слева,0px));padding-right:calc(16px + var(--отступ-справа,0px))}.покер #экран-игры{padding-top:calc(4px + var(--отступ-сверху,0px));padding-left:var(--отступ-слева,0px);padding-right:var(--отступ-справа,0px);padding-bottom:calc(16px + var(--отступ-снизу,0px))}
 html.в-телеграме .покер .pk-top>[data-back],html.в-телеграме .покер .pk-top>a{visibility:hidden}html.в-телеграме:not(.без-настроек) .покер #pk-help{visibility:hidden}
 @media(orientation:landscape) and (max-height:600px) and (min-width:600px){.покер .pk-table{height:calc(100dvh - 46px - var(--отступ-сверху,0px) - var(--отступ-снизу,0px))}.pk-dock{max-height:calc(100dvh - 48px - var(--отступ-сверху,0px) - var(--отступ-снизу,0px))}}
+
+/* Карты в коротком окне зависят от высоты стола, включая safe area Telegram. */
+@media(orientation:landscape) and (max-height:600px) and (min-width:600px){
+ .покер .pk-table{container-type:size}.pk-center{left:20%;right:20%;top:43%;display:flex;align-items:center;justify-content:center;gap:8px}.pk-center>p,.pk-pot small{display:none}.pk-pot{flex:none;min-width:30px}.pk-pot strong{font-size:18px}.pk-board{flex:none;width:calc(73.333cqh + 12px);max-width:calc(100% - 40px);margin:0}.pk-board .pk-card-rank{font-size:13px}.pk-board .pk-card-suit{font-size:20px}.pk-board .pk-card-corner{font-size:8px}
+}

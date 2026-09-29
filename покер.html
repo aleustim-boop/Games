@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Покер — Игры с друзьями</title>
-<link rel="stylesheet" href="style.css?v=100"><link rel="stylesheet" href="style-аватар.css?v=1"><link rel="stylesheet" href="style-покер.css?v=1">
+<link rel="stylesheet" href="style.css?v=100"><link rel="stylesheet" href="style-аватар.css?v=1"><link rel="stylesheet" href="style-покер.css?v=2">
 <script>window.ИграСтраницы='покер';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script></head>
 <body class="покер"><main id="приложение">
 <section id="экран-лобби" class="экран экран--виден pk-lobby">
  <header class="pk-top"><a href="index.html" aria-label="Все игры">‹</a><span>КЛУБ ДРУЗЕЙ</span><button data-rules aria-label="Как играть">?</button></header>
  <button id="pk-profile" class="pk-profile"><span class="pk-avatar" data-my-avatar></span><span><b id="pk-name">Вы</b><small>Мой профиль</small></span><span>›</span></button>
  <div class="pk-hero"><div><span class="pk-eyebrow">ДВЕ КАРТЫ. ТЫСЯЧИ РЕШЕНИЙ.</span><h1>Покер</h1><p>Техасский холдем</p></div></div>
+ <p id="pk-lobby-error" role="alert"></p><button id="pk-online-resume" class="pk-button pk-gold скрыт">Вернуться к онлайн-столу</button>
  <button id="pk-resume" class="pk-button скрыт">Продолжить партию ↗</button>
  <button id="лобби-найти-игру" class="pk-entry pk-gold"><span>♠</span><span><b>Играть онлайн</b><small>Найдите свой стол</small></span><span>↗</span></button>
  <button id="pk-friends" class="pk-entry"><span>♧</span><span><b>С друзьями</b><small>Ваш стол. Ваша компания.</small></span><span>↗</span></button>
@@ -22,9 +23,9 @@
 <section id="экран-игры" class="экран pk-game">
  <header class="pk-top"><button data-back aria-label="В меню">‹</button><div><b>Техасский холдем</b><small id="pk-round"></small></div><button id="pk-help" aria-label="Настройки и помощь">☰</button></header>
  <div class="pk-layout"><div id="pk-table" class="pk-table" role="group" aria-label="Покерный стол">
-  <div id="pk-seats"></div><div class="pk-center"><div class="pk-pot"><small id="pk-pot-label">Банк</small><strong id="pk-pot">0</strong><img src="img/покер/фишки-v1.webp" alt=""></div><div id="pk-board" class="pk-board" aria-label="Общие карты"></div><p id="pk-street"></p><div id="pk-result" class="pk-result" aria-live="polite"></div></div>
+  <div id="pk-seats"></div><div class="pk-center"><div class="pk-pot"><small id="pk-pot-label">Банк</small><strong id="pk-pot">0</strong><img src="img/покер/фишки-v1.webp" alt=""></div><div id="pk-board" class="pk-board" aria-label="Общие карты"></div><p id="pk-street"></p></div>
   <div class="pk-self"><div id="pk-hand" class="pk-hand" aria-label="Ваши карты"></div><div id="pk-self-info"></div><p id="pk-combination"></p></div>
- </div><aside class="pk-dock"><div id="pk-status" class="pk-status" aria-live="polite"></div><div id="pk-actions" class="pk-actions"></div><div id="pk-raise" class="pk-raise скрыт"><label for="pk-range">Общая ставка <output id="pk-raise-value"></output></label><input id="pk-range" type="range" min="0" max="1500" step="1"><div id="pk-presets"></div><button id="pk-raise-confirm" class="pk-button pk-gold">Повысить</button></div><div class="pk-tools"><button id="pk-log">Ход раздачи</button><button data-rules>Комбинации</button><button id="pk-sound" aria-pressed="true">Звук вкл</button></div><p id="pk-error" role="alert"></p><p id="строка-связи" class="скрыт" role="status"></p></aside></div>
+ </div><aside class="pk-dock"><div id="pk-result" class="pk-result" aria-live="polite"></div><button id="pk-showdown" class="pk-button скрыт">Итоги раздачи</button><div id="pk-status" class="pk-status" aria-live="polite"></div><div id="pk-actions" class="pk-actions"></div><div id="pk-raise" class="pk-raise скрыт"><label for="pk-range">Общая ставка <output id="pk-raise-value"></output></label><input id="pk-range" type="range" min="0" max="1500" step="1"><div id="pk-presets"></div><button id="pk-raise-confirm" class="pk-button pk-gold">Повысить</button></div><div class="pk-tools"><button id="pk-log">Ход раздачи</button><button data-rules>Комбинации</button><button id="pk-sound" aria-pressed="true">Звук вкл</button></div><p id="pk-error" role="alert"></p><p id="строка-связи" class="скрыт" role="status"></p></aside></div>
 </section>
 <section id="экран-друга" class="экран mono-settings">
         <div class="mono-top">
@@ -333,6 +334,6 @@
 
 <dialog id="pk-dialog"><header><h2 id="pk-dialog-title"></h2><button id="pk-close" aria-label="Закрыть">×</button></header><div id="pk-dialog-body"></div></dialog>
 </main>
-<script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/игры-реестр.js?v=poker-20260929"></script><script src="js/рейтинг-экран.js?v=41"></script><script src="js/профиль-экран.js?v=2"></script>
-<script src="js/покер-правила.js?v=1"></script><script src="js/покер-бот.js?v=1"></script><script src="js/покер-экран.js?v=1"></script><script src="js/дурак-комната.js?v=20260929b"></script><script src="js/сеть.js?v=poker-20260929"></script><script src="js/покер-онлайн.js?v=1"></script><script src="js/открытые-столы.js?v=20260929b"></script><script src="js/подбор-экран.js?v=1"></script><script src="js/популярность.js?v=1" data-game="покер"></script>
+<script src="js/telegram.js?v=32"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/игры-реестр.js?v=20260929c"></script><script src="js/рейтинг-экран.js?v=41"></script><script src="js/профиль-экран.js?v=2"></script>
+<script src="js/покер-правила.js?v=2"></script><script src="js/покер-бот.js?v=1"></script><script src="js/покер-экран.js?v=2"></script><script src="js/дурак-комната.js?v=20260929b"></script><script src="js/сеть.js?v=poker-20260929"></script><script src="js/покер-онлайн.js?v=1"></script><script src="js/открытые-столы.js?v=20260929b"></script><script src="js/подбор-экран.js?v=1"></script><script src="js/популярность.js?v=1" data-game="покер"></script>
 </body></html>

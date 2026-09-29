@@ -34,6 +34,7 @@ function сделатьХод(p, key, a = {}) {
       p.завершена=true;p.результат=p.игроки.find(k=>k!==key);p.проигравшие=[key];
       return {принято:true,событие:'сдался'};
     }
+    if(a.move?.version!==undefined&&a.move.version!==p.игра.version)throw Error('Ситуация за столом изменилась. Проверьте новую ставку.');
     P.action(p.игра,i,a.move);
     p.deadline=Date.now()+(p.игра.phase==="between"?6000:30000);
     if (p.игра.phase === "finished") {
@@ -55,6 +56,7 @@ function ходЗаБота(p, key, level) {
     : null;
 }
 function видДляИгрока(p, key, d = {}) {
+  const participants=d.места||d.участники||[];
   const v = {
     игра: "покер",
     код: d.код,
@@ -101,10 +103,10 @@ function видДляИгрока(p, key, d = {}) {
       v.покер.interrupted=true;v.покер.legal={};v.покер.turn=-1;
     }
     v.покер.deadline=p.deadline;
-    v.покер.bots=p.игроки.map(k=>!!d.места?.find(m=>m.ключ===k)?.этоБот);
+    v.покер.bots=p.игроки.map(k=>!!participants.find(m=>m.ключ===k)?.этоБот);
     v.покер.names = p.игроки.map(
       (k, j) =>
-        d.места?.find((m) => m.ключ === k)?.имя ||
+        participants.find((m) => m.ключ === k)?.имя ||
         (j === i ? "Вы" : `Игрок ${j + 1}`),
     );
   }

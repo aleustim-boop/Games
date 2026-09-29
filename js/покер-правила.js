@@ -30,22 +30,27 @@
   const alive=p=>!p.out,live=p=>!p.folded&&!p.out,canAct=p=>live(p)&&p.stack>0;
   function event(g,type,player=-1,amount=0){g.events.push({id:++g.version,hand:g.hand,type,player,amount});if(g.events.length>90)g.events.shift();}
   function pay(g,i,amount){const p=g.players[i],n=Math.min(p.stack,amount);p.stack-=n;p.bet+=n;p.total+=n;return n;}
-  function create(n=4,seed=Date.now(),secure=false){
+  function create(n=4,seed=Date.now(),secure=false,rules=2){
     if(!Number.isInteger(n)||n<2||n>6)throw Error('Нужно 2–6 игроков');
-    const g={seed:seed>>>0,secure,players:Array.from({length:n},()=>({stack:1500,out:false,hole:[],bet:0,total:0,folded:false,acted:null,action:''})),hand:0,button:n-1,bb:20,board:[],events:[],version:0,phase:'ready',turn:0,winner:null,result:null};deal(g);return g;
+    if(![1,2].includes(rules))throw Error('Неизвестная версия правил');
+    const g={rules,seed:seed>>>0,secure,players:Array.from({length:n},()=>({stack:1500,out:false,hole:[],bet:0,total:0,folded:false,acted:null,action:''})),hand:0,button:n-1,bb:20,board:[],events:[],version:0,phase:'ready',turn:0,winner:null,result:null};deal(g);return g;
   }
   function deal(g){
     const active=g.players.filter(p=>!p.out&&p.stack>0);if(active.length<2){g.phase='finished';g.winner=g.players.findIndex(p=>!p.out&&p.stack>0);g.turn=-1;return;}
     g.players.forEach(p=>{if(p.stack<=0)p.out=true;p.hole=[];p.bet=0;p.total=0;p.folded=p.out;p.acted=null;p.action='';});
-    const previousBig=g.bbSeat;
+    const previousBig=g.bbSeat,previousSmall=g.sbSeat;
     g.hand++;g.bb=Math.min(1280,20*Math.pow(2,Math.floor((g.hand-1)/10)));g.button=next(g,g.button,alive);
     // При переходе к игре вдвоём большой блайнд обязан перейти следующему живому месту.
     if(active.length===2&&Number.isInteger(previousBig)){const big=next(g,previousBig,alive);g.button=next(g,big,alive);}
+    // Турнирный мёртвый баттон: большой блайнд переходит следующему
+    // живому месту. Выбывший малый блайнд не должен перескакивать очередь.
+    if(g.rules>=2&&active.length>2&&Number.isInteger(previousBig))g.button=previousSmall;
     g.deck=shuffle(g);g.board=[];g.result=null;g.reveal=false;
     g.phase='preflop';g.minRaise=g.bb;g.currentBet=g.bb;
     let pos=g.button;for(let c=0;c<2;c++)for(let k=0;k<active.length;k++){pos=next(g,pos,alive);g.players[pos].hole.push(g.deck.pop());}
     g.sbSeat=active.length===2?g.button:next(g,g.button,alive);g.bbSeat=next(g,g.sbSeat,alive);
-    pay(g,g.sbSeat,g.bb/2);pay(g,g.bbSeat,g.bb);g.players[g.sbSeat].action='Малый блайнд';g.players[g.bbSeat].action='Большой блайнд';
+    if(g.rules>=2&&active.length>2&&Number.isInteger(previousBig)){g.sbSeat=previousBig;g.bbSeat=next(g,previousBig,alive);}
+    if(!g.players[g.sbSeat].out){pay(g,g.sbSeat,g.bb/2);g.players[g.sbSeat].action='Малый блайнд';}pay(g,g.bbSeat,g.bb);g.players[g.bbSeat].action='Большой блайнд';
     g.turn=next(g,g.bbSeat,canAct);event(g,'deal');advance(g,g.bbSeat);
   }
   function legal(g,i){
@@ -77,6 +82,7 @@
   function advance(g,after){
     if(g.players.filter(live).length===1){settle(g,false);return;}
     const actors=g.players.filter(canAct);
+    if(g.rules>=2&&actors.length===1)g.currentBet=Math.max(actors[0].bet,...g.players.filter(p=>live(p)&&p!==actors[0]).map(p=>p.bet));
     const need=p=>canAct(p)&&(p.bet<g.currentBet||p.acted===null);
     // Если единственному игроку с фишками уже нечего уравнивать, торговля закончена.
     if(actors.length>1||actors.length===1&&actors[0].bet<g.currentBet){const t=next(g,after,need);if(t>=0){g.turn=t;return;}}
