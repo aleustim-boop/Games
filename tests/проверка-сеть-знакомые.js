@@ -100,10 +100,37 @@ const страница = {
   readyState: 'complete'
 };
 
+/* Часы, которые завёл сам js/сеть.js (с подписью Telegram он раз
+   в полминуты с небольшим ставит отметку «я здесь», цепочкой setTimeout).
+   Помним все его таймеры, чтобы в конце погасить: иначе Node не
+   завершится сама. К концу проверки все её дела уже сделаны. */
+const часыСети = new Map();   // таймер → чем гасить
+function запомнитьЧасы(завести, снять) {
+  return function (дело, мс) {
+    const часы = завести(function () {
+      if (завести === setTimeout) часыСети.delete(часы);
+      дело.apply(null, arguments);
+    }, мс);
+    часыСети.set(часы, снять);
+    return часы;
+  };
+}
+function забытьЧасы(снять) {
+  return function (часы) {
+    часыСети.delete(часы);
+    снять(часы);
+  };
+}
+function погаситьЧасыСети() {
+  for (const [часы, снять] of Array.from(часыСети)) снять(часы);
+  часыСети.clear();
+}
+
 const окружение = {
   window: окно, document: страница, console: console,
-  fetch: нашFetch, setTimeout: setTimeout, clearTimeout: clearTimeout,
-  setInterval: setInterval, clearInterval: clearInterval,
+  fetch: нашFetch,
+  setTimeout: запомнитьЧасы(setTimeout, clearTimeout), clearTimeout: забытьЧасы(clearTimeout),
+  setInterval: запомнитьЧасы(setInterval, clearInterval), clearInterval: забытьЧасы(clearInterval),
   URLSearchParams: URLSearchParams, URL: URL, AbortController: AbortController,
   Promise: Promise, JSON: JSON, Date: Date, Math: Math
 };
@@ -216,9 +243,10 @@ const живой = сервер.запустить(ПОРТ, 2000);
   знакомые.дописать();
   /* Выходим по-хорошему: резкий «process.exit» на Windows ронял процесс
      на месте («Assertion failed … uv async»), и код выхода получался 127
-     сразу после честного итога. Гасим сторожа комнат и гнездо — Node
-     завершится сам. */
+     сразу после честного итога. Гасим сторожа комнат, гнездо и часы
+     отметки «я здесь» из js/сеть.js — Node завершится сам. */
   process.exitCode = всёХорошо ? 0 : 1;
   try { комнаты.остановитьУборку(); } catch (сбой) { /* уже остановлена */ }
   try { живой.close(); } catch (сбой) { /* уже закрыто */ }
+  погаситьЧасыСети();
 });

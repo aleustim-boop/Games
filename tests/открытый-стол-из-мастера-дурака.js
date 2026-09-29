@@ -259,8 +259,10 @@ async function пройти() {
 
   console.log('');
   console.log('Итого проверок: ' + всеПроверки + ', провалов: ' + провалы);
-  process.exitCode = провалы > 0 ? 1 : 0;
+  /* Выходим явно: js/сеть.js с подписью Telegram держит часы отметки
+     «я здесь», и сама Node не завершилась бы никогда. */
+  process.exit(провалы > 0 ? 1 : 0);
 }).catch(function (сбой) {
   console.log('Проверка сорвалась: ' + (сбой && сбой.stack || сбой));
-  process.exitCode = 1;
+  process.exit(1);
 });
