@@ -7,7 +7,7 @@ for(const kind of ['army','road'])for(const [width,height]of [[320,740],[390,844
  const dialog=p.locator('#кат-диалог[data-kind=award][open]');await dialog.waitFor();
  A(await dialog.evaluate(d=>{const r=d.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&d.scrollWidth<=d.clientWidth+1;}),'Окно помещается по ширине '+width);
  A(await p.locator('#кат-диалог-заголовок').evaluate(e=>{const r=e.getBoundingClientRect(),d=e.closest('dialog').getBoundingClientRect();return r.left>=d.left&&r.right<=d.right&&e.scrollWidth<=e.clientWidth+1;}),'Заголовок не обрезан');
- if(kind==='army')A(await p.locator('img.кат-бонус-рисунок').evaluate(i=>i.complete&&i.naturalWidth>0),'Рыцарь загрузился');else A.equal(await p.locator('svg.кат-бонус-рисунок').evaluate(e=>getComputedStyle(e).fill),'none');
+ if(kind==='army')A(await p.locator('img.кат-бонус-рисунок').evaluate(async i=>{await i.decode();return i.complete&&i.naturalWidth>0;}),'Рыцарь загрузился');else A.equal(await p.locator('svg.кат-бонус-рисунок').evaluate(e=>getComputedStyle(e).fill),'none');
  if(width===390)await p.screenshot({path:`tests/снимки/катан-награда-${kind}.png`});
  await p.getByRole('button',{name:'Понятно',exact:true}).click();A.equal(await dialog.count(),0);
 }A.deepEqual(errors,[]);console.log('Награды армии и дороги: 4 экрана, длинное имя, изображение рыцаря, золотая дорога, доступное закрытие — OK');}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
