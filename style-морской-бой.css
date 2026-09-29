@@ -141,3 +141,19 @@ html.в-телеграме .море-верх { display: none; }
 .море-сетка > .море-клетка[data-состояние=попадание] { background-color: #ff8d4b20; }
 .море-сетка > .море-клетка[data-состояние=потоплен] { background-color: #71362750; }
 .море-сетка > .море-клетка[aria-pressed=true] { background: radial-gradient(circle,#d2f76b50,#d2f76b16); }
+
+/* Узкие и низкие телефоны (портрет, высота ≤700px): без ужимания кнопка
+   «Выстрел» и открытие эмоций уезжали ниже безопасной границы Telegram.
+   Ландшафт (ширина ≥600px) не трогаем — там уже своя раскладка выше. */
+@media (max-height: 700px) and (max-width: 599px) {
+ .море #экран-игры { gap: 6px; }
+ .море-стол { gap: 6px; }
+ .море-стол > :first-child > .море-имя { min-height: 26px !important; margin-bottom: 3px !important; padding: 3px 6px !important; }
+ .море-низ { gap: 6px; }
+ .море-сводка { gap: 3px; }
+ #море-очередь { padding: 3px 5px !important; font-size: clamp(13px,3.6vw,17px) !important; line-height: 1.15 !important; }
+ #море-цель { font-size: 15px; }
+ .море #море-событие { min-height: 20px; font-size: 10px; line-height: 1.2; }
+ .море-действия { gap: 6px; }
+ #море-выстрел { min-height: 44px !important; font-size: 14px !important; }
+}
