@@ -24,7 +24,7 @@
     for(let r=0;r<6;r++){const p=node('pattern',{id:`${prefix}ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
     const shadows=node('filter',{id:prefix+'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
     ['лес','глина','пастбище','зерно','руда'].forEach((name,r)=>{for(let i=0;i<4;i++){const p=node('pattern',{id:`${prefix}вариант-${r}-${i}`,width:1,height:1,viewBox:`${i%2*627} ${Math.floor(i/2)*627} 627 627`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:`img/катан/${name}-варианты-${r===2?'v2':'v1'}.webp`,width:1254,height:1254}));defs.append(p);}});
-    const sand=node('pattern',{id:prefix+'песок',width:24,height:24,patternUnits:'userSpaceOnUse'});sand.append(node('rect',{width:24,height:24,fill:'#e7c792'}));for(let i=0;i<18;i++)sand.append(node('circle',{cx:(i*7)%24,cy:(i*11)%24,r:i%3===0?.65:.35,fill:i%2?'#94713f':'#f7e2b6',opacity:.6}));defs.append(sand);
+    const sand=node('pattern',{id:prefix+'песок',width:240,height:240,patternUnits:'userSpaceOnUse'});sand.append(node('image',{href:'img/катан/песок-v1.webp',width:240,height:240,preserveAspectRatio:'xMidYMid slice'}));defs.append(sand);
     for(const axis of ['x','y']){const gradient=node('linearGradient',{id:prefix+'край-'+axis,x1:0,y1:0,x2:axis==='x'?1:0,y2:axis==='y'?1:0});for(const [offset,color]of [[0,'black'],[.085,'white'],[.915,'white'],[1,'black']])gradient.append(node('stop',{offset,'stop-color':color}));defs.append(gradient);const mask=node('mask',{id:prefix+'переход-'+axis,maskUnits:'userSpaceOnUse',x:0,y:0,width:900,height:840});mask.append(node('rect',{width:900,height:840,fill:`url(#${prefix}край-${axis})`}));defs.append(mask);}
     const existing=svg.querySelector('defs');
     if(existing){for(const child of [...svg.children])if(child!==existing)child.remove();}else svg.replaceChildren(defs);
@@ -35,7 +35,7 @@
     while(at!==outline[0]){outline.push(at);const next=coast.find(e=>e.id!==prev&&(e.a===at||e.b===at));if(!next)break;at=next.a===at?next.b:next.a;prev=next.id;}
     const shore=outline.map(id=>xy(Г.vertices[id]).join(',')).join(' ');
     svg.append(node('polygon',{points:shore,transform:'translate(0 9)',fill:'#8b613d',stroke:'#493624','stroke-width':8,'stroke-linejoin':'round'}));
-    svg.append(node('polygon',{points:shore,fill:`url(#${prefix}песок)`,stroke:'#e9cc96','stroke-width':8,'stroke-linejoin':'round'}));
+    svg.append(node('polygon',{points:shore,fill:`url(#${prefix}песок)`,stroke:`url(#${prefix}песок)`,'stroke-width':8,'stroke-linejoin':'round'}));
     const lastRoll=v.log.slice().reverse().find(e=>e.type==='roll'),production=lastRoll&&v.dice&&lastRoll.id===v.serial?П.сумма(v.dice):0;
     for(const h of v.hexes){
       const variant=(variants[h.resource]++ + variantOffset)%4,geom=Г.hexes[h.id],[x,y]=xy(geom),group=node('g',{'class':'кат-гекс','data-hex':h.id,'data-resource':h.resource,'data-variant':variant,style:`--ресурс-цвет:${['#598852','#b95f38','#a6ba58','#d6ad4e','#899da8','#d6bb84'][h.resource]}`});
