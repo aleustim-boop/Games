@@ -13,9 +13,9 @@ async function main(){
   await page.locator('#start').click();await page.locator('[data-pad="1"]').click();await page.locator('[data-build="mortar"]').click();await page.locator('#launch').click();
   await page.waitForFunction(()=>БастионИгра.состояние().time>.1);assert(await page.locator('#storage-warning').isVisible());await page.close();
   const retry=await browser.newPage();await безTelegram(retry);retry.on('pageerror',e=>errors.push(e.message));
-  await retry.route('**/island-b-v1.webp',route=>route.abort());await retry.goto(url);await retry.locator('#start').click();
+  await retry.route('**/weapon-plinth-v4.webp',route=>route.abort());await retry.goto(url);await retry.locator('#start').click();
   await retry.locator('#retry-assets').waitFor();assert(await retry.locator('#launch').isDisabled());assert.equal(await retry.evaluate(()=>БастионИгра.состояние().time),0);
-  await retry.unroute('**/island-b-v1.webp');await retry.locator('#retry-assets').click();await retry.waitForFunction(()=>window.БастионИгра?.готов());
+  await retry.unroute('**/weapon-plinth-v4.webp');await retry.locator('#retry-assets').click();await retry.waitForFunction(()=>window.БастионИгра?.готов());
   await retry.locator('#continue').click();await retry.locator('#resume').click();await retry.locator('[data-pad="1"]').click();await retry.locator('#tower-panel [data-build="mortar"]').click();assert.equal((await retry.evaluate(()=>БастионИгра.состояние())).towers.length,1);
   // Поворот экрана во время выбора не списывает золото и не теряет выбор.
   await retry.setViewportSize({width:844,height:390});await retry.locator('[data-pad="2"]').click();assert(await retry.locator('#build-dialog').isVisible());

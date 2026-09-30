@@ -18,7 +18,7 @@ try{
  await page.reload();await page.waitForFunction(()=>БастионИгра.готов());await page.click('#continue');
  await page.evaluate(()=>{const original=BastionField.prototype.draw;BastionField.prototype.draw=function(...args){window.qaField=this;return original.apply(this,args);};});await page.click('#resume');await page.clock.runFor(80);
  for(const [width,height] of [[390,844],[844,390],[1440,1000]]){await page.setViewportSize({width,height});await page.clock.runFor(80);await page.screenshot({path:'tests/снимки/бастион-новый-бой-'+width+'.png',fullPage:true});}
- assert(await page.evaluate(()=>Object.keys(Bastion.ENEMIES).every(k=>qaField.spriteFrames[k+'-walk']?.length===4)));
+ assert(await page.evaluate(()=>Object.keys(Bastion.ENEMIES).every(k=>qaField.spriteFrames[k+'-walk']?.length===8)));
  // Проигрыш с причиной и повтор с оплаченной начальной расстановкой.
  await page.click('#pause');await page.click('#to-lobby');await page.evaluate(()=>{const R=Bastion,s=R.create();s.phase='wave';s.wave=2;s.hp=1;s.draft=[{pad:1,type:'mortar'},{pad:4,type:'tide'}];s.nextId=2;s.enemies=[{id:1,type:'runner',d:R.geometry(0).length-.1,hp:100,maxHp:100,slow:0,slowPower:0,wet:0,burn:0,burnDamage:0,broken:0,heal:2}];localStorage.setItem('bastion_save_v1',R.snapshot(s));});await page.reload();await page.waitForFunction(()=>БастионИгра.готов());await page.click('#continue');await page.click('#resume');await page.clock.runFor(100);
  assert((await page.locator('#dialog-content').textContent()).includes('Разведчик ×1'));await page.click('#retry-draft');const draft=await page.evaluate(()=>БастионИгра.состояние());assert.deepEqual(draft.towers.map(t=>[t.pad,t.type,t.level]),[[1,'mortar',1],[4,'tide',1]]);assert.equal(draft.gold,125);assert.equal(draft.wave,0);

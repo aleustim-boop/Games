@@ -1,0 +1,216 @@
+{
+  "mode": "built-in image_gen",
+  "technicalPreparation": "Canvas resizing, WebP conversion, mirrored thumbnails. PNG originals retained. Runtime crops dominant alpha silhouette for sprite cells.",
+  "assets": [
+    {
+      "kind": "animation",
+      "id": "raider",
+      "source": "raider-stride-v6.png",
+      "prompt": "raider-stride-v6.prompt.txt",
+      "runtime": "raider-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "runner",
+      "source": "runner-stride-v6.png",
+      "prompt": "runner-stride-v6.prompt.txt",
+      "runtime": "runner-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "crab",
+      "source": "crab-stride-v6b.png",
+      "prompt": "crab-stride-v6b.prompt.txt",
+      "runtime": "crab-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "shield",
+      "source": "shield-stride-v6.png",
+      "prompt": "shield-stride-v6.prompt.txt",
+      "runtime": "shield-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "healer",
+      "source": "healer-stride-v6.png",
+      "prompt": "healer-stride-v6.prompt.txt",
+      "runtime": "healer-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "boss",
+      "source": "boss-stride-v6.png",
+      "prompt": "boss-stride-v6.prompt.txt",
+      "runtime": "boss-stride-v6.webp",
+      "grid": [
+        4,
+        2
+      ],
+      "views": "rear/front, horizontally mirrored for west",
+      "timing": "distance based, four poses per view"
+    },
+    {
+      "kind": "animation",
+      "id": "boss-ritual",
+      "source": "boss-ritual-v6.png",
+      "prompt": "boss-ritual-v6.prompt.txt",
+      "runtime": "boss-ritual-v6.webp",
+      "grid": [
+        4,
+        1
+      ],
+      "timing": "charge and shield timers from game state"
+    },
+    {
+      "kind": "terrain",
+      "id": "island-01",
+      "source": "island-01-v6.png",
+      "prompt": "island-01-v6.prompt.txt",
+      "runtime": "island-01-v6.webp",
+      "thumbnail": "island-01-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-02",
+      "source": "island-02-v6.png",
+      "prompt": "island-02-v6.prompt.txt",
+      "runtime": "island-02-v6.webp",
+      "thumbnail": "island-02-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    },
+    {
+      "kind": "terrain",
+      "id": "island-03",
+      "source": "island-03-v6.png",
+      "prompt": "island-03-v6.prompt.txt",
+      "runtime": "island-03-v6.webp",
+      "thumbnail": "island-03-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-04",
+      "source": "island-04-v6.png",
+      "prompt": "island-04-v6.prompt.txt",
+      "runtime": "island-04-v6.webp",
+      "thumbnail": "island-04-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    },
+    {
+      "kind": "terrain",
+      "id": "island-05",
+      "source": "island-05-v6.png",
+      "prompt": "island-05-v6.prompt.txt",
+      "runtime": "island-05-v6.webp",
+      "thumbnail": "island-05-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-06",
+      "source": "island-06-v6.png",
+      "prompt": "island-06-v6.prompt.txt",
+      "runtime": "island-06-v6.webp",
+      "thumbnail": "island-06-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    },
+    {
+      "kind": "terrain",
+      "id": "island-07",
+      "source": "island-07-v6.png",
+      "prompt": "island-07-v6.prompt.txt",
+      "runtime": "island-07-v6.webp",
+      "thumbnail": "island-07-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-08",
+      "source": "island-08-v6.png",
+      "prompt": "island-08-v6.prompt.txt",
+      "runtime": "island-08-v6.webp",
+      "thumbnail": "island-08-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    },
+    {
+      "kind": "terrain",
+      "id": "island-09",
+      "source": "island-09-v6.png",
+      "prompt": "island-09-v6.prompt.txt",
+      "runtime": "island-09-v6.webp",
+      "thumbnail": "island-09-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-10",
+      "source": "island-10-v6.png",
+      "prompt": "island-10-v6.prompt.txt",
+      "runtime": "island-10-v6.webp",
+      "thumbnail": "island-10-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    },
+    {
+      "kind": "terrain",
+      "id": "island-11",
+      "source": "island-11-v6.png",
+      "prompt": "island-11-v6.prompt.txt",
+      "runtime": "island-11-v6.webp",
+      "thumbnail": "island-11-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": false
+    },
+    {
+      "kind": "terrain",
+      "id": "island-12",
+      "source": "island-12-v6.png",
+      "prompt": "island-12-v6.prompt.txt",
+      "runtime": "island-12-v6.webp",
+      "thumbnail": "island-12-thumb-v6.webp",
+      "geometry": "Existing road and build positions retained; reviewed with actual route overlay",
+      "mirrored": true
+    }
+  ]
+}

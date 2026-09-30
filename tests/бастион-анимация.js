@@ -15,7 +15,7 @@ try{
  await page.click('#pause');
  const checks=await page.evaluate(()=>{
   const c=document.createElement('canvas');c.width=c.height=1000;c.style.width='500px';document.body.append(c);
-  const f=new BastionField(c);f.images=qaField.images;f.weapons.images=f.images;f.loaded=true;const s=Bastion.create(),pad=Bastion.pads(0)[1];Bastion.build(s,1,'mortar');
+  const f=new BastionField(c);f.images=qaField.images;f.spriteFrames=qaField.spriteFrames;f.spriteTiles=qaField.spriteTiles;f.renderImages=qaField.renderImages;f.scenes=qaField.scenes;f.weapons.images=f.renderImages;f.loaded=true;const s=Bastion.create(),pad=Bastion.pads(0)[1];Bastion.build(s,1,'mortar');
   const victim={id:501,type:'raider',hp:10,maxHp:40,d:350,wet:0,burn:0};s.enemies=[victim];f.draw(s,0);const q=Bastion.position(0,victim.d);s.enemies=[];
   f.event({type:'kill',...q,gold:8});f.event({type:'shot',tower:'mortar',from:pad,to:q,targets:[q],splash:80});
   f.draw(s,.35);const before=f.ghosts.length===1&&f.effects.find(e=>e.type==='impact').age<0;f.draw(s,.08);const after=f.ghosts.length===0&&f.effects.find(e=>e.type==='impact').age>0;
