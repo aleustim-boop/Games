@@ -12,7 +12,10 @@ const { номерМеста } = require('../партия-по-сети');
 function понятнаяПричина(e, где) { if (e instanceof Error && e.constructor === Error) return e.message; console.error(где + ': сбой хода', e); return 'Такой ход не принят'; }
 function раздать(первый, настройки = {}) {
   const игроки = (настройки.игроки || []).slice(0, 2);
-  return { игроки, завершена: false, результат: null, проигравшие: [], игра: П.создать(игроки.includes(первый) ? игроки.indexOf(первый) : Math.random() < .5 ? 0 : 1) };
+  /* Кто ходит первым — не правило игры, а случайность: Math.random
+     предсказуем (по паре чисел его состояние восстанавливается), поэтому
+     берём у node:crypto — так же, как в нардах. */
+  return { игроки, завершена: false, результат: null, проигравшие: [], игра: П.создать(игроки.includes(первый) ? игроки.indexOf(первый) : require('node:crypto').randomInt(2)) };
 }
 function чейХод(п) {
   if (!п || п.завершена) return null;
