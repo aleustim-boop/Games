@@ -377,8 +377,44 @@
       event(g, "Победа", { kind: "win", player: g.winner });
     } else pump(g);
   }
+  // Годится ли место, выбранное участником аукциона за здание, прямо сейчас.
+  // Пока шёл аукцион, участник мог продать дома по соседству или заложить улицу —
+  // тогда строить здесь уже нельзя по правилу «стройте равномерно».
+  function buildingTargetOk(g, a, p, amount) {
+    const id = a.targets[p];
+    return (
+      int(id, 0, 39) &&
+      buildable(g, p, id) &&
+      (g.properties[id].level === 4 ? "hotel" : "house") === a.kind &&
+      g.players[p].money >= amount
+    );
+  }
+  // Победитель аукциона за здание, которому ещё можно строить. Если лидер
+  // строить уже не может, его ставка не списывается, и здание переходит к
+  // следующему по размеру ставке (ставка того, кто потом спасовал, тоже в силе).
+  function buildingWinner(g) {
+    const a = g.auction,
+      order = Object.keys(a.bids || {})
+        .map(Number)
+        .filter((i) => !g.players[i].out)
+        .sort((x, y) => a.bids[y] - a.bids[x]);
+    for (const p of order) {
+      if (buildingTargetOk(g, a, p, a.bids[p])) return p;
+      event(g, "Место для здания больше не годится: ставка не списана", {
+        kind: "auctionVoid",
+        player: p,
+        id: a.targets[p],
+      });
+    }
+    return -1;
+  }
   function settleAuction(g) {
     const a = g.auction;
+    if (a.building && a.high >= 0) {
+      a.high = buildingWinner(g);
+      if (a.high >= 0) a.bid = a.bids[a.high];
+      else event(g, "Здание осталось в банке", { kind: "auctionEmpty" });
+    }
     if (a.high >= 0) {
       g.players[a.high].money -= a.bid;
       if (a.building) g.properties[a.targets[a.high]].level++;
@@ -534,11 +570,19 @@
               ),
             );
           if (eligible.length > 1) {
+            // В «покупке» и «долге» у очереди уже есть дело, и после аукциона
+            // игра вернулась бы в этот этап с пустой очередью — партия встала бы.
+            // Поэтому последнее здание банка разыгрываем только в обычном ходе.
+            need(
+              !["buy", "debt"].includes(g.phase),
+              "Последнее здание банка идёт с аукциона: сначала завершите покупку или оплату долга",
+            );
             g.resume = g.phase;
             g.queue.unshift({ kind: "auction", id, building: true, eligible });
             auction(g, g.queue[0]);
             g.auction.kind = kind;
             g.auction.targets = {};
+            g.auction.bids = {};
             return;
           }
         }
@@ -721,6 +765,10 @@
             "Выберите место для выигранного здания",
           );
           a.targets[p] = m.id;
+          // Помним последнюю ставку каждого: нужна, если лидер к концу
+          // аукциона строить уже не сможет
+          a.bids = a.bids || {};
+          a.bids[p] = m.amount;
         }
         a.high = p;
         a.bid = m.amount;
