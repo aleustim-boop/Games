@@ -1,0 +1,17 @@
+﻿[
+  {
+    "key": "branch-siege-v3",
+    "ref": "D:/Claud/Games/img/бастион/прокачка-v2.png",
+    "prompt": "Reference approved workshop upgrade card art. Create ONLY the left upgrade card illustration, without frame or text, landscape 3:2: one heavy brass artillery shell with steel nose slamming through dark iron enemy armor and exploding with golden sparks and splinters against a dark coastal fortress. Premium cinematic 3D fantasy art, exactly matching reference left branch scene. Close dramatic composition, readable large shell. No text, no UI."
+  },
+  {
+    "key": "branch-cluster-v3",
+    "ref": "D:/Claud/Games/img/бастион/прокачка-v2.png",
+    "prompt": "Reference approved workshop upgrade card art. Create ONLY the right upgrade card illustration, without frame or text, landscape 3:2: cluster of six black iron mortar bombs with brass bands spreading in the air over a group of dark invading soldiers on a coastal road, multiple orange explosions below. Premium cinematic 3D fantasy art exactly matching reference right branch. Clear scattering bombs and AOE explosion. No water wave, no text, no UI."
+  },
+  {
+    "key": "lobby-wide-v3",
+    "ref": "D:/Claud/Games/img/бастион/lobby-scene-v3.png",
+    "prompt": "Adapt this exact approved fortress scene into a 1536x1024 LANDSCAPE background by extending the environment to both sides. Preserve the SAME lighthouse and SAME fortress, same teal banners, blue crystal pavilion, cannon, stormfleet on right, sunset left. Keep entire top of lighthouse in frame, do not crop. Fortress occupies center right, surrounded by sea, small campaign islands across foreground. Upper 18 percent is moody dark sky for live title. Lower 30 percent is dark sea for live controls. Premium realistic illustrated 3D game scene as reference. No UI, no text, no symbols, no framing, not a new castle. Full bleed production background."
+  }
+]

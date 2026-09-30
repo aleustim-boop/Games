@@ -1,0 +1,22 @@
+﻿[
+  {
+    "key": "lobby-scene-v3",
+    "ref": "D:/Claud/Games/img/бастион/лобби-v2.png",
+    "prompt": "Edit target: supplied approved portrait game lobby mockup. Remove ALL user interface: all lettering and numbers, title, stars/scroll badges, arrows/gear, buttons, panels, bottom navigation, numbered circles and dashed navigation path. Inpaint underlying environment seamlessly. KEEP the exact fortress, tall lighthouse on the right, cannon, magical blue pavilion, three small islands below, dark storm ships on right, sunset on left, sea and style and composition of this specific reference. No redesign, no new castle. The reference is authoritative. Extend the sea and shadowed cliff environment naturally into the bottom area formerly hidden by UI. Top area remains dark atmospheric sky with room for a live HTML title. Full-bleed continuous cinematic game environment, premium realistic illustrated 3D render, textured stone brass and teal banners. 1024x1536 portrait. Absolutely no text, symbols, menu, frame, buttons or UI baked in. This is a production background for a working game, not a new mockup."
+  },
+  {
+    "key": "workshop-scene-v3",
+    "ref": "D:/Claud/Games/img/бастион/прокачка-v2.png",
+    "prompt": "Edit target supplied approved workshop mockup. Extract its environmental scene as a clean 1024x1536 portrait production background. Keep the exact dark seaside stone workshop, brass cannon/mortar large in the upper center on a carved round stone platform, torch left, moody harbour and teal banners. Remove ALL lettering, labels, numbers, interface borders, buttons, branch cards, arrows, icons and menus. Fill the lower 55 percent with low-contrast dark stonework and deep teal ambient shadows appropriate behind live HTML controls. KEEP the magnificent detailed mortar and materials from this reference, not a cartoon simplified new cannon. No UI or text anywhere. Continuous environment full bleed."
+  },
+  {
+    "key": "spell-impact-v3",
+    "ref": "D:/Claud/Games/img/бастион/бой-широкий-v1.png",
+    "prompt": "Reference is the approved game UI style. Generate one square production spell icon matching the fiery impact spell at lower right of reference: a brilliant orange-gold burning meteor streaking diagonally downward across dark petrol navy atmosphere, sparks, glowing molten core, premium detailed realistic fantasy illustration, rich chiaroscuro. Fill the square, no frame, no text, no numbers, no UI, no montage. 1024x1024."
+  },
+  {
+    "key": "spell-tide-v3",
+    "ref": "D:/Claud/Games/img/бастион/бой-широкий-v1.png",
+    "prompt": "Reference is the approved game UI style. Generate one square production spell icon matching the blue wave spell at lower right of reference: an exquisitely detailed curling cyan-blue ocean wave with luminous foamy crest across dark petrol navy atmosphere, bright aqua water droplets, premium realistic fantasy illustration, rich chiaroscuro. Fill square, no frame, no text, no numbers, no UI, no montage. 1024x1024."
+  }
+]

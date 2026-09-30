@@ -1,0 +1,17 @@
+﻿[
+  {
+    "key": "mortar-overhead-v4",
+    "ref": "D:/Claud/Games/img/бастион/mortar-v1.png",
+    "prompt": "One isolated production game sprite, NOT sprite sheet. Camera EXACTLY DIRECTLY OVERHEAD 90 DEGREES looking STRAIGHT DOWN, orthographic top view, absolutely NOT isometric and not side view. Reference for brass material and weapon identity ONLY. The movable brass mortar gun barrel and metal carriage seen from DIRECTLY ABOVE, gun barrel points horizontally to the RIGHT edge of image. Circular swivel at image center, barrel extends right, breech at left. Barrel surface is scratched brass with ornate gold bands and rivets, dark iron mechanisms, rope cable, very detailed realistic painted texture with neutral ambient lighting. REMOVE foundation, stone base, flags, vertical tower, pedestal, floor and shadows. Genuine transparent alpha background. Entire weapon fits middle 80 percent of a square1024x1024, at same plane height. This top-down sprite will be rotated continuously and perspective-projected by a game, so direction right and precisely overhead view are essential."
+  },
+  {
+    "key": "ballista-overhead-v4",
+    "ref": "D:/Claud/Games/img/бастион/ballista-v1.png",
+    "prompt": "One isolated production game sprite, NOT sprite sheet. Camera EXACTLY DIRECTLY OVERHEAD 90 DEGREES looking STRAIGHT DOWN, orthographic TOP view, absolutely NOT isometric or side view. Reference for oak gold turquoise design ONLY. A horizontal crossbow turret upper assembly seen from directly above, long wooden bolt rail and silver bolt point horizontally RIGHT, symmetric curved crossbow limbs extend toward TOP and BOTTOM equally, rope bowstring drawn taut behind. Rich detailed polished dark oak, brass fastenings, small turquoise inlays, realistic painted high detail. Center of rotation at image center. NO stone base, NO support tower, NO pedestal, NO floor, NO flags, no cast shadow. Transparent alpha background. Whole weapon fits central80 percent of square1024x1024. This top-down sprite rotates continuously and projects into isometric perspective in game, so EXACT OVERHEAD view and pointing RIGHT mandatory."
+  },
+  {
+    "key": "weapon-plinth-v4",
+    "ref": "D:/Claud/Games/img/бастион/mortar-v1.png",
+    "prompt": "Extract and redesign only the EMPTY weapon base from reference as production isolated game sprite. Round ivory carved stone foundation with ornate brass bands and bolts, dark iron round swivel ring on top, squat teal-and-brass central cylindrical pedestal to hold a moving turret. Remove entire cannon, barrel, cradle, flag and ammunition. Base height moderate, not a tall tower. Premium detailed realistic illustrated 3D fantasy style exactly like reference. Isometric view35degrees down, no floor or background, genuine transparent alpha, centered square1024x1024, ample transparent margin, baseground center at x512 y760. No words, labels or spritesheet."
+  }
+]

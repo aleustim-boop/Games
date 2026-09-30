@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {Weapons,angleTo,delta,pose}=require('../js/бастион-орудия.js');
+const w=new Weapons(),t={pad:1,type:'mortar'},p={x:400,y:400};
+assert.equal(angleTo(p,{x:600,y:400}),0);
+assert.equal(angleTo(p,{x:400,y:600}),Math.PI/2);
+assert(Math.abs(Math.abs(angleTo(p,{x:200,y:400}))-Math.PI)<1e-9);
+assert(Math.abs(delta(Math.PI-.05,-Math.PI+.05)-.1)<1e-9,'Поворот должен идти коротким путём');
+w.aim(t,p,{x:600,y:400},.016);const before=w.unit(t).angle;
+for(let i=0;i<60;i++)w.aim(t,p,{x:600,y:400},1/60);
+assert(Math.abs(w.unit(t).angle)<.001);assert.notEqual(before,w.unit(t).angle);
+const muzzle=w.fire(t,p,{x:200,y:400});assert(muzzle.x<p.x,'Выстрел из ствола влево');assert(w.unit(t).recoil>0);
+for(let i=0;i<60;i++)w.aim(t,p,null,1/60);assert.equal(w.unit(t).recoil,0);assert.equal(w.unit(t).flash,0);
+w.aim(t,p,{x:400,y:600},0,false);assert.equal(w.unit(t).angle,Math.PI/2,'Без анимации направление всё равно правильное');
+assert(pose('ballista',p,0).x>p.x);w.reset();assert.equal(w.units.size,0);
+console.log('Наведение: четыре направления, кратчайший поворот, плавное сопровождение, отдача, точка вылета, отключение эффектов — пройдены.');
