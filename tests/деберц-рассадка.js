@@ -3,6 +3,14 @@ const assert=require('node:assert/strict'),os=require('node:os'),path=require('n
 process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'deb-seating-'+process.pid);
 const server=require('../server/сервер').создатьСервер();
 const {chromium,безTelegram}=require('./браузер-робот');
+// Единственный довод этого стенда — режим комнаты ('2'/'3'/'4'/'2x2'),
+// НЕ порт: страница берётся с фиксированного адреса ниже (общий сервер
+// раздачи страниц на 8137). Чужое число в доводе (например, порт из
+// --страницы другого прогона) раньше молча превращалось в несуществующий
+// режим и вешало locator('[data-друзья-режим="…"]') на минуту — теперь
+// честный отказ сразу.
+const РЕЖИМЫ=['2','3','4','2x2'];
+if(process.argv[2]&&!РЕЖИМЫ.includes(process.argv[2])){console.error('Неверный режим «'+process.argv[2]+'» — этот довод означает режим комнаты, а не порт. Ждёт один из: '+РЕЖИМЫ.join(', '));process.exit(1);}
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const b=await chromium.launch({headless:true});try{
  for(const mode of (process.argv[2]?[process.argv[2]]:['2','3','4','2x2'])){
   const p=await b.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];await безTelegram(p);p.on('pageerror',e=>errors.push(e.message));
