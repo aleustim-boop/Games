@@ -493,6 +493,42 @@
       a.actor = (a.actor + 1) % g.players.length;
     } while (!remaining.includes(a.actor));
   }
+  // Партия из памяти браузера, записанная старым кодом, могла зависнуть
+  // посреди аукциона: ход у выбывшего игрока, живые видят «действует другой».
+  // Оживляем по нынешним правилам: выбывших убираем из участников и, если
+  // ход был у выбывшего, отдаём его следующему живому (auctionNext сам
+  // решит, кончились ли торги). Если ход у живого — ход и ставки живых
+  // не трогаем, чистим только список участников.
+  // Лидер ставки выбыл: в аукционе за участок лот нельзя отдавать выбывшему,
+  // поэтому сбрасываем только его ставку (лидера нет, цена с нуля), а живые
+  // и их пасы остаются. В аукционе за здание ничего сбрасывать не нужно:
+  // buildingWinner и так пропускает выбывших. Это мягче, чем сдача, которая
+  // перезапускает аукцион целиком, но исход тот же — выбывшему ничего не уходит.
+  function reviveAuction(g) {
+    const a = g.phase === "auction" && g.auction;
+    if (!a) return;
+    const out = (i) => g.players[i]?.out;
+    const leaderOut = !a.building && a.high >= 0 && out(a.high);
+    if (!out(a.actor) && !leaderOut && !a.eligible.some(out)) return;
+    a.eligible = a.eligible.filter((i) => !out(i));
+    if (leaderOut) {
+      a.high = -1;
+      a.bid = 0;
+    }
+    if (!a.eligible.length) {
+      // Претендентов не осталось — снимаем тем же путём, что и auction()
+      g.auction = null;
+      g.queue.shift();
+      event(
+        g,
+        a.building ? "Здание осталось в банке" : "Участок остался в банке",
+        { kind: "auctionEmpty" },
+      );
+      pump(g);
+      return;
+    }
+    if (out(a.actor)) auctionNext(g);
+  }
   function validateTrade(g, t) {
     need(
       int(t.from, 0, g.players.length - 1) &&
@@ -924,6 +960,7 @@
     throw Error("Неизвестное действие");
   }
   function action(g, p, m) {
+    reviveAuction(g);
     const draft = copy(g);
     apply(draft, p, m);
     if (draft.serial === g.serial)
@@ -982,6 +1019,8 @@
     return v;
   }
   function assert(g) {
+    // assert зовут при загрузке сохранённой партии — оживляем зависший аукцион
+    reviveAuction(g);
     need(
       g.players.every((p) => int(p.money, 0, 1e9)),
       "Неверные деньги",
