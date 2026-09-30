@@ -12,7 +12,7 @@
    результат — без подделки ответа сервера.
 
    Что проверяем:
-     1) для всех 8 сетевых игр: хозяин создаёт стол → /приглашение → ссылка
+     1) для всех сетевых игр: хозяин создаёт стол → /приглашение → ссылка
         «метка_КОД_ИД» → друг (с настоящей подписью Telegram, другим ID)
         открывает её (js/сеть.js в vm разбирает ссылку и сам входит без
         набора кода) → учёт: создано → окноОткрыто → отправлено → вход →
@@ -215,7 +215,7 @@ function поднятьКлиента(играРусская, startapp, номе
       const классы = new Set();
       const у = {
         id: id, tagName: 'DIV', className: '', textContent: '', value: '', disabled: false,
-        style: {}, children: [],
+        style: {}, children: [], parentNode: null, hidden: false,
         classList: {
           add: function (c) { классы.add(c); }, remove: function (c) { классы.delete(c); },
           contains: function (c) { return классы.has(c); },
@@ -225,11 +225,35 @@ function поднятьКлиента(играРусская, startapp, номе
           }
         },
         addEventListener: function () {}, removeEventListener: function () {},
-        appendChild: function (н) { у.children.push(н); return н; },
-        insertAdjacentElement: function (_, н) { у.children.push(н); return н; },
+        appendChild: function (н) { у.children.push(н); н.parentNode = у; return н; },
+        insertAdjacentElement: function (_, н) { у.children.push(н); н.parentNode = у; return н; },
         querySelector: function () { return null; }, querySelectorAll: function () { return []; },
         focus: function () {}, click: function () {}, setAttribute: function () {},
-        getAttribute: function () { return null; }, remove: function () {}
+        getAttribute: function () { return null; }, remove: function () {
+          if (у.parentNode && Array.isArray(у.parentNode.children)) {
+            const место = у.parentNode.children.indexOf(у);
+            if (место !== -1) у.parentNode.children.splice(место, 1);
+          }
+          у.parentNode = null;
+        },
+        /* По смыслу настоящего Node.replaceWith: у родителя в списке детей
+           на месте старого узла встаёт новый, у нового узла parentNode
+           становится этим родителем, у старого — обнуляется. Здесь же
+           синхронизируем реестр id (Map «узлы»): в настоящем document
+           getElementById(id) после замены находит новый узел — если у
+           нового узла тот же id (как и делает js/сеть.js, см. anchor.id=id
+           в подключить()), регистрируем его в реестре вместо старого,
+           иначе дальнейшие document.getElementById(id) молча возвращали
+           бы заменённый (уже вынутый из страницы) старый узел. */
+        replaceWith: function (нов) {
+          if (у.parentNode && Array.isArray(у.parentNode.children)) {
+            const место = у.parentNode.children.indexOf(у);
+            if (место !== -1) у.parentNode.children[место] = нов;
+            нов.parentNode = у.parentNode;
+          }
+          if (нов.id) узлы.set(нов.id, нов);
+          у.parentNode = null;
+        }
       };
       узлы.set(id, у);
     }
@@ -412,9 +436,14 @@ const ДЕЙСТВИЯ = {};
    1) Полный путь приглашения для всех 8 сетевых игр
    ===================================================================== */
 async function случайПолныйПуть() {
-  console.log('\n1. Полный путь приглашения — все 8 сетевых игр');
+  console.log('\n1. Полный путь приглашения — все сетевые игры');
   const ИГРЫ = названия.сетевыеИгры ? названия.сетевыеИгры() : названия.ИГРЫ.filter(function (с) { return !!с.метка; }).map(function (с) { return с.игра; });
-  проверить('1) в списке сетевых игр их 8 (нашлось ' + ИГРЫ.length + ')', ИГРЫ.length === 8, ИГРЫ.join(', '));
+  // Число игр — не константа: сравниваем со свежим require того же
+  // server/названия.js, чтобы проверка сама ловила рассинхрон списка.
+  const ИГРЫ_С_СЕРВЕРА = require(path.join(КОРЕНЬ, 'server', 'названия.js')).сетевыеИгры();
+  проверить('1) список сетевых игр не пуст и совпадает с сервером',
+    ИГРЫ.length > 0 && JSON.stringify(ИГРЫ.slice().sort()) === JSON.stringify(ИГРЫ_С_СЕРВЕРА.slice().sort()),
+    'тест ' + ИГРЫ.length + ' игр: ' + ИГРЫ.join(', ') + '; сервер ' + ИГРЫ_С_СЕРВЕРА.length + ': ' + ИГРЫ_С_СЕРВЕРА.join(', '));
 
   let пройденоИгр = 0;
   for (const игра of ИГРЫ) {
@@ -529,7 +558,7 @@ async function случайПолныйПуть() {
     ДЕЙСТВИЯ[игра] = { хозяин: действийХозяина, друг: действийДруга };
     пройденоИгр++;
   }
-  проверить('1) прогнано игр: 8', пройденоИгр === 8, String(пройденоИгр));
+  проверить('1) прогнано игр: ' + ИГРЫ.length, пройденоИгр === ИГРЫ.length, String(пройденоИгр));
 }
 
 /* =====================================================================
@@ -652,7 +681,7 @@ async function случайОтменаПриглашения() {
    5) Реванш — все 8 игр одинаково
    ===================================================================== */
 async function случайРеванш() {
-  console.log('\n5. Реванш («ещё») — все 8 сетевых игр одинаково');
+  console.log('\n5. Реванш («ещё») — все сетевые игры одинаково');
   const ИГРЫ = названия.сетевыеИгры ? названия.сетевыеИгры() : названия.ИГРЫ.filter(function (с) { return !!с.метка; }).map(function (с) { return с.игра; });
   let пройдено = 0;
   let базовыйНомер = 910000;
@@ -696,7 +725,7 @@ async function случайРеванш() {
       Boolean(с) && !партияЗавершена(с), JSON.stringify(с));
     пройдено++;
   }
-  проверить('5) реванш прогнан на всех 8 играх', пройдено === 8, String(пройдено));
+  проверить('5) реванш прогнан на всех ' + ИГРЫ.length + ' играх', пройдено === ИГРЫ.length, String(пройдено));
 }
 
 /* =====================================================================
