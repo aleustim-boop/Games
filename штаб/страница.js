@@ -460,6 +460,12 @@ const ОФОРМЛЕНИЕ = `
   }
   .сноска b { color: var(--ink-soft); }
 
+  /* Блок «Задачи Кодексу» на главной: одна строка счётчиков и ссылка. */
+  .кодекс-блок { margin-bottom: 44px; }
+  .кодекс-блок-строка { margin: 0; font-size: 15.5px; color: var(--ink-soft); }
+  .кодекс-блок-строка--тихо { color: var(--muted); }
+  .кодекс-блок a { color: var(--sukno); font-weight: 700; text-decoration: none; }
+
   @media (max-width: 620px) {
     body { padding: 0 14px 60px; }
     .шапка { padding-top: 26px; }
@@ -467,7 +473,7 @@ const ОФОРМЛЕНИЕ = `
     .лента li { grid-template-columns: 1fr; gap: 2px; }
     .работы { grid-template-columns: 1fr; }
   }
-`;
+` + require('./дашборд-стиль.js');
 
 /* ---------------------------------------------------------------------------
    Куски страницы
@@ -490,7 +496,7 @@ function шапка(данные) {
   <header class="шапка">
     <div>
       <h1>Штаб BoardGames</h1>
-      <p class="подзаголовок">Что делается прямо сейчас, что уже у игроков в Telegram и что стоит в очереди. Страница собирается программой: цифры обновляются каждые 15 секунд, а раз в 5 минут всё пересобирается целиком — и списки задач тоже.</p>
+      <p class="подзаголовок">Работа, публикации и состояние игр — в одном месте.</p>
     </div>
     <div class="отметка-времени">
       обновлено <b>${э(сбор.деньСловами(время))}, ${э(часы)}</b><br>
@@ -946,19 +952,37 @@ function блокЗаданий(данные) {
   return данные.кнопкаЗаданий || '';
 }
 
+/**
+ * «Задачи Кодексу» на главной: одна строка счётчиков и ссылка на доску.
+ * Задач нет совсем — блок всё равно есть, но тихой строкой.
+ */
+function блокКодекс(данные) {
+  const доска = данные.кодекс || сбор.собратьКодекс();
+  const ссылка = ' <a href="/кодекс">открыть доску</a>';
+  if (!доска.всего) {
+    return '<section class="кодекс-блок"><p class="кодекс-блок-строка кодекс-блок-строка--тихо">'
+      + 'Задач Кодексу нет.' + ссылка + '</p></section>';
+  }
+  return '<section class="кодекс-блок"><h2>Задачи Кодексу</h2><p class="кодекс-блок-строка">'
+    + 'ждёт ' + доска.ждёт + ' · в работе ' + доска.вРаботе + ' · сдано ' + доска.сдано
+    + ' — ждут приёмки · вернули ' + доска.вернули + ссылка + '</p></section>';
+}
+
 /** Всё содержимое листа — то, что браузер подменяет раз в 15 секунд. */
 function внутренности(данные) {
-  return блокЗаданий(данные)
-    + шапка(данные)
+  const раздел=(id,html)=>'<div id="'+id+'" class="даш-раздел">'+html+'</div>';
+  return шапка(данные)
+    + '<nav class="даш-навигация" aria-label="Разделы штаба"><a href="#даш-обзор">Обзор</a><a href="#даш-работа">В работе</a><a href="#даш-важное">Важное</a><a href="#даш-кодекс">Кодекс</a><a href="#даш-очередь">Очередь</a><a href="#даш-публикации">Публикации</a><a href="#даш-службы">Службы</a><button type="button" data-dashboard-theme aria-label="Переключить светлую и тёмную тему">◐ Тема</button></nav>'
+    + раздел('даш-обзор',сводка(данные)+блокЗаданий(данные))
     + блокПростой(данные)
     + блокСвежесть(данные)
-    + сводка(данные)
     + блокНеОпубликовано(данные)
-    + блокВРаботе(данные)
-    + блокВажное(данные)
-    + блокОчередь(данные)
-    + блокСегодня(данные)
-    + блокСлужбы(данные)
+    + раздел('даш-работа',блокВРаботе(данные))
+    + раздел('даш-важное',блокВажное(данные))
+    + раздел('даш-кодекс',блокКодекс(данные))
+    + раздел('даш-очередь',блокОчередь(данные))
+    + раздел('даш-публикации',блокСегодня(данные))
+    + раздел('даш-службы',блокСлужбы(данные))
     + сноска(данные);
 }
 
@@ -977,6 +1001,8 @@ function целаяСтраница(данные) {
 <div class="лист">${внутренности(данные)}</div>
 
 <script>
+  try { var theme=localStorage.getItem('dashboard-theme');if(theme==='dark'||theme==='light')document.documentElement.dataset.theme=theme; } catch (_) {}
+  document.addEventListener('click',function(event){if(!event.target.closest('[data-dashboard-theme]'))return;var dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=dark?'light':'dark';try{localStorage.setItem('dashboard-theme',dark?'light':'dark');}catch(_){};});
   // Обновляемся раз в 15 секунд: забираем у сервера готовый кусок разметки
   // и подменяем содержимое листа. Так место, где страница прокручена,
   // не сбрасывается — а при полной перезагрузке телефон каждый раз
@@ -1029,9 +1055,11 @@ function целаяСтраница(данные) {
 
   async function обновить() {
     try {
+      if (document.activeElement && document.activeElement.closest('form')) return;
       var ответ = await fetch('/кусок', { cache: 'no-store' });
       if (!ответ.ok) return;
       var разметка = await ответ.text();
+      if (document.activeElement && document.activeElement.closest('form')) return;
       document.querySelector('.лист').innerHTML = разметка;
       восстановитьРаскрытые();
     } catch (ошибка) {
@@ -1058,6 +1086,7 @@ function целаяСтраница(данные) {
   // и пробуем в следующий раз; подмена куска тем временем идёт как шла.
   async function перезагрузитьЕслиЖив() {
     try {
+      if (document.activeElement && document.activeElement.closest('form')) return;
       var ответ = await fetch('/жив', { cache: 'no-store' });
       if (!ответ.ok) return;
       // Ответить 200 может и чужая страница (ошибка туннеля, вход в Wi-Fi) —
