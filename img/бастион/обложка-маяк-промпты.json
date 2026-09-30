@@ -1,0 +1,13 @@
+{
+  "tool": "built-in imagegen",
+  "prompts": [
+    [
+      "cover",
+      "Premium game key art landscape 3:2: a spectacular pale limestone coastal fortress with tall warm glowing lighthouse on a rocky island, deep emerald turquoise ocean, brass cannon and teal banners, fantasy sailing ships approaching from far distance, warm sunset and dramatic sky. Beautiful realistic stylized 3D miniature scene. Strong central fortress silhouette, mature elegant gold and teal palette. NO text, letters, UI, icons, map markers, borders or buttons anywhere. Production lobby illustration for sea-fantasy tower defense."
+    ],
+    [
+      "beacon",
+      "Production game sprite: one tall coastal lighthouse in pale ivory limestone, teal vertical banner, octagonal brass lantern house with warm golden lamp at top, circular stone footing. 3D premium realistic miniature seen from 65 degrees above matching sea-fantasy tower defense. Full isolated building fills 80% square. Actual transparent background. No scenery, no text, no UI, no ground beyond base."
+    ]
+  ]
+}

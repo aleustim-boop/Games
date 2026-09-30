@@ -1,0 +1,33 @@
+{
+  "tool": "built-in imagegen",
+  "prompts": [
+    [
+      "terrain",
+      "Use case: stylized-concept. Asset: production game terrain background, SQUARE 1024x1024. Beautiful premium hand-painted 3D miniature coastal island viewed almost directly from above, sea teal, pale weathered limestone, low mossy grass, tiny flowers, fractured coastal cliffs and foam along edges. Island fills central 90% of square. IMPORTANT: large central flat grassy open playable land, no roads, no paths, NO buildings, towers, UI, text, people, markers or symbols. Only subtle rocks and shrubs at outer edges; central 75% must be unobstructed with low visual contrast because game engine overlays winding sand path and buildings. Warm sunlight upper left, rich detailed tactile terrain, elegant realistic game art, not cartoony. Sea border edges. Entire island visible, camera 75 degrees above ground."
+    ],
+    [
+      "ballista",
+      "Use case: stylized-concept. Asset: single tower-defense BALLISTA game sprite on actual transparent alpha background, square image. Isometric 3D premium miniature, viewed from 65 degrees above ground; compact round pale limestone platform, teal and brass wooden ballista turret, large horizontal crossed bow limbs, arrow loaded aimed upper right. Strong readable silhouette, polished brass, rich walnut wood, teal banner. Centered object fills 80% of frame. No environment, text, UI or cast shadow outside base. Isolated transparent background. High detail but readable as 64px game sprite."
+    ],
+    [
+      "mortar",
+      "Use case: stylized-concept. Asset: single tower-defense MORTAR game sprite on actual transparent alpha background, square image. Isometric 3D premium miniature viewed from 65 degrees above ground; squat circular pale limestone platform with huge short brass cannon barrel tilted upward toward upper right. Black cannonballs, warm glowing barrel mouth, teal small pennant, warm metallic details. Strong compact silhouette distinct from a ballista. Centered object fills 80% of frame. No environment, text, UI or cast shadow outside base. Isolated transparent background. Readable as 64px game sprite."
+    ],
+    [
+      "tide",
+      "Use case: stylized-concept. Asset: single tower-defense magical TIDAL TOWER game sprite on actual transparent alpha background, square image. Isometric 3D premium miniature viewed from 65 degrees above ground; round pale limestone platform, slender brass and teal tower supporting a luminous aqua water crystal floating between three prongs, swirling cyan water ribbon around middle. Strong slender silhouette, readable as 64px game sprite. Centered object fills 80% frame. No environment, text, UI or cast shadow outside base. Isolated transparent background."
+    ],
+    [
+      "storm",
+      "Production tower defense sprite: one tall tesla coil tower, polished brass and teal enamel, glowing lightning orb and three crescent metal rings, round pale limestone base, premium isometric 3D miniature seen from 65 degrees above, fills 80% of square, actual transparent background, no text/UI/environment/ground outside base. Strong silhouette clearly recognizable at 64 px. Original sea fantasy game."
+    ],
+    [
+      "fire",
+      "Production tower defense sprite: one squat fortified BRAZIER tower, dark bronze fire bowl with vivid golden orange flame over short octagonal pale limestone base, teal enamel details, premium isometric 3D miniature seen from 65 degrees above, fills 80% of square, actual transparent background, no text/UI/environment/ground outside base. Strong squat fiery silhouette recognizable at 64 px. Original sea fantasy game."
+    ],
+    [
+      "signal",
+      "Production tower defense sprite: one SIGNAL SUPPORT tower, elegant tall pale limestone beacon with large teal and gold unfurled triangular flag and brass signal mirror disk, round pale limestone base, premium isometric 3D miniature seen from 65 degrees above, fills 80% of square, actual transparent background, no text/UI/environment/ground outside base. Strong flag silhouette recognizable at 64 px. Original sea fantasy game."
+    ]
+  ]
+}

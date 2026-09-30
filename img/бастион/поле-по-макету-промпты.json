@@ -1,0 +1,22 @@
+{
+  "tool": "built-in imagegen",
+  "reference": "бой-широкий-v1.png",
+  "prompts": [
+    [
+      "island-a",
+      "Use supplied image ONLY as visual style reference. Create a SQUARE production battlefield background for this EXACT sea-fantasy tower defense: high-end detailed isometric diorama, elevated chalk limestone cliffs, blue teal sea foam, cypress trees, antique ruined arches, tiny waterfalls, warm sunlight, original realistic MINIATURE style identical to reference. No text, UI, people, enemies, towers, flags, symbols, foundations or plus markers. Battlefield takes up most of image. A single wide organic sandy footpath enters from a wooden pirate landing pier near TOP LEFT at (10%,12%), winds through (25%,23%), (49%,25%), (69%,37%), (65%,47%), (43%,52%), (35%,65%), (54%,74%), and exits at a small stone bridge at (86%,87%) bottom right. The road is natural sand embedded in terrain, irregular sandy shoulders, NO black outline, NO geometric paving border, NO sharp right angle bends, no road branches. Leave clear flat areas for future towers on both sides, especially around (30%,35%), (52%,40%), (75%,55%), (22%,60%), (52%,62%), (67%,80%). Island should have height and rich coastal scenery, not a flat empty lawn. Keep all path unobstructed by rocks or trees. View camera 60 degrees above, entire island visible."
+    ],
+    [
+      "island-b",
+      "Use reference image as exact style guide for a SQUARE production tower defense battlefield: rich realistic miniature diorama coastal limestone island, dark teal sea, waves, old arches, cypress trees, tiny glowing amber crystals near coastal cliffs. NO text, UI, characters, towers, markers or building foundations. Original premium 3D miniature visual matching reference. One natural irregular sandy road starts from wooden pier at (12%,14%), goes through (30%,23%), (61%,20%), (77%,35%), (63%,48%), (35%,47%), (25%,63%), (47%,76%), (77%,75%), ending at stone exit bridge (87%,88%). Coordinates are percentages of square. Smooth organic winding road, generous turning curves, no road borders, no black strokes, no junctions. Broad clear spaces next to path for future tower sprites. Raised island edges and rugged cliffs visible, lush subtropical maritime scenery, warm amber sunlight. Top-down isometric camera 60 degrees."
+    ],
+    [
+      "island-c",
+      "Use reference image as exact style guide. SQUARE premium tower defense production terrain: dramatic limestone sea fortress island, emerald sea and foam, fallen ancient pillars at coastline, cypress trees, ruins and small waterfalls. Rich realistic isometric miniature art, not cartoon or map drawing. NO text, UI, enemies, buildings/towers, foundations or markers. A single sandy organic winding footpath enters at wooden dock near (10%,13%), follows (26%,27%), (56%,28%), (72%,41%), (60%,53%), (32%,54%), (27%,70%), (51%,80%), ending at stone bridge (87%,85%). All coordinates in percentage of square. Irregular natural sand edges, smooth bends with no geometric border, no sharp corners or outlined stroke, no branches. Leave buildable flat clearings alongside bends, especially (30%,39%), (58%,42%), (80%,56%), (16%,57%), (43%,66%), (68%,70%). Camera 60 degrees above, visible impressive cliffs at edges, teal and golden aesthetic matching supplied reference."
+    ],
+    [
+      "pad",
+      "Isolated premium miniature circular empty stone tower foundation, matching tower defense reference style. Light ivory weathered limestone blocks, low raised circular stepped plinth seen from 60 degrees overhead, flat central stone disk ready to build on. Thin brass ring around inset center. ACTUAL TRANSPARENT background, no text, plus signs, characters, environment, tower or frame. Square sprite, centered whole circular base fills 85% frame. Realistic tactile architectural miniature matching reference."
+    ]
+  ]
+}

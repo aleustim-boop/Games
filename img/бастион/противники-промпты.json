@@ -1,0 +1,17 @@
+{
+  "tool": "built-in imagegen",
+  "prompts": [
+    [
+      "raider",
+      "Game sprite for premium sea-fantasy tower defense, single small hooded pirate raider walking toward bottom right, 3D painted miniature seen from 65 degrees above, charcoal purple hood and cloak, leather armor, curved steel sword, recognizable human silhouette. Actual transparent background, no environment, no text, no UI, no decorative frame. Centered full body including feet, fills 80% of square. Tactile detailed realistic miniatures style, warm sunlight upper left. Legible at 32px."
+    ],
+    [
+      "crab",
+      "Game sprite for premium sea-fantasy tower defense, single chunky armored mechanical crab, golden brass domed carapace, six dark metal legs and two curved claws, blue glowing eyes. 3D painted miniature seen from 65 degrees above, actual transparent background, no environment, no text/UI/frame, centered full body fills 80% square. Detailed realistic miniature, warm sunlight upper left. Readable at 40px."
+    ],
+    [
+      "boss",
+      "Game sprite for premium sea-fantasy tower defense, single imposing abyssal sea warlord, dark teal spiked armor, bronze shoulder guards, glowing cyan eyes, trident, royal deep purple cape, 3D painted miniature seen from 65 degrees above. Actual transparent background, no environment, no text/UI/frame, full body including boots, centered fills 80% square. Strong massive silhouette readable at 60px."
+    ]
+  ]
+}
