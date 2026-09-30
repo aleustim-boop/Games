@@ -184,16 +184,48 @@
         }
   }
   function auction(g, task) {
+    // Выбывшие не участвуют в аукционе — ни при первом запуске, ни при
+    // перезапуске после чьей-то сдачи посреди торгов.
+    const eligible = (task.eligible || alive(g)).filter(
+      (i) => !g.players[i].out,
+    );
+    if (task.building && !eligible.length) {
+      // Все претенденты на здание выбыли, пока задание ждало в очереди —
+      // торговаться не с кем, здание остаётся в банке.
+      g.queue.shift();
+      event(g, "Здание осталось в банке", { kind: "auctionEmpty" });
+      pump(g);
+      return;
+    }
+    let actor = task.eligible ? eligible[0] : g.turn;
+    if (!eligible.includes(actor)) actor = eligible[0];
     g.auction = {
       id: task.id,
       building: !!task.building,
-      eligible: task.eligible || alive(g),
+      eligible,
       passed: [],
       high: -1,
       bid: 0,
-      actor: task.eligible?.[0] ?? g.turn,
+      actor,
+      // Вид, места и ставки — только для аукциона за здание, и заводим их
+      // сразу здесь: если аукцион потом перезапустится после сдачи
+      // участника, вид здания не потеряется.
+      ...(task.building
+        ? {
+            // Партия из памяти браузера может нести задание аукциона за
+            // здание, записанное ДО обновления, — без buildingKind; тогда
+            // довычисляем вид по складу банка (остался один отель — значит
+            // именно он).
+            kind:
+              task.buildingKind ||
+              (stock(g).hotels === 1 && stock(g).houses > 1
+                ? "hotel"
+                : "house"),
+            targets: {},
+            bids: {},
+          }
+        : {}),
     };
-    if (g.players[g.auction.actor].out) g.auction.actor = alive(g)[0];
     g.phase = "auction";
     event(g, "Начинается аукцион", { kind: "auction", id: task.id });
   }
@@ -394,12 +426,17 @@
   // следующему по размеру ставке (ставка того, кто потом спасовал, тоже в силе).
   function buildingWinner(g) {
     const a = g.auction,
-      order = Object.keys(a.bids || {})
+      // Партия, сохранённая до этого обновления, могла не иметь a.bids —
+      // тогда считаем ставкой лидера его собственную a.high/a.bid, чтобы
+      // он не остался без здания молча. Восстанавливаем a.bids на месте,
+      // иначе settleAuction() следом упадёт на том же отсутствующем поле.
+      bids = (a.bids = a.bids || { [a.high]: a.bid }),
+      order = Object.keys(bids)
         .map(Number)
         .filter((i) => !g.players[i].out)
-        .sort((x, y) => a.bids[y] - a.bids[x]);
+        .sort((x, y) => bids[y] - bids[x]);
     for (const p of order) {
-      if (buildingTargetOk(g, a, p, a.bids[p])) return p;
+      if (buildingTargetOk(g, a, p, bids[p])) return p;
       event(g, "Место для здания больше не годится: ставка не списана", {
         kind: "auctionVoid",
         player: p,
@@ -414,7 +451,10 @@
       a.high = buildingWinner(g);
       if (a.high >= 0) a.bid = a.bids[a.high];
       else event(g, "Здание осталось в банке", { kind: "auctionEmpty" });
-    }
+    } else if (a.building)
+      // Все спасовали, ни одной ставки не было — тоже сообщаем игрокам,
+      // чем кончились торги, а не молчим.
+      event(g, "Здание осталось в банке", { kind: "auctionEmpty" });
     if (a.high >= 0) {
       g.players[a.high].money -= a.bid;
       if (a.building) g.properties[a.targets[a.high]].level++;
@@ -575,14 +615,19 @@
             // Поэтому последнее здание банка разыгрываем только в обычном ходе.
             need(
               !["buy", "debt"].includes(g.phase),
-              "Последнее здание банка идёт с аукциона: сначала завершите покупку или оплату долга",
+              "Последнее здание банка идёт с аукциона: дождитесь, пока закончится покупка или оплата долга",
             );
             g.resume = g.phase;
-            g.queue.unshift({ kind: "auction", id, building: true, eligible });
+            // Вид здания храним в самом задании очереди — он нужен и при
+            // перезапуске аукциона после сдачи участника, не только сейчас.
+            g.queue.unshift({
+              kind: "auction",
+              id,
+              building: true,
+              buildingKind: kind,
+              eligible,
+            });
             auction(g, g.queue[0]);
-            g.auction.kind = kind;
-            g.auction.targets = {};
-            g.auction.bids = {};
             return;
           }
         }
