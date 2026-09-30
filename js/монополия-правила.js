@@ -221,6 +221,20 @@
       pump(g);
       return;
     }
+    if (task.building && task.paused) {
+      // Торги за здание прервала сдача игрока (см. apply «surrender»):
+      // продолжаем их с того же места — ставки, пасы и очередь живых
+      // сохраняются, reviveAuction снимает только ставку выбывшего.
+      g.auction = task.paused;
+      delete task.paused;
+      g.phase = "auction";
+      event(g, "Торги за здание продолжаются", {
+        kind: "auction",
+        id: task.id,
+      });
+      reviveAuction(g);
+      return;
+    }
     let actor = task.eligible ? eligible[0] : g.turn;
     if (!eligible.includes(actor)) actor = eligible[0];
     g.auction = {
@@ -406,7 +420,12 @@
     pl.free = [];
     g.queue.shift();
     g.queue = g.queue.filter((q) => q.from !== p);
+    // Сдача посреди торгов за здание: торги продолжаются сразу, а участки
+    // сдавшегося идут с аукциона уже после них — иначе чужие аукционы
+    // вклинились бы в торги, и живые могли бы потерять под них деньги.
+    const paused = g.queue[0]?.paused ? [g.queue.shift()] : [];
     g.queue.unshift(
+      ...paused,
       ...(inherited.length
         ? [{ kind: "inherit", from: recipient, ids: inherited }]
         : []),
@@ -495,28 +514,55 @@
       a.actor = (a.actor + 1) % g.players.length;
     } while (!remaining.includes(a.actor));
   }
-  // Партия из памяти браузера, записанная старым кодом, могла зависнуть
-  // посреди аукциона: ход у выбывшего игрока, живые видят «действует другой».
-  // Оживляем по нынешним правилам: выбывших убираем из участников и, если
-  // ход был у выбывшего, отдаём его следующему живому (auctionNext сам
-  // решит, кончились ли торги). Если ход у живого — ход и ставки живых
-  // не трогаем, чистим только список участников.
-  // Лидер ставки выбыл: в аукционе за участок лот нельзя отдавать выбывшему,
-  // поэтому сбрасываем только его ставку (лидера нет, цена с нуля), а живые
-  // и их пасы остаются. В аукционе за здание ничего сбрасывать не нужно:
-  // buildingWinner и так пропускает выбывших. Это мягче, чем сдача, которая
-  // перезапускает аукцион целиком, но исход тот же — выбывшему ничего не уходит.
+  // Торги за здание, в которых кто-то выбыл — сдался посреди торгов или
+  // пришёл из памяти с флагом out (решение владельца 30.09 09:32 «снимать
+  // только ставку сдавшегося»). Снимаем ставку и место выбывших; ставки,
+  // пасы и очередь живых не трогаем. Выбыл лидер — лидером становится
+  // лучшая из оставшихся ставок (её хозяин мог уже спасовать — ставка всё
+  // равно в силе, как в buildingWinner); ставок нет — торги без лидера с
+  // начальной цены. Если ход теперь не у того, кто может торговаться
+  // (выбыл сам или стал лидером), ход идёт дальше; auctionNext сам
+  // закончит торги, если торговаться больше некому, — тогда здание
+  // достаётся лидеру по его ставке или остаётся в банке.
+  function dropOutBids(g) {
+    const a = g.auction,
+      out = (i) => g.players[i]?.out;
+    // Партия из памяти до появления a.bids: ставка есть только у лидера
+    a.bids = a.bids || (a.high >= 0 ? { [a.high]: a.bid } : {});
+    for (const k of Object.keys(a.bids))
+      if (out(Number(k))) {
+        delete a.bids[k];
+        if (a.targets) delete a.targets[k];
+      }
+    if (a.high >= 0 && out(a.high)) {
+      const best = Object.keys(a.bids)
+        .map(Number)
+        .sort((x, y) => a.bids[y] - a.bids[x])[0];
+      a.high = best === undefined ? -1 : best;
+      a.bid = best === undefined ? 0 : a.bids[best];
+    }
+    const canBid = a.eligible.filter(
+      (i) => !a.passed.includes(i) && i !== a.high,
+    );
+    if (!canBid.includes(a.actor)) auctionNext(g);
+  }
+  // Аукцион, в котором кто-то выбыл. Зовут в начале каждого действия, при
+  // загрузке партии (assert) и когда торги за здание продолжаются после
+  // сдачи (auction). Выбывших убираем из участников; если участников не
+  // осталось — лот остаётся в банке. Торги за здание дальше чинит
+  // dropOutBids. В аукционе за участок ставок по игрокам не хранится,
+  // поэтому выбывший лидер просто сбрасывается (лидера нет, цена с нуля),
+  // а ход у выбывшего отдаём следующему живому.
   function reviveAuction(g) {
     const a = g.phase === "auction" && g.auction;
     if (!a) return;
     const out = (i) => g.players[i]?.out;
-    const leaderOut = !a.building && a.high >= 0 && out(a.high);
-    if (!out(a.actor) && !leaderOut && !a.eligible.some(out)) return;
+    const leaderOut = a.high >= 0 && out(a.high);
+    const bidOut =
+      a.building && Object.keys(a.bids || {}).some((k) => out(Number(k)));
+    if (!out(a.actor) && !leaderOut && !bidOut && !a.eligible.some(out))
+      return;
     a.eligible = a.eligible.filter((i) => !out(i));
-    if (leaderOut) {
-      a.high = -1;
-      a.bid = 0;
-    }
     if (!a.eligible.length) {
       // Претендентов не осталось — снимаем тем же путём, что и auction()
       g.auction = null;
@@ -528,6 +574,14 @@
       );
       pump(g);
       return;
+    }
+    if (a.building) {
+      dropOutBids(g);
+      return;
+    }
+    if (leaderOut) {
+      a.high = -1;
+      a.bid = 0;
     }
     if (out(a.actor)) auctionNext(g);
   }
@@ -595,7 +649,14 @@
       }
       if (!["buy", "debt", "inherit", "auction"].includes(g.phase))
         g.resume = g.phase;
-      if (original === "auction") g.auction = null;
+      if (original === "auction") {
+        // Торги за здание сдача не сбрасывает (решение владельца 30.09):
+        // откладываем их в само задание очереди, и после банкротства
+        // auction() продолжит их с того же места. Аукцион за участок, как
+        // и раньше, после сдачи начинается заново.
+        if (g.auction.building) g.queue[0].paused = g.auction;
+        g.auction = null;
+      }
       if (!(g.phase === "debt" && g.queue[0]?.from === p))
         g.queue.unshift(
           pay(p, -1, 1000000000, "Добровольное завершение участия"),
