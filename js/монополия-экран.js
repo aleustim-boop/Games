@@ -5,7 +5,8 @@
     B = window.МонополияБот,
     F = window.МонополияПоле,
     $ = (id) => document.getElementById(id),
-    KEY = "monopoly-match-v1";
+    KEY = "monopoly-match-v1",
+    ВЕРСИЯ_ЗАПИСИ = 1; // какую версию записи знает эта страница
   let game = null,
     v = null,
     previous = null,
@@ -76,10 +77,22 @@
     try {
       localStorage.removeItem(KEY);
     } catch (_) {}
+    try {
+      const заметка = $("mono-restore-note");
+      заметка.textContent =
+        "Сохранённая партия не подошла к обновлённым правилам — начните новую.";
+      заметка.classList.remove("скрыт");
+    } catch (e) {
+      // запись уже стёрта верно; не вышло лишь показать слова — экран от этого жить не перестаёт
+      console.error("Монополия: не удалось показать сообщение о пропавшей партии:", e);
+    }
+  }
+  // Сообщение показывается один раз: любая партия (с ботами или по сети)
+  // гасит его, и в лобби оно больше не возвращается.
+  function погаситьЗаметкуОПропавшейПартии() {
     const заметка = $("mono-restore-note");
-    заметка.textContent =
-      "Сохранённая партия не подошла к обновлённым правилам — начните новую.";
-    заметка.classList.remove("скрыт");
+    заметка.textContent = "";
+    заметка.classList.add("скрыт");
   }
   try {
     Object.assign(
@@ -93,22 +106,51 @@
   try {
     запись = localStorage.getItem(KEY);
   } catch (_) {} // память браузера закрыта — партии нет, и «не подошла» тут ни при чём
-  try {
-    const r = JSON.parse(запись);
-    if (
-      r &&
-      r.version === 1 &&
-      Array.isArray(r.actions) &&
-      r.actions.length < 30000
-    ) {
-      const restored = P.create(r.n, r.seed);
-      for (const x of r.actions) P.action(restored, x.p, x.move);
-      P.assert(restored);
-      game = restored;
-      record = r;
+  // Стираем запись, только когда негодна она сама: не разбирается как JSON,
+  // не той формы/версии или правила отказываются её проигрывать. Всё прочее
+  // (правила не загрузились, сбой вокруг) запись не трогает — партия просто
+  // не восстановится в этот раз, а годное сохранение доживёт до следующего.
+  if (
+    typeof P?.create !== "function" ||
+    typeof P.action !== "function" ||
+    typeof P.assert !== "function"
+  ) {
+    console.error(
+      "Монополия: правила не загрузились — сохранённая партия не восстановлена и не стёрта.",
+    );
+  } else if (запись !== null) {
+    let восстановленная = null,
+      разобранная = null;
+    try {
+      разобранная = JSON.parse(запись);
+      if (
+        разобранная &&
+        typeof разобранная.version === "number" &&
+        разобранная.version > ВЕРСИЯ_ЗАПИСИ
+      ) {
+        // В кэше старая страница, а партию писала новая версия игры: её сохранение годное — не стираем.
+        console.warn("Монополия: сохранение новее этой версии игры — не тронуто.");
+      } else {
+        if (
+          !разобранная ||
+          разобранная.version !== ВЕРСИЯ_ЗАПИСИ ||
+          !Array.isArray(разобранная.actions) ||
+          разобранная.actions.length >= 30000
+        )
+          throw new Error("запись не той формы или версии");
+        восстановленная = P.create(разобранная.n, разобранная.seed);
+        for (const x of разобранная.actions)
+          P.action(восстановленная, x.p, x.move);
+        P.assert(восстановленная);
+      }
+    } catch (_) {
+      восстановленная = null;
+      забытьНеподошедшуюПартию();
     }
-  } catch (_) {
-    забытьНеподошедшуюПартию();
+    if (восстановленная) {
+      game = восстановленная;
+      record = разобранная;
+    }
   }
   function screen(id) {
     clearTimeout(timer);
@@ -117,6 +159,7 @@
       presenting = false;
     }
     if (id === "экран-меню") id = "экран-лобби";
+    if (id === "экран-игры") погаситьЗаметкуОПропавшейПартии(); // партия началась — напоминание о старой не нужно
     document
       .querySelectorAll(".экран")
       .forEach((e) => e.classList.toggle("экран--виден", e.id === id));
@@ -200,7 +243,6 @@
       result: false,
     };
     game = P.create(prefs.n, seed);
-    $("mono-restore-note").classList.add("скрыт"); // новая партия начата — напоминание о старой не нужно
     save();
     screen("экран-игры");
     render();
@@ -1417,6 +1459,7 @@
     начать() {
       clearTimeout(timer);
       online = true;
+      погаситьЗаметкуОПропавшейПартии(); // вход в сетевую партию (экран игры покажет вид чуть позже)
     },
     показатьВид(state) {
       if (
