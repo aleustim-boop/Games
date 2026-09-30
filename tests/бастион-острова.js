@@ -5,6 +5,10 @@ const assert=require('node:assert/strict'),{chromium,безTelegram}=require('./
  await безTelegram(page);page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/island-\d+-v6.webp/.test(r.url()))requests.push(r.url());});
  const url=server.url+'/'+encodeURIComponent('бастион')+'.html';await page.goto(url);await page.waitForFunction(()=>БастионИгра.готов());
  assert.equal(new Set(requests).size,1,'Первое открытие не скачивает все 12 полей');
+ await page.click('#choose-map');await page.locator('.map-card>img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
+ assert.equal(await page.locator('.map-card>img').count(),12);
+ for(const width of [320,390,820,1440]){await page.setViewportSize({width,height:1000});const cards=await page.locator('.map-card').evaluateAll(items=>items.map(e=>{const b=e.querySelector('b').getBoundingClientRect(),label=e.querySelector('span').getBoundingClientRect(),box=e.getBoundingClientRect();return {overlap:b.bottom>label.top,overflow:label.right>box.right||label.left<box.left,loaded:e.querySelector('img').naturalWidth>0};}));assert(cards.every(c=>!c.overlap&&!c.overflow&&c.loaded),'Иллюстрация, номер и название не пересекаются '+width);}
+ await page.screenshot({path:'tests/снимки/бастион-выбор-острова-v6.png'});await page.click('#close-dialog');await page.setViewportSize({width:390,height:844});
  await page.evaluate(()=>{const draw=BastionField.prototype.draw;BastionField.prototype.draw=function(...args){window.qaField=this;return draw.apply(this,args);};});await page.click('#start');await page.waitForFunction(()=>window.qaField);
  const maps=await page.evaluate(async()=>{const result=[];for(let map=0;map<12;map++){const ok=await qaField.ensureMap(map);result.push({map,ok,url:BastionField.scene(map),cache:qaField.scenes.size});}return result;});
  assert(maps.every(m=>m.ok&&m.cache<=3),'Каждая сцена загружена, в памяти не больше трёх');assert.equal(new Set(maps.map(m=>m.url)).size,12);
