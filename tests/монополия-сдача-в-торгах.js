@@ -54,7 +54,7 @@ const БЕЗ_ФЛАГОВ = АРГУМЕНТЫ.filter((а) => !а.startsWith('--
 const ПОЛОМКИ = [
   {
     название: 'сдача сжигает все ставки и начинает торги с нуля, как до правки',
-    было: `        if (g.auction.building) g.queue[0].paused = g.auction;\n`,
+    было: `        g.queue[0].paused = g.auction;\n`,
     стало: ``,
   },
   {

@@ -51,7 +51,7 @@ const ИСПОЛЬЗУЕТСЯ_КОПИЯ = process.argv.includes('--слома�
 
 /* Старое поведение: сдача не откладывает торги за здание, и они
    начинаются заново. */
-const ПОРЧА_БЫЛО = '        if (g.auction.building) g.queue[0].paused = g.auction;\n';
+const ПОРЧА_БЫЛО = '        g.queue[0].paused = g.auction;\n';
 const внутри = (папка, корень) => {
   const от = path.relative(path.resolve(корень), path.resolve(папка));
   return !от.startsWith('..') && !path.isAbsolute(от);
