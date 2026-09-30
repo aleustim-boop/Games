@@ -1,0 +1,62 @@
+{
+  "date": "2026-09-30",
+  "method": "image_gen built-in; PNG originals preserved; technical WebP conversion and atlas slicing",
+  "walk": {
+    "layout": "2×2 frames, alpha, high three-quarter view; alpha bounds normalized at runtime",
+    "subjects": {
+      "raider": "Purple hooded pirate, leather armour, curved sabre",
+      "runner": "Red-haired swift scout, rust cape, daggers",
+      "crab": "Bronze and turquoise armoured sea crab, six legs",
+      "shield": "Ivory/brass shield warrior, navy cloak",
+      "healer": "Ivory hooded aqua priest with lantern staff",
+      "boss": "Black brass storm admiral, horned helmet, purple cape, hammer"
+    }
+  },
+  "branches": [
+    {
+      "source": "ballista-branches-v5.png",
+      "prompt": "ballista-branches-v5.prompt.txt",
+      "outputs": [
+        "ballista-branch-0-v5.webp",
+        "ballista-branch-1-v5.webp"
+      ]
+    },
+    {
+      "source": "tide-branches-v5.png",
+      "prompt": "tide-branches-v5.prompt.txt",
+      "outputs": [
+        "tide-branch-0-v5.webp",
+        "tide-branch-1-v5.webp"
+      ]
+    },
+    {
+      "source": "storm-branches-v5.png",
+      "prompt": "storm-branches-v5.prompt.txt",
+      "outputs": [
+        "storm-branch-0-v5.webp",
+        "storm-branch-1-v5.webp"
+      ]
+    },
+    {
+      "source": "fire-branches-v5.png",
+      "prompt": "fire-branches-v5.prompt.txt",
+      "outputs": [
+        "fire-branch-0-v5.webp",
+        "fire-branch-1-v5.webp"
+      ]
+    },
+    {
+      "source": "signal-branches-v5.png",
+      "prompt": "signal-branches-v5.prompt.txt",
+      "outputs": [
+        "signal-branch-0-v5.webp",
+        "signal-branch-1-v5.webp"
+      ]
+    }
+  ],
+  "environment": {
+    "source": "pontoon-v5.png",
+    "prompt": "pontoon-v5.prompt.txt",
+    "output": "pontoon-v5.webp"
+  }
+}
