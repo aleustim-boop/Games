@@ -791,7 +791,14 @@
         ["roll", "jail", "manage", "buy", "debt", "auction"].includes(v.phase)
       ) {
         if (c.rents) {
-          if (P.buildable(v, v.me, id))
+          // Пока идёт аукцион за последнее здание банка (g.auction.building,
+          // js/монополия-правила.js: auction), правила всегда отказывают
+          // строить — кнопку прячем, чтобы не звать игрока на заведомый
+          // отказ (как «Купить»/«Бросить» просто не рисуются не в свой ход).
+          if (
+            P.buildable(v, v.me, id) &&
+            !(v.auction && v.auction.building)
+          )
             body.append(
               button(
                 "Построить " +
