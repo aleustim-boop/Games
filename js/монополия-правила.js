@@ -920,10 +920,42 @@
     Object.assign(g, draft);
     return g;
   }
+  /* Клиенту не верим: наружу уходят только эти поля состояния партии,
+     перечисленные по имени, а не всё состояние копией минус секреты.
+     Новое поле, которое появится в create() или в любом месте правил,
+     которое пишет g.новоеПоле, само игроку не утечёт — его нужно
+     осознанно дописать в этот список.
+     Не входят: seed (зерно генератора случайных чисел) и decks (ещё не
+     вскрытые карты колод) — по ним можно было бы предсказать будущие
+     броски кубиков и карты. */
+  const VIEW_FIELDS = [
+    "version",
+    "secure",
+    "players",
+    "properties",
+    "turn",
+    "round",
+    "phase",
+    "doubles",
+    "extra",
+    "dice",
+    "dicePlayer",
+    "utilityDice",
+    "queue",
+    "events",
+    "serial",
+    "winner",
+    "auction",
+    "trade",
+    "card",
+    "startRolls",
+    "resume",
+  ];
   function view(g, me) {
-    const v = copy(g);
-    delete v.seed;
-    delete v.decks;
+    const v = {};
+    for (const key of VIEW_FIELDS) {
+      if (g[key] !== undefined) v[key] = copy(g[key]);
+    }
     v.me = me;
     v.actor = who(g);
     v.stock = stock(g);
