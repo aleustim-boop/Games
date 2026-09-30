@@ -2,7 +2,7 @@
 .домино .дом-сбор-стола { gap:16px; padding:18px; }
 .дом-выбор-числа { display:flex; gap:7px; }
 .дом-выбор-числа button { flex:1; min-width:0; min-height:44px; border:1px solid #ffffff25; border-radius:12px; padding:8px 5px; background:#182126; color:#eaece6; font:600 14px system-ui; }
-.дом-выбор-числа button[aria-checked=true] { color:#15200e; background:#d2f76b; border-color:#d2f76b; }
+.дом-выбор-числа button[aria-checked=true] { color:#15200e; background:var(--сб-акцент, #d2f76b); border-color:var(--сб-акцент, #d2f76b); }
 .дом-выбор-параметра { display:grid; gap:9px; }
 .дом-выбор-параметра > strong { font-size:14px; }
 .домино .дом-выбор-стол { width:calc(100% - 60px); max-width:400px; justify-self:center; aspect-ratio:1.85; margin:35px auto 58px; --место:48px; --дерево-свет:#b99066; --дерево:#89603d; --дерево-тень:#4c301c; --сукно-свет:#31573d; --сукно:#183b27; --сукно-тень:#10271a; }
@@ -10,13 +10,52 @@
 .домино .дом-выбор-стол .рассадка__место { padding:0; border:1px solid #8d9c9860; cursor:pointer; }
 .домино .дом-выбор-стол .рассадка__место:disabled { opacity:1; cursor:default; }
 .домино #комната-стол .рассадка__место:disabled { opacity:1; }
-.домино .дом-выбор-стол .рассадка__место--я { border-color:#d2f76b; }
+.домино .дом-выбор-стол .рассадка__место--я { border-color:var(--сб-акцент, #d2f76b); }
 .дом-место-значок { display:grid; place-items:center; width:32px; height:32px; font-size:32px; line-height:1; color:#cad8c9; }
 .дом-место-значок img { width:100%; height:100%; filter:invert(.85); }
 .дом-выбор-стол .рассадка__место--я img { filter:invert(88%) sepia(59%) saturate(500%) hue-rotate(22deg); }
 .дом-выбор-стол .рассадка__имя { font-size:12px; color:#e6ece2; padding:3px 5px; background:#101a16dd; border-radius:5px; }
-.дом-выбор-стол .рассадка__место--я .рассадка__имя { color:#d2f76b; }
+.дом-выбор-стол .рассадка__место--я .рассадка__имя { color:var(--сб-акцент, #d2f76b); }
 .дом-выбор-стол .рассадка__место--свободно { border-style:dashed; box-shadow:none; background:#18251fee; }
 .домино .дом-сбор-стола > [role=status] { text-align:center; min-height:20px; }
 .домино #экран-друга .дом-сбор-стола > p:not([role=status]):last-of-type { font-size:12px; color:#9dada5; }
+/* Отсчёт минуты на ход (стол от трёх мест): общая «.пилюля» + «.таймер-хода» из style.css,
+   здесь только место — в правом углу плашки «Ваш ход / Ходит …», не меняя её высоту.
+   Ваш ход: плашка салатовая, поэтому пилюля тёмная с салатовой цифрой; чужой — обычный контур.
+   Мало времени (≤10 с) — тот же тёплый цвет, что у «истекает» в Катане; правило «мало»
+   стоит ПОСЛЕ «моего» и сильнее его, чтобы ходящий видел красное на последних секундах.
+   Общий цвет «время истекает» завести в style.css отдельной задачей (сейчас он «от руки»
+   и здесь, и в Катане). */
+.домино .дом-очередь { position:relative; }
+.домино .дом-очередь .дом-отсчёт { position:absolute; right:9px; top:50%; transform:translateY(-50%); height:auto; max-height:none; margin:0; padding:5px 10px; font-size:13px; }
+.домино .дом-очередь.дом-очередь--есть-отсчёт { padding-inline:66px; }
+.домино .дом-очередь.ваш .дом-отсчёт--мой { background:#172014; color:var(--сб-акцент, #d2f76b); border-color:#172014; }
+.домино .дом-очередь .дом-отсчёт.дом-отсчёт--мало, .домино .дом-очередь.ваш .дом-отсчёт--мой.дом-отсчёт--мало { background:#743b25; color:#fff1c7; border-color:#743b25; }
+/* Окно итога раунда и конца матча — из трёх частей, тот же приём, что у панели знаков в шашках:
+   столбик не выше экрана, шапка и подвал своего размера, середина забирает остаток и прокручивается сама.
+     шапка    — заголовок и подпись, видны всегда;
+     середина — итоги игроков и «Все раунды и подсчёт»; на узком экране с четырьмя игроками не помещается;
+     подвал   — строка «Следующий раунд начнётся через N с» (стол от трёх мест) и все три кнопки, видны всегда.
+   Высота — от общей --доступно из style.css (там dvh, а в старых встроенных браузерах Telegram — запасной vh).
+   Прокручивается только середина: окно целиком — нет, страница под окном — тоже нет (overscroll). */
+.домино #дом-результат[open] { display:flex; flex-direction:column; overflow:hidden; max-height:calc(var(--доступно, 100vh) - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 24px); }
+.домино #дом-результат > * + * { margin-top:14px; }
+.домино .дом-итог-шапка, .домино .дом-итог-подвал { flex:0 0 auto; }
+.домино .дом-итог-шапка > h2 { margin:0; }
+/* Фокус окна при открытии встаёт на заголовок (autofocus в разметке), а не на середину — иначе середина
+   обводится рамкой фокуса и прокручивается. Рамка на заголовке не нужна: он не кнопка. */
+.домино #дом-итог-заголовок:focus { outline:none; }
+.домино .дом-итог-шапка > p { margin:6px 0 0; }
+.домино .дом-итог-середина { flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+/* Мягкий край середины: когда ниже (выше) ещё есть итоги, край гаснет — видно, что тут прокрутка.
+   Признаки ставит js по прокрутке (дом-итог-середина--ниже / --выше); всё помещается — края чёткие.
+   -webkit- — для старых встроенных браузеров Telegram на iPhone. */
+.домино .дом-итог-середина--ниже { -webkit-mask-image:linear-gradient(#000 calc(100% - 40px), transparent); mask-image:linear-gradient(#000 calc(100% - 40px), transparent); }
+.домино .дом-итог-середина--выше { -webkit-mask-image:linear-gradient(transparent, #000 32px); mask-image:linear-gradient(transparent, #000 32px); }
+.домино .дом-итог-середина--выше.дом-итог-середина--ниже { -webkit-mask-image:linear-gradient(transparent, #000 32px, #000 calc(100% - 40px), transparent); mask-image:linear-gradient(transparent, #000 32px, #000 calc(100% - 40px), transparent); }
+.домино #дом-результат > .дом-итог-подвал { margin-top:18px; }
+.домино .дом-итог-середина > * + *,.домино .дом-итог-подвал > * + * { margin-top:10px; }
+.домино .дом-итог-середина > details { margin-top:14px; }
+.домино .дом-итог-отсчёт { text-align:center; color:var(--сб-акцент, #d2f76b); }
+@media(max-width:400px) { .домино #дом-результат[open] { padding:18px; } }
 @media(min-width:600px) { .домино .дом-выбор-стол { --место:58px; margin-top:38px; margin-bottom:63px; } }
