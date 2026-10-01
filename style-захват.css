@@ -275,6 +275,23 @@ body.захват dialog > p + form, body.захват dialog > div + form { mar
   font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums;
   border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 14px; background: var(--подложка);
 }
+/* Строка места: «1  Имя  очки 12 · взято областей 3  в плюсе». На узком экране счёт уходит на вторую строку. */
+.захват-итог-места > .захват-итог-строка { flex-wrap: wrap; justify-content: flex-start; gap: 4px 10px; }
+.захват-итог-место { flex: 0 0 auto; min-width: 18px; font-weight: 700; color: var(--сб-текст-тихий); }
+.захват-итог-имя { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.захват-итог-счёт { flex: 1 1 100%; order: 3; padding-left: 28px; font-size: 13px; font-weight: 500; color: var(--сб-текст-тихий); }
+/* «в плюсе» — тот же салатовый акцент, что у strong в окнах; рамка строки человека — тоже акцент («здесь вы»). */
+body.захват dialog .захват-итог-плюс { flex: 0 0 auto; font-size: 13px; font-weight: 700; }
+.захват-итог-места > .захват-итог-строка--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент); }
+/* «Досмотреть быстро»: пометка над картой и выход к итогу. */
+body.захват #экран-игры > .захват-досмотр { width: 100%; max-width: 520px; align-self: center; flex: 0 0 auto; }
+.захват-досмотр {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 4px 4px 14px;
+  font-size: 14px; font-weight: 700; color: var(--сб-акцент);
+  border: 1px solid var(--сб-акцент); border-radius: 12px; background: var(--подложка);
+}
+.захват-досмотр > .кнопка { flex: 0 0 auto; }
+
 /* Рекорды: строка на партию, дата первой. */
 .захват-рекорды-строка { padding: 10px 0; font-size: 13px !important; line-height: 1.5; border-bottom: 1px solid var(--край); }
 #захват-рекорды-список { display: block; }
