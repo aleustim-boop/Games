@@ -128,6 +128,9 @@
 @keyframes кат-сота-свечение{0%,100%{opacity:.65}50%{opacity:.95}}
 .без-анимации .кат-производство-ореол{animation:none}
 @media(prefers-reduced-motion:reduce){.кат-производство-ореол{animation:none!important}}
+/* Один зелёный акцент для доступного подтверждения во всех игровых окнах. */
+.катан .кнопка.кнопка--главная:not(#экран-друзей *):not(#экран-добавить-друга *):not(:disabled){background:linear-gradient(#9edf40,#4f8b27 45%,#286414);color:#fff8e2;border:1px solid #cbff89;box-shadow:inset 0 2px 4px #e8ff91aa,0 2px 10px #85b33b55;text-shadow:0 1px 2px #284011}
+.катан .кнопка.кнопка--главная:not(#экран-друзей *):not(#экран-добавить-друга *):disabled{opacity:1;background:linear-gradient(#414343,#242727);color:#a9b1ad;border-color:#737a73;box-shadow:inset 0 1px 2px #ffffff30;text-shadow:none}
 .кат-монополия-ресурс{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0;padding:12px;border:1px solid #b99a5b;border-radius:14px;background:#172c26}.кат-монополия-ресурс svg{flex:none;width:70px;height:100px}.кат-монополия-ресурс h3{margin:0;color:#f5d69a;font-size:20px}
 .кат-обмен-выполнен button{pointer-events:auto;display:block;margin:10px 0 0 auto;padding:7px 16px;min-height:44px;border:1px solid #e7c77e;border-radius:10px;background:#234b3d;color:#ffe0a0;font:inherit;cursor:pointer}
 .кат-кража-маршрут{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0 18px}.кат-кража-маршрут>div{display:grid;justify-items:center;gap:6px;min-width:0;flex:1;text-align:center}.кат-кража-маршрут .кат-аватар{width:46px;height:46px;flex:none}.кат-кража-маршрут b{max-width:100%;overflow-wrap:anywhere}.кат-кража-маршрут small{color:#c4cbbc}.кат-кража-маршрут>strong{font-size:30px;color:#e7c77e}

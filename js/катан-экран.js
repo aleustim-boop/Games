@@ -419,7 +419,7 @@
       const mine=event.type==='bank'||event.player===v.me||event.other===v.me;
       exchangeNotice.replaceChildren(el('b','✓ Обмен выполнен'),...(mine?[el('span',event.type==='bank'?'Банк / порт':'С '+name(event.player===v.me?event.other:event.player)),el('span','Отдали: '+resourceText(give)),el('span','Получили: '+resourceText(want))]:[el('span',name(event.player)+' → '+name(event.other)+': '+resourceText(event.give)),el('span',name(event.other)+' → '+name(event.player)+': '+resourceText(event.want))]));
     }
-    exchangeNotice.append(button('Понятно',()=>{clearTimeout(exchangeNoticeTimer);exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;}));
+    exchangeNotice.append(button('Понятно',()=>{clearTimeout(exchangeNoticeTimer);exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;},'кнопка кнопка--главная'));
     exchangeNotice.hidden=false;mountExchangeNotice();
     clearTimeout(exchangeNoticeTimer);exchangeNoticeTimer=setTimeout(()=>{exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;},9000);
   }
