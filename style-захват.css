@@ -182,6 +182,17 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
   padding: 2px 10px; color: var(--сб-акцент); font-weight: 700;
   border: 1px solid var(--сб-акцент); border-radius: 999px;
 }
+/* Последние 10 секунд раунда (класс ставит сетевой модуль): тёплый цвет отказа вместо салатового
+   и мягкая пульсация — заметно, но второго акцента на странице не появляется. */
+.захват-таймер.захват-таймер--мало {
+  color: var(--карта-отказ); border-color: var(--карта-отказ);
+  background: color-mix(in srgb, var(--карта-отказ) 14%, transparent);
+  animation: захват-таймер-мало 1s ease-in-out infinite;
+}
+@keyframes захват-таймер-мало {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
 
 /* ---------- Стол: полоса игроков ----------
    Плашки по три в ряд (вчетвером — по две), как карточки соперников в других играх.
@@ -230,10 +241,14 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
 .захват-шайба__значок { display: none; }
 .захват-пилюля { display: none; }
 .захват-игрок__значок { display: none; }
-/* Плашка «Раунд N — раскрытие» поверх карты. */
+/* Плашка «Раунд N — раскрытие» и итог раунда поверх карты. Её касание открывает журнал (ТЗ 8.5),
+   поэтому касания она ловит сама; спрятанная (.скрыт — display: none) карте не мешает.
+   За сетевым столом итог может висеть долго: выше трети карты пластина не растёт, длинный
+   итог прокручивается внутри, а не закрывает карту. */
 .захват-пластина {
   position: absolute; left: 8px; right: 8px; top: 8px; width: fit-content; max-width: calc(100% - 16px); margin-inline: auto; z-index: 3;
-  padding: 8px 16px; text-align: center; pointer-events: none;
+  max-height: 33%; overflow-y: auto; overscroll-behavior: contain;
+  padding: 8px 16px; text-align: center; cursor: pointer;
   font-size: 15px; font-weight: 700; line-height: 1.25; color: var(--сб-текст);
   background: var(--сб-поверхность); border: 1px solid var(--сб-акцент); border-radius: 12px;
 }
@@ -302,6 +317,9 @@ body.захват #захват-отменить:disabled { opacity: 0.4; }
 /* Журнал: длинный список строк событий прокручивается внутри листа. */
 .захват-журнал-строки { max-height: 50dvh; overflow-y: auto; overscroll-behavior: contain; }
 .захват-журнал-строки > * { padding: 9px 0; font-size: 14px; line-height: 1.4; border-bottom: 1px solid var(--край); overflow-wrap: anywhere; }
+/* Заголовок раунда в журнале: под ним строки его событий. */
+.захват-журнал-строки > .захват-журнал-раунд { padding-top: 14px; font-size: 13px; font-weight: 700; color: var(--сб-текст-тихий); }
+.захват-журнал-строки > .захват-тихо { color: var(--сб-текст-тихий); }
 
 /* ---------- Окна: «Как играть», итог, рекорды, «Сдаться?» ----------
    Рамка и фон окон общие (style-коллекция.css); здесь размеры, текст и отступы. */
