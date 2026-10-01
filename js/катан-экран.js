@@ -280,7 +280,7 @@
     $('кат-стройки').replaceChildren(...Object.entries(П.ЦЕНЫ).map(([type,cost])=>{
       const enabled=type==='development'?v.legal.development:v.legal[type].length>0;
       const b=button(названия[type],()=>{
-        if(!enabled){const body=modal(названия[type]);body.append(el('p','Стоимость: '+resourceText(cost)));const missing=cost.map((n,r)=>Math.max(0,n-v.hand[r]));body.append(el('p',П.сумма(missing)?'Не хватает: '+resourceText(missing):type==='development'?'Колода развития закончилась.':'Нет доступного места или закончились фигуры этого типа.'));body.append(button('Понятно',close));return;}
+        if(!enabled){const body=modal(названия[type]);body.append(el('p','Стоимость: '+resourceText(cost)));const missing=cost.map((n,r)=>Math.max(0,n-v.hand[r]));body.append(el('p',П.сумма(missing)?'Не хватает: '+resourceText(missing):type==='development'?'Колода развития закончилась.':'Нет доступного места или закончились фигуры этого типа.'));body.append(button('Понятно',close,'кнопка кнопка--главная'));return;}
         if(type==='development')act({type});else{mode=mode===type?null:type;selected=null;close();render();}
       },enabled?'':'кат-нехватка');
       b.disabled=busy||presenting||!mine||v.phase!=='main';b.setAttribute('aria-pressed',String(mode===type));
@@ -308,7 +308,7 @@
   }
   function showVictims(){
     victimPrompt=v.serial+':'+v.robber;
-    const body=modal('У кого забрать ресурс?','victim');body.append(el('p','Разбойник уже на выбранной соте. Нажмите игрока, у которого хотите забрать случайную карту.'));const list=el('div',undefined,'кат-жертвы');for(const i of v.victims){const b=button('',async()=>{if(await act({type:'steal',victim:i}))closeAction();},'кнопка кат-жертва цвет-'+playerColor(i)),avatar=playerAvatar(i),text=el('span');text.append(el('b',name(i)),el('small',v.players[i].cards+' карт ресурсов'));b.setAttribute('aria-label','Забрать ресурс у '+name(i));b.append(avatar,text);list.append(b);}body.append(list,button('Посмотреть поле',close));
+    const body=modal('У кого забрать ресурс?','victim');body.append(el('p','Разбойник уже на выбранной соте. Нажмите игрока, у которого хотите забрать случайную карту.'));const list=el('div',undefined,'кат-жертвы');for(const i of v.victims){const b=button('',async()=>{if(await act({type:'steal',victim:i}))closeAction();},'кнопка кат-жертва цвет-'+playerColor(i)),avatar=playerAvatar(i),text=el('span');text.append(el('b',name(i)),el('small',v.players[i].cards+' карт ресурсов'));b.setAttribute('aria-label','Забрать ресурс у '+name(i));b.append(avatar,text);list.append(b);}body.append(list,button('Посмотреть поле',close,'кнопка кнопка--главная'));
   }
   function positionDice(){
     const dice=$('кат-кубики');dice.hidden=!v.dice;if(!v.dice)return;const scene=document.querySelector('.кат-сцена'),roll=v.log.findLast(e=>e.type==='roll'),card=$('кат-игроки').querySelector('[data-player="'+(roll?.player??v.turn)+'"]');if(!card)return;if(dice.parentElement!==scene)scene.append(dice);
@@ -484,7 +484,7 @@
     }else if((o.to===-1||o.to===v.me)&&!o.rejected?.includes(v.me)){
       if(o.request&&!o.accepted?.includes(v.me)){const reply=button('Предложить свой вариант',()=>trade(null,o),'кнопка кнопка--главная');reply.disabled=o.want.some((n,r)=>n>v.hand[r]);body.append(reply,button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))close();}));if(reply.disabled)body.append(el('small','У вас пока нет искомого ресурса.'));}
       else if(o.accepted?.includes(v.me)){const quote=o.quotes?.find(q=>q.player===v.me);if(quote)body.append(dealCards('Вы',name(o.from),quote.give,quote.want));body.append(el('p',(o.request?'Ваш вариант отправлен. ':'Вы согласились. ')+name(o.from)+' выбирает, с кем обменяться.'),button(o.request?'Отозвать свой вариант':'Отозвать согласие',async()=>{if(await act({type:'withdrawTrade',offer:o.id}))close();}));}
-      else {const accept=button('Согласиться на обмен',async()=>{if(await act({type:'agree',offer:o.id}))close();},'кнопка кнопка--главная');accept.disabled=busy||o.want.some((n,r)=>n>v.hand[r]);body.append(accept,button('Предложить свой вариант',()=>trade(null,o)),button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))close();}));if(accept.disabled)body.append(el('small','Для обмена не хватает ресурсов. Можно предложить другой вариант.'));}
+      else {const accept=button('Согласиться на обмен',async()=>{if(await act({type:'agree',offer:o.id}))close();},'кнопка кнопка--главная');accept.disabled=busy||o.want.some((n,r)=>n>v.hand[r]);body.append(accept,button('Предложить свой вариант',()=>trade(null,o),'кнопка кнопка--главная'),button('Отказаться',async()=>{if(await act({type:'reject',offer:o.id}))close();}));if(accept.disabled)body.append(el('small','Для обмена не хватает ресурсов. Можно предложить другой вариант.'));}
     }
     if(o.from===v.me||v.turn===v.me)body.append(button('Отменить предложение',async()=>{if(await act({type:'cancelOffer',offer:o.id}))close();}));
     body.append(button('Свернуть',close));bot();
@@ -524,7 +524,7 @@
     const body=modal(v.winner<0?'Партия завершена':v.winner===v.me?'Вы победили!':`Победитель: ${name(v.winner)}`,'result');
     if(v.surrendered>=0)body.append(el('p',`${name(v.surrendered)} завершили партию досрочно.`));else if(v.interrupted)body.append(el('p','Партия прервана без результата.'));
     [...v.players.entries()].sort((a,b)=>b[1].score-a[1].score).forEach(([i,p])=>{const row=el('div',undefined,'кат-итог');row.append(el('b',name(i)),el('strong',`${p.score} / ${v.options.targetPoints||10}`),el('small',`Поселения: ${p.pieces.settlement} · Города: ${p.pieces.city*2} очк.`),el('small',`Победные карты: ${p.victoryCards??0} · Дорога: ${v.roadOwner===i?2:0} · Армия: ${v.armyOwner===i?2:0}`));body.append(row);});
-    body.append(button('Посмотреть остров',close));
+    body.append(button('Посмотреть остров',close,'кнопка кнопка--главная'));
     // Соперник уже позвал реванш, а мы ещё нет — говорим об этом прямо, иначе непонятно, что жмём.
     if(online&&network?.соперникХочетЕщё&&!network?.яХочуЕщё)body.append(el('p','Кто-то за столом уже зовёт сыграть ещё — жмите «Сыграть ещё».','подпись'));
     body.append(button(online&&network?.яХочуЕщё?'Ждём согласия игроков…':'Сыграть ещё',async()=>{if(online){const r=await window.Сеть.отправитьХод({действие:'ещё'});if(!r?.принято)$('кат-ошибка').textContent=r?.причина||'Нет связи';}else{close();fresh();}},'кнопка кнопка--главная'));
