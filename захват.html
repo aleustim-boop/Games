@@ -3,13 +3,13 @@
 <link rel="stylesheet" href="style-аватар.css?v=1"></head><body class="захват"><main id="приложение">
 <!-- Лобби: каркас дурака (заголовок, профиль, картинка-гнездо, карточки входов, «Есть код?», нижняя полоса). -->
 <section id="экран-лобби" class="экран экран--виден фото-лобби">
-  <div class="захват-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div>
+  <div class="верх-игры"><button type="button" class="верх-игры__кнопка" data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button type="button" class="верх-игры__кнопка" data-меню aria-label="Ещё">···</button></div>
   <header class="фото-лобби__заголовок"><h1>Захват</h1><button id="захват-правила-лобби" class="кнопка кнопка--мелкая">Правила</button><p class="захват-тихо">Карта будет вашей — если успеете первыми</p></header>
   <button id="захват-продолжить" class="кнопка скрыт">Продолжить партию с ботами ↗</button>
   <button id="лобби-профиль" class="карточка-профиля"><span class="фото-лобби__аватар"><img src="img/дурак/значки/avatar.svg?v=1" alt="" aria-hidden="true"></span><span class="фото-лобби__профиль"><strong id="лобби-имя">Вы</strong><small>Мой профиль и результаты</small></span><img src="img/дурак/значки/chevron-right.svg?v=1" alt="" aria-hidden="true"></button>
   <figure id="захват-афиша" class="фото-лобби__обложка"><img src="img/захват/лобби.webp?v=1" alt="Карта игры «Захват»" fetchpriority="high"></figure>
   <div class="фото-лобби__входы">
-    <button id="лобби-найти-игру" class="карточка-входа карточка-входа--играть-онлайн"><span class="карточка-входа__значок"><img src="img/дурак/значки/globe.svg?v=1" alt="" aria-hidden="true"></span><span class="карточка-входа__текст"><strong class="карточка-входа__название">Играть онлайн</strong><span class="карточка-входа__подпись">Найдите стол или пригласите друзей</span></span><span class="карточка-входа__стрелка"><img src="img/дурак/значки/chevron-right.svg?v=1" alt="" aria-hidden="true"></span></button>
+    <button id="лобби-найти-игру" hidden class="скрыт карточка-входа карточка-входа--играть-онлайн"><span class="карточка-входа__значок"><img src="img/дурак/значки/globe.svg?v=1" alt="" aria-hidden="true"></span><span class="карточка-входа__текст"><strong class="карточка-входа__название">Играть онлайн</strong><span class="карточка-входа__подпись">Найдите стол или пригласите друзей</span></span><span class="карточка-входа__стрелка"><img src="img/дурак/значки/chevron-right.svg?v=1" alt="" aria-hidden="true"></span></button>
     <button id="захват-боты" class="карточка-входа"><span class="карточка-входа__значок"><img src="img/дурак/значки/robot.svg?v=1" alt="" aria-hidden="true"></span><span class="карточка-входа__текст"><strong class="карточка-входа__название">Играть с ботами</strong><span class="карточка-входа__подпись">Свой темп, без таймера</span></span><span class="карточка-входа__стрелка"><img src="img/дурак/значки/chevron-right.svg?v=1" alt="" aria-hidden="true"></span></button>
   </div>
   <div class="деберц-пригласили"><div><strong>Есть код?</strong><p>Присоединитесь к столу друзей</p></div><button id="лобби-есть-код" class="кнопка">Ввести код <span aria-hidden="true">↗</span></button></div>
@@ -19,7 +19,7 @@
 
 <!-- Настройки партии с ботами: всё одним экраном (ТЗ 8.2). -->
 <section id="захват-настройки" class="экран">
-  <div class="захват-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div>
+  <div class="верх-игры"><button type="button" class="верх-игры__кнопка" data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button type="button" class="верх-игры__кнопка" data-меню aria-label="Ещё">···</button></div>
   <h1>Партия с ботами</h1>
   <div class="захват-панель">
     <div class="захват-выбор-параметра"><strong>Игроков за картой</strong>
@@ -38,14 +38,14 @@
         <button type="button" role="radio" aria-checked="false" data-значение="сложный">Сложные</button>
       </div>
     </div>
-    <p id="захват-подпись-карты" class="захват-тихо" role="status">Карта: Материк · 30 областей · 15 раундов</p>
+    <p id="захват-подпись-карты" class="захват-тихо" role="status">Карта: Материк · 30 областей</p>
     <button id="захват-начать" class="кнопка кнопка--главная">Начать</button>
   </div>
 </section>
 
 <!-- Стол: нижней полосы нет (ТЗ 8.4). Рисунков нет: холст и шайбы заполняет код готовыми рисунками Кодекса. -->
 <section id="экран-игры" class="экран">
-  <div class="захват-верх"><button data-назад aria-label="Назад">‹</button><h1>Захват</h1><button data-меню aria-label="Ещё">···</button></div>
+  <div class="верх-игры"><button type="button" class="верх-игры__кнопка" data-назад aria-label="Назад">‹</button><h1>Захват</h1><button type="button" class="верх-игры__кнопка" data-меню aria-label="Ещё">···</button></div>
   <div class="захват-раунд">
     <span id="захват-раунд" class="захват-тихо"></span>
     <span id="захват-таймер" class="захват-таймер скрыт" role="timer"></span>
@@ -116,7 +116,7 @@
 
 <!-- Онлайн: общие экраны комнаты, как у домино и монополии (ТЗ 8.3). -->
 <section id="экран-друга" class="экран">
-  <div class="захват-верх"><button data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button data-меню aria-label="Ещё">···</button></div>
+  <div class="верх-игры"><button type="button" class="верх-игры__кнопка" data-назад aria-label="Назад">‹</button><span>Игры с друзьями</span><button type="button" class="верх-игры__кнопка" data-меню aria-label="Ещё">···</button></div>
   <button id="кнопка-с-другом" class="скрыт">Создать игру</button>
   <h1>Ваш стол</h1>
   <div class="захват-панель">
@@ -151,7 +151,7 @@
   <button id="кнопка-друг-назад" class="кнопка">Назад</button>
 </section>
 <section id="экран-комнаты" class="экран">
-  <div class="захват-верх"><button id="кнопка-комната-назад" type="button" aria-label="Выйти из комнаты">‹</button><span>Комната игры</span><button id="кнопка-комната-ещё" type="button" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры">···</button></div>
+  <div class="верх-игры"><button id="кнопка-комната-назад" type="button" class="верх-игры__кнопка" aria-label="Выйти из комнаты">‹</button><span>Комната игры</span><button id="кнопка-комната-ещё" type="button" class="верх-игры__кнопка" data-путь="ещё" aria-label="Ещё" aria-haspopup="dialog" aria-controls="лист-игры">···</button></div>
   <div id="комната" class="комната скрыт">
     <header class="комната__шапка">
       <h2 class="комната__заголовок">Комната игры</h2>
@@ -232,7 +232,7 @@
 
 <!-- «Как играть» (ТЗ 8.8): доступна из лобби до партии и из «⋯» -->
 <dialog id="захват-справка"><h2>Как играть</h2>
-<p><strong>Цель.</strong> Захватите все столицы — или наберите больше всех очков за 15 раундов. Очки: 1 за область, 3 за столицу.</p>
+<p><strong>Цель.</strong> Захватите все столицы — или наберите больше всех очков за 10, 15 или 20 раундов (выбирают перед партией, обычно 15). Очки: 1 за область, 3 за столицу. Побеждает верхняя половина стола: вдвоём и втроём — первое место, вчетвером и впятером — два первых, вшестером — три первых. Кто выбыл или сдался, не побеждает.</p>
 <p><strong>Все ходят разом.</strong> Каждый раунд все игроки отдают приказы одновременно и тайно. Нажали «Готово» все — приказы исполняются разом, и вы видите, кто что сделал.</p>
 <p><strong>Подкрепление.</strong> В начале раунда вы получаете войска: области / 3 (не меньше 3), плюс прибавка за каждый целый край, плюс 2 за каждую столицу. Касайтесь своих областей, чтобы поставить войска.</p>
 <p><strong>Приказ.</strong> Проведите пальцем от своей области к соседней. В чужую — удар, в свою — перевод. В каждой области всегда остаётся 1 войско.</p>
@@ -281,4 +281,4 @@
 </div>
 </main>
 <script src="js/telegram.js?v=34"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script><script src="js/лист-ещё.js?v=12"></script><script src="js/игры-реестр.js?v=bastion-20260930"></script><script src="js/рейтинг-экран.js?v=46"></script><script src="js/профиль-экран.js?v=3"></script>
-<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=2"></script><script src="js/захват-бот.js?v=1"></script><script src="js/захват-память.js?v=1"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=1"></script><script src="js/захват-раскрытие.js?v=2"></script><script src="js/захват-карта-вид.js?v=1"></script><script src="js/деберц-сказать.js?v=8"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/дурак-комната.js?v=20260929c"></script><script src="js/сеть.js?v=troe-20261001"></script><script src="js/открытые-столы.js?v=20260930d"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>
+<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=2"></script><script src="js/захват-бот.js?v=1"></script><script src="js/захват-память.js?v=1"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=1"></script><script src="js/захват-раскрытие.js?v=2"></script><script src="js/захват-карта-вид.js?v=1"></script><script src="js/захват-стол.js?v=1"></script><script src="js/деберц-сказать.js?v=8"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/захват-экран.js?v=1"></script><script src="js/дурак-комната.js?v=20260929c"></script><script src="js/сеть.js?v=troe-20261001"></script><script src="js/открытые-столы.js?v=20260930d"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>
