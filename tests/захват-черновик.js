@@ -262,6 +262,10 @@ console.log('Папка с сервером: ' + ПАПКА);
 /* «Захват» закрыт для столов, пока не задана эта переменная (server/игры/реестр.js). */
 process.env.OPEN_HIDDEN_GAMES = 'захват';
 const ДАННЫЕ = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-черновик-данные-'));
+/* Убираем за собой свою папку при любом выходе: успех, провал, исключение. */
+process.on('exit', function () {
+  try { fs.rmSync(ДАННЫЕ, { recursive: true, force: true }); } catch (уборка) { /* не страшно */ }
+});
 process.env.GAMES_DATA = ДАННЫЕ;
 process.env.ДАННЫЕ_ИГРЫ = ДАННЫЕ;
 
