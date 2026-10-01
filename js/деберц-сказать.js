@@ -1,7 +1,8 @@
 'use strict';
 (function () {
-  const З = window.ДеберцЗнаки;
-  window.ДеберцСказать = function (контекст) {
+  window.ДеберцСказать = function (контекст, каталог) {
+    // Второй довод — каталог фраз игры (у «Захвата» свой); без него — каталог деберца, как раньше.
+    const З = каталог || window.ДеберцЗнаки;
     const окно = document.createElement('dialog'); окно.id = 'экран-эмоций'; окно.className = 'экран--поверх'; окно.setAttribute('aria-label', 'Сказать за столом');
     const заголовок = document.createElement('span'); заголовок.hidden = true;
     const вкладки = document.createElement('div'); вкладки.className = 'панель-знаков__вкладки';
