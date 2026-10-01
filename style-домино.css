@@ -144,3 +144,48 @@ body.домино #дом-обзор #дом-цепь-большая { min-heigh
   background-repeat: repeat, no-repeat, repeat, no-repeat;
   background-blend-mode: soft-light, normal, soft-light, normal;
 }
+
+/* ---------- Мелочи окна итога и карточек соседей ---------- */
+
+/* Ожидание у гостя («Ждём хозяина стола…»): кнопка неактивна, но текст светлый и читается,
+   а крутилка крупная и яркая — на тёмном оливковом фоне и на 320 она не должна сливаться. */
+body.домино #дом-дальше.дом-ждём { opacity:1; background:#2b3a2a; border-color:#d2f76b99; color:#f5f3e9; }
+body.домино #дом-дальше.дом-ждём { display:flex; align-items:center; justify-content:center; gap:10px; }
+body.домино #дом-дальше.дом-ждём::after { flex:none; width:22px; height:22px; border:3px solid #f5f3e966; border-top-color:#d2f76b; margin-left:0; }
+
+/* Мягкий край середины итога — 24 точки (было 40: гасил очки последней карточки).
+   Число лежит в переменной: js читает её и не рисует край, когда до конца прокрутки меньше этой высоты. */
+body.домино .дом-итог-середина { --дом-край-итога:24px; }
+body.домино .дом-итог-середина--ниже { -webkit-mask-image:linear-gradient(#000 calc(100% - var(--дом-край-итога)), transparent); mask-image:linear-gradient(#000 calc(100% - var(--дом-край-итога)), transparent); }
+body.домино .дом-итог-середина--выше { -webkit-mask-image:linear-gradient(transparent, #000 var(--дом-край-итога)); mask-image:linear-gradient(transparent, #000 var(--дом-край-итога)); }
+body.домино .дом-итог-середина--выше.дом-итог-середина--ниже { -webkit-mask-image:linear-gradient(transparent, #000 var(--дом-край-итога), #000 calc(100% - var(--дом-край-итога)), transparent); mask-image:linear-gradient(transparent, #000 var(--дом-край-итога), #000 calc(100% - var(--дом-край-итога)), transparent); }
+
+/* Имя соседа — до двух строк вместо «Алек…»: слово без пробелов переносится в любом месте. */
+body.домино #экран-игры .дом-игрок b { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; white-space:normal; overflow:hidden; overflow-wrap:anywhere; line-height:1.15; }
+
+/* Узкий экран: имя занимает всю верхнюю строку карточки (иначе ему остаётся ~30 точек рядом с очками),
+   очки и «N костей» — строкой ниже. Карточка с длинным именем выше короткой не больше чем на строку имени. */
+@media(max-width:400px) {
+  body.домино #экран-игры .дом-игрок b { grid-column:1/-1; }
+  body.домино #экран-игры .дом-игрок strong { grid-column:2; grid-row:2; line-height:1; }
+  body.домино #экран-игры .дом-игрок small { grid-column:1; grid-row:2; align-self:center; }
+}
+
+/* Окно итога на низком/узком экране: карточки и кнопки компактнее, чтобы на 320×568 целиком
+   помещались две карточки; остальное — в прокрутке с мягким краем («ниже есть ещё»). */
+@media(max-width:400px), (max-height:700px) {
+  body.домино .дом-итог-игрок { padding:9px 12px; gap:2px 6px; }
+  body.домино .дом-итог-игрок strong { font-size:24px; line-height:1.1; }
+  body.домино .дом-итог-игрок .дом-остаток { padding-bottom:0; }
+  body.домино .дом-итог-игрок .дом-остаток .дом-кость { width:22px; height:44px; }
+  body.домино .дом-итог-середина > * + * { margin-top:8px; }
+  body.домино .дом-итог-середина > details { margin-top:8px; }
+  body.домино #дом-результат > .дом-итог-подвал { margin-top:10px; }
+  body.домино .дом-итог-подвал > * + * { margin-top:6px; }
+  body.домино .дом-итог-подвал .кнопка { min-height:40px; padding:8px 12px; }
+  body.домино #дом-результат > * + * { margin-top:10px; }
+}
+
+/* «Результат раунда» неактивна (ждём голос / идёт голосование): не салатовая вполсилы, а тёмная «выключенная»
+   кнопка с читаемой подписью-причиной. Салатовый — только у того, на что можно нажать. */
+body.домино #дом-действие:disabled { opacity:1; background:#202825; border-color:#ffffff25; color:#c3cec6; }
