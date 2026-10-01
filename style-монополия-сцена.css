@@ -936,3 +936,47 @@ html.в-телеграме .монополия #экран-игры .mono-top > 
 @media (min-width: 1000px) {
   .монополия .mono-layout { grid-template-columns: minmax(0, min(760px, calc(100dvh - 245px - var(--отступ-сверху, 0px)))) minmax(260px, 320px); justify-content: center; }
 }
+
+/* Окно сделки или покупки при идущем голосовании «закончить по согласию»:
+   js/монополия-экран.js открывает его не модально, чтобы плашка (общая, в body,
+   слой 105) оставалась нажимаемой, и ставит число «--плашка-низ» — нижний край
+   плашки в пикселях. Окно начинается ниже этого края, высота ограничена экраном,
+   длинное содержимое листается внутри окна. */
+#mono-modal.mono-не-модальное[open] {
+  --зазор-под-плашкой: 8px;
+  position: fixed;
+  inset: calc(var(--плашка-низ, 215) * 1px + var(--зазор-под-плашкой)) 0 auto 0;
+  margin: 0 auto;
+  height: fit-content;
+  max-height: calc(100dvh - var(--плашка-низ, 215) * 1px - var(--зазор-под-плашкой) - 12px);
+  overflow-y: auto;
+  z-index: 50;
+}
+/* Пока окно не модальное, стол под ним не нажимается (кнопки хода, поле). */
+#экран-игры.mono-окно-не-модальное .mono-layout {
+  pointer-events: none;
+}
+
+/* Лобби на узком экране (задача #16): зазор после плашки о сохранённой партии,
+   картинка заполняет свою область без пустых полос, запас над нижней полосой. */
+body.монополия #экран-лобби > #mono-restore-note {
+  margin: 0 0 12px;
+}
+body.монополия #экран-лобби > .mono-hero {
+  max-height: 290px;
+  margin-block: 12px;
+  place-items: stretch;
+}
+body.монополия #экран-лобби > .mono-hero::before {
+  aspect-ratio: auto;
+  max-height: none;
+  height: auto;
+  min-height: 0;
+}
+body.монополия #экран-лобби > #mono-bots {
+  margin-bottom: 12px;
+}
+body.монополия #экран-лобби > .нижние-вкладки {
+  margin-top: auto;
+  flex-shrink: 0;
+}

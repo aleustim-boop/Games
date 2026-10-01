@@ -189,8 +189,86 @@
     else $("mono-modal").classList.remove("mono-итог");
     const body = $("mono-modal-body");
     body.replaceChildren();
-    if (!$("mono-modal").open) $("mono-modal").showModal();
+    if (!$("mono-modal").open) открытьОкно();
     return body;
+  }
+  // Голосование «закончить по согласию» — плашка из общего листа «⋯», она лежит
+  // в body. Модальное окно браузера перекрывает всё и делает остальную страницу
+  // неактивной, поэтому голосовать было нельзя, пока окно открыто.
+  function идётГолосование() {
+    const плашка = document.getElementById("плашка-досрочно");
+    if (!плашка || плашка.classList.contains("скрыт")) return false;
+    const кнопки = плашка.querySelector(".плашка-досрочно__кнопки");
+    return !!кнопки && !кнопки.classList.contains("скрыт");
+  }
+  // Пока идёт голосование, окно открываем не модальным: плашка остаётся
+  // нажимаемой, а само окно и его содержимое не меняются. Модальность помним
+  // сами (а не спрашиваем у браузера через :modal — старые WebView его не знают).
+  let окноНеМодальное = false;
+  function открытьОкно() {
+    окноНеМодальное = идётГолосование();
+    if (окноНеМодальное) $("mono-modal").show();
+    else $("mono-modal").showModal();
+    обновитьОкноПодПлашку();
+  }
+  function подстроитьОкноПодГолосование() {
+    const окно = $("mono-modal");
+    if (!окно.open || окноНеМодальное === идётГолосование()) return;
+    // show() ставит фокус на первый элемент окна — у игрока, печатавшего сумму,
+    // пропал бы курсор: запоминаем поле и возвращаем после переоткрытия.
+    const былФокус = document.activeElement;
+    окно.close();
+    открытьОкно();
+    if (былФокус && окно.contains(былФокус) && былФокус.focus) былФокус.focus();
+  }
+  // Немодальное окно не блокирует страницу само, и палец попал бы в стол под
+  // окном («Конец хода», «Бросить кубики»). Поэтому на время немодальности
+  // ставим классы: css гасит нажатия по столу (плашка лежит в body — её не
+  // задевает). Для css отдаём числом нижний край плашки: окно начинается ниже.
+  function обновитьОкноПодПлашку() {
+    const окно = $("mono-modal");
+    if (!окно.open) окноНеМодальное = false;
+    $("экран-игры").classList.toggle("mono-окно-не-модальное", окноНеМодальное);
+    окно.classList.toggle("mono-не-модальное", окноНеМодальное);
+    const плашка = document.getElementById("плашка-досрочно");
+    if (окноНеМодальное && плашка) {
+      окно.style.setProperty(
+        "--плашка-низ",
+        Math.ceil(плашка.getBoundingClientRect().bottom),
+      );
+    }
+  }
+  function следитьЗаГолосованием() {
+    let голосовали = идётГолосование();
+    let прицеплено = false;
+    const сверить = () => {
+      const сейчас = идётГолосование();
+      if (сейчас === голосовали) return;
+      голосовали = сейчас;
+      подстроитьОкноПодГолосование();
+    };
+    const наблюдатель = new MutationObserver(сверить);
+    const прицепить = () => {
+      const плашка = document.getElementById("плашка-досрочно");
+      if (!плашка || прицеплено) return;
+      прицеплено = true;
+      // Плашка меняет высоту (перенос строк, причина отказа) — окно следует за ней.
+      if (window.ResizeObserver)
+        new ResizeObserver(обновитьОкноПодПлашку).observe(плашка);
+      наблюдатель.observe(плашка, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ["class"],
+      });
+    };
+    // Плашку лист создаёт сам, когда она впервые нужна, — ждём её в body.
+    new MutationObserver(() => {
+      прицепить();
+      сверить();
+    }).observe(document.body, { childList: true });
+    прицепить();
+    $("mono-modal").addEventListener("close", обновитьОкноПодПлашку);
+    window.addEventListener("resize", обновитьОкноПодПлашку);
   }
   function close() {
     dialogKind = "";
@@ -1275,6 +1353,7 @@
     e.preventDefault();
     close();
   });
+  следитьЗаГолосованием();
   document.querySelectorAll("[data-back]").forEach((b) => (b.onclick = back));
   document.querySelectorAll("[data-rules]").forEach((b) => (b.onclick = rules));
   $("mono-bots").onclick = () => {
