@@ -379,6 +379,16 @@
 #деберц-сведения > :is(#деберц-сдаться, #деберц-предложить-закончить) { bottom: 56px; }
 #деберц-сведения > #деберц-результаты { bottom: 112px; z-index: 2; }
 #деберц-сведения > #деберц-результаты::before { content: ''; position: absolute; z-index: -1; left: -24px; right: -24px; top: -34px; bottom: -136px; background: linear-gradient(to bottom, transparent, var(--сб-поверхность) 24px); }
+/* Признак «ниже ещё»: узкая полоса, приклеенная к верхнему краю блока кнопок (псевдоэлемент верхней кнопки,
+   bottom: 100% — числа нет, поэтому полоса вплотную к кнопке при любом числе кнопок). Верхние 10px — плавный переход,
+   ниже, под самой надписью, сплошной цвет окна: текст не просвечивает. Шкала — прокрутка окна (animation-timeline):
+   в конце прокрутки надпись гаснет, а если текст помещается целиком, шкалы нет и она прозрачна. Где шкал прокрутки
+   нет (старые браузеры), подсказки просто нет. Полоса вынесена вверх от кнопки и высоты окна не меняет. */
+#деберц-сведения > #деберц-результаты::after { content: 'ниже ещё ↓'; position: absolute; left: -24px; right: -24px; bottom: 100%; box-sizing: border-box; height: 30px; padding-top: 10px; line-height: 20px; font-size: 12px; text-align: center; background: linear-gradient(to bottom, transparent, var(--сб-поверхность) 10px); color: var(--сб-акцент); pointer-events: none; opacity: 0; }
+@supports (animation-timeline: scroll()) {
+  #деберц-сведения > #деберц-результаты::after { animation: деберц-сведения-ниже-ещё linear both; animation-timeline: scroll(nearest block); }
+}
+@keyframes деберц-сведения-ниже-ещё { 0%, 88% { opacity: 1; } 100% { opacity: 0; } }
 /* Конец партии: тот же приём — блок кнопок липнет к низу, подложка с затуханием сверху и до низа экрана. */
 #деберц-итог-действия { --поле: 24px; --низ: 24px; position: sticky; bottom: 0; z-index: 2; }
 #деберц-итог-действия::before { content: ''; position: absolute; z-index: -1; left: calc(-1 * var(--поле)); right: calc(-1 * var(--поле)); top: -34px; bottom: calc(-1 * var(--низ)); background: linear-gradient(to bottom, transparent, #171d1b 24px); }
