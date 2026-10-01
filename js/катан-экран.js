@@ -159,7 +159,7 @@
   }
   function close(){if(dialogBack){const back=dialogBack;dialogBack=null;back();return;}if(dialogKind==='purchase'&&v?.phase==='finished'){results();return;}refreshTrade=null;restoreBuilds();$('кат-диалог').close();dialogKind='';render(); }
   function closeAction(){if(!['result','loot','purchase'].includes(dialogKind))close();}
-  function modal(title,kind=''){$('кат-диалог').dataset.kind=kind;stopAutoRoll();refreshTrade=null;dialogBack=null;restoreBuilds();dialogKind=kind;if(!online&&kind!=='offer'){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
+  function modal(title,kind=''){$('кат-диалог').dataset.kind=kind;stopAutoRoll();refreshTrade=null;dialogBack=null;restoreBuilds();dialogKind=kind;if(!online&&kind!=='offer'){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();mountExchangeNotice();return body;}
   function back(){
     if($('кат-диалог').open){close();return;}
     if($('кат-доп-настройки').classList.contains('экран--виден')){settings();screen(optionsReturn);return;}
@@ -193,17 +193,18 @@
     if(ok&&action.type==='development')showPurchasedCard(v.dev.at(-1));
     return ok;
   }
+  function botView(i){const view=П.вид(g,i);view.bots=g.players.map((_,j)=>j>0);return view;}
   function bot(){
     clearTimeout(timer);timer=null;
     if(online||!g||g.phase==='finished'||busy||presenting||$('кат-диалог').open&&dialogKind!=='offer')return;
     if($('кат-диалог').open&&dialogKind==='offer'&&g.offer?.from>0&&(g.offer.to===-1||g.offer.to===0)&&!g.offer.rejected?.includes(0))return;
     let who=-1,action=null;
     for(let i=1;i<g.n;i++){
-      const view=П.вид(g,i);
+      const view=botView(i);
       if(g.phase==='discard'&&g.discard[i]){who=i;action=Б.ход(view,record.level);break;}
       const trade=Б.ответНаОбмен(view);if(trade){who=i;action=trade;break;}
     }
-    if(who<0&&П.кто(g)>0){who=П.кто(g);action=Б.ход(П.вид(g,who),record.level);}
+    if(who<0&&П.кто(g)>0){who=П.кто(g);action=Б.ход(botView(who),record.level);}
     if(!action)return;
     let delay=display.pace;
     if(g.offer?.from>0&&(g.offer.to===-1||g.offer.to===0)&&!g.offer.rejected?.includes(0)){if(botOfferWait?.id!==g.offer.id)botOfferWait={id:g.offer.id,until:Date.now()+15000};delay=Math.max(delay,botOfferWait.until-Date.now());}else botOfferWait=null;
@@ -237,6 +238,7 @@
     if(dialogKind==='trade'&&$('кат-диалог').open)refreshTrade?.();
     if(dialogKind==='offer'&&$('кат-диалог').open&&!v.offer){$('кат-диалог').close();dialogKind='';refreshTrade=null;}
     if(dialogKind==='offer'&&$('кат-диалог').open&&$('кат-диалог-тело').dataset.offerSerial!==[v.serial,v.offer?.id,v.tradeStatus?.type].join(':')){showOffer();$('кат-диалог-тело').dataset.offerSerial=[v.serial,v.offer?.id,v.tradeStatus?.type].join(':');}
+    mountExchangeNotice();
     document.querySelector('.кат-карта').classList.toggle('загрузка',!artReady);
     const mine=v.phase==='discard'?v.discard[v.me]>0:v.turn===v.me,active=v.phase!=='finished';
     $('экран-игры').classList.toggle('расстановка',v.phase.startsWith('setup'));
@@ -353,7 +355,10 @@
     const title=kind==='road'?'Самая длинная дорога':'Самая большая армия',body=modal(owner===v.me?'Ваш бонус: +2 ПО':owner>=0?name(owner)+' получает +2 ПО':'Бонус больше не принадлежит игроку','award'),symbol=kind==='army'?el('img'):statIcon('road');if(kind==='army'){symbol.src='img/катан/разбойник-v2.webp';symbol.alt='Рыцарь — самая большая армия';}symbol.classList.add('кат-бонус-рисунок');body.append(symbol,el('h3',title),el('p',owner>=0?(owner===v.me?'Вы получаете':name(owner)+' получает')+' 2 победных очка. Они уже учтены в счёте.':name(old)+' теряет 2 победных очка.'));if(old>=0&&owner>=0)body.append(el('p',(old===v.me?'Вы теряете':name(old)+' теряет')+' этот бонус и 2 очка.'));body.append(button('Понятно',close,'кнопка кнопка--главная'));
   }
   function showPlayedCard(event){
-    const body=modal(name(event.player)+' играет карту','played-development'),frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=event.card;frame.append(picture(['knight','roads','plenty','monopoly'].indexOf(event.card)),el('b',названия[event.card]));body.append(frame,el('p',описания[event.card]),button('Понятно',close,'кнопка кнопка--главная'));
+    const body=modal(name(event.player)+' играет карту','played-development'),frame=el('div',undefined,'кат-новая-карта');frame.dataset.card=event.card;frame.append(picture(['knight','roads','plenty','monopoly'].indexOf(event.card)),el('b',названия[event.card]));body.append(frame);
+    if(event.card==='monopoly'&&Number.isInteger(event.resource)&&event.resource>=0&&event.resource<5){const chosen=el('div',undefined,'кат-монополия-ресурс');chosen.dataset.resource=event.resource;chosen.append(cardPicture(event.resource),el('h3','Выбран ресурс: '+ресурсы[event.resource]));body.append(chosen,el('p',name(event.player)+' забирает у остальных игроков все карты этого ресурса.'));}
+    else body.append(el('p',event.card==='monopoly'?'Выбранный ресурс не записан в этом событии.':описания[event.card]));
+    body.append(button('Понятно',close,'кнопка кнопка--главная'));
   }
   function beginAttack(event){
     if(!v||!$('экран-игры').classList.contains('экран--виден'))return;
@@ -398,6 +403,12 @@
     const root=el('div',undefined,'кат-сделка'),left=el('div'),right=el('div');left.append(el('h3',from),el('small','Отдаёт'),resourceCards(give));right.append(el('h3',to),el('small','Отдаёт'),resourceCards(want));root.append(left,el('span','⇄','кат-сделка-стрелка'),right);return root;
   }
   let exchangeNotice=null,exchangeNoticeTimer=null;
+  function mountExchangeNotice(){
+    if(!exchangeNotice||exchangeNotice.hidden)return;
+    const host=$('кат-диалог').open?$('кат-диалог'):document.body;
+    if(exchangeNotice.parentNode!==host){exchangeNotice.hidePopover?.();host.append(exchangeNotice);}
+    if(exchangeNotice.showPopover&&!exchangeNotice.matches(':popover-open'))exchangeNotice.showPopover();
+  }
   function showExchange(event){
     if(!exchangeNotice){exchangeNotice=el('div',undefined,'кат-обмен-выполнен');exchangeNotice.id='кат-обмен-выполнен';exchangeNotice.setAttribute('role','status');exchangeNotice.setAttribute('popover','manual');document.body.append(exchangeNotice);}
     if(event.type==='tradeClosed'){
@@ -409,7 +420,7 @@
       exchangeNotice.replaceChildren(el('b','✓ Обмен выполнен'),...(mine?[el('span',event.type==='bank'?'Банк / порт':'С '+name(event.player===v.me?event.other:event.player)),el('span','Отдали: '+resourceText(give)),el('span','Получили: '+resourceText(want))]:[el('span',name(event.player)+' → '+name(event.other)+': '+resourceText(event.give)),el('span',name(event.other)+' → '+name(event.player)+': '+resourceText(event.want))]));
     }
     exchangeNotice.append(button('Понятно',()=>{clearTimeout(exchangeNoticeTimer);exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;}));
-    exchangeNotice.hidden=false;if(exchangeNotice.showPopover)exchangeNotice.showPopover();else ($('кат-диалог').open?$('кат-диалог-тело'):document.body).append(exchangeNotice);
+    exchangeNotice.hidden=false;mountExchangeNotice();
     clearTimeout(exchangeNoticeTimer);exchangeNoticeTimer=setTimeout(()=>{exchangeNotice.hidePopover?.();exchangeNotice.hidden=true;},9000);
   }
   function tradeInventory(){const box=el('div',undefined,'кат-торговля-запас'),stock=el('div',undefined,'кат-торговля-ресурсы');box.append(el('b','У вас на руках'),stock);v.hand.forEach((n,r)=>{const item=el('span');item.dataset.resource=r;item.setAttribute('aria-label',`${ресурсы[r]}: ${n}`);item.append(picture(r),el('strong',n));stock.append(item);});return box;}
@@ -493,7 +504,7 @@
     if(e.type==='trade')return `${n} и ${name(e.other)}: ${resourceText(e.give)} ↔ ${resourceText(e.want)}`;
     if(e.type==='steal')return Number.isInteger(e.resource)&&e.resource>=0?`${n} забирает ${ресурсы[e.resource]} × 1 у ${name(e.victim)}`:`${n} забирает случайный ресурс у ${name(e.victim)}`;
     if(e.type==='reject')return `${n}: отклонено предложение обмена${Number.isInteger(e.other)?' от «'+name(e.other)+'»':''}`;
-    if(e.type==='dev')return `${n}: ${названия[e.card]}`;
+    if(e.type==='dev')return `${n}: ${названия[e.card]}`+(e.card==='monopoly'&&Number.isInteger(e.resource)&&e.resource>=0&&e.resource<5?' — выбран ресурс: '+ресурсы[e.resource]:'');
     if(e.type==='discard')return `${n}: сброшено ${e.count} ресурсов`;
     if(e.type==='tradeClosed')return `${name(e.from)}: обмен не состоялся — ${({rejected:'все отказались',cancelled:'предложение отменено',turnEnded:'ход завершён',finished:'партия завершена',replaced:'условия изменены',changed:'выполнено другое действие'})[e.reason]||'предложение закрыто'}`;
     if(e.type==='undo')return `${n}: отменено — ${e.action==='bank'?'обмен с банком':названия[e.action]||e.action}`;
@@ -601,7 +612,7 @@
     const left=online?(serverDeadline===null?Infinity:Math.max(0,(serverDeadline-Date.now())/1000)):Ч.остаток(record.clock);
     clockLabel.hidden=!Number.isFinite(left)||v.phase==='finished';clockLabel.textContent=Number.isFinite(left)?`${Math.floor(Math.ceil(left)/60)}:${String(Math.ceil(left)%60).padStart(2,'0')}`:'';clockLabel.classList.toggle('истекает',left<=15);
     if(!online&&left<=0&&!busy&&!presenting&&g.phase!=='finished'){
-      const who=П.кто(g),view=П.вид(g,who),action=view.phase==='main'?{type:'end'}:Б.ход(view,record.level);
+      const who=П.кто(g),view=botView(who),action=view.phase==='main'?{type:'end'}:Б.ход(view,record.level);
       if(action){if($('кат-диалог').open)close();selected=null;local(who,action);if(Ч.остаток(record.clock)<=0)record.clock.deadline=Date.now()+3000;save();render();}
     }
   },250);

@@ -213,7 +213,7 @@
       if(a.card==='plenty')нужно(ресурсы(a.resources)&&сумма(a.resources)===Math.min(2,сумма(g.bank))&&хватит(g.bank,a.resources),'Выберите два доступных ресурса');
       if(a.card==='monopoly')нужно(Number.isInteger(a.resource)&&a.resource>=0&&a.resource<5,'Выберите ресурс');
       if(a.card==='roads')нужно(дороги(g,p).length>0,'Нет места для дороги');
-      g.players[p].dev.splice(idx,1);g.playedDev=true;g.offer=null;событие(g,p,'dev',{card:a.card});
+      g.players[p].dev.splice(idx,1);g.playedDev=true;g.offer=null;событие(g,p,'dev',{card:a.card,...(a.card==='monopoly'?{resource:a.resource}:{})});
       if(a.card==='knight'){g.players[p].knights++;g.returnPhase=g.phase;g.phase='robber';}
       if(a.card==='roads'){g.returnPhase=g.phase;g.phase='freeRoad';g.freeRoads=Math.min(2,15-фигуры(g,p).road);}
       if(a.card==='plenty')a.resources.forEach((n,r)=>take(g,p,r,n));

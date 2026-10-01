@@ -3,6 +3,7 @@
   const П=typeof module!=='undefined'?require('./катан-правила'):root.КатанПравила,Г=П.Г;
   const sum=П.сумма;
   const открытыеОчки=(v,i)=>v.players[i].score-(v.players[i].victoryCards||0);
+  const сравнитьЦели=(v,a,b)=>открытыеОчки(v,b)-открытыеОчки(v,a)||Number(v.bots?.[b]===true)-Number(v.bots?.[a]===true);
   function ценность(v,id){
     const income=[0,0,0,0,0];
     for(const [i,b] of v.buildings.entries())if(b?.owner===v.me)for(const h of Г.vertices[i].hexes){const t=v.hexes[h];if(t.resource<5)income[t.resource]+=(6-Math.abs(7-t.number))*b.level;}
@@ -82,11 +83,12 @@
     if(v.phase==='setupRoad'||v.phase==='freeRoad')return {type:'road',edge:путь(v)?.edge&&v.legal.road.includes(путь(v).edge)?путь(v).edge:v.legal.road[0]};
     if(v.phase==='robber'){
       const strength=h=>{const buildings=Г.hexes[h.id].vertices.map(id=>v.buildings[id]).filter(Boolean),enemies=buildings.filter(b=>b.owner!==p&&(!v.options?.friendlyRobber||открытыеОчки(v,b.owner)>2)),victims=enemies.filter(b=>v.players[b.owner].cards>0);
-        return [Math.max(-1,...victims.map(b=>открытыеОчки(v,b.owner))),Math.max(-1,...enemies.map(b=>открытыеОчки(v,b.owner))),-buildings.filter(b=>b.owner===p).reduce((s,b)=>s+b.level,0),enemies.reduce((s,b)=>s+b.level,0)*(h.number?6-Math.abs(7-h.number):0)];};
+        const target=enemies.map(b=>b.owner).sort((a,b)=>сравнитьЦели(v,a,b))[0],victim=victims.map(b=>b.owner).sort((a,b)=>сравнитьЦели(v,a,b))[0];
+        return [target===undefined?-1:открытыеОчки(v,target),Number(v.bots?.[target]===true),victim===undefined?-1:открытыеОчки(v,victim),Number(v.bots?.[victim]===true),-buildings.filter(b=>b.owner===p).reduce((s,b)=>s+b.level,0),enemies.reduce((s,b)=>s+b.level,0)*(h.number?6-Math.abs(7-h.number):0)];};
       const compare=(a,b)=>{const x=strength(a),y=strength(b);for(let i=0;i<x.length;i++)if(x[i]!==y[i])return y[i]-x[i];return a.id-b.id;};
       return {type:'robber',hex:v.hexes.filter(h=>(v.legal.robber||v.hexes.filter(t=>t.id!==v.robber).map(t=>t.id)).includes(h.id)).sort(compare)[0].id};
     }
-    if(v.phase==='steal')return {type:'steal',victim:v.victims.slice().sort((a,b)=>открытыеОчки(v,b)-открытыеОчки(v,a))[0]};
+    if(v.phase==='steal')return {type:'steal',victim:v.victims.slice().sort((a,b)=>сравнитьЦели(v,a,b))[0]};
     if(v.legal.dev.includes('knight')&&полезенРыцарь(v))return {type:'dev',card:'knight'};
     if(v.phase==='roll')return {type:'roll'};
     if(v.phase!=='main')return null;
