@@ -1,0 +1,292 @@
+/* «Захват»: оформление оболочки (этап В2).
+   Здесь только то, что не зависит от рисунков Кодекса: колонка, лобби, настройки, полоса игроков,
+   строка раунда, панель действий, листы, итог, «Как играть», рекорды.
+   Лобби, карточки входов, профиль, обложка, нижняя полоса, лист «⋯» и кнопки уже оформлены
+   общими файлами (style.css, style-коллекция.css, style-настольные-фото.css) — тут их не повторяем.
+   Все цвета — из общих переменных (--сб-*, --коллекция-*, --карта-отказ): так тема Telegram
+   и общий вид сборника подставляются сами. Своих цветов нет. */
+
+/* ---------- Переменные страницы ----------
+   Общие переменные «--фон/--текст/--кнопка-фон» по умолчанию берут цвета Telegram (светлые или
+   жёлтые). На странице игры подставляем тёмные цвета сборника с салатовым акцентом —
+   тем же приёмом, что у экранов «Ваш стол» и «Комната». Ставим на #приложение, а не на body:
+   так их видят и экраны, и окна <dialog>. */
+body.захват #приложение {
+  --текст: var(--сб-текст);
+  --текст-тихий: var(--сб-текст-тихий);
+  --кнопка-фон: var(--сб-акцент);
+  --кнопка-текст: var(--сб-акцент-текст);
+  --акцент: var(--сб-акцент);
+  --подложка: rgba(248, 245, 235, 0.06);
+  --край: rgba(248, 245, 235, 0.14);
+  color: var(--сб-текст);
+}
+body.захват #приложение *,
+body.захват #приложение *::before,
+body.захват #приложение *::after { box-sizing: border-box; }
+body.захват h1, body.захват h2, body.захват p { margin: 0; }
+body.захват button { touch-action: manipulation; }
+body.захват button:focus-visible,
+body.захват input:focus-visible { outline: 3px solid var(--сб-акцент); outline-offset: 3px; }
+
+/* ---------- Экраны: колонка и ни одной горизонтальной прокрутки ---------- */
+body.захват :is(#экран-лобби, #захват-настройки) {
+  padding: calc(10px + var(--отступ-сверху, 0px)) max(14px, calc((100% - 520px) / 2)) calc(14px + var(--отступ-снизу, 0px));
+  gap: 12px;
+  align-items: stretch;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--сб-текст);
+}
+/* В лобби внизу лежит нижняя полоса (fixed): оставляем под неё место. */
+body.захват #экран-лобби.фото-лобби {
+  padding-bottom: calc(76px + var(--отступ-снизу, 0px));
+}
+body.захват #экран-игры {
+  gap: 6px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--сб-текст);
+}
+body.захват #захват-настройки > h1 { font-size: clamp(26px, 7vw, 34px); line-height: 1.1; text-align: center; }
+
+/* Общая «тихая» подпись */
+.захват-тихо { color: var(--сб-текст-тихий); font-size: 13px; line-height: 1.45; }
+
+/* ---------- Кнопки ----------
+   Главная (салатовая) оформлена общим файлом. Остальные — тёмные с тонкой рамкой, как у домино:
+   салатовый на экране один и значит «нажми сюда». Высота не меньше 44 — палец попадает. */
+body.захват .кнопка { min-height: 48px; min-width: 0; touch-action: manipulation; }
+body.захват .кнопка--главная { min-height: 52px; font-size: 18px; }
+body.захват .кнопка:not(.кнопка--главная):not(.кнопка--мелкая) {
+  color: var(--сб-текст);
+  background: var(--сб-поверхность);
+  border: 1px solid var(--край);
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+body.захват .кнопка:disabled { opacity: 0.42; cursor: default; }
+
+/* ---------- Лобби ---------- */
+body.захват #экран-лобби > .кнопка { width: 100%; max-width: none; margin: 0; }
+/* Заголовок как у других игр: название и подпись. Кнопка «Правила» — тихая ссылка под подписью,
+   а не в правом верхнем углу: угол занят общей кнопкой «⋯» (в Telegram — системной). */
+body.захват .фото-лобби__заголовок { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+body.захват .фото-лобби__заголовок > p { order: 2; margin-top: 6px; }
+body.захват .фото-лобби__заголовок > .кнопка--мелкая {
+  order: 3; min-height: 44px; margin: 2px 0 -6px -12px; padding: 8px 12px;
+  color: var(--сб-акцент); background: none; border: 0; font-size: 14px;
+}
+/* Главный вход — салатовый, как «Играть онлайн» у дурака. Пока онлайн-карточка спрятана
+   (нет сервера), единственный вход — «Играть с ботами», и салатовым становится он;
+   когда онлайн появится, главным станет он, а боты вернутся к тёмной карточке. */
+body.захват .фото-лобби__входы:has(#лобби-найти-игру.скрыт) #захват-боты {
+  color: var(--сб-акцент-текст); border-color: var(--сб-акцент);
+  background: linear-gradient(130deg, color-mix(in srgb, var(--сб-акцент) 78%, #fff), var(--сб-акцент));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 22px rgba(210, 247, 107, 0.16);
+}
+body.захват .фото-лобби__входы:has(#лобби-найти-игру.скрыт) #захват-боты .карточка-входа__подпись,
+body.захват .фото-лобби__входы:has(#лобби-найти-игру.скрыт) #захват-боты .карточка-входа__стрелка { color: rgba(16, 19, 10, 0.68); }
+body.захват .фото-лобби__входы:has(#лобби-найти-игру.скрыт) #захват-боты :is(.карточка-входа__значок, .карточка-входа__стрелка) img { filter: brightness(0); }
+/* Строка «Есть код?» (общая у игр: в style-деберц.css, сюда тот файл не подключён). */
+body.захват .деберц-пригласили {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 14px 2px; border-top: 1px solid var(--край);
+}
+body.захват .деберц-пригласили > div { min-width: 0; }
+body.захват .деберц-пригласили strong { font-size: 15px; }
+body.захват .деберц-пригласили p { margin-top: 4px; font-size: 12px; color: var(--сб-текст-тихий); }
+body.захват .деберц-пригласили .кнопка { flex: 0 0 auto; min-height: 44px; padding: 8px 14px; font-size: 15px; }
+
+/* ---------- Настройки и панели ---------- */
+.захват-панель {
+  display: grid; gap: 16px; width: 100%; max-width: 520px; margin-inline: auto; padding: 18px;
+  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 20px;
+  background: var(--коллекция-панель, var(--сб-поверхность)); box-shadow: var(--коллекция-тень, none);
+}
+.захват-панель > h2 { font-size: 20px; }
+.захват-выбор-параметра { display: grid; gap: 8px; min-width: 0; }
+.захват-выбор-параметра > strong { font-size: 14px; font-weight: 600; color: var(--сб-текст-тихий); }
+/* Ряд «пилюль»: «2 3 4 5 6», «Лёгкие / Обычные / Сложные». Выбранная — салатовая и жирная. */
+.захват-выбор-числа { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.захват-выбор-числа > button {
+  flex: 1 1 0; min-width: 44px; min-height: 48px; padding: 8px 10px;
+  font: inherit; font-size: 16px; font-weight: 600; line-height: 1.2;
+  color: var(--сб-текст); background: var(--подложка); border: 1px solid var(--край); border-radius: 14px; cursor: pointer;
+}
+.захват-выбор-числа > button:active { transform: scale(0.97); }
+.захват-выбор-числа > button[aria-checked="true"] {
+  color: var(--сб-акцент-текст); background: var(--сб-акцент); border-color: var(--сб-акцент); font-weight: 700;
+}
+.захват-панель #захват-начать,
+.захват-панель #кнопка-создать-игру { width: 100%; max-width: none; margin: 0; }
+
+/* ---------- Стол: строка раунда ---------- */
+body.захват #экран-игры > :is(.захват-раунд, .захват-игроки, .захват-карта, .захват-подсказка, .захват-панель-действий) {
+  width: 100%; max-width: 520px; align-self: center; flex: 0 0 auto;
+}
+.захват-раунд { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
+.захват-раунд > * { min-width: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.захват-раунд > #захват-раунд { color: var(--сб-текст); font-weight: 700; font-size: 15px; }
+.захват-таймер {
+  padding: 2px 10px; color: var(--сб-акцент); font-weight: 700;
+  border: 1px solid var(--сб-акцент); border-radius: 999px;
+}
+
+/* ---------- Стол: полоса игроков ----------
+   Плашки по три в ряд (вчетвером — по две), как карточки соперников в других играх.
+   Верхняя строка плашки: имя и галка «готов»; нижняя: метка и счёт «областей · очки». */
+.захват-игроки { display: flex; flex-wrap: wrap; gap: 6px; }
+.захват-игрок {
+  flex: 1 1 calc((100% - 12px) / 3 - 1px); min-width: 0; padding: 7px 9px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "имя готов" "метка счёт";
+  gap: 2px 6px; align-items: center;
+  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 14px;
+  background: var(--коллекция-панель, var(--сб-поверхность)); box-shadow: var(--коллекция-тень, none);
+  color: var(--сб-текст);
+}
+.захват-игроки:has(> :nth-child(4):not(.скрыт)):not(:has(> :nth-child(5):not(.скрыт))) > .захват-игрок { flex-basis: calc(50% - 3px); }
+.захват-игрок__имя { grid-area: имя; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; line-height: 1.2; }
+.захват-игрок__готов { grid-area: готов; min-width: 14px; text-align: right; color: var(--сб-акцент); font-size: 15px; font-weight: 700; line-height: 1; }
+.захват-игрок__метка { grid-area: метка; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: var(--сб-текст-тихий); }
+.захват-игрок__счёт { grid-area: счёт; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--сб-текст); }
+/* Это вы: салатовая рамка (акцент — «здесь вы»). */
+.захват-игрок.захват-игрок--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент); }
+.захват-игрок.захват-игрок--я .захват-игрок__имя { color: var(--сб-акцент); }
+/* Выбыл или сдался: плашка притушена, имя зачёркнуто. */
+.захват-игрок.захват-игрок--вне { opacity: 0.5; filter: grayscale(1); }
+.захват-игрок--вне .захват-игрок__имя { text-decoration: line-through; }
+
+/* ---------- Стол: место под карту ----------
+   Холст и слой шайб лежат друг на друге и занимают всё место карты. Рисунки и шайбы появятся
+   на этапе Г2; здесь — только размеры. Касания и жесты (зум, сдвиг, протяжка приказа) ловит
+   узел карты, поэтому браузеру и Telegram запрещаем перехватывать их своей прокруткой и зумом. */
+.захват-карта {
+  position: relative; flex: 1 1 auto; min-height: 200px; overflow: hidden;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 18px;
+  background-color: var(--сб-поверхность);
+}
+.захват-холст { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+/* Слой шайб повторяет зум и сдвиг карты: стол ставит их числами --зум, --сдвиг-x, --сдвиг-y на узле карты. */
+.захват-слой {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;
+  transform-origin: 0 0;
+  transform: translate(calc(var(--сдвиг-x, 0) * 1px), calc(var(--сдвиг-y, 0) * 1px)) scale(var(--зум, 1));
+}
+/* Рисунков ещё нет (этап Г2): шайбы, пилюли «+N» и значки цвета игроков спрятаны. Больше ничего. */
+.захват-шайба { display: none; }
+.захват-шайба__число { display: none; }
+.захват-шайба__значок { display: none; }
+.захват-пилюля { display: none; }
+.захват-игрок__значок { display: none; }
+/* Плашка «Раунд N — раскрытие» поверх карты. */
+.захват-пластина {
+  position: absolute; left: 50%; top: 8px; transform: translateX(-50%); z-index: 3; max-width: calc(100% - 16px);
+  padding: 8px 16px; text-align: center; pointer-events: none;
+  font-size: 15px; font-weight: 700; line-height: 1.25; color: var(--сб-текст);
+  background: var(--сб-поверхность); border: 1px solid var(--сб-акцент); border-radius: 12px;
+}
+
+/* ---------- Стол: подсказка и панель действий ---------- */
+.захват-подсказка {
+  min-height: 44px; display: grid; place-items: center; padding: 6px 12px; text-align: center;
+  font-size: 15px; line-height: 1.3; color: var(--сб-текст);
+  border: 1px solid var(--край); border-radius: 12px; background: var(--подложка);
+}
+.захват-подсказка:empty { visibility: hidden; }
+/* Отказ («нельзя»): красная рамка и подкраска — видно с одного взгляда, текст остаётся белым. */
+.захват-подсказка.захват-подсказка--отказ {
+  border-color: var(--карта-отказ); background: color-mix(in srgb, var(--карта-отказ) 18%, transparent);
+  font-weight: 600;
+}
+.захват-панель-действий { display: flex; gap: 8px; align-items: stretch; }
+.захват-панель-действий > .кнопка { flex: 1 1 0; min-width: 0; min-height: 52px; padding: 8px 10px; font-size: 17px; }
+.захват-панель-действий > #захват-готово { flex: 1.5 1 0; }
+/* Замок после «Готово»: кнопка становится «Изменить» (теряет салатовую заливку) —
+   рисуем её салатовым контуром с замком: приказы отданы и заперты, пока не нажмёте «Изменить». */
+body.захват #захват-готово:not(.кнопка--главная) {
+  color: var(--сб-акцент); background: transparent; border: 2px solid var(--сб-акцент); box-shadow: none;
+}
+body.захват #захват-готово:not(.кнопка--главная)::before { content: "🔒"; margin-right: 8px; font-size: 15px; }
+/* «Отменить» неактивна (нечего отменять или приказы заперты): притушена. */
+body.захват #захват-отменить:disabled { opacity: 0.4; }
+
+/* ---------- Листы поверх стола: приказ, карточка области, журнал, «Вы выбыли» ----------
+   Выезжают снизу, как общий лист «⋯» (он лежит выше: z-index 110). Карта над листом остаётся видна. */
+.захват-лист {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; width: 100%; max-width: 520px; margin-inline: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  max-height: calc(100% - 24px - var(--отступ-сверху, 0px)); overflow-y: auto; overscroll-behavior: contain;
+  padding: 24px max(16px, calc(var(--отступ-справа, 0px) + 16px)) calc(14px + var(--отступ-снизу, 0px)) max(16px, calc(var(--отступ-слева, 0px) + 16px));
+  color: var(--сб-текст); background: var(--сб-поверхность); border-radius: 20px 20px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 -12px 32px rgba(0, 0, 0, 0.45);
+  animation: лист-ещё-вверх 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.захват-лист::before {
+  content: ""; position: absolute; top: 8px; left: 50%; width: 36px; height: 4px; margin-left: -18px;
+  border-radius: 999px; background: rgba(255, 255, 255, 0.18);
+}
+.захват-лист > h2 { font-size: 18px; font-weight: 700; line-height: 1.3; text-align: center; }
+.захват-лист > p { font-size: 15px; line-height: 1.4; }
+.захват-лист > .кнопка { width: 100%; max-width: none; margin: 0; }
+.захват-лист > p:empty { display: none; }
+/* Приказ: «−  ползунок  +», крупное число, шанс боя и потери. */
+.захват-приказ-счётчик { display: flex; align-items: center; gap: 10px; }
+.захват-приказ-счётчик > .кнопка { flex: 0 0 52px; width: 52px; min-width: 52px; min-height: 52px; padding: 0; font-size: 26px; line-height: 1; }
+.захват-приказ-счётчик > input[type="range"] { flex: 1 1 auto; min-width: 0; height: 44px; margin: 0; accent-color: var(--сб-акцент); }
+.захват-приказ-число { font-size: 34px; font-weight: 700; line-height: 1.1; text-align: center; color: var(--сб-акцент); font-variant-numeric: tabular-nums; }
+.захват-приказ-шанс { font-size: 17px; font-weight: 600; text-align: center; }
+.захват-приказ-потери { font-size: 14px; text-align: center; color: var(--сб-текст-тихий); }
+/* Журнал: длинный список строк событий прокручивается внутри листа. */
+.захват-журнал-строки { max-height: 50dvh; overflow-y: auto; overscroll-behavior: contain; }
+.захват-журнал-строки > * { padding: 9px 0; font-size: 14px; line-height: 1.4; border-bottom: 1px solid var(--край); overflow-wrap: anywhere; }
+
+/* ---------- Окна: «Как играть», итог, рекорды, «Сдаться?» ----------
+   Рамка и фон окон общие (style-коллекция.css); здесь размеры, текст и отступы. */
+body.захват dialog {
+  width: min(520px, calc(100vw - 24px)); max-width: none;
+  max-height: calc(100dvh - var(--отступ-сверху, 0px) - var(--отступ-снизу, 0px) - 24px);
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  padding: 22px; border: 1px solid var(--край); border-radius: 22px; color: var(--сб-текст);
+}
+body.захват dialog > * + * { margin-top: 14px; }
+body.захват dialog h2 { font-size: 22px; line-height: 1.2; }
+body.захват dialog p { font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+body.захват dialog p.захват-тихо { font-size: 13px; }
+body.захват dialog strong { color: var(--сб-акцент); }
+body.захват dialog .кнопка { width: 100%; max-width: none; margin-inline: 0; }
+/* Кнопка в форме («Понятно», «Закрыть») отделена от текста над ней: зазор побольше, чем между абзацами. */
+body.захват dialog > form { margin-bottom: 0; }
+body.захват dialog > p + form, body.захват dialog > div + form { margin-top: 20px; }
+/* Итог: заголовок крупно по центру, места — строками-плашками. */
+.захват-итог-окно > h2 { font-size: 26px; text-align: center; outline: none; }
+.захват-итог-окно > .захват-тихо { text-align: center; }
+.захват-итог-места { display: grid; gap: 8px; }
+.захват-итог-места > * {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 10px 14px;
+  font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums;
+  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 14px; background: var(--подложка);
+}
+/* Рекорды: строка на партию, дата первой. */
+.захват-рекорды-строка { padding: 10px 0; font-size: 13px !important; line-height: 1.5; border-bottom: 1px solid var(--край); }
+#захват-рекорды-список { display: block; }
+
+/* ---------- Узкие и низкие экраны (320 точек, 568 высоты) ---------- */
+@media (max-width: 359px) {
+  .захват-игрок { padding: 6px 7px; }
+  .захват-игрок__имя { font-size: 12px; }
+  .захват-панель { padding: 14px; }
+  .захват-панель-действий > .кнопка { font-size: 15px; }
+  body.захват dialog { padding: 18px; }
+}
+@media (max-height: 640px) {
+  .захват-карта { min-height: 150px; }
+  .захват-подсказка { min-height: 40px; padding-block: 4px; font-size: 14px; }
+  .захват-панель-действий > .кнопка { min-height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.захват * , body.захват *::after { animation: none !important; transition: none !important; }
+}
