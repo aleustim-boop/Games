@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Захват — Игры с друзьями</title><link rel="stylesheet" href="style.css?v=109"><script>window.ИграСтраницы='захват';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script><link rel="stylesheet" href="style-коллекция.css?v=2">
 <link rel="stylesheet" href="style-настольные-фото.css?v=1">
-<link rel="stylesheet" href="style-захват.css?v=3">
+<link rel="stylesheet" href="style-захват.css?v=4">
 <link rel="stylesheet" href="style-аватар.css?v=1"></head><body class="захват"><main id="приложение">
 <!-- Лобби: каркас дурака (заголовок, профиль, картинка-гнездо, карточки входов, «Есть код?», нижняя полоса). -->
 <section id="экран-лобби" class="экран экран--виден фото-лобби">
@@ -69,6 +69,8 @@
     <canvas id="захват-холст" class="захват-холст"></canvas>
     <div id="захват-слой" class="захват-слой"></div>
     <div id="захват-пластина" class="захват-пластина скрыт" role="status"></div>
+    <!-- Подсказки первой партии (ТЗ 13): пилюля над картой, не окно; «Понятно» гасит все -->
+    <div id="захват-совет" class="захват-совет скрыт" role="status"><span id="захват-совет-текст"></span><button id="захват-совет-понятно" type="button">Понятно</button></div>
   </div>
   <p id="захват-подсказка" class="захват-подсказка" role="status"></p>
   <div class="захват-панель-действий">
@@ -260,6 +262,8 @@
 <p><strong>Одновременность.</strong> Если двое бьют друг друга, колонны встречаются на границе и бьются до конца. Если в одну область бьют несколько, первым бьёт больший отряд. Ушедшие в бой не защищают дом.</p>
 <p><strong>Края.</strong> Держите все области края — и каждый раунд получаете прибавку. Края обведены светлым швом, прибавка написана при долгом касании.</p>
 <p><strong>Друзья и боты.</strong> Договаривайтесь фразами «Мир?» и «Союз?» — но помните, что слово ничего не обязывает. Ушёл или задремал игрок — за него играет бот.</p>
+<p><button id="захват-подсказки-снова" class="кнопка" type="button">Показать подсказки снова</button></p>
+<p id="захват-подсказки-снова-ответ" class="захват-тихо" role="status"></p>
 <form method="dialog"><button class="кнопка кнопка--главная">Понятно</button></form></dialog>
 
 <!-- Итог партии (ТЗ 8.7) -->
@@ -303,4 +307,4 @@
 </div>
 </main>
 <script src="js/telegram.js?v=34"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script><script src="js/лист-ещё.js?v=12"></script><script src="js/игры-реестр.js?v=bastion-20260930"></script><script src="js/рейтинг-экран.js?v=46"></script><script src="js/профиль-экран.js?v=3"></script>
-<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=2"></script><script src="js/захват-бот.js?v=1"></script><script src="js/захват-память.js?v=1"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=1"></script><script src="js/захват-раскрытие.js?v=2"></script><script src="js/захват-карта-вид.js?v=1"></script><script src="js/захват-стол.js?v=2"></script><script src="js/деберц-сказать.js?v=8"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/захват-экран.js?v=4"></script><script src="js/дурак-комната.js?v=20260929c"></script><script src="js/сеть.js?v=troe-20261001"></script><script src="js/открытые-столы.js?v=20260930d"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>
+<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=2"></script><script src="js/захват-бот.js?v=1"></script><script src="js/захват-память.js?v=1"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=1"></script><script src="js/захват-раскрытие.js?v=2"></script><script src="js/захват-карта-вид.js?v=1"></script><script src="js/захват-стол.js?v=2"></script><script src="js/деберц-сказать.js?v=8"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/захват-экран.js?v=5"></script><script src="js/дурак-комната.js?v=20260929c"></script><script src="js/сеть.js?v=troe-20261001"></script><script src="js/открытые-столы.js?v=20260930d"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>

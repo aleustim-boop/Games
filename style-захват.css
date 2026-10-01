@@ -203,6 +203,18 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
   border: 1px solid var(--край); border-radius: 12px; background: var(--подложка);
 }
 .захват-подсказка:empty { visibility: hidden; }
+/* Подсказка первой партии (ТЗ 13): пилюля у нижнего края карты, чтобы не закрывать итог раунда сверху. Нажимается только «Понятно». */
+.захват-совет {
+  position: absolute; left: 8px; right: 8px; bottom: 8px; width: fit-content; max-width: calc(100% - 16px); margin-inline: auto; z-index: 4;
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; pointer-events: none;
+  font-size: 15px; font-weight: 700; line-height: 1.25; color: var(--сб-текст);
+  background: var(--сб-поверхность); border: 1px solid var(--сб-акцент); border-radius: 12px;
+}
+.захват-совет.скрыт { display: none; }
+.захват-совет > button {
+  pointer-events: auto; flex: 0 0 auto; min-height: 36px; padding: 4px 12px; border-radius: 10px;
+  font: inherit; font-size: 14px; color: var(--сб-акцент-текст); background: var(--сб-акцент); border: 0;
+}
 /* Отказ («нельзя»): красная рамка и подкраска — видно с одного взгляда, текст остаётся белым. */
 .захват-подсказка.захват-подсказка--отказ {
   border-color: var(--карта-отказ); background: color-mix(in srgb, var(--карта-отказ) 18%, transparent);
