@@ -35,6 +35,18 @@
 .дом-игрок b { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .дом-игрок strong { color:#d2f76b; font-size:23px; grid-column:2; grid-row:1/3; align-self:center; }
 .дом-игрок small { color:#9cafa2; font-size:11px; }
+.дом-игрок .дом-игрок__бот { grid-column:1/-1; min-width:0; font-style:normal; font-size:10px; line-height:12px; color:#9cafa2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Сосед уснул, за него играет бот — так же, как в дураке (style.css, «соперник--спит»):
+   без пунктира (пунктир там значит «ушёл») и без салатового (салатовый — акцент хода).
+   Роль аватара тут играют закрытые кости: притушены. Размеры и сетку не трогаем. */
+.дом-игрок.дом-игрок--спит { position:relative; }
+.дом-игрок--спит .дом-закрытые { opacity:.4; filter:grayscale(1); }
+/* Если ход как раз у спящего, салатовую рамку и фон хода снимаем: он спит, а не думает. */
+body .дом-игрок.дом-игрок--спит.ходит { background:var(--коллекция-панель,#1b2420); border-color:#546259; box-shadow:none; }
+/* Тихий значок сна в углу; поверх сетки, раскладку не двигает. */
+.дом-игрок--спит::after { content:"z z"; position:absolute; bottom:3px; right:5px; font-size:10px; font-weight:700; font-style:italic; line-height:1; color:#a9bde0; pointer-events:none; }
+/* Метка спящего: холодная, не мельче 10; класс повторён, чтобы перебить правило метки выше. */
+.дом-игрок.дом-игрок--спит .дом-игрок__бот.дом-игрок__бот { color:#a9bde0; background:rgba(140,165,220,.16); font-style:italic; font-size:10px; }
 .дом-стол { min-height:0; display:flex; flex-direction:column; padding:10px; border:7px solid #99764e; border-radius:27px; background:radial-gradient(ellipse at 40% 20%,#294d37,#102d20); box-shadow:inset 0 0 0 2px #d0af77,inset 0 0 70px #0008,0 12px 25px #0005; }
 .дом-стол-шапка { display:flex; justify-content:space-between; gap:8px; color:#c3d3c7; font-size:12px; padding:3px 4px 7px; }
 .дом-стол-шапка button { background:transparent; color:#cfe697; border:0; font:inherit; }
