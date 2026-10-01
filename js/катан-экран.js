@@ -23,7 +23,7 @@
   const описания={knight:'Переместите разбойника и заберите случайный ресурс у соседа.',roads:'Постройте две дороги бесплатно.',plenty:'Возьмите два ресурса из банка.',monopoly:'Заберите у соперников все ресурсы выбранного вида.',vp:'Скрытое победное очко. Учитывается автоматически в ваш ход.'};
   let g=null,record=null,v=null,online=false,network=null,mode=null,timer=null,busy=false,lastResult='',dialogKind='',prefs={n:4,level:'обычный',sound:true},билетБота=null;
   let lastSerial=null,audio=null,selected=null,presentationTimer=null,presenting=false,boardFilter='all';
-  let refreshTrade=null,robberMove=null,pendingLoot=null,robberAttack=null;const notices=[];let previousAwards=null;
+  let refreshTrade=null,dialogBack=null,robberMove=null,pendingLoot=null,robberAttack=null;const notices=[];let previousAwards=null;
   const seenOffers=new Set();let offerQueued=false;let cardSerial=0,victimPrompt='',tradeSelection=null;
   let production=null,productionStage='',botOfferWait=null;
   const shownHand=()=>v.hand.map((n,r)=>Math.max(0,n-(production?.gains?.[v.me]?.[r]||0)));
@@ -157,9 +157,9 @@
     window.Телеграм?.показатьСтрелку(back);лист?.освежитьКнопкуНастроек(id);
     if(id==='экран-лобби')profile();
   }
-  function close(){if(dialogKind==='purchase'&&v?.phase==='finished'){results();return;}refreshTrade=null;restoreBuilds();$('кат-диалог').close();dialogKind='';render(); }
+  function close(){if(dialogBack){const back=dialogBack;dialogBack=null;back();return;}if(dialogKind==='purchase'&&v?.phase==='finished'){results();return;}refreshTrade=null;restoreBuilds();$('кат-диалог').close();dialogKind='';render(); }
   function closeAction(){if(!['result','loot','purchase'].includes(dialogKind))close();}
-  function modal(title,kind=''){$('кат-диалог').dataset.kind=kind;stopAutoRoll();refreshTrade=null;restoreBuilds();dialogKind=kind;if(!online&&kind!=='offer'){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
+  function modal(title,kind=''){$('кат-диалог').dataset.kind=kind;stopAutoRoll();refreshTrade=null;dialogBack=null;restoreBuilds();dialogKind=kind;if(!online&&kind!=='offer'){clearTimeout(timer);timer=null;}$('кат-диалог-заголовок').textContent=title;const body=$('кат-диалог-тело');body.replaceChildren();if(!$('кат-диалог').open)$('кат-диалог').showModal();return body;}
   function back(){
     if($('кат-диалог').open){close();return;}
     if($('кат-доп-настройки').classList.contains('экран--виден')){settings();screen(optionsReturn);return;}
@@ -415,6 +415,7 @@
   function tradeInventory(){const box=el('div',undefined,'кат-торговля-запас'),stock=el('div',undefined,'кат-торговля-ресурсы');box.append(el('b','У вас на руках'),stock);v.hand.forEach((n,r)=>{const item=el('span');item.dataset.resource=r;item.setAttribute('aria-label',`${ресурсы[r]}: ${n}`);item.append(picture(r),el('strong',n));stock.append(item);});return box;}
   function trade(bankChoice,counter){
     const body=modal('Торговля','trade');
+    if(counter){dialogBack=()=>{if(v.offer&&v.phase==='main')showOffer();else close();};body.append(button('← Назад к предложению',close,'кнопка кат-назад-к-обмену'));}
     if(v.phase!=='main'){body.append(el('p','Торговля доступна после броска кубиков и завершения действий разбойника.'));return;}
     const turn=v.turn,bankPanel=el('div',undefined,'кат-форма-обмена'),peoplePanel=el('div',undefined,'кат-форма-обмена');
     const validTurn=()=>{if(v.phase!=='main'||v.turn!==turn){$('кат-ошибка').textContent='Ход сменился. Откройте обмен заново.';close();return false;}return true;};
@@ -440,7 +441,7 @@
     const target=el('select');target.setAttribute('aria-label','Кому предложить обмен');if(v.turn===v.me){const o=el('option','Всем игрокам');o.value=-1;target.append(o);}v.players.forEach((_,i)=>{if(i!==v.me&&(v.turn===v.me||i===v.turn)){const o=el('option',name(i));o.value=i;target.append(o);}});peoplePanel.append(target);
     const give=counter?counter.want.slice():[0,0,0,0,0],want=counter?counter.give.slice():[0,0,0,0,0];if(counter){target.value=counter.from;target.disabled=true;}
     const notice=el('p',undefined,'кат-обмен-инструкция');notice.setAttribute('role','status');
-    const confirm=button(counter?'Отправить встречное предложение':'Предложить обмен',async()=>{if(validTurn()&&await act({type:counter?(counter.request?'quote':'counter'):'offer',offer:counter?.id,to:Number(target.value),give:give.slice(),want:want.slice(),confirmation:true})){if(counter?.request)close();else showOffer();}},'кнопка кнопка--главная');
+    const confirm=button(counter?'Отправить встречное предложение':'Предложить обмен',async()=>{if(validTurn()&&await act({type:counter?(counter.request?'quote':'counter'):'offer',offer:counter?.id,to:Number(target.value),give:give.slice(),want:want.slice(),confirmation:true})){dialogBack=null;if(counter?.request)close();else showOffer();}},'кнопка кнопка--главная');
     const pickers=[];
     const update=()=>{
       bankUpdate();inventory.replaceChildren(...tradeInventory().childNodes);
@@ -538,7 +539,7 @@
   }
   function settings(){
     document.querySelectorAll('.кат-правила-стола').forEach(tableOptions);
-    function radios(id,values,current,change){$(id).replaceChildren(...values.map(([value,label])=>{const b=button(label,()=>{change(value);save();settings();});b.setAttribute('role','radio');b.setAttribute('aria-checked',String(value===current));return b;}));}
+    function radios(id,values,current,change){$(id).replaceChildren(...values.map(([value,label])=>{const b=button(label,()=>{change(value);save();settings();});b.setAttribute('role','radio');b.setAttribute('aria-label',label);b.setAttribute('aria-checked',String(value===current));return b;}));}
     radios('кат-число',[[3,'Трое'],[4,'Четверо']],prefs.n,n=>prefs.n=n);
     for(const id of ['кат-цель','кат-цель-онлайн'])radios(id,[[10,'10 ПО'],[12,'12 ПО'],[15,'15 ПО']],prefs.targetPoints,n=>prefs.targetPoints=n);
     document.querySelector('.кат-настройки-факты').textContent=`До ${prefs.targetPoints} победных очков`;

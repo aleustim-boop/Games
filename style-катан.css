@@ -9,7 +9,7 @@
 .катан h2:not(#экран-друзей *):not(#экран-добавить-друга *) { font-size:22px; }
 .катан button { touch-action:manipulation; cursor:pointer; }
 .катан button:not(#экран-друзей *):not(#экран-добавить-друга *):not(.рассадка__место):disabled { opacity:.45; cursor:default; }
-.катан .кнопка:not(#экран-друзей *):not(#экран-добавить-друга *) { width:auto; min-width:0; max-width:none; min-height:44px; padding:12px 16px; background:#202c26; border:1px solid #52634d; border-radius:14px; color:#f5f3e9; box-shadow:none; font:600 15px/1.25 system-ui; }
+.катан .кнопка:not(#экран-друзей *):not(#экран-добавить-друга *):not(.кат-переключатель *) { width:auto; min-width:0; max-width:none; min-height:44px; padding:12px 16px; background:#202c26; border:1px solid #52634d; border-radius:14px; color:#f5f3e9; box-shadow:none; font:600 15px/1.25 system-ui; }
 .катан .кнопка--главная { background:#d2f76b; color:#172014; border-color:#d2f76b; }
 .катан .карточка-профиля img,.катан .карточка-входа:not(.карточка-входа--играть-онлайн) img,.кат-рассадка img { filter:invert(1); }
 .кат-верх { min-height:32px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
@@ -152,7 +152,7 @@
 .кат-факты span+span::before { content:'·'; margin-right:15px; color:#d6ba7c; }
 .катан .карточка-профиля,.катан .карточка-входа:not(.карточка-входа--играть-онлайн) { background:#17282b; border-color:#78999428; }
 .катан .карточка-входа--играть-онлайн { background:linear-gradient(115deg,#dafa8c,#c5ee67); box-shadow:0 5px 22px #d2f76b12; }
-.катан .кнопка:not(#экран-друзей *):not(#экран-добавить-друга *) { background:#203438; border-color:#9db9af36; border-radius:12px; }
+.катан .кнопка:not(#экран-друзей *):not(#экран-добавить-друга *):not(.кат-переключатель *) { background:#203438; border-color:#9db9af36; border-radius:12px; }
 .катан .кнопка--главная { background:linear-gradient(120deg,#def994,#c7ed70); color:#19301c; border-color:#d3f58b; box-shadow:0 4px 18px #bde86c12; }
 .катан button:focus-visible { outline:2px solid #e4f9b4; outline-offset:3px; }
 .катан #экран-игры { padding-left:max(12px,calc((100% - 1560px)/2),var(--отступ-слева,0px)); padding-right:max(12px,calc((100% - 1560px)/2),var(--отступ-справа,0px)); gap:10px; }
