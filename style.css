@@ -16033,6 +16033,32 @@ html.в-телеграме #комната > .комната__шапка { margi
 #комната > .комната__подбор:disabled::before,
 #комната > .комната__подбор:disabled > :not(.комната__скоро) { opacity: 0.6; }
 
+/* Строка подбора — сетка: слева кружок, справа подпись, а пометка («в списке
+   виден, подбор — только на двоих») стоит ПОД подписью и переносится по
+   словам. В одну строку длинная пометка наезжала на подпись (снимок 390). */
+#комната > .комната__подбор {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-rows: minmax(44px, auto) auto;
+  column-gap: 12px;
+  align-items: center;
+}
+
+#комната > .комната__подбор::before { grid-column: 1; grid-row: 1; }
+#комната > .комната__подбор > :first-child { grid-column: 2; grid-row: 1; }
+
+#комната > .комната__подбор[aria-checked="true"]::after { top: 22px; }
+
+#комната > .комната__подбор > .комната__скоро {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
+  margin: -4px 0 8px;
+  border-radius: 14px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 #комната .комната__скоро {
   flex: 0 0 auto;
   margin-left: auto;
