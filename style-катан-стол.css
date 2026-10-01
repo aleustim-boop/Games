@@ -290,6 +290,9 @@
 .кат-выбор-цвета button { padding:8px 3px; border:1px solid #bca06c55; border-radius:12px; background:#142521; color:#f1e7d2; font:600 12px system-ui; }
 .кат-выбор-цвета button::before { content:''; display:block; width:26px; height:26px; border-radius:5px; margin:0 auto 6px; background:var(--цвет); box-shadow:inset 0 -5px 8px #0004; }
 .кат-выбор-цвета button[aria-pressed=true] { outline:2px solid var(--цвет); outline-offset:2px; }
+/* Главная кнопка хода должна выигрывать у общих стилей кнопок с исключениями экранов. */
+.катан #приложение #экран-игры #кат-главное:not(:disabled) { background:linear-gradient(#9edf40,#4f8b27 45%,#286414); color:#fff8e2; border:1px solid #cbff89; box-shadow:inset 0 2px 4px #e8ff91aa,0 2px 10px #85b33b55; text-shadow:0 1px 2px #284011; }
+.катан #приложение #экран-игры #кат-главное:disabled { opacity:1; background:linear-gradient(#414343,#242727); color:#a9b1ad; border-color:#737a73; box-shadow:inset 0 1px 2px #ffffff30; text-shadow:none; }
 .катан .кат-журнал { border-left:3px solid var(--цвет); background:color-mix(in srgb,var(--цвет) 8%,transparent); padding:12px; margin:5px 0; border-radius:0 8px 8px 0; }
 .кат-карта-низ { gap:5px; flex-wrap:nowrap; }
 #кат-предложение { left:0; right:0; background:#24302af5; border-color:#cfad6b; }
