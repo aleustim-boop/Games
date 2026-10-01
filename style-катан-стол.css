@@ -17,6 +17,7 @@
 .кат-сцена .кат-игрок small { display:block; grid-column:2; grid-row:2; font-size:9px; line-height:12px; color:#e0d5bf; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .кат-сцена .кат-игрок-статус { grid-column:2/4; grid-row:3; font-size:10px; color:#b9f86b; line-height:12px; }
 .катан .цвет-0 { --цвет:#e35fae; }.катан .цвет-1 { --цвет:#208ee9; }.катан .цвет-2 { --цвет:#f0e6d3; }.катан .цвет-3 { --цвет:#ed862d; }
+.катан .цвет-4 { --цвет:#48b66b; }.катан .цвет-5 { --цвет:#b8804f; }.катан .цвет-6 { --цвет:#f2d34f; }.катан .цвет-7 { --цвет:#ed5353; }
 .кат-постройка.цвет-0 .кат-фигура { filter:hue-rotate(135deg) saturate(1.65) brightness(1.45); }
 .кат-постройка.цвет-0.доступно .кат-фигура { filter:hue-rotate(135deg) saturate(1.65) brightness(1.45) drop-shadow(0 0 6px #d6ff72); }
 .кат-сцена .кат-карта { position:absolute; inset:54px -5px; grid-row:auto; grid-column:auto; border:0; border-radius:0; background:none; box-shadow:none; overflow:visible; }

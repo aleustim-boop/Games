@@ -28,7 +28,7 @@
   let production=null,productionStage='',botOfferWait=null;
   const shownHand=()=>v.hand.map((n,r)=>Math.max(0,n-(production?.gains?.[v.me]?.[r]||0)));
   const playerColor=i=>v?.colors?.[i]??i;
-  function setColors(){const colors=[0,1,2,3],chosen=Number.isInteger(prefs.color)?prefs.color:v.me;[colors[v.me],colors[chosen]]=[colors[chosen],colors[v.me]];v.colors=colors;}
+  function setColors(){const colors=[0,1,2,3],chosen=Number.isInteger(prefs.color)&&prefs.color>=0&&prefs.color<8?prefs.color:v.me;if(chosen<4)[colors[v.me],colors[chosen]]=[colors[chosen],colors[v.me]];else colors[v.me]=chosen;v.colors=colors;}
   let autoRoll=null,autoRollTimer=null,autoRollSent='';
   const autoRollKey=()=>`${online?network?.код:record?.id}:${network?.сыграноПартий||0}:${v?.round}:${v?.turn}:${v?.serial}`;
   const canAutoRoll=()=>v?.phase==='roll'&&v.turn===v.me&&!v.dev.length&&!busy&&!presenting&&document.visibilityState==='visible'&&$('экран-игры').classList.contains('экран--виден')&&!$('кат-диалог').open;
@@ -135,7 +135,7 @@
   function colorChoices(root){
     root.append(el('h3','Цвет ваших фишек'));
     const row=el('div',undefined,'кат-выбор-цвета');row.setAttribute('role','group');row.setAttribute('aria-label','Цвет фишек');
-    ['Розовый','Синий','Слоновая кость','Оранжевый'].forEach((label,i)=>{const b=button(label,()=>{prefs.color=i;save();row.querySelectorAll('button').forEach((e,j)=>e.setAttribute('aria-pressed',String(i===j)));render();settings();},'цвет-'+i);b.setAttribute('aria-pressed',String((prefs.color??0)===i));row.append(b);});root.append(row,el('small','Личная палитра поля. У каждого игрока остаётся свой отдельный цвет.','кат-тихо'));
+    ['Розовый','Синий','Слоновая кость','Оранжевый','Зелёный','Коричневый','Жёлтый','Красный'].forEach((label,i)=>{const b=button(label,()=>{prefs.color=i;save();row.querySelectorAll('button').forEach((e,j)=>e.setAttribute('aria-pressed',String(i===j)));render();settings();},'цвет-'+i);b.setAttribute('aria-pressed',String((prefs.color??0)===i));row.append(b);});root.append(row,el('small','Личная палитра поля. У каждого игрока остаётся свой отдельный цвет.','кат-тихо'));
   }
   function tableOptions(root){
     root.replaceChildren(el('small','ПРАВИЛА ВАШЕГО ОСТРОВА'),el('h2','Как будем играть?'));colorChoices(root);

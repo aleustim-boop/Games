@@ -8,7 +8,7 @@
 .катан h1 { font-size:clamp(32px,7vw,46px); letter-spacing:-.04em; }
 .катан h2:not(#экран-друзей *):not(#экран-добавить-друга *) { font-size:22px; }
 .катан button { touch-action:manipulation; cursor:pointer; }
-.катан button:not(#экран-друзей *):not(#экран-добавить-друга *):disabled { opacity:.45; cursor:default; }
+.катан button:not(#экран-друзей *):not(#экран-добавить-друга *):not(.рассадка__место):disabled { opacity:.45; cursor:default; }
 .катан .кнопка:not(#экран-друзей *):not(#экран-добавить-друга *) { width:auto; min-width:0; max-width:none; min-height:44px; padding:12px 16px; background:#202c26; border:1px solid #52634d; border-radius:14px; color:#f5f3e9; box-shadow:none; font:600 15px/1.25 system-ui; }
 .катан .кнопка--главная { background:#d2f76b; color:#172014; border-color:#d2f76b; }
 .катан .карточка-профиля img,.катан .карточка-входа:not(.карточка-входа--играть-онлайн) img,.кат-рассадка img { filter:invert(1); }
@@ -317,6 +317,7 @@
 .кат-превью .кат-порт { display:none; }
 .кат-рассадка .рассадка__место { min-width:0; min-height:0; width:56px; height:56px; padding:0; border:2px solid var(--цвет,#d2f76b); background:#1d2c30; color:#dce7e3; box-shadow:0 4px 12px #0006; }
 .кат-место-значок { width:32px; height:32px; display:grid; place-items:center; color:#e4eee7; font-size:30px; line-height:1; }
+.кат-рассадка .рассадка__место--я .кат-место-значок { width:100%; height:100%; border-radius:50%; }
 .кат-место-значок svg { width:30px; height:30px; }
 .кат-рассадка .рассадка__имя { color:#e7eee8; background:#132328f5; border-radius:7px; padding:3px 7px; top:calc(100% + 5px); font:600 11px/1.2 'Onest',system-ui,sans-serif; text-shadow:none; }
 .кат-рассадка .рассадка__место--я { background:#31432c; border-color:#d2f76b; }

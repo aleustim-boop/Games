@@ -16,10 +16,13 @@
       '68,246 195,119 330,196 329,363 202,431 69,391',
       '48,88 69,76 70,53 107,40 143,58 145,81 164,70 193,84 193,132 218,121 220,103 250,90 284,108 286,129 315,112 347,130 347,308 219,361 47,287'
     ];
-    for(let owner=0;owner<4;owner++)for(let level=1;level<=2;level++){
+    // Новые цвета сохраняют объём и фактуру светлой деревянной фигуры из атласа.
+    const tints=['#48b66b','#b8804f','#f2d34f','#ed5353'];
+    tints.forEach((hex,i)=>{const f=node('filter',{id:prefix+'краска-фишки-'+(i+4),'color-interpolation-filters':'sRGB'}),rgb=hex.slice(1).match(/../g).map(n=>parseInt(n,16)/255);f.append(node('feColorMatrix',{type:'matrix',values:rgb.map(c=>`${.2126*c} ${.7152*c} ${.0722*c} 0 0`).join(' ')+' 0 0 0 1 0'}));defs.append(f);});
+    for(let owner=0;owner<8;owner++)for(let level=1;level<=2;level++){
       const id=`${prefix}фигура-${owner}-${level}`,paint=node('pattern',{id:id+'-краска',width:1,height:1,viewBox:level===1?'68 119 262 312':'47 40 300 321',preserveAspectRatio:'none'});
-      paint.append(node('image',{href:'img/катан/фигуры-v4.webp',x:-owner*384,y:-(level-1)*512,width:1536,height:1024}));defs.append(paint);
-      const piece=node('symbol',{id,viewBox:level===1?'55 105 285 340':'35 25 320 365'});piece.append(node('polygon',{points:silhouettes[level-1],fill:`url(#${id}-краска)`}));defs.append(piece);
+      paint.append(node('image',{href:'img/катан/фигуры-v4.webp',x:-(owner<4?owner:2)*384,y:-(level-1)*512,width:1536,height:1024}));defs.append(paint);
+      const piece=node('symbol',{id,viewBox:level===1?'55 105 285 340':'35 25 320 365'}),shape=node('polygon',{points:silhouettes[level-1],fill:`url(#${id}-краска)`});if(owner>=4)shape.setAttribute('filter',`url(#${prefix}краска-фишки-${owner})`);piece.append(shape);defs.append(piece);
     }
     for(let r=0;r<6;r++){const p=node('pattern',{id:`${prefix}ресурс-${r}`,width:1,height:1,viewBox:`${r%3*512} ${Math.floor(r/3)*512} 512 512`,preserveAspectRatio:'xMidYMid slice'});p.append(node('image',{href:'img/катан/ресурсы-v2.webp',width:1536,height:1024}));defs.append(p);}
     const shadows=node('filter',{id:prefix+'тень-фигуры',x:'-50%',y:'-50%',width:'200%',height:'200%'});shadows.append(node('feDropShadow',{dx:0,dy:4,stdDeviation:2,'flood-opacity':.6}));defs.append(shadows);
