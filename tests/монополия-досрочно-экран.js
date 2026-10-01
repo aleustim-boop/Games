@@ -104,6 +104,12 @@ function запуститьЭкран() {
   const заготовка =
     'var crypto = { getRandomValues: function (а) { а[0] = 12345; return а; } };' +
     'var matchMedia = window.matchMedia;' +
+    // Наблюдатель за изменениями страницы: экран ставит его на плашку «Закончить партию?»
+    // (js/монополия-экран.js, следитьЗаГолосованием). Эта проверка плашку голосования не трогает
+    // (она про итог и кнопки), поэтому пустышка честна: обратный вызов не нужен. Голосование — отдельная проверка.
+    'var MutationObserver = function (дело) { this.дело = дело; };' +
+    'MutationObserver.prototype.observe = function () {};' +
+    'MutationObserver.prototype.disconnect = function () {};' +
     'window.МонополияПравила = document.__заготовки.P;' +
     'window.МонополияДанные = document.__заготовки.Д;' +
     'window.МонополияБот = {};' +

@@ -180,6 +180,11 @@ function запустить(источник, память, правила) {
   const заготовка =
     'var crypto = { getRandomValues: function (а) { а[0] = 12345; return а; } };' + // новая партия берёт зерно из crypto
 
+    // Наблюдатель за страницей (голосование «Закончить партию?» в экране): эта проверка про
+    // сохранённую партию и плашку не трогает, поэтому пустышка честна.
+    'var MutationObserver = function (дело) { this.дело = дело; };' +
+    'MutationObserver.prototype.observe = function () {};' +
+    'MutationObserver.prototype.disconnect = function () {};' +
     'window.МонополияПравила = document.__заготовки.P;' +
     'window.МонополияДанные = document.__заготовки.Д;' +
     'window.МонополияБот = {}; window.МонополияПоле = {};' +
