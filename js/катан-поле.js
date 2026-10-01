@@ -45,7 +45,10 @@
       group.append(node('title',{},['Лес — дерево','Холмы — глина','Пастбище — шерсть','Поля — зерно','Горы — руда','Пустыня'][h.resource]+(h.number?` · бросок ${h.number}`:'')+(h.id===v.robber?' · заблокировано разбойником':'')));
       const points=geom.vertices.map(id=>{const [vx,vy]=xy(Г.vertices[id]);return [x+(vx-x)*.91,y+(vy-y)*.91].join(',');}).join(' ');
       const path=node('polygon',{points,fill:`url(#${prefix}${h.resource<5?'вариант-'+h.resource+'-'+variant:'земля-5'})`,'class':'кат-земля'});group.append(path);
-      if(production===h.number&&h.id!==v.robber)group.append(node('polygon',{points,fill:'none','class':'кат-производство'}));
+      if(production>0&&production===h.number&&h.id!==v.robber){
+        group.classList.add('кат-выпавшая-сота');
+        group.append(node('polygon',{points,fill:'none','class':'кат-производство-ореол'}),node('polygon',{points,'class':'кат-производство'}));
+      }
       if(h.number){
         group.append(node('circle',{cx:x,cy:y+22,r:25,'class':'кат-номер-фон'}));
         group.append(node('text',{x,y:y+26,'class':[6,8].includes(h.number)?'кат-номер кат-красный':'кат-номер'},h.number));

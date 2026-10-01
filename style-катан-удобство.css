@@ -121,6 +121,13 @@
 
 .катан #кат-диалог .кат-выбор-карты{padding:0;background:#142720;min-width:0}.катан #кат-диалог .кат-выбор-минус{padding:0}.кат-сброс-карты .кат-ресурс-карта{max-width:none}
 .катан #кат-диалог .кат-выбор-минус{font-size:clamp(10px,2.7vw,14px);line-height:1.2;white-space:normal;padding:4px 2px}
+.кат-выпавшая-сота .кат-производство-ореол{stroke:#ffc847;stroke-width:17;stroke-linejoin:round;opacity:.65;filter:drop-shadow(0 0 12px #ffcc49);pointer-events:none;animation:кат-сота-свечение 1.6s ease-in-out 3}
+.кат-выпавшая-сота .кат-производство{fill:#ffd454;fill-opacity:.13;stroke:#fff5b2;stroke-width:8;stroke-linejoin:round;filter:drop-shadow(0 0 4px #fff4b3);pointer-events:none}
+.кат-выпавшая-сота .кат-номер-фон{fill:#ffdb69;stroke:#fffbe6;stroke-width:4;filter:drop-shadow(0 0 7px #ffca39)}
+.кат-выпавшая-сота .кат-номер,.кат-выпавшая-сота .кат-вероятность{fill:#34200b}
+@keyframes кат-сота-свечение{0%,100%{opacity:.65}50%{opacity:.95}}
+.без-анимации .кат-производство-ореол{animation:none}
+@media(prefers-reduced-motion:reduce){.кат-производство-ореол{animation:none!important}}
 .кат-монополия-ресурс{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0;padding:12px;border:1px solid #b99a5b;border-radius:14px;background:#172c26}.кат-монополия-ресурс svg{flex:none;width:70px;height:100px}.кат-монополия-ресурс h3{margin:0;color:#f5d69a;font-size:20px}
 .кат-обмен-выполнен button{pointer-events:auto;display:block;margin:10px 0 0 auto;padding:7px 16px;min-height:44px;border:1px solid #e7c77e;border-radius:10px;background:#234b3d;color:#ffe0a0;font:inherit;cursor:pointer}
 .кат-кража-маршрут{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0 18px}.кат-кража-маршрут>div{display:grid;justify-items:center;gap:6px;min-width:0;flex:1;text-align:center}.кат-кража-маршрут .кат-аватар{width:46px;height:46px;flex:none}.кат-кража-маршрут b{max-width:100%;overflow-wrap:anywhere}.кат-кража-маршрут small{color:#c4cbbc}.кат-кража-маршрут>strong{font-size:30px;color:#e7c77e}
