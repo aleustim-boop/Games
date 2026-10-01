@@ -34,6 +34,17 @@
     b.onclick = fn;
     return b;
   };
+  /* Партия кончилась без победителя: по согласию стола или отменена без итога
+     (например, соперник ушёл до первого хода). Сервер (server/игры/монополия.js)
+     кладёт в вид признак «прервана» в обоих случаях и не различает их, а фаза
+     правил остаётся прежней («roll», «buy»…): без признака экран ждал бы хода,
+     которого уже не будет. Поэтому слова правдивы для обоих случаев. Обычный
+     конец («finished») сильнее: у него есть победитель, он показывается по-старому. */
+  const СЛОВА_СОГЛАСИЕ = "Партия закончена без победителя",
+    СЛОВА_БЕЗ_РЕЙТИНГА = "В рейтинг партия не записывается",
+    МЕТКА_СОГЛАСИЯ = "по согласию"; // что запоминаем в lastWinner, чтобы итог открылся один раз
+  const прерванаПоСогласию = () =>
+    v?.прервана === true && v.phase !== "finished";
   const money = (x) => Number(x).toLocaleString("ru-RU");
   const name = (i) =>
     i < 0 ? "Банк" : i === v?.me ? "Вы" : v?.names?.[i] || `Бот ${i}`;
@@ -173,6 +184,9 @@
     clearTimeout(timer);
     dialogKind = kind;
     $("mono-modal-title").textContent = title;
+    // Класс окна итогов: по нему css закрепляет кнопки внизу окна.
+    if (kind === "result") $("mono-modal").classList.add("mono-итог");
+    else $("mono-modal").classList.remove("mono-итог");
     const body = $("mono-modal-body");
     body.replaceChildren();
     if (!$("mono-modal").open) $("mono-modal").showModal();
@@ -253,7 +267,8 @@
     save();
   }
   async function act(move) {
-    if (busy || presenting) return false;
+    // Партия кончилась без победителя — ходов больше нет, сервер всё равно ответил бы отказом.
+    if (busy || presenting || прерванаПоСогласию()) return false;
     busy = true;
     $("mono-error").textContent = "";
     try {
@@ -435,7 +450,13 @@
       );
     }
     if (!v) return;
+    // Показ броска кубиков не должен держать кнопки запертыми, когда партия уже кончена.
+    if (прерванаПоСогласию()) {
+      clearTimeout(presentationTimer);
+      presenting = false;
+    }
     if (
+      !прерванаПоСогласию() &&
       previous &&
       v.events.some(
         (e) =>
@@ -498,9 +519,11 @@
         ? v.winner === v.me
           ? "Вы победили!"
           : `Победитель: ${name(v.winner)}`
-        : v.actor === v.me
-          ? "Ваш ход"
-          : `Действует ${name(v.actor)}`;
+        : прерванаПоСогласию()
+          ? СЛОВА_СОГЛАСИЕ
+          : v.actor === v.me
+            ? "Ваш ход"
+            : `Действует ${name(v.actor)}`;
     const hints = {
       roll: "Бросьте кубики и двигайтесь по городу.",
       jail: "Заплатите 50, используйте карту или попробуйте выбросить дубль.",
@@ -514,7 +537,9 @@
       inherit: "При получении залога нужно заплатить 10% банку.",
       finished: "Последний оставшийся в игре участник победил.",
     };
-    $("mono-hint").textContent = hints[v.phase] || "";
+    $("mono-hint").textContent = прерванаПоСогласию()
+      ? "Партия не доиграна, победителя нет."
+      : hints[v.phase] || "";
     const actions = $("mono-actions");
     actions.dataset.phase = v.phase;
     actions.replaceChildren();
@@ -544,6 +569,13 @@
       }
       if (lastWinner !== v.winner) {
         lastWinner = v.winner;
+        results();
+      }
+    } else if (прерванаПоСогласию()) {
+      // Ни кнопок хода, ни записи в историю: партия не доиграна, победа и поражение не считаются.
+      actions.append(button("Итоги партии", results, true));
+      if (lastWinner !== МЕТКА_СОГЛАСИЯ) {
+        lastWinner = МЕТКА_СОГЛАСИЯ;
         results();
       }
     } else if (v.phase === "buy") {
@@ -756,7 +788,9 @@
     }
     $("mono-properties").disabled = p.out;
     $("mono-trade").disabled =
-      p.out || !["roll", "jail", "manage", "buy", "debt"].includes(v.phase);
+      p.out ||
+      прерванаПоСогласию() ||
+      !["roll", "jail", "manage", "buy", "debt"].includes(v.phase);
     $("mono-event").textContent = v.events.slice(-1).map(logText).join(" · ");
     previous = JSON.parse(JSON.stringify(v));
     if (presenting)
@@ -767,6 +801,7 @@
       v.card &&
       v.card.serial !== lastCard &&
       v.phase !== "finished" &&
+      !прерванаПоСогласию() &&
       !presenting &&
       !$("mono-modal").open
     ) {
@@ -849,6 +884,7 @@
       body.append(table);
       if (
         s.owner === v.me &&
+        !прерванаПоСогласию() &&
         ["roll", "jail", "manage", "buy", "debt", "auction"].includes(v.phase)
       ) {
         if (c.rents) {
@@ -1046,15 +1082,32 @@
     // рейтинга один раз: победа, если я остался последним не разорившимся,
     // иначе поражение. «results» может открыться повторно (кнопка «Итоги
     // партии»), поэтому ручку сразу обнуляем — второй раз сдавать нечего.
+    // Партия без победителя не доиграна: победителя не называем.
+    // Билет рейтинга тут не сдаётся сам: такая партия приходит только по сети (online).
+    const этоСогласие = прерванаПоСогласию();
     if (!online && ручкаРейтинга && window.ОчкиРейтинга) {
       window.ОчкиРейтинга.сдать(ручкаРейтинга, v.winner === v.me ? "победа" : "поражение");
       ручкаРейтинга = null;
     }
     const body = modal(
-      v.winner === v.me ? "Ваш город победил!" : "Партия завершена",
+      этоСогласие
+        ? СЛОВА_СОГЛАСИЕ
+        : v.winner === v.me
+          ? "Ваш город победил!"
+          : "Партия завершена",
       "result",
     );
-    body.append(el("p", `Победитель: ${name(v.winner)} · Ходов: ${v.round}`));
+    // Текст и список игроков прокручиваются, кнопки лежат отдельно и закреплены внизу окна.
+    const список = el("div", undefined, "mono-итог-список");
+    body.append(список);
+    список.append(
+      el(
+        "p",
+        этоСогласие
+          ? `${СЛОВА_БЕЗ_РЕЙТИНГА} · Ходов: ${v.round}`
+          : `Победитель: ${name(v.winner)} · Ходов: ${v.round}`,
+      ),
+    );
     for (const [i, p] of v.players.entries()) {
       const row = el("div", undefined, "mono-property-row");
       row.append(
@@ -1062,18 +1115,18 @@
         el("span", name(i)),
         el("b", p.out ? "Банкрот" : money(p.money)),
       );
-      body.append(row);
+      список.append(row);
     }
     // Соперник (или все за столом) уже вышли — звать на реванш некого,
     // проверяем это раньше прочих подписей, чтобы не путать игрока.
     if (online && network?.соперникУшёл)
-      body.append(el("p", "Реванша не будет — вернитесь в меню.", "подпись"));
+      список.append(el("p", "Реванша не будет — вернитесь в меню.", "подпись"));
     // Мы уже позвали на реванш (видно и после закрытия-открытия «Итогов партии»,
     // не только сразу после клика) — или это уже соперник зовёт нас.
     else if (online && network?.яХочуЕщё)
-      body.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
+      список.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
     else if (online && network?.соперникХочетЕщё)
-      body.append(
+      список.append(
         el(
           "p",
           "Кто-то из игроков уже зовёт сыграть ещё — жмите «Сыграть ещё».",
@@ -1089,7 +1142,7 @@
             $("mono-error").textContent = r?.причина || "Нет связи";
           else {
             кнопкаЕщё.disabled = true;
-            body.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
+            список.append(el("p", "Ждём согласия остальных игроков…", "подпись"));
           }
         } else {
           close();
@@ -1100,10 +1153,14 @@
     );
     кнопкаЕщё.disabled =
       online && Boolean(network?.яХочуЕщё || network?.соперникУшёл);
-    body.append(кнопкаЕщё, button("Посмотреть поле", close));
+    const кнопкиИтога = el("div", undefined, "mono-итог-кнопки");
+    body.append(кнопкиИтога);
+    кнопкиИтога.append(кнопкаЕщё, button("Посмотреть поле", close));
     // «В друзья» — только по сети, узел пустой, дальше рисует js/сеть.js.
     if (online && typeof window.Сеть?.кнопкаВДрузья === "function")
-      window.Сеть.кнопкаВДрузья(body.appendChild(el("div", undefined, "подпись")));
+      window.Сеть.кнопкаВДрузья(
+        кнопкиИтога.appendChild(el("div", undefined, "подпись")),
+      );
   }
   function history() {
     const body = modal("Мои партии");
@@ -1286,7 +1343,11 @@
           }),
         );
     body.append(button("Правила", rules));
-    if (v.phase !== "finished" && !v.players[v.me].out)
+    if (
+      v.phase !== "finished" &&
+      !прерванаПоСогласию() &&
+      !v.players[v.me].out
+    )
       body.append(
         button("Завершить участие", () => {
           const b = modal("Завершить участие?");

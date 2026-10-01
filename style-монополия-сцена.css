@@ -458,6 +458,175 @@ body.монополия .кнопка--главная {
     linear-gradient(#0e3025ed, #051b13f5),
     url("img/монополия/сукно-v2.webp") center/cover;
 }
+/* Окно итогов: текст и список игроков прокручиваются, кнопки закреплены внизу
+   и видны всегда. Правила только для класса итога — другие окна не меняются. */
+#mono-modal.mono-итог[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 18px 18px 16px;
+}
+#mono-modal.mono-итог .mono-dialog-head {
+  flex: none;
+}
+#mono-modal.mono-итог .mono-dialog-head h2 {
+  font-size: 22px;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+#mono-modal.mono-итог #mono-modal-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.mono-итог-список {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 22px;
+  /* Тонкая золотая полоса прокрутки и затухание у нижнего края: видно, что список листается. */
+  scrollbar-width: thin;
+  scrollbar-color: #d7ae65 #03140f66;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 22px), #0000);
+  mask-image: linear-gradient(#000 calc(100% - 22px), #0000);
+}
+.mono-итог-список::-webkit-scrollbar {
+  width: 5px;
+}
+.mono-итог-список::-webkit-scrollbar-thumb {
+  background: #d7ae65;
+  border-radius: 3px;
+}
+.mono-итог-список::-webkit-scrollbar-track {
+  background: #03140f66;
+  border-radius: 3px;
+}
+/* Пустой узел под «В друзья» (его наполняет js/сеть.js) не даёт лишнего зазора. */
+.mono-итог-кнопки > div:empty {
+  display: none;
+}
+.mono-итог-кнопки {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #d4af6840;
+}
+.mono-итог-кнопки .mono-btn {
+  width: 100%;
+  margin: 0;
+  min-height: 48px;
+}
+/* Гнездо «В друзья» (строки кладёт js/сеть.js): кнопки на всю ширину окна одна под другой
+   с теми же отступами, что и у главных кнопок, — без дыры справа и без слипания. */
+.mono-итог-кнопки > :not(.mono-btn) {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+.mono-итог-кнопки > :not(.mono-btn) > button {
+  width: 100%;
+  margin: 0;
+  min-height: 48px;
+}
+/* Фишка — тоже span, и правило «.mono-property-row span { flex: 1 }» растягивало её в ширину. */
+.mono-итог-список .mono-token {
+  flex: none;
+}
+/* Узкий или низкий экран (320×568): шапка и строки плотнее, чтобы три игрока влезли без прокрутки. */
+@media (max-width: 360px), (max-height: 640px) {
+  #mono-modal.mono-итог[open] {
+    padding: 14px 14px 12px;
+  }
+  #mono-modal.mono-итог .mono-dialog-head h2 {
+    font-size: 19px;
+    margin: 0 0 6px;
+  }
+  #mono-modal.mono-итог .mono-dialog-head button {
+    font-size: 26px;
+  }
+  #mono-modal.mono-итог #mono-modal-body p {
+    line-height: 1.35;
+    margin: 0 0 6px;
+  }
+  .mono-итог-список .mono-property-row {
+    padding: 6px 12px;
+    margin: 5px 0;
+    gap: 10px;
+  }
+  .mono-итог-список .mono-token {
+    width: 36px;
+    height: 36px;
+  }
+  .mono-итог-кнопки {
+    gap: 8px;
+    padding-top: 10px;
+  }
+  .mono-итог-кнопки .mono-btn {
+    min-height: 46px;
+    padding: 10px 16px;
+  }
+  .mono-итог-кнопки > :not(.mono-btn) {
+    gap: 8px;
+  }
+  .mono-итог-кнопки > :not(.mono-btn) > button {
+    min-height: 46px;
+  }
+}
+/* Альбомный экран (568×320): кнопки в один ряд, шапка и строки ещё плотнее. */
+@media (max-height: 480px) {
+  #mono-modal.mono-итог[open] {
+    padding: 10px 14px 10px;
+  }
+  #mono-modal.mono-итог .mono-dialog-head h2 {
+    font-size: 17px;
+    margin: 0 0 4px;
+  }
+  #mono-modal.mono-итог #mono-modal-body p {
+    margin: 0 0 4px;
+    line-height: 1.25;
+  }
+  .mono-итог-список {
+    padding-bottom: 14px;
+  }
+  .mono-итог-список .mono-property-row {
+    padding: 4px 10px;
+    margin: 4px 0;
+  }
+  .mono-итог-список .mono-token {
+    width: 28px;
+    height: 28px;
+  }
+  .mono-итог-кнопки {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    padding-top: 8px;
+  }
+  /* «В друзья» (строки кладёт js/сеть.js): отдельный ряд, кнопки рядом друг с другом. */
+  .mono-итог-кнопки > :not(.mono-btn) {
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  .mono-итог-кнопки > :not(.mono-btn) > button {
+    flex: 1 1 0;
+    margin: 0;
+    min-height: 40px;
+  }
+  .mono-итог-кнопки .mono-btn {
+    flex: 1 1 0;
+    min-height: 44px;
+    padding: 8px 10px;
+  }
+}
 .mono-settings {
   background: #031a14cd;
   padding: 22px !important;
