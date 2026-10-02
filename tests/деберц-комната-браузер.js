@@ -78,7 +78,14 @@ async function прогнать(портФайлов, портКомнат) {
       await p.locator('#экран-игры').waitFor({ state: 'visible' });
       assert.equal(await p.locator('.деберц-участник').count(), n - 1, МЕТКА + ' партия восстановлена после перезагрузки');
       await p.getByRole('button', { name: 'За столом', exact: true }).click();
-      await p.locator('#деберц-сдаться').click(); await p.locator('#деберц-сдаться-да').click();
+      if (n > 2) {
+        // Больше чем на двоих при открытой двери «Сдаться» скрыта (js/деберц-экран.js, показать()):
+        // партию заканчивают голосованием. Один живой игрок среди ботов — решает один.
+        assert(await p.locator('#деберц-сдаться').isHidden(), МЕТКА + ' за столом больше чем на двоих «Сдаться» скрыта');
+        await p.locator('#деберц-предложить-закончить').click();
+      } else {
+        await p.locator('#деберц-сдаться').click(); await p.locator('#деберц-сдаться-да').click();
+      }
       await p.getByRole('button', { name: 'В меню', exact: true }).click();
       assert(await p.locator('#деберц-боты').isVisible(), МЕТКА + ' после сдачи вернулись в лобби деберца');
       console.log('Комната ' + режим + ': создание, боты, начало, взятка, возврат и сдача — OK');
