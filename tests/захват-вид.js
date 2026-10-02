@@ -106,6 +106,26 @@ function подготовитьКопию(режим) {
     if (исходник.indexOf(якорь) === -1) throw new Error('--сломать-эффекты: в js/захват-экран.js не нашлась функция сделатьШаг (якорь не найден — провал)');
     fs.mkdirSync(path.join(папка, 'js'), { recursive: true });
     fs.writeFileSync(path.join(папка, 'js', 'захват-экран.js'), исходник.replace(якорь, якорь + " if (шаг.вид === 'стрелка' || шаг.вид === 'вспышка') return;"));
+  } else if (режим === 'всплытие') {
+    // Копия js/захват-стол.js: функция «всплытие» сразу выходит — «+N/−N» раскрытия не появляются.
+    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'захват-стол.js'), 'utf8');
+    const якорь = 'function всплытие(область, текст, знак, длитМс) {';
+    if (исходник.split(якорь).length !== 2) throw new Error('--сломать-всплытие: в js/захват-стол.js функция всплытие найдена не один раз (якорь не найден — провал)');
+    fs.mkdirSync(path.join(папка, 'js'), { recursive: true });
+    fs.writeFileSync(path.join(папка, 'js', 'захват-стол.js'), исходник.replace(якорь, () => якорь + ' return;'));
+  } else if (режим === 'прозрачность') {
+    // Копия style-захват.css: у «+N» прозрачность 0 насильно (даже анимации не пробить) — надпись невидима.
+    const css = fs.readFileSync(path.join(ПРОЕКТ, 'style-захват.css'), 'utf8');
+    const якорь = '.захват-всплытие {\n';
+    if (css.split(якорь).length !== 2) throw new Error('--сломать-прозрачность: правило .захват-всплытие не нашлось (якорь не найден — провал)');
+    fs.writeFileSync(path.join(папка, 'style-захват.css'), css.replace(якорь, () => якорь + '  opacity: 0 !important;\n'));
+  } else if (режим === 'страховка') {
+    // Копия js/захват-стол.js: страховочный таймер всплытия не ставится — при «уменьшенном движении» узлы копятся.
+    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'захват-стол.js'), 'utf8');
+    const якорь = 'в.таймер = таймер.поставить(';
+    if (исходник.split(якорь).length !== 2) throw new Error('--сломать-страховку: страховочный таймер найден не один раз (якорь не найден — провал)');
+    fs.mkdirSync(path.join(папка, 'js'), { recursive: true });
+    fs.writeFileSync(path.join(папка, 'js', 'захват-стол.js'), исходник.replace(якорь, () => 'в.таймер = (function () { return null; })('));
   } else if (режим === 'размер') {
     // Копия js/захват-экран.js: вызов слушатьРазмер() убран — окно меняет размер, а карта и шайбы не пересчитываются.
     const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'захват-экран.js'), 'utf8');
@@ -123,8 +143,8 @@ function подготовитьКопию(режим) {
       холст: ['.захват-холст { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }',
         '.захват-холст { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; transform: translateY(70px) scale(0.9); }'],
       пластина: ['position: absolute; left: -1px; right: -1px; bottom: calc(100% + 7px); z-index: 3;',
-        'position: absolute; left: -1px; right: -1px; bottom: 0; z-index: 3;'],
-      пилюля: ['transform: translate(-50%, -100%); margin-top: -1px;', 'transform: translate(-50%, -100%) translateX(-2000px); margin-top: -1px;']
+        'position: absolute; left: -1px; right: -1px; top: calc(100% + 7px); bottom: auto; z-index: 3;'],
+      пилюля: ['transform: translate(-50%, -100%); margin-top: -1px;', 'transform: translate(-50%, -100%); translate: -2000px 0; margin-top: -1px;']
     };
     const [было, стало] = порчи[режим];
     const испорчен = css.replace(было, () => стало);
@@ -150,6 +170,12 @@ let копия = null;
 if (аргументы.includes('--сломать')) копия = подготовитьКопию('слой');
 else if (аргументы.includes('--сломать-фон')) копия = подготовитьКопию('фон');
 else if (аргументы.includes('--сломать-эффекты')) копия = подготовитьКопию('эффекты');
+if (аргументы.includes('--сломать-всплытие')) копия = подготовитьКопию('всплытие');
+if (аргументы.includes('--сломать-прозрачность')) копия = подготовитьКопию('прозрачность');
+if (аргументы.includes('--сломать-страховку')) копия = подготовитьКопию('страховка');
+const ТОЛЬКО_ДВИЖЕНИЕ = аргументы.includes('--сломать-страховку');
+const ТОЛЬКО_ВСПЛЫТИЕ = аргументы.includes('--сломать-всплытие') || аргументы.includes('--сломать-прозрачность');
+const ТОЛЬКО_СЧЁТ = аргументы.includes('--сломать-счёт');   // порча стиля — через page.route, копии на диске нет
 const ТОЛЬКО_РАЗМЕР = аргументы.includes('--сломать-размер');
 if (ТОЛЬКО_РАЗМЕР) копия = подготовитьКопию('размер');
 for (const р of ['место', 'холст', 'пластина', 'пилюля']) if (аргументы.includes('--сломать-' + р)) копия = подготовитьКопию(р);
@@ -161,9 +187,10 @@ const пауза = мс => new Promise(г => setTimeout(г, мс));
 const сниматьсяФайлы = [];
 
 /* Новая страница: подделка Telegram, «не новичок», слушатели консоли и сети. */
-async function открыть(браузер, порт, ш, в) {
+async function открыть(браузер, порт, ш, в, допНастройка) {
   const контекст = await браузер.newContext({ viewport: { width: ш, height: в } });
   const страница = await контекст.newPage();
+  if (допНастройка) await допНастройка(страница);
   await подготовитьПодделку(страница, {});
   const сост = { ошибки: [], сбои: [], картинки: [], фаза: 'полный', цвета: new Set() };
   страница.on('console', с => {
@@ -723,6 +750,212 @@ async function проверитьСменуРазмера(браузер, пор
   await контекст.close();
 }
 
+/* Г2в, часть А: во время раскрытия (полный режим, 390×844) над шайбами появляются «+N»/«−N» (.захват-всплытие):
+   текст вида +N или −N, знак совпадает с классом, пилюля целиком внутри окна карты; после касания карты
+   («Пропустить») их 0. Ноль найденных всплытий — провал. Один снимок «+N» — в папку снимков. */
+async function проверитьВсплытия(браузер, порт) {
+  console.log('\n=== Всплытия «+N/−N» во время раскрытия: 390×844, полный режим ===');
+  const { контекст, страница, сост } = await открыть(браузер, порт, 390, 844);
+  try {
+    await страница.click('#захват-боты');
+    await страница.waitForTimeout(300);
+    await страница.click('#захват-выбор-число [data-значение="3"]');
+    await страница.click('#захват-начать');
+    await страница.waitForTimeout(1200);
+    // Наблюдатель: каждое новое всплытие записывается со своим местом (на следующем кадре, когда оно уже разложено).
+    await страница.evaluate(() => {
+      window.__вспл = [];
+      const записать = у => requestAnimationFrame(() => {
+        const р = у.getBoundingClientRect(), окно = document.querySelector('.захват-окно-карты'), О = окно ? окно.getBoundingClientRect() : null;
+        window.__вспл.push({ текст: (у.textContent || '').trim(), класс: у.className, ширина: р.width, окно: !!О,
+          внутри: !!О && р.width > 0 && р.left >= О.left - 0.5 && р.right <= О.right + 0.5 && р.top >= О.top - 0.5 && р.bottom <= О.bottom + 0.5,
+          где: Math.round(р.left) + ',' + Math.round(р.top) + ',' + Math.round(р.right) + ',' + Math.round(р.bottom) });
+      });
+      new MutationObserver(списки => списки.forEach(с => с.addedNodes.forEach(у => {
+        if (у.nodeType === 1 && у.classList.contains('захват-всплытие')) записать(у);
+      }))).observe(document.body, { childList: true, subtree: true });
+    });
+    const раундДо = await страница.evaluate(() => (document.getElementById('захват-раунд').textContent || '').trim());
+    await страница.click('#захват-готово');
+    await страница.waitForTimeout(300);
+    if (await страница.evaluate(() => { const у = document.getElementById('захват-остаток'); return !!у && !у.classList.contains('скрыт'); })) {
+      await страница.click('#захват-остаток-да', { timeout: 4000 }).catch(() => {});
+    }
+    const появилось = await страница.waitForFunction(() => document.querySelectorAll('.захват-всплытие--плюс').length > 0, null, { timeout: 9000, polling: 'raf' }).then(() => true, () => false);
+    проверить(появилось, 'всплытия: во время раскрытия появилось «+N» (.захват-всплытие--плюс; ноль — провал)');
+    if (появилось) {
+      // Пик видимости: ждём кадр, где вычисленная прозрачность ≥ 0,95, и замораживаем анимацию (потом возобновим).
+      // elementFromPoint: пилюля у игры с pointer-events: none (пальцы идут к карте), поэтому на миг мерим с auto —
+      // так видно, лежит ли над надписью что-то ещё (шайба, пластина, другой слой).
+      const пик = await страница.waitForFunction(() => {
+        const у = Array.from(document.querySelectorAll('.захват-всплытие--плюс')).find(н => parseFloat(getComputedStyle(н).opacity) >= 0.95);
+        if (!у) return false;
+        у.getAnimations().forEach(а => а.pause());
+        const был = у.style.pointerEvents; у.style.pointerEvents = 'auto';
+        const р = у.getBoundingClientRect();
+        const сверху = document.elementFromPoint(р.left + р.width / 2, р.top + р.height / 2);
+        у.style.pointerEvents = был;
+        window.__пикВсплытия = { узел: у, текст: (у.textContent || '').trim(), прозрачность: parseFloat(getComputedStyle(у).opacity), ширина: р.width, высота: р.height,
+          сама: сверху === у || (!!сверху && у.contains(сверху)), сверху: сверху ? (сверху.className || сверху.tagName) : 'ничего', цвет: getComputedStyle(у).color, видимость: getComputedStyle(у).visibility };
+        return true;
+      }, null, { timeout: 9000, polling: 'raf' }).then(() => true, () => false);
+      проверить(пик, 'всплытия: нашёлся миг пика — прозрачность ≥ 0,95 (ноль — провал)');
+      if (пик) {
+        const д = await страница.evaluate(() => { const п = window.__пикВсплытия; return { текст: п.текст, прозрачность: п.прозрачность, ширина: п.ширина, высота: п.высота, сама: п.сама, сверху: п.сверху, цвет: п.цвет, видимость: п.видимость }; });
+        проверить(д.прозрачность >= 0.6, 'всплытия, видимость: прозрачность в пике ' + д.прозрачность + ' (нужно ≥ 0,6)');
+        проверить(д.ширина > 0 && д.высота > 0, 'всплытия, видимость: размер надписи ' + Math.round(д.ширина) + '×' + Math.round(д.высота) + ' (нужно > 0)');
+        проверить(д.видимость === 'visible', 'всплытия, видимость: visibility «' + д.видимость + '»');
+        проверить(д.сама, 'всплытия, видимость: в центре надписи «' + д.текст + '» лежит она сама, а не «' + д.сверху + '» (её не перекрывают)');
+        const файл = 'всплытие-плюс-N.png';
+        await страница.screenshot({ path: path.join(ПАПКА, файл) });
+        сниматьсяФайлы.push(файл);
+        await страница.evaluate(() => { window.__пикВсплытия.узел.getAnimations().forEach(а => а.play()); });
+      }
+    }
+    // Ждём конца раскрытия: после него записанные всплытия разбираем целиком.
+    await страница.waitForFunction(п => (document.getElementById('захват-раунд').textContent || '').trim() !== п, раундДо, { timeout: 25000 }).catch(() => {});
+    const записи = await страница.evaluate(() => window.__вспл.slice());
+    проверить(записи.length > 0, 'всплытия: за раскрытие записано всплытий: ' + записи.length + ' (ноль — провал)');
+    const плохойТекст = записи.filter(з => !/^[+−-]\d+$/.test(з.текст));
+    проверить(записи.length > 0 && !плохойТекст.length, 'всплытия: текст каждого — «+N» или «−N»' + (плохойТекст.length ? '; плохой: «' + плохойТекст[0].текст + '»' : ' (' + записи.slice(0, 4).map(з => з.текст).join(' ') + ' …)'));
+    const плохойЗнак = записи.filter(з => (/захват-всплытие--минус/.test(з.класс) ? !/^[−-]/.test(з.текст) : !/^\+/.test(з.текст)));
+    проверить(записи.length > 0 && !плохойЗнак.length, 'всплытия: знак текста совпадает с видом плюс/минус' + (плохойЗнак.length ? '; не совпал: «' + плохойЗнак[0].текст + '» ' + плохойЗнак[0].класс : ''));
+    const торчат = записи.filter(з => !з.окно || !з.внутри);
+    проверить(записи.length > 0 && !торчат.length, 'всплытия: каждое целиком внутри окна карты' + (торчат.length ? '; торчит: «' + торчат[0].текст + '» [' + торчат[0].где + ']' : ''));
+    // Пропуск: второй раунд, ждём всплытие и касаемся карты.
+    await страница.waitForTimeout(600);
+    await страница.click('#захват-готово');
+    await страница.waitForTimeout(300);
+    if (await страница.evaluate(() => { const у = document.getElementById('захват-остаток'); return !!у && !у.classList.contains('скрыт'); })) {
+      await страница.click('#захват-остаток-да', { timeout: 4000 }).catch(() => {});
+    }
+    const второе = await страница.waitForFunction(() => document.querySelectorAll('.захват-всплытие').length > 0, null, { timeout: 9000, polling: 'raf' }).then(() => true, () => false);
+    проверить(второе, 'всплытия, пропуск: перед касанием всплытие есть (контроль; ноль — провал)');
+    const точка = await страница.evaluate(() => { const о = document.querySelector('.захват-окно-карты').getBoundingClientRect(); return { x: о.left + 6, y: о.top + 6 }; });
+    await страница.mouse.click(точка.x, точка.y);
+    await страница.waitForTimeout(300);
+    const осталось = await страница.locator('.захват-всплытие').count();
+    проверить(второе && осталось === 0, 'всплытия, пропуск: после касания карты «Пропустить» всплытий ' + осталось + ' (нужно 0)');
+    проверить(сост.ошибки.length === 0, 'всплытия: консоль без ошибок' + (сост.ошибки.length ? ': ' + сост.ошибки.slice(0, 3).join(' | ') : ''));
+  } catch (е) {
+    проверить(false, 'всплытия: проверка упала: ' + String(е.message || е).split('\n')[0]);
+  }
+  await контекст.close();
+}
+
+/* Г2в, «уменьшенное движение» (reducedMotion: reduce): анимации в оформлении выключены, animationend не приходит,
+   поэтому «+N» снимает страховочный таймер стола. Во время раскрытия «+N» появляется (ноль — провал), и ни одно
+   не живёт дольше своего --длит (или 1000) + 400 мс: узлы не копятся. */
+async function проверитьУменьшенноеДвижение(браузер, порт) {
+  console.log('\n=== Всплытия при «уменьшенном движении» ===');
+  const { контекст, страница, сост } = await открыть(браузер, порт, 390, 844, с => с.emulateMedia({ reducedMotion: 'reduce' }));
+  try {
+    await страница.click('#захват-боты');
+    await страница.waitForTimeout(300);
+    await страница.click('#захват-выбор-число [data-значение="3"]');
+    await страница.click('#захват-начать');
+    await страница.waitForTimeout(1200);
+    await страница.evaluate(() => {
+      window.__жизнь = { видели: 0, засиделись: [], живых: new Map() };
+      const Ж = window.__жизнь;
+      new MutationObserver(сп => сп.forEach(с => с.addedNodes.forEach(у => {
+        if (у.nodeType === 1 && у.classList.contains('захват-всплытие')) {
+          Ж.видели++;
+          Ж.живых.set(у, { с: performance.now(), длит: parseFloat(у.style.getPropertyValue('--длит')) || 1000, анимация: getComputedStyle(у).animationName });
+        }
+      }))).observe(document.body, { childList: true, subtree: true });
+      const цикл = () => {
+        const т = performance.now();
+        Ж.живых.forEach((д, у) => {
+          if (!у.isConnected) { Ж.живых.delete(у); return; }
+          if (т - д.с > д.длит + 400) { Ж.засиделись.push((у.textContent || '') + ' ' + Math.round(т - д.с) + ' мс при длит ' + д.длит); Ж.живых.delete(у); }
+        });
+        requestAnimationFrame(цикл);
+      };
+      requestAnimationFrame(цикл);
+    });
+    const раундДо = await страница.evaluate(() => (document.getElementById('захват-раунд').textContent || '').trim());
+    await страница.click('#захват-готово');
+    await страница.waitForTimeout(300);
+    if (await страница.evaluate(() => { const у = document.getElementById('захват-остаток'); return !!у && !у.classList.contains('скрыт'); })) {
+      await страница.click('#захват-остаток-да', { timeout: 4000 }).catch(() => {});
+    }
+    await страница.waitForFunction(п => (document.getElementById('захват-раунд').textContent || '').trim() !== п, раундДо, { timeout: 25000 }).catch(() => {});
+    await страница.waitForTimeout(1600);
+    const р = await страница.evaluate(() => ({ видели: window.__жизнь.видели, засиделись: window.__жизнь.засиделись, осталось: document.querySelectorAll('.захват-всплытие').length,
+      без: window.matchMedia('(prefers-reduced-motion: reduce)').matches }));
+    проверить(р.без, 'уменьшенное движение: режим включён в браузере (контроль)');
+    проверить(р.видели > 0, 'уменьшенное движение: «+N» появлялись, всего ' + р.видели + ' (ноль — провал)');
+    проверить(р.видели > 0 && !р.засиделись.length, 'уменьшенное движение: ни одно не прожило дольше длит + 400 мс' + (р.засиделись.length ? '; засиделись: ' + р.засиделись.slice(0, 3).join('; ') : ''));
+    проверить(р.видели > 0 && р.осталось === 0, 'уменьшенное движение: после раскрытия узлов .захват-всплытие ' + р.осталось + ' (нужно 0)');
+    проверить(сост.ошибки.length === 0, 'уменьшенное движение: консоль без ошибок' + (сост.ошибки.length ? ': ' + сост.ошибки.slice(0, 3).join(' | ') : ''));
+  } catch (е) {
+    проверить(false, 'уменьшенное движение: проверка упала: ' + String(е.message || е).split('\n')[0]);
+  }
+  await контекст.close();
+}
+
+/* Г2в, часть Б: на 320×568 счёт игрока «N обл · M оч» — в одну строку и не обрезан. Мерим живой счёт и худший
+   («28 обл · 46 оч», текст подставляется в узлы). Ноль плашек — провал. ломать=true: стиль счёта портится
+   на лету (page.route): white-space: normal и фиксированные 14px — счёт переносится, проверка обязана покраснеть. */
+async function проверитьСчётНа320(браузер, порт, ломать) {
+  console.log('\n=== Счёт игроков в одну строку: 320×568' + (ломать ? ' (порча стиля)' : '') + ' ===');
+  let порченоРаз = 0;
+  const допНастройка = !ломать ? null : async страница => {
+    await страница.route(у => decodeURIComponent(у.pathname).endsWith('/style-захват.css'), async маршрут => {
+      const ответ = await маршрут.fetch();
+      const css = await ответ.text();
+      const было = 'white-space: nowrap; font-size: 11px; font-size: min(14px, 13.5cqi);';
+      const стало = 'white-space: normal; font-size: 14px;';
+      if (css.split(было).length !== 2) throw new Error('--сломать-счёт: в style-захват.css правило счёта не нашлось (якорь не найден — провал)');
+      порченоРаз++;
+      await маршрут.fulfill({ response: ответ, body: css.replace(было, () => стало) });
+    });
+  };
+  for (const игроков of [3, 6]) {
+    const { контекст, страница, сост } = await открыть(браузер, порт, 320, 568, допНастройка);
+    const метка = 'счёт на 320, ' + игроков + ' игроков';
+    try {
+      await страница.click('#захват-боты');
+      await страница.waitForTimeout(300);
+      await страница.click('#захват-выбор-число [data-значение="' + игроков + '"]');
+      await страница.click('#захват-начать');
+      await страница.waitForTimeout(1200);
+      const замер = (худший) => страница.evaluate(х => {
+        const узлы = Array.from(document.querySelectorAll('.захват-игрок:not(.скрыт) .захват-игрок__счёт'));
+        return узлы.map(у => {
+          if (х) у.textContent = '28 обл · 46 оч';
+          const п = у.getBoundingClientRect(), плашка = у.closest('.захват-игрок').getBoundingClientRect();
+          const диапазон = document.createRange(); диапазон.selectNodeContents(у);
+          const строк = new Set(Array.from(диапазон.getClientRects()).map(р => Math.round(р.top))).size;
+          const кегль = parseFloat(getComputedStyle(у).fontSize);
+          return { текст: у.textContent, строк: строк, высота: п.height, кегль: кегль, прокрутка: у.scrollWidth, ширина: у.clientWidth,
+            вПлашке: п.left >= плашка.left - 0.5 && п.right <= плашка.right + 0.5 };
+        });
+      }, худший);
+      if (!ломать && игроков === 6) {
+        const файл = 'плашки-320.png';
+        await страница.screenshot({ path: path.join(ПАПКА, файл) });
+        сниматьсяФайлы.push(файл);
+      }
+      for (const [подпись, худший] of [['живой', false], ['худший «28 обл · 46 оч»', true]]) {
+        const р = await замер(худший);
+        проверить(р.length >= игроков, метка + ' (' + подпись + '): плашек со счётом ' + р.length + ' (нужно ≥ ' + игроков + '; ноль — провал)');
+        if (!р.length) continue;
+        const многострочные = р.filter(з => з.строк !== 1 || з.высота > з.кегль * 1.7);
+        проверить(!многострочные.length, метка + ' (' + подпись + '): счёт в одну строку' + (многострочные.length ? '; не так: «' + многострочные[0].текст + '» строк ' + многострочные[0].строк + ', высота ' + Math.round(многострочные[0].высота) + ' при кегле ' + многострочные[0].кегль : ' (' + р[0].текст + ', кегль ' + р[0].кегль + ')'));
+        const обрезанные = р.filter(з => з.прокрутка > з.ширина + 0.5 || !з.вПлашке);
+        проверить(!обрезанные.length, метка + ' (' + подпись + '): счёт не обрезан — scrollWidth ≤ clientWidth и внутри плашки' + (обрезанные.length ? '; обрезан: «' + обрезанные[0].текст + '» ' + обрезанные[0].прокрутка + ' > ' + обрезанные[0].ширина : ''));
+      }
+      проверить(!ломать || порченоРаз > 0, метка + ': порча стиля дошла до страницы');
+      проверить(сост.ошибки.length === 0, метка + ': консоль без ошибок' + (сост.ошибки.length ? ': ' + сост.ошибки.slice(0, 3).join(' | ') : ''));
+    } catch (е) {
+      проверить(false, метка + ': проверка упала: ' + String(е.message || е).split('\n')[0]);
+    }
+    await контекст.close();
+  }
+}
+
 /* Замер раскрытия при замедлении процессора ×4. */
 async function замерить(браузер, порт, карта, лёгкий) {
   const [ш, в] = [390, 844];
@@ -782,9 +1015,17 @@ async function главная() {
   const замеры = [];
   try {
     if (ТОЛЬКО_РАЗМЕР) await проверитьСменуРазмера(браузер, порт);
+    else if (ТОЛЬКО_ВСПЛЫТИЕ) await проверитьВсплытия(браузер, порт);
+    else if (ТОЛЬКО_ДВИЖЕНИЕ) await проверитьУменьшенноеДвижение(браузер, порт);
+    else if (ТОЛЬКО_СЧЁТ) await проверитьСчётНа320(браузер, порт, true);
     else {
       for (const карта of КАРТЫ) for (const [ш, в] of ШИРИНЫ) await играть(браузер, порт, ш, в, карта);
-      if (!ЛОМАЮ) await проверитьСменуРазмера(браузер, порт);
+      if (!ЛОМАЮ) {
+        await проверитьСменуРазмера(браузер, порт);
+        await проверитьВсплытия(браузер, порт);
+        await проверитьУменьшенноеДвижение(браузер, порт);
+        await проверитьСчётНа320(браузер, порт, false);
+      }
     }
     if (ЗАМЕР) {
       console.log('\n=== Замер раскрытия, процессор ×4 медленнее, ширина 390 ===');
