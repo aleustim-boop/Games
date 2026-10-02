@@ -96,8 +96,8 @@ async function прогнать(портФайлов, портКомнат, то
       await p.evaluate(() => { const timer = window.setTimeout.bind(window); window.setTimeout = (fn, ms, ...args) => timer(fn, ms === 1500 || ms === 2400 || ms === 6000 ? 10 : ms, ...args); });
       let завершена = false;
       for (let шаг = 0; шаг < 3000; шаг++) {
-        if (await p.getByRole('button', { name: 'Сыграть ещё', exact: true }).isVisible()) { завершена = true; break; }
-        const действие = p.locator('#панель-кнопок button:enabled:not(.кнопка--инфо):not(#кнопка-эмоции), #деберц-итог-действия button:enabled').filter({ hasNotText: /Сыграть ещё|В лобби/ }).first();
+        if (await p.getByRole('button', { name: 'Играть ещё', exact: true }).isVisible()) { завершена = true; break; }
+        const действие = p.locator('#панель-кнопок button:enabled:not(.кнопка--инфо):not(#кнопка-эмоции), #деберц-итог-действия button:enabled').filter({ hasNotText: /Играть ещё|В меню|Рекорды|Похвастаться|Сыграть с ботом/ }).first();
         if (await действие.isVisible()) await действие.click();
         else {
           const карта = p.locator('#карты-человека button:enabled').first();
@@ -107,7 +107,7 @@ async function прогнать(портФайлов, портКомнат, то
       assert(завершена, МЕТКА + ' ' + режим + ': полная партия через нажатия');
       const результат = await p.evaluate(() => window.ДеберцПамять.открыть(localStorage).результаты());
       assert.equal(результат.length, 1, МЕТКА + ' результат партии записан'); assert.equal(результат[0].режим, режим, МЕТКА + ' режим результата верный');
-      await p.getByRole('button', { name: 'Сыграть ещё', exact: true }).click();
+      await p.getByRole('button', { name: 'Играть ещё', exact: true }).click();
       assert.equal(await p.locator('#счёт-я').textContent(), '0', МЕТКА + ' новая партия начата с нуля');
       await p.getByRole('button', { name: 'За столом', exact: true }).click();
       await p.locator('#деберц-сдаться').click(); await p.locator('#деберц-сдаться-да').click();

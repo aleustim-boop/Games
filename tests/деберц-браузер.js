@@ -187,12 +187,12 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || '8137');
     });
     let конец = false, снимок = false;
     for (let шаг = 0; шаг < 1500; шаг++) {
-      const ещё = страница.getByRole('button', { name: 'Сыграть ещё', exact: true });
+      const ещё = страница.getByRole('button', { name: 'Играть ещё', exact: true });
       if (await ещё.isVisible()) { конец = true; break; }
       // Бот может закончить партию между двумя чтениями DOM. Не нажимаем
       // реванш вместо следующей сдачи при таком обновлении экрана.
       const действие = страница.locator('#панель-кнопок button:enabled:not(.кнопка--инфо):not(#кнопка-эмоции), #деберц-итог-действия button:enabled')
-        .filter({ hasNotText: /Сыграть ещё|В лобби/ }).first();
+        .filter({ hasNotText: /Играть ещё|В меню|Рекорды|Похвастаться|Сыграть с ботом/ }).first();
       if (await действие.isVisible()) await действие.click();
       else {
         const карта = страница.locator('#карты-человека button:enabled').first();
@@ -217,7 +217,7 @@ const адрес = 'http://127.0.0.1:' + (process.argv[2] || '8137');
     await страница.locator('#кнопка-лист-игры-рекорды').click();
     assert.equal(await страница.locator('#деберц-список li').count(), 1);
     await страница.getByRole('button', { name: 'Закрыть результаты', exact: true }).click();
-    await страница.getByRole('button', { name: 'Сыграть ещё', exact: true }).click();
+    await страница.getByRole('button', { name: 'Играть ещё', exact: true }).click();
     assert.equal(await страница.locator('#счёт-я').textContent(), '0');
     assert.equal(await страница.locator('#счёт-бот').textContent(), '0');
     await страница.getByRole('button', { name: 'За столом', exact: true }).click();

@@ -233,7 +233,7 @@ async function ходить(с) {
     const кнопка = с.locator('#панель-кнопок button:enabled:not(.кнопка--инфо):not(#кнопка-эмоции), #деберц-итог-действия button:enabled').first();
     if (await кнопка.isVisible({ timeout: 300 })) {
       const т = (await кнопка.textContent()).trim();
-      if (!['Реванш', 'В лобби'].includes(т)) { await кнопка.click({ timeout: 1500 }); return 'кнопка «' + т + '»'; }
+      if (!['Реванш', 'В меню', 'Рекорды', 'Похвастаться', 'Сыграть с ботом'].includes(т)) { await кнопка.click({ timeout: 1500 }); return 'кнопка «' + т + '»'; }
     }
     const карта = с.locator('#карты-человека button:enabled').first();
     if (await карта.isVisible({ timeout: 300 })) {

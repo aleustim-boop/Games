@@ -217,8 +217,7 @@
 /* Лобби: изображение зависит и от высоты окна, нижняя панель не закрывает кнопки. */
 .деберц #экран-лобби { box-sizing: border-box; height: 100dvh; overflow-y: auto; justify-content: flex-start; gap: 8px; padding-top: 10px; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
 .деберц #экран-лобби > * { flex-shrink: 0; }
-.деберц #экран-лобби .лобби__картинка { height: clamp(110px, 25dvh, 250px); min-height: 0; aspect-ratio: auto; margin: 0; }
-.деберц #экран-лобби .лобби__рисунок { height: 100%; width: 100%; object-fit: cover; }
+/* Рамку картинки 16:10 даёт общий style.css; лобби при нехватке высоты прокручивается. */
 .деберц #экран-лобби .лобби__заголовок { font-size: clamp(30px, 5dvh, 48px); margin: 0; line-height: 1; }
 .деберц #экран-лобби > .подпись { margin: 0; font-size: 12px; }
 .деберц #экран-лобби .карточка-профиля { min-height: 45px; padding: 8px 12px; --аватар: 30px; }
@@ -251,6 +250,8 @@
 }
 
 .деберц #экран-результата { position: fixed; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); margin: 0; padding: 24px; background: #171d1b; box-shadow: 0 0 0 100vmax #000b, 0 20px 70px #0008; flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; pointer-events: auto; }
+/* Окно итога выше летящих карт (у них z-index 160): карта не закрывает кнопки. */
+.деберц #экран-результата.экран--виден { z-index: 170; }
 .деберц #экран-результата::before { display: none; }
 .деберц #экран-результата h2 { width: 100%; text-align: center; font-size: 28px; }
 .деберц #пояснение-результата { text-align: center; }

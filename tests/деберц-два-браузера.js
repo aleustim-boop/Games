@@ -137,7 +137,7 @@ async function прогнать(портФайлов, портКомнат) {
         // tests/деберц-комната-браузер.js).
         const кнопка = с.locator('#панель-кнопок button:enabled:not(.кнопка--инфо):not(#кнопка-эмоции), #деберц-итог-действия button:enabled').first();
         const карта = с.locator('#карты-человека button:enabled').first();
-        if (await кнопка.isVisible() && !['Реванш', 'В лобби'].includes(await кнопка.textContent())) { await кнопка.click(); нажали = true; break; }
+        if (await кнопка.isVisible() && !['Реванш', 'В меню', 'Рекорды', 'Похвастаться', 'Сыграть с ботом'].includes(await кнопка.textContent())) { await кнопка.click(); нажали = true; break; }
         if (await карта.isVisible()) { await нажатьКарту(с, карта); нажали = true; break; }
       }
       if (!нажали) await а.waitForTimeout(30);
@@ -153,9 +153,9 @@ async function прогнать(портФайлов, портКомнат) {
     await а.locator('#деберц-сдаться').click();
     await а.locator('#деберц-сдаться-да').click();
     await б.waitForFunction(() => document.getElementById('деберц-статус').textContent.includes('Вы победили'));
-    await а.getByRole('button', { name: 'В лобби', exact: true }).click();
+    await а.getByRole('button', { name: 'В меню', exact: true }).click();
     assert(await а.locator('#деберц-боты').isVisible());
-    await б.getByRole('button', { name: 'В лобби', exact: true }).click();
+    await б.getByRole('button', { name: 'В меню', exact: true }).click();
     assert.deepEqual(ошибки, []);
     if (предупреждения.length) {
       console.log('Предупреждения в консоли (не проваливают проверку, ' + предупреждения.length + ' шт.):');

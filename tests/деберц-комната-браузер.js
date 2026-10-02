@@ -79,7 +79,7 @@ async function прогнать(портФайлов, портКомнат) {
       assert.equal(await p.locator('.деберц-участник').count(), n - 1, МЕТКА + ' партия восстановлена после перезагрузки');
       await p.getByRole('button', { name: 'За столом', exact: true }).click();
       await p.locator('#деберц-сдаться').click(); await p.locator('#деберц-сдаться-да').click();
-      await p.getByRole('button', { name: 'В лобби', exact: true }).click();
+      await p.getByRole('button', { name: 'В меню', exact: true }).click();
       assert(await p.locator('#деберц-боты').isVisible(), МЕТКА + ' после сдачи вернулись в лобби деберца');
       console.log('Комната ' + режим + ': создание, боты, начало, взятка, возврат и сдача — OK');
       await p.close();
