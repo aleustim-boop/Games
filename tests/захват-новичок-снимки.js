@@ -1,0 +1,235 @@
+'use strict';
+
+/* =====================================================================
+   «ЗАХВАТ»: ПЕРВАЯ ПАРТИЯ НОВИЧКА СО СНИМКАМИ — БРАУЗЕРНАЯ ПРОВЕРКА (playwright/chromium).
+   Сводный node-прогон её не гоняет.
+
+   Что делает (ширины 360 и 390, чистая память игрока = первая партия):
+     1. открывает захват.html, жмёт «С ботами» — первая партия стартует сразу;
+     2. раунд 1: расставляет всё подкрепление касаниями своей области; на своих областях обязана
+        быть метка пульса, ровно на одной НЕ своей — «цель новичка». Снимок: цель-<ширина>.png;
+     3. жмёт «Готово», ждёт, пока на экране реально итог раунда (пластина с «Журнал ›»):
+        текст начинается с «Раунд 1:», есть «Журнал ›», нет «за Вы» и «Перевод вас».
+        Снимок: итог-раунда-<ширина>.png;
+     4. раунд 2: меток пульса и цели нет;
+     5. консоль без ошибок.
+   Каждый поиск, нашедший ноль, — провал, а не пропуск.
+
+   Запуск:
+       node tests/захват-новичок-снимки.js
+       node tests/захват-новичок-снимки.js --стол <путь>   (подменяет js/захват-стол.js этой копией;
+                                                            снимки тогда — во временную папку)
+   Копия с вырезанной меткой цели для ломающего запуска делается во временной папке
+   командой:  node tests/захват-новичок-снимки.js --сделать-копию <путь>
+   Перед запуском: node штаб/браузер-занят.js
+   Страницы отдаёт свой статический сервер на свободном порту (гасится в конце).
+   ===================================================================== */
+
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const http = require('http');
+
+const ПРОЕКТ = path.join(__dirname, '..');
+const аргументы = process.argv.slice(2);
+
+/* Порча — только в КОПИИ: метка цели новичка вырезана. Файл проекта не трогаем. */
+if (аргументы.includes('--сделать-копию')) {
+  const куда = аргументы[аргументы.indexOf('--сделать-копию') + 1];
+  if (!куда) { console.log('Укажите путь копии: --сделать-копию <путь>'); process.exit(1); }
+  const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'захват-стол.js'), 'utf8');
+  const якорь = "if (цельНовичка === ш.область) имена.push('захват-шайба--цель-новичка');";
+  if (исходник.split(якорь).length !== 2) { console.log('Якорь метки цели не найден ровно один раз — копию не делаю'); process.exit(1); }
+  fs.mkdirSync(path.dirname(куда), { recursive: true });
+  fs.writeFileSync(куда, исходник.replace(якорь, () => '/* метка цели вырезана порчей */'));
+  console.log('Копия с вырезанной меткой цели: ' + куда);
+  process.exit(0);
+}
+
+const иСтол = аргументы.indexOf('--стол');
+const КОПИЯ_СТОЛА = иСтол >= 0 ? path.resolve(аргументы[иСтол + 1] || '') : null;
+if (иСтол >= 0 && (!КОПИЯ_СТОЛА || !fs.existsSync(КОПИЯ_СТОЛА))) { console.log('Файл копии стола не найден: ' + КОПИЯ_СТОЛА); process.exit(1); }
+
+// Ломающий запуск снимает во временную папку: настоящие снимки не затираются.
+const ПАПКА = КОПИЯ_СТОЛА
+  ? fs.mkdtempSync(path.join(os.tmpdir(), 'захват-новичок-снимки-'))
+  : path.join(ПРОЕКТ, 'tests', 'снимки', 'захват-новичок');
+fs.mkdirSync(ПАПКА, { recursive: true });
+const { chromium, подготовитьПодделку } = require(path.join(ПРОЕКТ, 'tests', 'браузер-робот.js'));
+
+let провалов = 0;
+let проверок = 0;
+function проверить(условие, слова) {
+  проверок++;
+  console.log((условие ? '  ок   — ' : '  ПЛОХО— ') + слова);
+  if (!условие) провалов++;
+  return условие;
+}
+
+const ТИПЫ = {
+  '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8', '.json': 'application/json',
+  '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png',
+  '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf'
+};
+
+function поднятьСервер() {
+  const сервер = http.createServer((запрос, ответ) => {
+    let путь = '/';
+    try { путь = decodeURIComponent(запрос.url.split('?')[0]); } catch (_) { /* как есть */ }
+    if (путь === '/') путь = '/index.html';
+    const файл = path.join(ПРОЕКТ, путь);
+    if (файл.startsWith(ПРОЕКТ)) {
+      try {
+        if (fs.statSync(файл).isFile()) {
+          ответ.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл).toLowerCase()] || 'application/octet-stream' });
+          ответ.end(fs.readFileSync(файл));
+          return;
+        }
+      } catch (_) { /* нет файла */ }
+    }
+    ответ.writeHead(404); ответ.end('нет такого файла');
+  });
+  return new Promise(готово => сервер.listen(0, '127.0.0.1', () => готово(сервер)));
+}
+
+const пауза = мс => new Promise(г => setTimeout(г, мс));
+
+async function партия(браузер, порт, ш, в) {
+  const метка = 'ширина ' + ш;
+  console.log('\n=== ' + метка + '×' + в + ' ===');
+  const контекст = await браузер.newContext({ viewport: { width: ш, height: в } });
+  const страница = await контекст.newPage();
+  const ошибки = [];
+  страница.on('console', с => {
+    const адрес = с.location().url || '';
+    if (с.type() === 'error' && адрес.indexOf('telegram-web-app.js') === -1) ошибки.push(с.text() + ' ' + адрес);
+  });
+  страница.on('pageerror', е => ошибки.push('необработанная ошибка: ' + е.message));
+  await подготовитьПодделку(страница, {});
+  // Маршрут ставим ПОСЛЕ подделки: последний поставленный срабатывает первым.
+  let подменено = 0;
+  if (КОПИЯ_СТОЛА) {
+    // Адрес с кириллицей приходит закодированным — сравниваем после раскодирования.
+    await страница.route(адрес => { try { return /\/js\/захват-стол\.js/.test(decodeURIComponent(адрес.pathname)); } catch (_) { return false; } }, маршрут => {
+      подменено++;
+      return маршрут.fulfill({ status: 200, contentType: 'application/javascript; charset=utf-8', body: fs.readFileSync(КОПИЯ_СТОЛА) });
+    });
+  }
+  // Память НЕ засеваем: «zahvat-learned» нет — это первая партия игрока.
+  await страница.goto('http://127.0.0.1:' + порт + '/захват.html', { waitUntil: 'load' });
+  await страница.waitForTimeout(800);
+  const снять = async имя => { const файл = path.join(ПАПКА, имя + '-' + ш + '.png'); await страница.screenshot({ path: файл }); console.log('    снимок: ' + файл); };
+  const шаг = async (имя, дело) => {
+    try { await дело(); } catch (е) { проверить(false, метка + ': шаг «' + имя + '» упал: ' + String(е.message || е).split('\n')[0]); }
+  };
+
+  // Описание шайб: номер, своя ли, метки.
+  const описатьШайбы = () => страница.evaluate(() => {
+    const м = document.querySelector('.захват-игрок--я .захват-игрок__значок');
+    const р = м && /захват-игрок__значок--([^ ]+)/.exec(m_class(м));
+    function m_class(у) { return у.getAttribute('class') || ''; }
+    const я = р ? р[1] : null;
+    return {
+      я: я,
+      шайбы: Array.from(document.querySelectorAll('.захват-шайба')).map(у => ({
+        область: Number(у.getAttribute('data-область')),
+        своя: !!я && у.classList.contains('захват-шайба--' + я),
+        пульс: у.classList.contains('захват-шайба--пульс'),
+        цель: у.classList.contains('захват-шайба--цель-новичка')
+      }))
+    };
+  });
+
+  await шаг('старт', async () => {
+    await страница.click('#захват-боты');
+    await страница.waitForTimeout(1500);
+    проверить(await страница.evaluate(() => document.getElementById('экран-игры').classList.contains('экран--виден')),
+      метка + ': «С ботами» сразу открыл стол (первая партия, без настроек)');
+    проверить(/Раунд\s*1/.test(await страница.evaluate(() => document.getElementById('захват-раунд').textContent || '')),
+      метка + ': идёт раунд 1');
+  });
+
+  await шаг('расстановка', async () => {
+    let кликов = 0;
+    for (; кликов < 40; кликов++) {
+      const остаток = await страница.evaluate(() => {
+        const т = document.getElementById('захват-совет-текст').textContent || '';
+        const м = /Осталось:\s*(\d+)/.exec(т);
+        return м ? Number(м[1]) : 0;
+      });
+      if (остаток <= 0) break;
+      const о = await описатьШайбы();
+      const своя = о.шайбы.filter(ш => ш.своя)[0];
+      if (!своя) break;
+      const точка = await страница.evaluate(н => window.ЗахватЭкран.гдеОбласть(н), своя.область);
+      if (!точка) break;
+      await страница.mouse.click(точка.x, точка.y);
+      await страница.waitForTimeout(120);
+    }
+    проверить(кликов > 0, метка + ': подкрепление расставлено касаниями (касаний: ' + кликов + ', ноль — провал)');
+    await страница.waitForTimeout(400);
+    const о = await описатьШайбы();
+    const своих = о.шайбы.filter(ш => ш.своя);
+    проверить(!!о.я && своих.length > 0, метка + ': найдены свои области (' + своих.length + ', цвет «' + о.я + '»)');
+    const сПульсом = своих.filter(ш => ш.пульс);
+    проверить(своих.length > 0 && сПульсом.length === своих.length, метка + ': на каждой своей области метка пульса (' + сПульсом.length + ' из ' + своих.length + ')');
+    проверить(о.шайбы.filter(ш => !ш.своя && ш.пульс).length === 0, метка + ': на чужих и ничьих областях пульса нет');
+    const цели = о.шайбы.filter(ш => ш.цель);
+    проверить(цели.length === 1, метка + ': «цель новичка» стоит ровно на одной области (найдено ' + цели.length + ')');
+    проверить(цели.length === 1 && !цели[0].своя, метка + ': цель новичка — не своя область');
+    await снять('цель');
+  });
+
+  await шаг('итог раунда', async () => {
+    const р1 = await страница.evaluate(() => (document.getElementById('захват-раунд').textContent || '').trim());
+    await страница.click('#захват-готово');
+    await страница.waitForTimeout(400);
+    if (await страница.evaluate(() => { const у = document.getElementById('захват-остаток'); return !!у && !у.classList.contains('скрыт'); })) {
+      await страница.click('#захват-остаток-да', { timeout: 4000 }).catch(() => {});
+    }
+    const итогНаЭкране = await страница.waitForFunction(() => {
+      const п = document.getElementById('захват-пластина');
+      if (!п || п.classList.contains('скрыт')) return false;
+      const строки = Array.from(п.querySelectorAll('p')).map(у => (у.textContent || '').trim());
+      return строки.length > 1 && строки[строки.length - 1] === 'Журнал ›' && /^Раунд\s*\d+:/.test(строки[0]);
+    }, null, { timeout: 45000, polling: 100 }).then(() => true, () => false);
+    проверить(итогНаЭкране, метка + ': итог раунда реально на экране (пластина со строкой «Журнал ›»)');
+    const строки = await страница.evaluate(() => Array.from(document.querySelectorAll('#захват-пластина p')).map(у => (у.textContent || '').trim()));
+    const весь = строки.join('\n');
+    console.log('    итог: ' + строки.join(' | '));
+    проверить(строки.length > 0 && /^Раунд 1:/.test(строки[0]), метка + ': текст итога начинается с «Раунд 1:» («' + (строки[0] || '') + '»)');
+    проверить(строки.includes('Журнал ›'), метка + ': в итоге есть «Журнал ›»');
+    проверить(строки.length > 0 && !/за Вы/.test(весь), метка + ': в итоге нет «за Вы»');
+    проверить(строки.length > 0 && !/Перевод вас/.test(весь), метка + ': в итоге нет «Перевод вас»');
+    await снять('итог-раунда');
+    const новый = await страница.waitForFunction(п => (document.getElementById('захват-раунд').textContent || '').trim() !== п, р1, { timeout: 20000 }).then(() => true, () => false);
+    проверить(новый, метка + ': начался раунд 2 (надпись раунда сменилась)');
+    await страница.waitForTimeout(600);
+    const о = await описатьШайбы();
+    проверить(о.шайбы.length > 0, метка + ': раунд 2: шайбы на столе есть (' + о.шайбы.length + ', ноль — провал)');
+    проверить(о.шайбы.filter(ш => ш.пульс).length === 0, метка + ': раунд 2: меток пульса нет');
+    проверить(о.шайбы.filter(ш => ш.цель).length === 0, метка + ': раунд 2: метки цели нет');
+  });
+
+  if (КОПИЯ_СТОЛА) проверить(подменено > 0, метка + ': подмена js/захват-стол.js сработала (запросов подменено: ' + подменено + ')');
+  проверить(ошибки.length === 0, метка + ': консоль без ошибок' + (ошибки.length ? ' (' + ошибки[0] + ')' : ''));
+  await контекст.close();
+}
+
+(async () => {
+  const сервер = await поднятьСервер();
+  const порт = сервер.address().port;
+  const браузер = await chromium.launch();
+  try {
+    for (const [ш, в] of [[360, 740], [390, 844]]) await партия(браузер, порт, ш, в);
+  } catch (е) {
+    проверить(false, 'проверка упала: ' + String(е.message || е).split('\n')[0]);
+  } finally {
+    await браузер.close();
+    сервер.close();
+  }
+  console.log('\nСнимки: ' + ПАПКА);
+  console.log('Итого проверок: ' + проверок + ', провалов: ' + провалов);
+  process.exit(провалов ? 1 : 0);
+})();
