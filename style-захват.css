@@ -403,6 +403,15 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
   border: 1px solid var(--край); border-radius: 12px; background: var(--подложка);
 }
 .захват-подсказка:empty { visibility: hidden; }
+/* Вторая строка расстановки («Всего 7: 2 за край Кряж, …»): мельче и серее, высота подсказки не растёт —
+   поля и межстрочие тесные, длинное режется «…». Колонка minmax(0,1fr), чтобы строка не распирала плашку. */
+.захват-подсказка:has(> .захват-подсказка__разбивка) {
+  grid-template-columns: minmax(0, 1fr); align-content: center; row-gap: 0; padding-block: 3px; line-height: 1.2;
+}
+.захват-подсказка__разбивка {
+  display: block; min-width: 0; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-size: 12px; line-height: 1.15; font-weight: 400; color: var(--сб-текст-тихий, #9aa0a6);
+}
 /* Подсказка первой партии (ТЗ 13): пилюля у нижнего края карты, чтобы не закрывать итог раунда сверху. Нажимается только «Понятно». */
 .захват-совет {
   position: absolute; left: 8px; right: 8px; bottom: 8px; width: fit-content; max-width: calc(100% - 16px); margin-inline: auto; z-index: 4;
