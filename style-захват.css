@@ -4,7 +4,9 @@
    Лобби, карточки входов, профиль, обложка, нижняя полоса, лист «⋯» и кнопки уже оформлены
    общими файлами (style.css, style-коллекция.css, style-настольные-фото.css) — тут их не повторяем.
    Все цвета — из общих переменных (--сб-*, --коллекция-*, --карта-отказ): так тема Telegram
-   и общий вид сборника подставляются сами. Своих цветов нет. */
+   и общий вид сборника подставляются сами. Своих цветов почти нет: приглушённый светлый текст на стекле
+   (--захват-тихо), серый выключенной «Отменить» (#858B94), тёмное море под холстом — запасное.
+   Стол (этап П3, «Парящий»): карта под всем экраном, поверх — стекло из общих классов стекло-* (style.css, конец). */
 
 /* ---------- Переменные страницы ----------
    Общие переменные «--фон/--текст/--кнопка-фон» по умолчанию берут цвета Telegram (светлые или
@@ -52,11 +54,45 @@ body.захват #экран-лобби.фото-лобби {
   --вт-панель-низ: clamp(52px, 14.36vw, 64px);
   padding-bottom: calc(var(--вт-панель-низ) + 12px + var(--отступ-снизу, 0px));
 }
+/* Стол «Парящий» (этап П3): карта лежит под всем экраном, поверх неё «парят» верхняя строка, капсулы
+   игроков и пульт. Поля — 12 точек (на узких 320 — 8) плюс безопасные зоны Telegram; прокрутки у стола нет. */
+body.захват {
+  /* Высота пульта в САМОМ высоком виде — с итогом раунда (четыре строки итога и кнопки). Её читает код окна
+     карты (П6), чтобы остров не прыгал между фазами. Число записано готовым значением в px (не calc):
+     JS читает его как есть. Расчёт для ≥ 360: рамка 2 + отступы 2×16 + 4 строки по 20 + 3 зазора по 2 + зазор 8 +
+     кнопки 56 = 184, запас 4 → 188. Для < 360: 2 + 2×12 + 86 + 8 + 56 = 176, запас 4 → 180.
+     Обычный пульт (подсказка в 2 строки, чипы 32) ниже: 178 и 170. */
+  --захват-пульт-наибольший: 188px;
+  --захват-тихо: #b9c1dc;   /* приглушённый светлый текст на стекле (подписи, пометки): читается и на светлом краю карты */
+  --захват-поле: 12px;
+  --захват-пульт-отступ: 16px;
+}
+@media (max-width: 359px) {
+  body.захват {
+    --захват-пульт-наибольший: 180px;
+    --захват-поле: 8px;
+    --захват-пульт-отступ: 12px;
+  }
+}
 body.захват #экран-игры {
-  gap: 6px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  --стекло-радиус-панель: 24px;
+  gap: 8px;
+  padding: calc(var(--захват-поле) + var(--отступ-сверху, 0px)) calc(var(--захват-поле) + var(--отступ-справа, 0px))
+           calc(var(--захват-поле) + var(--отступ-снизу, 0px)) calc(var(--захват-поле) + var(--отступ-слева, 0px));
+  overflow: hidden;
   color: var(--сб-текст);
+}
+/* Всё, что парит над картой, лежит выше неё и касания ловит только самим собой: пустое место между капсулами
+   отдаёт жест карте (сдвиг и зум). */
+body.захват #экран-игры > :is(.верх-игры, .захват-игроки, .захват-досмотр, .захват-совет, .захват-пульт) {
+  position: relative; z-index: 2; flex: 0 0 auto; width: 100%; max-width: 520px; align-self: center; margin: 0;
+}
+body.захват #экран-игры > :is(.верх-игры, .захват-игроки) { pointer-events: none; }
+body.захват #экран-игры > :is(.верх-игры, .захват-игроки) > * { pointer-events: auto; }
+/* Только для чтения с экрана: подпись у кнопки без слова («Сказать»). */
+.захват-для-чтения {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
 }
 body.захват #захват-настройки > h1 { font-size: clamp(26px, 7vw, 34px); line-height: 1.1; text-align: center; }
 
@@ -66,9 +102,11 @@ body.захват #захват-настройки > h1 { font-size: clamp(26px,
 /* ---------- Кнопки ----------
    Главная (салатовая) оформлена общим файлом. Остальные — тёмные с тонкой рамкой, как у домино:
    салатовый на экране один и значит «нажми сюда». Высота не меньше 44 — палец попадает. */
-body.захват .кнопка { min-height: 48px; min-width: 0; touch-action: manipulation; }
+/* Кнопки со стеклом (стекло-кнопка-круг, стекло-акцент) сами себя рисуют — общие правила ниже их не трогают. */
+body.захват .кнопка { touch-action: manipulation; }
+body.захват .кнопка:not(.стекло-кнопка-круг) { min-width: 0; min-height: 48px; }
 body.захват .кнопка--главная { min-height: 52px; font-size: 18px; }
-body.захват .кнопка:not(.кнопка--главная):not(.кнопка--мелкая) {
+body.захват .кнопка:not(.кнопка--главная):not(.кнопка--мелкая):not(.стекло-кнопка-круг):not(.стекло-акцент) {
   color: var(--сб-текст);
   background: var(--сб-поверхность);
   border: 1px solid var(--край);
@@ -169,24 +207,39 @@ body.захват #экран-друга .деберц-пригласили .к�
 .захват-онлайн-рассадка .рассадка__место--я .рассадка__имя { color: var(--сб-акцент); }
 
 /* ---------- Стол: строка раунда ---------- */
-body.захват #экран-игры > :is(.захват-раунд, .захват-игроки, .захват-карта, .захват-подсказка, .захват-панель-действий) {
-  width: 100%; max-width: 520px; align-self: center; flex: 0 0 auto;
+/* Верхняя строка «‹  Раунд 3 из 10  ⋯»: два круга Ø 44 (общий класс стекло-кнопка-круг) и между ними капсула
+   раунда высотой 36. Левый и правый круг одной ширины, поэтому капсула стоит по центру экрана.
+   Общее правило style.css «.верх-игры» тянет строку за поля экрана (отрицательные поля) — здесь поля свои. */
+body.захват #экран-игры > .верх-игры {
+  height: 44px; margin: 0; gap: 8px; max-width: 520px;
 }
-/* Карта забирает всю свободную высоту колонки, подсказка и панель действий прижаты к низу.
-   Правило стоит после общего выше: у него «flex: 0 0 auto» сжимало карту до её минимума. */
-body.захват #экран-игры > .захват-карта { flex: 1 1 0; }
-.захват-раунд { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
-.захват-раунд > * { min-width: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
-.захват-раунд > #захват-раунд { color: var(--сб-текст); font-weight: 700; font-size: 15px; }
+/* В Telegram круги «‹ ⋯» заменяют его стрелка и пункт «Настройки»: круги скрыты, а капсула раунда остаётся
+   (общее правило style.css скрывает строку целиком — для стола «Захвата» это неверно). Верх строки уже
+   отсчитан от полосы Telegram (--отступ-сверху её включает). */
+html.в-телеграме body.захват #экран-игры > .верх-игры { display: flex; justify-content: center; }
+html.в-телеграме body.захват #экран-игры > .верх-игры > .верх-игры__кнопка { display: none; }
+.захват-раунд {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;
+  flex: 0 1 auto; min-width: 0; max-width: calc(100% - 104px); height: 36px; padding: 0 16px;
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+html.в-телеграме .захват-раунд { max-width: 100%; }
+/* Знаки в кругах: «‹» и «···» — текст, крупнее и жирнее, чтобы читались на стекле. */
+body.захват #экран-игры > .верх-игры > .верх-игры__кнопка { font-size: 26px; font-weight: 700; line-height: 1; padding: 0 0 3px; }
+body.захват #экран-игры > .верх-игры > [data-меню] { padding-bottom: 6px; letter-spacing: 1px; }
+/* Поле касания капсулы — 44: прозрачная кайма на 4 точки сверху и снизу (сама капсула 36). */
+.захват-раунд::after { content: ""; position: absolute; inset: -4px 0; }
+.захват-раунд > * { min-width: 0; font-size: 16px; font-variant-numeric: tabular-nums; }
+.захват-раунд > #захват-раунд { overflow: hidden; text-overflow: ellipsis; color: var(--сб-текст); font-weight: 700; }
+/* Таймер — белый на стекле: салатовый на столе только у «Готово» и «Ударить». */
 .захват-таймер {
-  padding: 2px 10px; color: var(--сб-акцент); font-weight: 700;
-  border: 1px solid var(--сб-акцент); border-radius: 999px;
+  flex: 0 0 auto; padding: 1px 8px; color: var(--сб-текст); font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.42); border-radius: 999px;
 }
-/* Последние 10 секунд раунда (класс ставит сетевой модуль): тёплый цвет отказа вместо салатового
-   и мягкая пульсация — заметно, но второго акцента на странице не появляется. */
+/* Последние 10 секунд раунда (класс ставит сетевой модуль): тёплый цвет отказа и мягкая пульсация. */
 .захват-таймер.захват-таймер--мало {
-  color: var(--карта-отказ); border-color: var(--карта-отказ);
-  background: color-mix(in srgb, var(--карта-отказ) 14%, transparent);
+  color: color-mix(in srgb, var(--карта-отказ) 70%, #fff); border-color: var(--карта-отказ);
+  background: color-mix(in srgb, var(--карта-отказ) 22%, transparent);
   animation: захват-таймер-мало 1s ease-in-out infinite;
 }
 @keyframes захват-таймер-мало {
@@ -194,32 +247,29 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
   50% { opacity: 0.6; }
 }
 
-/* ---------- Стол: полоса игроков ----------
-   Плашки по три в ряд (вчетвером — по две), как карточки соперников в других играх.
-   Верхняя строка плашки: имя и галка «готов»; нижняя: метка и счёт «областей · очки». */
-.захват-игроки { display: flex; flex-wrap: wrap; gap: 6px; }
+/* ---------- Стол: капсулы игроков ----------
+   Капсулы стекла (общий класс стекло-капсула) высотой 52, скругление 26, зазор 8. Ряды по ТЗ 8.4:
+   2–3 игрока — один ряд, 4 = 2 + 2, 5 = 3 + 2, 6 = 3 + 3 (второй ряд растягивается на всю ширину).
+   Внутри: сверху жетон (значок цвета игрока), имя, метка («бот», «спит»), галка «готов»;
+   снизу на всю ширину счёт «5 обл · 8 оч». Жетон 28 (на 320 — 22), а не 32: с 32 имя и метка
+   в капсуле втроём на 390 не помещаются. Счёт не мельче 12 и не переносится. */
+.захват-игроки { display: flex; flex-wrap: wrap; gap: 8px; }
 .захват-игрок {
-  flex: 1 1 calc((100% - 12px) / 3 - 1px); min-width: 0; padding: 7px 9px;
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "имя готов" "метка счёт";
-  gap: 2px 6px; align-items: center;
-  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 14px;
-  background: var(--коллекция-панель, var(--сб-поверхность)); box-shadow: var(--коллекция-тень, none);
-  color: var(--сб-текст);
+  --стекло-радиус-капсула: 26px;
+  flex: 1 1 calc((100% - 16px) / 3 - 1px); min-width: 0; min-height: 52px; padding: 4px 6px 4px 6px;
+  display: grid; grid-template-columns: auto minmax(46px, max-content) minmax(0, max-content) 1fr;
+  grid-template-areas: "значок имя метка готов" "счёт счёт счёт счёт";
+  gap: 0 4px; align-content: center; align-items: center;
 }
-.захват-игроки:has(> :nth-child(4):not(.скрыт)):not(:has(> :nth-child(5):not(.скрыт))) > .захват-игрок { flex-basis: calc(50% - 3px); }
-.захват-игрок__имя { grid-area: имя; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; line-height: 1.2; }
-.захват-игрок__готов { grid-area: готов; min-width: 14px; text-align: right; color: var(--сб-акцент); font-size: 15px; font-weight: 700; line-height: 1; }
-.захват-игрок__метка { grid-area: метка; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: var(--сб-текст-тихий); }
-/* Счёт «5 обл · 8 оч» не переносится: место уступают имя и метка (у них многоточие).
-   Самый длинный счёт — «28 обл · 46 оч» (областей до 30, очков до 48), при 14px он ≈ 7 кеглей в ширину, а внутри
-   плашки втроём всего 101 px на 390, 91 на 360 и 81 на 320. Поэтому кегль считается от ширины самой плашки
-   («cqi» — 1% её внутренней ширины, плашка для этого «container-type»): на 390 остаётся 14px, уже — меньше. */
-.захват-игрок { container-type: inline-size; }
-.захват-игрок__счёт { grid-area: счёт; white-space: nowrap; font-size: 11px; font-size: min(14px, 13.5cqi); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--сб-текст); }
-/* Это вы: салатовая рамка (акцент — «здесь вы»). */
-.захват-игрок.захват-игрок--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент); }
+.захват-игроки:has(> :nth-child(4):not(.скрыт)):not(:has(> :nth-child(5):not(.скрыт))) > .захват-игрок { flex-basis: calc(50% - 4px); }
+.захват-игрок__имя { grid-area: имя; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 700; line-height: 1.2; }
+.захват-игрок__готов { grid-area: готов; min-width: 0; text-align: right; color: var(--сб-текст); font-size: 15px; font-weight: 700; line-height: 1; }
+.захват-игрок__метка { grid-area: метка; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--сб-текст-тихий); }
+.захват-игрок__счёт { grid-area: счёт; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; line-height: 1.25; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--сб-текст); }
+/* Это вы: салатовая кромка и салатовое имя (акцент — «здесь вы»), чуть светится. */
+.захват-игрок.захват-игрок--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент), 0 0 14px rgba(210, 247, 107, 0.28), var(--стекло-тень-малая); }
 .захват-игрок.захват-игрок--я .захват-игрок__имя { color: var(--сб-акцент); }
-/* Выбыл или сдался: плашка притушена, имя зачёркнуто. */
+/* Выбыл или сдался: капсула притушена, имя зачёркнуто. */
 .захват-игрок.захват-игрок--вне { opacity: 0.5; filter: grayscale(1); }
 .захват-игрок--вне .захват-игрок__имя { text-decoration: line-through; }
 
@@ -228,14 +278,18 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
    на этапе Г2; здесь — только размеры. Касания и жесты (зум, сдвиг, протяжка приказа) ловит
    узел карты, поэтому браузеру и Telegram запрещаем перехватывать их своей прокруткой и зумом. */
 .захват-карта {
-  position: relative; flex: 1 1 auto; min-height: 200px;
+  position: absolute; inset: 0; z-index: 0;
   touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
-  border: 1px solid var(--коллекция-кромка, var(--край)); border-radius: 18px;
-  background-color: var(--сб-поверхность);
+  border: 0; border-radius: 0;
+  /* Море на случай, пока холст ещё не нарисован: тёмная синяя глубина, градиентом, не плоской заливкой. */
+  background:
+    radial-gradient(120% 70% at 30% 20%, #123a5e 0%, transparent 70%),
+    radial-gradient(110% 80% at 80% 90%, #0d2d4d 0%, transparent 70%),
+    #071a2e;
 }
-/* Окно карты обрезает приближенную карту по рамке. Сам узел карты не обрезает: пластина раунда из него
-   выходит вверх, на строку раунда и полосу игроков. */
-.захват-окно-карты { position: absolute; inset: 0; overflow: hidden; border-radius: 17px; }
+/* Узел карты — на весь экран и лежит под панелями; остров рисуется в окне между полосой игроков и пультом,
+   это считает код (П6). Окно обрезает приближенную карту по краям экрана. */
+.захват-окно-карты { position: absolute; inset: 0; overflow: hidden; border-radius: 0; }
 /* Холст — на всё окно, точка в точку (его размер в точках = размер окна × плотность): море на всей
    площади, карту по центру кладёт сам код. Растягивать или вписывать холст нельзя — слой шайб разъедется. */
 .захват-холст { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
@@ -313,12 +367,12 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
 .захват-шайба__значок--аметист, .захват-игрок__значок--аметист { --кадр: 3; }
 .захват-шайба__значок--бирюза, .захват-игрок__значок--бирюза { --кадр: 4; }
 .захват-шайба__значок--роза, .захват-игрок__значок--роза { --кадр: 5; }
-/* Значок у имени в полосе игроков: слева в верхней строке, рядом имя, метка («бот», «спит») и галка.
-   Нижняя строка целиком — счёт «12 обл · 31 оч» в одну строку: в плашке втроём на 390 точек внутри всего
-   101 px, рядом со значком счёт не помещался и переносился. Тесно — ужимаются имя и метка, не счёт.
-   Имя и метка делят тесноту поровну (обе колонки «до своей ширины»): иначе «спит» съедало всё и от «Бот» оставалось «Б…». */
-.захват-игрок { grid-template-columns: auto minmax(0, max-content) minmax(0, max-content) 1fr; grid-template-areas: "значок имя метка готов" "счёт счёт счёт счёт"; }
-.захват-игрок__значок { grid-area: значок; --ш: 18px; align-self: center; }
+/* Значок-жетон у имени в капсуле игрока: слева в верхней строке, рядом имя, метка («бот», «спит») и галка.
+   Нижняя строка целиком — счёт в одну строку. Тесно — ужимаются имя и метка, не счёт. Имя и метка делят
+   тесноту поровну (обе колонки «до своей ширины»): иначе «спит» съедало всё и от «Бот» оставалось «Б…».
+   Сетка колонок — в блоке «капсулы игроков» выше. Жетон 28, на 320 — 22. */
+.захват-игрок__значок { grid-area: значок; --ш: 28px; align-self: center; }
+@media (max-width: 359px) { .захват-игрок__значок { --ш: 22px; } }
 /* Пилюля «+N» над шайбой: пилюля-метки.webp, 192×64. Края по 32 px рисунка (слева и справа) не тянутся, середина
    растягивается под текст; сверху и снизу краёв нет — рисунок на всю высоту. На экране высота 18 px, края 9 px. */
 .захват-пилюля {
@@ -373,99 +427,233 @@ body.захват #экран-игры > .захват-карта { flex: 1 1 0;
   75% { opacity: 1; translate: 0 -3px; }
   100% { opacity: 0; translate: 0 -6px; }
 }
-/* Плашка «Раунд N — раскрытие» и итог раунда — поверх строки раунда и полосы игроков, не на карте:
-   шайб и «+N» не закрывает (ТЗ 8.5, приёмка Г1). Узел лежит в узле карты (касание во время раскрытия
-   доходит до карты — «Пропустить»), но стоит над ним: низ пластины — по низу полосы игроков
-   (рамка карты 1 px + зазор колонки 6 px).
-   Высота — РОВНО строка раунда + зазор + полоса игроков (разбор Г3б, п. 5 и 9): закрывает обе, не больше и не меньше,
-   без прокрутки. Высоту CSS узнать из соседей не может, поэтому она посчитана: плашка игрока держит 56 px
-   (min-height ниже; сам контент 48–54), строка раунда 28 px, зазор колонки 6 px. Рядов плашек один (до трёх
-   игроков) или два (четыре и больше) — это то же правило, что в раскладке полосы выше. Строк в пластине не больше трёх
-   плюс «Журнал ›» (режет js), каждая в одну линию с «…». Касание пластины открывает журнал (ТЗ 8.5),
-   поэтому касания она ловит сама; спрятанная (.скрыт) не мешает. */
-.захват-игрок { min-height: 56px; }
+/* Пластина итога раунда и «Раунд N — раскрытие» — теперь внутри пульта (ТЗ 8.5): на время итога пульт
+   показывает её строки вместо подсказки и чипов, кнопки остаются. Шайб и «+N» она не закрывает: пульт ниже
+   окна карты. Строк не больше трёх плюс «Подробно ›» (режет js), каждая в одну линию с «…», строка 20 px:
+   четыре строки с зазорами — 86 px, выше пластина не вырастет (от этого числа посчитан
+   --захват-пульт-наибольший). Касание пластины открывает журнал (ТЗ 8.5), поэтому касания она ловит
+   сама; спрятанная (.скрыт) не мешает. Своей рамки и фона у неё нет — это уже стекло пульта. */
 .захват-пластина {
-  --рядов: 1;
-  position: absolute; left: -1px; right: -1px; bottom: calc(100% + 7px); z-index: 3;
-  box-sizing: border-box; height: calc(34px + var(--рядов) * 56px + (var(--рядов) - 1) * 6px);
-  display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; overflow: hidden;
-  padding: 4px 16px; text-align: center; cursor: pointer;
-  font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--сб-текст);
-  background: var(--сб-поверхность); border: 1px solid var(--сб-акцент); border-radius: 12px;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 2px;
+  max-height: 86px; overflow: hidden; margin: 0; padding: 0; text-align: left; cursor: pointer;
+  font-size: 15px; font-weight: 600; line-height: 20px; color: var(--сб-текст);
+  background: none; border: 0;
 }
-.захват-игроки:has(> :nth-child(4):not(.скрыт)) ~ .захват-карта > .захват-пластина { --рядов: 2; }
-.захват-пластина > p { margin: 0; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.захват-пластина > * { margin: 0; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* Последняя строка («Итог раунда 2 из 10 · Подробно ›») — тише остальных, но не мельче 13. */
+.захват-пластина > :last-child:not(:first-child) { font-size: 13px; font-weight: 500; color: var(--захват-тихо, #b9c1dc); }
 
 /* ---------- Стол: подсказка и панель действий ---------- */
+/* Пульт — стеклянная панель внизу (общий класс стекло-панель): поля от краёв экрана задаёт сам экран,
+   отступы внутри 16 (на 320 — 12), скругление 24, высота по содержимому, прижат к низу.
+   Порядок внутри: строка подсказки, ряд чипов, пластина итога, ряд кнопок. */
+body.захват #экран-игры > .захват-пульт {
+  margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: var(--захват-пульт-отступ);
+}
+.захват-пульт__строка { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
 .захват-подсказка {
-  min-height: 44px; display: grid; place-items: center; padding: 6px 12px; text-align: center;
-  font-size: 15px; line-height: 1.3; color: var(--сб-текст);
-  border: 1px solid var(--край); border-radius: 12px; background: var(--подложка);
+  flex: 1 1 auto; min-width: 0; min-height: 20px; max-height: 40px; overflow: hidden; margin: 0; padding: 0;
+  font-size: 17px; font-weight: 700; line-height: 20px; text-align: left; color: var(--сб-текст);
+  overflow-wrap: anywhere; background: none; border: 0;
 }
 .захват-подсказка:empty { visibility: hidden; }
-/* Вторая строка расстановки («Всего 7: 2 за край Кряж, …»): мельче и серее, высота подсказки не растёт —
-   поля и межстрочие тесные, длинное режется «…». Колонка minmax(0,1fr), чтобы строка не распирала плашку. */
-.захват-подсказка:has(> .захват-подсказка__разбивка) {
-  grid-template-columns: minmax(0, 1fr); align-content: center; row-gap: 0; padding-block: 3px; line-height: 1.2;
-}
-.захват-подсказка__разбивка {
-  display: block; min-width: 0; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  font-size: 12px; line-height: 1.15; font-weight: 400; color: var(--сб-текст-тихий, #9aa0a6);
-}
-/* Подсказка первой партии (ТЗ 13): пилюля у нижнего края карты, чтобы не закрывать итог раунда сверху. Нажимается только «Понятно». */
-.захват-совет {
-  position: absolute; left: 8px; right: 8px; bottom: 8px; width: fit-content; max-width: calc(100% - 16px); margin-inline: auto; z-index: 4;
-  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; pointer-events: none;
-  font-size: 15px; font-weight: 700; line-height: 1.25; color: var(--сб-текст);
-  background: var(--сб-поверхность); border: 1px solid var(--сб-акцент); border-radius: 12px;
-}
-.захват-совет.скрыт { display: none; }
-.захват-совет > button {
-  pointer-events: auto; flex: 0 0 auto; min-height: 44px; padding: 4px 12px; border-radius: 10px;
-  font: inherit; font-size: 14px; color: var(--сб-акцент-текст); background: var(--сб-акцент); border: 0;
-}
-/* Отказ («нельзя»): красная рамка и подкраска — видно с одного взгляда, текст остаётся белым. */
-.захват-подсказка.захват-подсказка--отказ {
-  border-color: var(--карта-отказ); background: color-mix(in srgb, var(--карта-отказ) 18%, transparent);
-  font-weight: 600;
-}
-.захват-панель-действий { display: flex; gap: 8px; align-items: stretch; }
-.захват-панель-действий > .кнопка { flex: 1 1 0; min-width: 0; min-height: 52px; padding: 8px 10px; font-size: 17px; }
-.захват-панель-действий > #захват-готово { flex: 1.5 1 0; }
-/* После «Готово» кнопка становится «Изменить» и берёт общий вид второстепенной кнопки (правило выше:
-   светлый текст на тёмной поверхности), своего цвета у неё нет. Замок говорит: приказы отданы и заперты.
-   Во время раскрытия она заперта совсем — приглушена мягче общего, чтобы подпись читалась. */
-body.захват #захват-готово:not(.кнопка--главная):not(.захват-готово--пропуск)::before { content: "🔒"; margin-right: 8px; font-size: 15px; }
-body.захват #захват-готово:not(.кнопка--главная):disabled { opacity: 0.6; }
-/* «Отменить» неактивна (нечего отменять или приказы заперты): притушена. */
-body.захват #захват-отменить:disabled { opacity: 0.4; }
+/* Пометка справа в строке подсказки: «Всего 7» (расстановка) и «Готовы 3/6» (онлайн). Не мельче 13. */
+#захват-готовы { flex: 0 0 auto; font-size: 14px; line-height: 20px; white-space: nowrap; color: var(--захват-тихо, #b9c1dc); }
+#захват-готовы:empty { display: none; }
+/* Отказ («нельзя»): текст тёплого цвета отказа — видно с одного взгляда, фона у подсказки больше нет. */
+.захват-подсказка.захват-подсказка--отказ { color: color-mix(in srgb, var(--карта-отказ) 62%, #fff); }
 
-/* ---------- Листы поверх стола: приказ, карточка области, журнал, «Вы выбыли» ----------
-   Выезжают снизу, как общий лист «⋯» (он лежит выше: z-index 110). Карта над листом остаётся видна. */
+/* Ряд чипов разбивки подкрепления: капсулы высотой 32, зазор 8, в одну строку (не переносятся).
+   Значок слева — место 16×16 под рисунок-маску Кодекса (П13): пока рисунка нет, место пустое.
+   Рисунок подставит переменная --чип-значок на классах --край, --столица, --области. */
+.захват-чипы { display: flex; flex-wrap: nowrap; gap: 8px; min-width: 0; overflow: hidden; }
+.захват-чипы:empty { display: none; }
+.захват-чип {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 8px;
+  white-space: nowrap; font-size: 13px; font-weight: 600; line-height: 1; color: var(--сб-текст);
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.12) 0%, transparent 70%), rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2); border-top-color: rgba(255, 255, 255, 0.36);
+  border-radius: 16px;
+}
+.захват-чип::before {
+  content: ""; flex: 0 0 16px; width: 16px; height: 16px; background-color: currentColor;
+  -webkit-mask: var(--чип-значок, linear-gradient(transparent, transparent)) center / contain no-repeat;
+  mask: var(--чип-значок, linear-gradient(transparent, transparent)) center / contain no-repeat;
+}
+/* Серая строка вместо чипов, когда они не влезают (П4): та же высота 32, длинное режется «…». */
+.захват-чипы__строка {
+  flex: 1 1 0; min-width: 0; height: 32px; display: flex; align-items: center; overflow: hidden;
+  white-space: nowrap; text-overflow: ellipsis; font-size: 13px; color: var(--захват-тихо, #b9c1dc);
+}
+
+/* Пульт в режиме итога раунда (ТЗ 8.5): подсказка и чипы скрыты, пластина стоит на их месте, кнопки остаются. */
+.захват-пульт--итог > :is(.захват-пульт__строка, .захват-чипы) { display: none; }
+
+/* Подсказка первой партии (ТЗ 13): капсула прямо над пультом, в потоке — пульт ниже неё, карту она не
+   закрывает. Лежит над пультом, пока видна; пульт прижат к низу и без неё. Нажимается только «Понятно». */
+body.захват #экран-игры > .захват-совет {
+  --стекло-радиус-капсула: 20px;
+  margin-top: auto; width: fit-content; max-width: 100%;
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; pointer-events: none;
+  font-size: 15px; font-weight: 700; line-height: 1.25;
+}
+body.захват #экран-игры > .захват-совет:not(.скрыт) + .захват-пульт { margin-top: 0; }
+.захват-совет.скрыт { display: none; }
+/* «Понятно» — светлая стеклянная кнопка, не салатовая: салатовый на столе только у «Готово» и «Ударить». */
+.захват-совет > button {
+  pointer-events: auto; flex: 0 0 auto; min-height: 44px; padding: 4px 14px; border-radius: 14px;
+  font: inherit; font-size: 14px; font-weight: 700; color: var(--сб-текст);
+  background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.34);
+}
+.захват-совет > button:active { background: rgba(255, 255, 255, 0.3); transform: scale(0.97); }
+
+/* Ряд кнопок: высота 56, ширина поровну; онлайн — справа ещё круг «Сказать» Ø 56. */
+.захват-панель-действий { display: flex; gap: 8px; align-items: stretch; }
+body.захват #захват-пульт .захват-панель-действий > .кнопка {
+  flex: 1 1 0; min-width: 0; height: 56px; min-height: 56px; padding: 0 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 17px; font-weight: 700; line-height: 1.1; white-space: nowrap; border-radius: 16px;
+}
+/* «Отменить» и «Изменить» — тёмное стекло без салатового. Размытие внутри панели не нужно (она сама стекло). */
+body.захват #захват-пульт .захват-панель-действий > .кнопка:not(.кнопка--главная):not(#кнопка-эмоции) {
+  color: var(--сб-текст);
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.16) 0%, transparent 62%), rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2); border-top-color: rgba(255, 255, 255, 0.42); border-left-color: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.16), 0 4px 10px rgba(4, 12, 38, 0.35);
+  -webkit-backdrop-filter: none; backdrop-filter: none; filter: none;
+}
+/* Нажатие видно: кнопка чуть вдавливается и светлеет. */
+body.захват #захват-пульт .захват-панель-действий > .кнопка:not(.кнопка--главная):not(#кнопка-эмоции):not(:disabled):active {
+  transform: scale(0.97); background-color: rgba(255, 255, 255, 0.2);
+}
+/* «Отменить» неактивна (нечего отменять или приказы заперты): серый #858B94, а не прозрачность —
+   так надпись остаётся читаемой, а салатовым выключенное не светится (брак макетов, вид.md 10). */
+body.захват #захват-пульт #захват-отменить:disabled {
+  opacity: 1; color: #858B94; cursor: default; transform: none;
+  background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); box-shadow: none;
+}
+/* «Готово» (салатовая, общий класс стекло-акцент) чуть крупнее соседа. Когда она стала «Изменить» или
+   «Пропустить ›», с неё снимается кнопка--главная, и она одевается тёмным стеклом (правило выше). Замок
+   говорит: приказы отданы и заперты. Во время раскрытия она заперта совсем — приглушена мягче общего. */
+body.захват #захват-пульт #захват-готово { font-size: 18px; border-radius: 16px; }
+body.захват #захват-готово:not(.кнопка--главная):not(.захват-готово--пропуск)::before { content: "🔒"; font-size: 15px; }
+body.захват #захват-готово:not(.кнопка--главная):disabled { opacity: 0.6; }
+/* «Сказать» — стеклянный круг Ø 56 (общий класс стекло-кнопка-круг), значок-облачко общей переменной. */
+body.захват #захват-пульт #кнопка-эмоции {
+  --значок: var(--значок-чат);
+  flex: 0 0 56px; width: 56px; min-width: 56px; height: 56px; min-height: 56px; padding: 0; border-radius: 50%;
+}
+body.захват #захват-пульт #кнопка-эмоции::before {
+  content: ""; width: 26px; height: 26px; background-color: currentColor;
+  -webkit-mask: var(--значок) center / contain no-repeat; mask: var(--значок) center / contain no-repeat;
+}
+
+/* ---------- Листы поверх стола: приказ, карточка области, журнал, «Вы выбыли», «Поставить» ----------
+   Лист — стеклянная панель (общий класс стекло-панель в разметке) на месте пульта: те же поля от краёв
+   экрана и то же скругление 24. Пока лист открыт, стол получает класс «экран-игры--лист» и пульт под ним
+   скрыт (правило ниже). Выезжает снизу, как общий лист «⋯» (он лежит выше: z-index 110). Остров лист не
+   сжимает: он закрывает низ карты, верхняя половина видна. Рамка, фон и тень — от стекло-панель,
+   здесь их не задаём (иначе пришлось бы гадать, чей файл подключён позже). */
 .захват-лист {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; width: 100%; max-width: 520px; margin-inline: auto;
+  --стекло-радиус-панель: 24px;
+  position: fixed; left: 0; right: 0; z-index: 40; margin-inline: auto;
+  bottom: calc(var(--захват-поле, 12px) + var(--отступ-снизу, 0px));
+  width: min(520px, calc(100% - 2 * var(--захват-поле, 12px) - var(--отступ-слева, 0px) - var(--отступ-справа, 0px)));
   display: flex; flex-direction: column; gap: 10px;
-  max-height: calc(100% - 24px - var(--отступ-сверху, 0px)); overflow-y: auto; overscroll-behavior: contain;
-  padding: 24px max(16px, calc(var(--отступ-справа, 0px) + 16px)) calc(14px + var(--отступ-снизу, 0px)) max(16px, calc(var(--отступ-слева, 0px) + 16px));
-  color: var(--сб-текст); background: var(--сб-поверхность); border-radius: 20px 20px 0 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 -12px 32px rgba(0, 0, 0, 0.45);
+  max-height: min(75%, calc(100% - 140px)); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  padding: 26px var(--захват-пульт-отступ, 16px) var(--захват-пульт-отступ, 16px);
   animation: лист-ещё-вверх 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+/* Ручка 36×4 сверху. */
 .захват-лист::before {
   content: ""; position: absolute; top: 8px; left: 50%; width: 36px; height: 4px; margin-left: -18px;
-  border-radius: 999px; background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px; background: rgba(255, 255, 255, 0.4);
 }
-.захват-лист > h2 { font-size: 18px; font-weight: 700; line-height: 1.3; text-align: center; }
+/* Пока лист открыт — пульт и подсказка новичка под ним скрыты (класс ставит код на #экран-игры). */
+#экран-игры.экран-игры--лист > :is(.захват-пульт, .захват-совет) { display: none; }
+.захват-лист > h2 { font-size: 20px; font-weight: 700; line-height: 1.25; text-align: left; }
 .захват-лист > p { font-size: 15px; line-height: 1.4; }
-.захват-лист > .кнопка { width: 100%; max-width: none; margin: 0; }
 .захват-лист > p:empty { display: none; }
-/* Приказ: «−  ползунок  +», крупное число, шанс боя и потери. */
+/* Селекторы кнопок листа начинаются с «body.захват #экран-игры» нарочно: общие правила кнопок выше
+   («.кнопка:not(…)», «.кнопка--главная») сильны, и без id лист проигрывал бы им по высоте и цвету. */
+body.захват #экран-игры .захват-лист > .кнопка { width: 100%; max-width: none; min-height: 56px; margin: 0; padding: 0 14px; font-size: 17px; border-radius: 16px; }
+/* Кнопки листа — тёмное стекло. Салатовая здесь одна — «Ударить» (общий класс стекло-акцент); остальные,
+   даже «Поставить» и «Досмотреть быстро», светлее соседей и жирнее, но не салатовые. */
+body.захват #экран-игры .захват-лист > .кнопка:not(.стекло-акцент) {
+  color: var(--сб-текст); font-weight: 600;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.16) 0%, transparent 62%), rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2); border-top-color: rgba(255, 255, 255, 0.42); border-left-color: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.16), 0 4px 10px rgba(4, 12, 38, 0.35);
+}
+body.захват #экран-игры .захват-лист > .кнопка:not(.стекло-акцент).кнопка--главная {
+  font-weight: 700; background-color: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.5);
+}
+/* «Ударить», когда шанса нет (кнопка--главная снята кодом), — тёмная, как все остальные. */
+body.захват #экран-игры .захват-лист > .стекло-акцент:not(.кнопка--главная) {
+  color: var(--сб-текст); font-weight: 600; filter: none;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.16) 0%, transparent 62%), rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2); border-top-color: rgba(255, 255, 255, 0.42); border-left-color: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.16), 0 4px 10px rgba(4, 12, 38, 0.35);
+}
+body.захват #экран-игры .захват-лист > .кнопка:not(:disabled):active { transform: scale(0.97); }
+/* «Ударить» — главная салатовая: светится как «Готово», а кнопка-размер — те же 56 (правило выше). */
+body.захват #экран-игры .захват-лист > .стекло-акцент.кнопка--главная { font-size: 18px; font-weight: 700; }
+/* «Готово» и «Ударить» — ровно #D2F76B, сплошным цветом: общие градиенты (style.css, style-коллекция.css) снимаем. */
+body.захват #захват-пульт #захват-готово.кнопка--главная,
+body.захват #экран-игры .захват-лист > .стекло-акцент.кнопка--главная {
+  background: #D2F76B; background-image: none;
+}
+
+/* ---------- Стекло светлее и прозрачнее (по макету) ----------
+   Цвет и плотность — переменные общего стекла, меняем только для «Захвата»; запасной вид (--…-запасная)
+   они не трогают. Размытие снижено в пределах вид.md (не больше 20 px) и выключено в «Лёгких». */
+body.захват {
+  --стекло-ргб: 40, 66, 100;
+  --стекло-плотность-панель: 0.34;
+  --стекло-плотность-капсула: 0.3;
+  --стекло-плотность-круг: 0.3;
+}
+html:not(.стекло-без-размытия) body.захват:not(.стекло-без-размытия) .стекло-панель {
+  -webkit-backdrop-filter: blur(12px) saturate(var(--стекло-насыщенность)); backdrop-filter: blur(12px) saturate(var(--стекло-насыщенность));
+}
+html:not(.стекло-без-размытия) body.захват:not(.стекло-без-размытия) :is(.стекло-капсула, .стекло-кнопка-круг) {
+  -webkit-backdrop-filter: blur(8px) saturate(var(--стекло-насыщенность)); backdrop-filter: blur(8px) saturate(var(--стекло-насыщенность));
+}
+/* Приказ: кнопки «Отмена» и «Ударить» стоят в одну строку, «Убрать приказ» (если есть) — над ними. */
+#захват-приказ { flex-direction: row; flex-wrap: wrap; align-content: flex-start; }
+#захват-приказ > * { flex: 1 1 100%; min-width: 0; }
+#захват-приказ > #захват-приказ-убрать { order: 4; }
+#захват-приказ > #захват-приказ-отмена { order: 5; flex: 1 1 calc(50% - 5px); }
+#захват-приказ > #захват-приказ-отдать { order: 6; flex: 1 1 calc(50% - 5px); font-weight: 700; }
+/* Приказ: «−  ползунок  +», число, шанс боя и потери. «−» и «+» — стеклянные круги Ø 44 (общий класс). */
 .захват-приказ-счётчик { display: flex; align-items: center; gap: 10px; }
-.захват-приказ-счётчик > .кнопка { flex: 0 0 52px; width: 52px; min-width: 52px; min-height: 52px; padding: 0; font-size: 26px; line-height: 1; }
-.захват-приказ-счётчик > input[type="range"] { flex: 1 1 auto; min-width: 0; height: 44px; margin: 0; accent-color: var(--сб-акцент); }
-.захват-приказ-число { font-size: 34px; font-weight: 700; line-height: 1.1; text-align: center; color: var(--сб-акцент); font-variant-numeric: tabular-nums; }
-.захват-приказ-шанс { font-size: 17px; font-weight: 600; text-align: center; }
-.захват-приказ-потери { font-size: 14px; text-align: center; color: var(--сб-текст-тихий); }
+body.захват .захват-приказ-счётчик > .кнопка { font-size: 24px; line-height: 1; font-weight: 600; letter-spacing: 0; }
+body.захват .захват-приказ-счётчик > .кнопка:disabled { opacity: 0.55; cursor: default; }
+/* Ползунок: светлая дорожка и белый бегунок (как на макете), не салатовый. Касание — полоса высотой 44. */
+.захват-приказ-счётчик > input[type="range"] {
+  -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 44px; margin: 0;
+  background: transparent; cursor: pointer;
+}
+.захват-приказ-счётчик > input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px; border-radius: 4px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(205, 220, 245, 0.55));
+}
+.захват-приказ-счётчик > input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 28px; height: 28px; margin-top: -10px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, #dbe4f6 70%); border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(4, 12, 38, 0.6);
+}
+.захват-приказ-счётчик > input[type="range"]::-moz-range-track {
+  height: 8px; border-radius: 4px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(205, 220, 245, 0.55));
+}
+.захват-приказ-счётчик > input[type="range"]::-moz-range-thumb {
+  width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0%, #dbe4f6 70%);
+  border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 2px 8px rgba(4, 12, 38, 0.6);
+}
+.захват-приказ-число { font-size: 28px; font-weight: 700; line-height: 1.15; text-align: left; color: var(--сб-текст); font-variant-numeric: tabular-nums; }
+.захват-приказ-счётчик > .захват-приказ-число { flex: 1 1 auto; text-align: center; }
+.захват-приказ-шанс { font-size: 17px; font-weight: 700; text-align: left; }
+.захват-приказ-потери { font-size: 14px; text-align: left; color: var(--захват-тихо, #b9c1dc); }
+.захват-лист > .захват-тихо { color: var(--захват-тихо, #b9c1dc); font-size: 14px; }
 /* Журнал: длинный список строк событий прокручивается внутри листа. */
 .захват-журнал-строки { max-height: 50dvh; overflow-y: auto; overscroll-behavior: contain; }
 .захват-журнал-строки > * { padding: 9px 0; font-size: 14px; line-height: 1.4; border-bottom: 1px solid var(--край); overflow-wrap: anywhere; }
@@ -513,13 +701,15 @@ body.захват dialog .захват-итог-плюс { flex: 0 0 auto; font-
   font: inherit; color: var(--сб-акцент); cursor: pointer;
 }
 /* «Досмотреть быстро»: пометка над картой и выход к итогу. */
-body.захват #экран-игры > .захват-досмотр { width: 100%; max-width: 520px; align-self: center; flex: 0 0 auto; }
+/* Лежит под строкой «‹ ⋯» поверх карты: плотное тёмное стекло без размытия (панель мелкая, размытие ей не нужно),
+   белая кромка — не салатовая. */
 .захват-досмотр {
   display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 4px 4px 14px;
-  font-size: 14px; font-weight: 700; color: var(--сб-акцент);
-  border: 1px solid var(--сб-акцент); border-radius: 12px; background: var(--подложка);
+  font-size: 14px; font-weight: 700; color: var(--сб-текст);
+  border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 16px;
+  background: rgba(var(--стекло-ргб-запасная, 21, 24, 27), 0.82); box-shadow: var(--стекло-тень-малая);
 }
-.захват-досмотр > .кнопка { flex: 0 0 auto; }
+.захват-досмотр > .кнопка { flex: 0 0 auto; min-height: 44px; }
 
 /* Рекорды: строка на партию, дата первой. */
 .захват-рекорды-строка { padding: 10px 0; font-size: 13px !important; line-height: 1.5; border-bottom: 1px solid var(--край); }
@@ -527,23 +717,21 @@ body.захват #экран-игры > .захват-досмотр { width: 1
 
 /* ---------- Узкие и низкие экраны (320 точек, 568 высоты) ---------- */
 @media (max-width: 359px) {
-  /* В верхней строке плашки четыре колонки: узкий промежуток оставляет имени и метке ещё 6 px. */
-  .захват-игрок { padding: 6px 7px; column-gap: 4px; }
-  .захват-игрок__имя { font-size: 12px; }
+  /* Капсулы игроков втроём: в ряду всего 93 px, поля и промежутки узкие, имя 13 (не мельче 12), счёт 12. */
+  .захват-игрок { padding: 4px 3px; column-gap: 3px; }
+  .захват-игрок__имя { font-size: 13px; }
   .захват-панель { padding: 14px; }
   /* На 320 «Сложные» заполняло пилюлю целиком — поля внутри у́же, чтобы слово не вылезало. */
   .захват-выбор-числа > button { padding-inline: 6px; }
-  .захват-панель-действий > .кнопка { font-size: 15px; }
+  /* Кнопки пульта: «Сказать» + две кнопки в 280 px — шрифт и поля меньше, высота всё те же 56. */
+  body.захват #захват-пульт .захват-панель-действий > .кнопка { font-size: 15px; padding: 0 8px; gap: 6px; }
+  body.захват #захват-пульт #захват-готово { font-size: 16px; }
+  body.захват #захват-пульт #кнопка-эмоции { padding: 0; }
   body.захват dialog { padding: 18px; }
-  /* Пилюля-подсказка над картой: на 320 при 15 px текст занимал 4-5 строк и закрывал карту.
-     Шире (почти вся колонка), поля и шрифт меньше (13 px, не ниже 12) — не выше трёх строк. */
-  .захват-совет { left: 4px; right: 4px; max-width: calc(100% - 8px); gap: 4px; padding: 6px 6px 6px 8px; font-size: 12px; line-height: 1.2; }
-  .захват-совет > button { min-height: 44px; padding: 4px 8px; font-size: 12px; }
-}
-@media (max-height: 640px) {
-  .захват-карта { min-height: 150px; }
-  .захват-подсказка { min-height: 40px; padding-block: 4px; font-size: 14px; }
-  .захват-панель-действий > .кнопка { min-height: 48px; }
+  /* Подсказка новичка над пультом: на 320 шрифт 13 и меньше поля — не выше трёх строк. */
+  body.захват #экран-игры > .захват-совет { gap: 4px; padding: 6px 6px 6px 12px; font-size: 13px; line-height: 1.2; }
+  .захват-совет > button { padding: 4px 10px; font-size: 13px; }
+  .захват-лист { padding-top: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   body.захват * , body.захват *::after { animation: none !important; transition: none !important; }

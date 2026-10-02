@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Захват — Игры с друзьями</title><link rel="stylesheet" href="style.css?v=110"><script>window.ИграСтраницы='захват';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script><link rel="stylesheet" href="style-коллекция.css?v=2">
 <link rel="stylesheet" href="style-настольные-фото.css?v=1">
-<link rel="stylesheet" href="style-захват.css?v=16">
+<link rel="stylesheet" href="style-захват.css?v=17">
 <link rel="stylesheet" href="style-аватар.css?v=1"></head><body class="захват"><main id="приложение">
 <!-- Лобби: каркас дурака (заголовок, профиль, картинка-гнездо, карточки входов, «Есть код?», нижняя полоса). -->
 <section id="экран-лобби" class="экран экран--виден фото-лобби">
@@ -44,64 +44,67 @@
   </div>
 </section>
 
-<!-- Стол: нижней полосы нет (ТЗ 8.4). Рисунков нет: холст и шайбы заполняет код готовыми рисунками Кодекса. -->
+<!-- Стол «Парящий» (ТЗ 8.4): карта под всем экраном, поверх неё стекло — верхняя строка с капсулой раунда,
+     капсулы игроков и пульт снизу. Нижней полосы нет. Рисунков нет: холст и шайбы заполняет код готовыми рисунками Кодекса. -->
 <section id="экран-игры" class="экран">
-  <div class="верх-игры"><button type="button" class="верх-игры__кнопка" data-назад aria-label="Назад">‹</button><h1>Захват</h1><button type="button" class="верх-игры__кнопка" data-меню aria-label="Ещё">···</button></div>
-  <div class="захват-раунд">
-    <span id="захват-раунд" class="захват-тихо"></span>
-    <span id="захват-таймер" class="захват-таймер скрыт" role="timer"></span>
-    <span id="захват-готовы" class="захват-тихо"></span>
+  <div id="захват-карта" class="захват-карта" aria-label="Карта">
+    <!-- Окно обрезает приближенную карту; пластина итога лежит в пульте, не здесь (ТЗ 8.5) -->
+    <div class="захват-окно-карты">
+      <canvas id="захват-холст" class="захват-холст"></canvas>
+      <div id="захват-слой" class="захват-слой"></div>
+    </div>
   </div>
+  <div class="верх-игры"><button type="button" class="верх-игры__кнопка стекло-кнопка-круг" data-назад aria-label="Назад">‹</button><div class="захват-раунд стекло-капсула"><span id="захват-раунд" class="захват-тихо"></span><span id="захват-таймер" class="захват-таймер скрыт" role="timer"></span></div><button type="button" class="верх-игры__кнопка стекло-кнопка-круг" data-меню aria-label="Ещё">···</button></div>
   <!-- «Досмотреть быстро» (ТЗ 5): пометка сверху и выход к записанному итогу в любой миг -->
   <div id="захват-досмотр" class="захват-досмотр скрыт" role="status">
     <span>Итог уже записан</span>
     <button id="захват-досмотр-итог" class="кнопка кнопка--мелкая">К итогу</button>
   </div>
   <div id="захват-игроки" class="захват-игроки" aria-label="Игроки">
-    <div class="захват-игрок скрыт" data-место="1"><span class="захват-игрок__значок"></span><span id="захват-имя-1" class="захват-игрок__имя" data-место="1"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
-    <div class="захват-игрок скрыт" data-место="2"><span class="захват-игрок__значок"></span><span id="захват-имя-2" class="захват-игрок__имя" data-место="2"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
-    <div class="захват-игрок скрыт" data-место="3"><span class="захват-игрок__значок"></span><span id="захват-имя-3" class="захват-игрок__имя" data-место="3"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
-    <div class="захват-игрок скрыт" data-место="4"><span class="захват-игрок__значок"></span><span id="захват-имя-4" class="захват-игрок__имя" data-место="4"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
-    <div class="захват-игрок скрыт" data-место="5"><span class="захват-игрок__значок"></span><span id="захват-имя-5" class="захват-игрок__имя" data-место="5"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
-    <div class="захват-игрок скрыт" data-место="6"><span class="захват-игрок__значок"></span><span id="захват-имя-6" class="захват-игрок__имя" data-место="6"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="1"><span class="захват-игрок__значок"></span><span id="захват-имя-1" class="захват-игрок__имя" data-место="1"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="2"><span class="захват-игрок__значок"></span><span id="захват-имя-2" class="захват-игрок__имя" data-место="2"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="3"><span class="захват-игрок__значок"></span><span id="захват-имя-3" class="захват-игрок__имя" data-место="3"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="4"><span class="захват-игрок__значок"></span><span id="захват-имя-4" class="захват-игрок__имя" data-место="4"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="5"><span class="захват-игрок__значок"></span><span id="захват-имя-5" class="захват-игрок__имя" data-место="5"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
+    <div class="захват-игрок стекло-капсула скрыт" data-место="6"><span class="захват-игрок__значок"></span><span id="захват-имя-6" class="захват-игрок__имя" data-место="6"></span><span class="захват-игрок__счёт"></span><span class="захват-игрок__метка"></span></div>
   </div>
-  <div id="захват-карта" class="захват-карта" aria-label="Карта">
-    <!-- Окно обрезает приближенную карту; пластина лежит вне окна, поверх строки раунда и полосы игроков (ТЗ 8.5) -->
-    <div class="захват-окно-карты">
-      <canvas id="захват-холст" class="захват-холст"></canvas>
-      <div id="захват-слой" class="захват-слой"></div>
+  <!-- Подсказки первой партии (ТЗ 13): пилюля над пультом, не окно; «Понятно» гасит только текущую -->
+  <div id="захват-совет" class="захват-совет стекло-капсула скрыт" role="status"><span id="захват-совет-текст"></span><button id="захват-совет-понятно" type="button">Понятно</button></div>
+  <!-- Пульт: подсказка и «Готовы N/M», чипы разбивки подкрепления, пластина итога, кнопки действий -->
+  <div id="захват-пульт" class="захват-пульт стекло-панель">
+    <div class="захват-пульт__строка">
+      <p id="захват-подсказка" class="захват-подсказка" role="status"></p>
+      <span id="захват-готовы" class="захват-тихо"></span>
     </div>
+    <div id="захват-чипы" class="захват-чипы" role="list"></div>
     <div id="захват-пластина" class="захват-пластина скрыт" role="status"></div>
-    <!-- Подсказки первой партии (ТЗ 13): пилюля над картой, не окно; «Понятно» гасит только текущую -->
-    <div id="захват-совет" class="захват-совет скрыт" role="status"><span id="захват-совет-текст"></span><button id="захват-совет-понятно" type="button">Понятно</button></div>
-  </div>
-  <p id="захват-подсказка" class="захват-подсказка" role="status"></p>
-  <div class="захват-панель-действий">
-    <button id="захват-отменить" class="кнопка">↶ Отменить</button>
-    <button id="захват-готово" class="кнопка кнопка--главная">✓ Готово</button>
-    <button id="кнопка-эмоции" class="кнопка скрыт">💬 Сказать</button>
+    <div class="захват-панель-действий">
+      <button id="захват-отменить" class="кнопка">↶ Отменить</button>
+      <button id="захват-готово" class="кнопка кнопка--главная стекло-акцент">✓ Готово</button>
+      <button id="кнопка-эмоции" class="кнопка стекло-кнопка-круг скрыт" aria-label="Сказать"><span class="захват-для-чтения">Сказать</span></button>
+    </div>
   </div>
   <p id="строка-связи" class="скрыт" role="status"></p>
 
   <!-- Лист приказа (ТЗ 8.4.2) -->
-  <div id="захват-приказ" class="захват-лист скрыт" role="dialog" aria-labelledby="захват-приказ-заголовок">
+  <div id="захват-приказ" class="захват-лист стекло-панель скрыт" role="dialog" aria-labelledby="захват-приказ-заголовок">
     <h2 id="захват-приказ-заголовок"></h2>
     <div class="захват-приказ-счётчик">
-      <button id="захват-приказ-минус" class="кнопка" aria-label="Меньше войск">−</button>
+      <button id="захват-приказ-минус" class="кнопка стекло-кнопка-круг" aria-label="Меньше войск">−</button>
       <input id="захват-приказ-ползунок" type="range" min="1" max="1" value="1" aria-label="Сколько войск послать">
-      <button id="захват-приказ-плюс" class="кнопка" aria-label="Больше войск">+</button>
+      <button id="захват-приказ-плюс" class="кнопка стекло-кнопка-круг" aria-label="Больше войск">+</button>
     </div>
     <p id="захват-приказ-число" class="захват-приказ-число"></p>
     <p id="захват-приказ-шанс" class="захват-приказ-шанс"></p>
     <p id="захват-приказ-потери" class="захват-приказ-потери"></p>
     <p id="захват-приказ-подкрепление" class="захват-тихо"></p>
-    <button id="захват-приказ-отдать" class="кнопка кнопка--главная">Ударить</button>
+    <button id="захват-приказ-отдать" class="кнопка кнопка--главная стекло-акцент">Ударить</button>
     <button id="захват-приказ-убрать" class="кнопка скрыт">Убрать приказ</button>
     <button id="захват-приказ-отмена" class="кнопка">Отмена</button>
   </div>
 
   <!-- Долгое касание области (ТЗ 8.4.3) -->
-  <div id="захват-карточка" class="захват-лист скрыт" role="dialog" aria-labelledby="захват-карточка-имя">
+  <div id="захват-карточка" class="захват-лист стекло-панель скрыт" role="dialog" aria-labelledby="захват-карточка-имя">
     <h2 id="захват-карточка-имя"></h2>
     <p id="захват-карточка-хозяин"></p>
     <p id="захват-карточка-войска"></p>
@@ -111,14 +114,14 @@
   </div>
 
   <!-- Журнал раунда (ТЗ 8.5): лист со строками событий -->
-  <div id="захват-журнал" class="захват-лист скрыт" role="dialog" aria-labelledby="захват-журнал-заголовок">
+  <div id="захват-журнал" class="захват-лист стекло-панель скрыт" role="dialog" aria-labelledby="захват-журнал-заголовок">
     <h2 id="захват-журнал-заголовок">Журнал раунда</h2>
     <div id="захват-журнал-строки" class="захват-журнал-строки"></div>
     <button id="захват-журнал-закрыть" class="кнопка">Закрыть</button>
   </div>
 
   <!-- «Вы выбыли» / «Вы сдались» без сети (ТЗ 5): итог уже записан, досмотр — только показ -->
-  <div id="захват-выбыл" class="захват-лист скрыт" role="dialog" aria-labelledby="захват-выбыл-заголовок">
+  <div id="захват-выбыл" class="захват-лист стекло-панель скрыт" role="dialog" aria-labelledby="захват-выбыл-заголовок">
     <h2 id="захват-выбыл-заголовок"></h2>
     <button id="захват-выбыл-смотреть" class="кнопка кнопка--главная">Досмотреть быстро</button>
     <button id="захват-выбыл-новая" class="кнопка">Новая партия</button>
@@ -126,12 +129,12 @@
   </div>
 
   <!-- Долгое касание своей области, пока не всё подкрепление поставлено (ТЗ 9) -->
-  <div id="захват-поставить" class="захват-лист скрыт" role="dialog" aria-labelledby="захват-поставить-заголовок">
+  <div id="захват-поставить" class="захват-лист стекло-панель скрыт" role="dialog" aria-labelledby="захват-поставить-заголовок">
     <h2 id="захват-поставить-заголовок"></h2>
     <div class="захват-приказ-счётчик">
-      <button id="захват-поставить-минус" class="кнопка" aria-label="Меньше войск">−</button>
+      <button id="захват-поставить-минус" class="кнопка стекло-кнопка-круг" aria-label="Меньше войск">−</button>
       <p id="захват-поставить-число" class="захват-приказ-число"></p>
-      <button id="захват-поставить-плюс" class="кнопка" aria-label="Больше войск">+</button>
+      <button id="захват-поставить-плюс" class="кнопка стекло-кнопка-круг" aria-label="Больше войск">+</button>
     </div>
     <button id="захват-поставить-да" class="кнопка кнопка--главная">Поставить</button>
     <button id="захват-поставить-все" class="кнопка">Все сюда</button>
@@ -320,4 +323,4 @@
 </div>
 </main>
 <script src="js/telegram.js?v=36"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script><script src="js/лист-ещё.js?v=13"></script><script src="js/игры-реестр.js?v=zahvat-20261002"></script><script src="js/рейтинг-экран.js?v=46"></script><script src="js/профиль-экран.js?v=3"></script>
-<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=3"></script><script src="js/захват-бот.js?v=2"></script><script src="js/захват-память.js?v=4"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=2"></script><script src="js/захват-раскрытие.js?v=10"></script><script src="js/захват-карта-вид.js?v=5"></script><script src="js/захват-стол.js?v=16"></script><script src="js/деберц-сказать.js?v=9"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/захват-экран.js?v=25"></script><script src="js/захват-онлайн.js?v=18"></script><script src="js/дурак-комната.js?v=zahvat-20261001b"></script><script src="js/сеть.js?v=kod-igra-20261001"></script><script src="js/открытые-столы.js?v=zahvat-20261001"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>
+<script src="js/друзья-экран.js?v=4"></script><script src="js/захват-карты.js?v=1"></script><script src="js/захват-правила.js?v=3"></script><script src="js/захват-бот.js?v=2"></script><script src="js/захват-память.js?v=4"></script><script src="js/захват-звук.js?v=1"></script><script src="js/захват-знаки.js?v=2"></script><script src="js/захват-раскрытие.js?v=10"></script><script src="js/захват-карта-вид.js?v=5"></script><script src="js/захват-стол.js?v=17"></script><script src="js/деберц-сказать.js?v=9"></script><script src="js/нижние-вкладки.js?v=10"></script><script src="js/очки-рейтинга.js?v=2"></script><script src="js/онлайн-лобби.js?v=1"></script><script src="js/захват-экран.js?v=26"></script><script src="js/захват-онлайн.js?v=19"></script><script src="js/дурак-комната.js?v=zahvat-20261001b"></script><script src="js/сеть.js?v=kod-igra-20261001"></script><script src="js/открытые-столы.js?v=zahvat-20261001"></script><script src="js/подбор-экран.js?v=3"></script><script src="js/популярность.js?v=1" data-game="захват"></script></body></html>
