@@ -66,6 +66,7 @@
 #экран-витрины [data-игра="шашки"] { --catalog-art: url('img/витрина/checkers.jpg'); }
 #экран-витрины [data-игра="домино"] { --catalog-art: url('img/витрина/dominoes.jpg'); }
 #экран-витрины [data-игра="морской-бой"] { --catalog-art: url('img/витрина/battleship.jpg'); }
+#экран-витрины [data-игра="захват"] { --catalog-art: url('img/захват/обложка.webp'); }
 #экран-витрины [data-игра="катан"] { --catalog-art: url('img/катан/обложка-v5.webp'); }
 #экран-витрины [data-игра="монополия"] { --catalog-art: url('img/монополия/обложка-v3.webp'); }
 #экран-витрины [data-игра="покер"] { --catalog-art: url('img/покер/обложка-v1.webp'); }
