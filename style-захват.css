@@ -526,6 +526,10 @@ body.захват #экран-игры > .захват-досмотр { width: 1
   .захват-выбор-числа > button { padding-inline: 6px; }
   .захват-панель-действий > .кнопка { font-size: 15px; }
   body.захват dialog { padding: 18px; }
+  /* Пилюля-подсказка над картой: на 320 при 15 px текст занимал 4-5 строк и закрывал карту.
+     Шире (почти вся колонка), поля и шрифт меньше (13 px, не ниже 12) — не выше трёх строк. */
+  .захват-совет { left: 4px; right: 4px; max-width: calc(100% - 8px); gap: 4px; padding: 6px 6px 6px 8px; font-size: 12px; line-height: 1.2; }
+  .захват-совет > button { min-height: 34px; padding: 4px 8px; font-size: 12px; }
 }
 @media (max-height: 640px) {
   .захват-карта { min-height: 150px; }
