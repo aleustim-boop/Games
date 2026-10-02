@@ -154,11 +154,12 @@ async function сыгратьРаунд(страница) {
     if (!window.__наблюдатель) {
       window.__наблюдатель = new MutationObserver(() => {
         if (window.__т1 !== null) return;
-        const заперта = готово.hasAttribute('disabled');
-        if (заперта && window.__начало === null) window.__начало = performance.now();
-        else if (!заперта && window.__начало !== null) window.__т1 = performance.now();
+        // Раскрытие идёт, пока «Готово» стала «Пропустить ›» (класс захват-готово--пропуск); кнопка при этом не заперта.
+        const идётРаскрытие = готово.classList.contains('захват-готово--пропуск');
+        if (идётРаскрытие && window.__начало === null) window.__начало = performance.now();
+        else if (!идётРаскрытие && window.__начало !== null) window.__т1 = performance.now();
       });
-      window.__наблюдатель.observe(готово, { attributes: true, attributeFilter: ['disabled'] });
+      window.__наблюдатель.observe(готово, { attributes: true, attributeFilter: ['class'] });
       document.addEventListener('click', е => {
         if (е.target.closest && е.target.closest('#захват-готово, #захват-остаток-да') && window.__т1 === null) window.__т0 = performance.now();
       }, true);
