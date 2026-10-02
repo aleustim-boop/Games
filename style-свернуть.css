@@ -1,43 +1,50 @@
 /* Кнопка «Свернуть» (создаёт js/telegram.js, видна только в полном экране Telegram 8.0+).
    Файл самостоятельный: у 14 страниц нет style.css, поэтому цвета здесь свои.
-   Встаёт по центру полосы, где Telegram рисует свои кнопки («Закрыть» слева, «⌄ ⋯» справа),
-   сразу под системными часами. Размеры полосы приходят из js/telegram.js:
+   Слова на кнопке нет — только значок-стрелка вниз (владелец 02.10); подпись для скринридера
+   лежит в aria-label, который ставит js/telegram.js.
+   Встаёт вплотную слева от правой системной капсулы Telegram («⌄ ⋯»), в той же полосе
+   и вровень с ней по высоте. Капсула занимает справа примерно 90–96px, берём 96px и
+   прибавляем безопасный отступ справа (вырез в боковой рамке).
+   Размеры полосы приходят из js/telegram.js:
    --телеграм-система-сверху (часы, вырез) и --телеграм-полоса-сверху (полоса кнопок Telegram).
    Если Telegram полосу не прислал (ноль) — кнопка встаёт под системным отступом
-   и берёт обычную высоту под палец.
+   и берёт обычную высоту под палец (32px).
    Правка этого файла = поднять номер ?v= в константе js/telegram.js. */
 
 .свернуть-окно {
+  --свернуть-размер: max(32px, var(--телеграм-полоса-сверху, 0px));   /* высота полосы; ширина такая же — кнопка круглая */
   position: fixed;
   top: var(--телеграм-система-сверху, 0px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: calc(96px + env(safe-area-inset-right, 0px));
   z-index: 90;                          /* поверх экранов игр и листа витрины (у них слой 30); ниже листа игры 110 и плашек */
   box-sizing: border-box;
-  height: max(32px, var(--телеграм-полоса-сверху, 0px));
-  min-width: 96px;
+  width: var(--свернуть-размер);
+  height: var(--свернуть-размер);
   margin: 0;
-  padding: 0 14px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
   background: rgba(20, 24, 22, 0.72);
   color: #f1f5f2;
   font: 600 13px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  letter-spacing: 0.01em;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 .свернуть-окно::before {
-  content: "⌄";
-  color: #b8e986;                       /* салатовый акцент проекта — только на значке */
-  font-size: 16px;
-  line-height: 1;
+  content: "";
+  display: block;
+  width: 22px;
+  height: 22px;
+  background-color: #b8e986;            /* салатовый акцент проекта — только на значке */
+  /* готовый рисованный значок «вправо» из набора дурака, повёрнутый вниз; шрифтовой ⌄ читался как буква «v» */
+  -webkit-mask: url(img/дурак/значки/chevron-right.svg) no-repeat center / contain;
+  mask: url(img/дурак/значки/chevron-right.svg) no-repeat center / contain;
+  transform: rotate(90deg);
 }
 
 .свернуть-окно:active {
@@ -47,27 +54,6 @@
 .свернуть-окно:focus-visible {
   outline: 2px solid #b8e986;
   outline-offset: 2px;
-}
-
-/* Катан в полном экране ставит название «Катан» по центру полосы Telegram
-   (style-катан-настройки.css, класс кат-заголовок-в-телеграме на экране игры).
-   Там кнопка стала бы поверх названия, поэтому сжимается до значка ⌄ и встаёт
-   правее названия: между ним и правой капсулой Telegram (она начинается
-   примерно в 96px от края). Ширину названия берём от того же размера шрифта,
-   что у катана: clamp(22px, 6vw, 30px), с запасом 1.6 размера на половину слова.
-   На 320px правый край кнопки (≈227) не заходит в правые 90px (капсула Telegram). */
-html:has(.кат-заголовок-в-телеграме) .свернуть-окно {
-  left: calc(50% + clamp(22px, 6vw, 30px) * 1.6 + 2px);
-  transform: none;
-  min-width: 0;
-  width: 30px;
-  padding: 0;
-  font-size: 0;                         /* слово прячем, остаётся значок; подпись — aria-label */
-  gap: 0;
-}
-
-html:has(.кат-заголовок-в-телеграме) .свернуть-окно::before {
-  font-size: 18px;
 }
 
 /* Запасной случай: Telegram не прислал полосу кнопок (js/telegram.js ставит на <html>
