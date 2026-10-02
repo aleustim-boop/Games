@@ -43,7 +43,7 @@ const assert = require('node:assert/strict'), { chromium, безTelegram, под
     const after = await p.locator('#море-поле-врага').boundingBox(); assert.equal(after.width, before.width); assert.equal(after.height, before.height);
     await p.locator('#кнопка-эмоции').click(); assert(await p.getByRole('dialog', { name: 'Сказать за столом' }).isVisible());
     await p.locator('#кнопка-эмоции-назад').click();
-    await p.locator('#море-сдаться').click(); await p.locator('#море-реванш').click();
+    await p.locator('#море-сдаться').click(); await p.locator('#кнопка-ещё').click();
     assert(await p.locator('#море-расстановка').isVisible());
     assert.deepEqual(errors, []); console.log('Браузер: ручная расстановка, ошибки касаний, сохранение, 5 размеров, полный бой, результат, реванш и Сказать — OK');
   } finally { await b.close(); }

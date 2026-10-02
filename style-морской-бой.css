@@ -17,8 +17,6 @@ html.в-телеграме .море-верх { display: none; }
 .море-вход { display: flex; flex-direction: column; gap: 6px; padding: 20px; text-align: left; width: 100%; }
 .море-вход strong { font-size: 22px; }
 .море-вход span { font-size: 13px; opacity: .7; }
-.море-афиша { width: 100%; min-height: 180px; height: clamp(160px,26dvh,260px); border: 1px solid #35566a; border-radius: 20px; overflow: hidden; background: radial-gradient(ellipse at 65% 40%,#194e70,#0b1b2b 70%); display: grid; place-items: center; position: relative; }
-.море-афиша img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .море-вкладки { display: flex; justify-content: space-around; width: 100%; gap: 8px; margin-top: auto; }
 .море-вкладки button { flex: 1; }
 .море-выбор { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
