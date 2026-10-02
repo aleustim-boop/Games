@@ -904,8 +904,8 @@ async function состояниеЛоббиДлинноеИмя(браузер, 
       const узелИмя = document.getElementById('лобби-имя');
       if (!узелИмя) return false;
       узелИмя.textContent = имя;
-      const узелВторой = document.getElementById('лобби-серия-текст');
-      if (узелВторой) узелВторой.textContent = 'Серия побед подряд: 999999999, рекорд не побит уже очень давно';
+      const узелВторой = document.getElementById('лобби-место');
+      if (узелВторой) узелВторой.textContent = '99999-е место из 99999999, место очень длинное';
       const местоНаПодиуме = document.querySelector('.карточка-профиля__место');
       if (местоНаПодиуме) местоНаПодиуме.textContent = '99999-е место из 99999999';
       return true;
