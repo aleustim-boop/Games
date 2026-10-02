@@ -459,6 +459,11 @@ body.захват dialog > p + form, body.захват dialog > div + form { mar
 /* «в плюсе» — тот же салатовый акцент, что у strong в окнах; рамка строки человека — тоже акцент («здесь вы»). */
 body.захват dialog .захват-итог-плюс { flex: 0 0 auto; font-size: 13px; font-weight: 700; }
 .захват-итог-места > .захват-итог-строка--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент); }
+/* «Изменить ›» в серой строке настроек итога: слово-ссылка акцентным цветом, касание не меньше 32 точек в высоту. */
+.захват-ссылка {
+  display: inline-block; min-height: 32px; padding: 0 4px; border: 0; background: none;
+  font: inherit; color: var(--сб-акцент); cursor: pointer;
+}
 /* «Досмотреть быстро»: пометка над картой и выход к итогу. */
 body.захват #экран-игры > .захват-досмотр { width: 100%; max-width: 520px; align-self: center; flex: 0 0 auto; }
 .захват-досмотр {
