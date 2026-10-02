@@ -278,6 +278,16 @@ function m_есть(м) { return !!(м && м.есть); }
     await страница.waitForTimeout(600);
     const до = await страница.evaluate(() => ({ просили: window.__дневник.полныйЭкран, вид: !!document.querySelector('.свернуть-окно') }));
     проверить(до.вид && до.просили === 1, 'старт: кнопка есть, полный экран просили раз ' + до.просили);
+    // Сначала обычный путь: нажатие закрывает приложение (close), полный экран не трогает
+    await страница.click('.свернуть-окно');
+    await страница.waitForTimeout(400);
+    const закрытие = await страница.evaluate(() => ({
+      close: window.ПоддельныйТелеграм.журнал.filter((с) => с === 'close').length,
+      выход: window.ПоддельныйТелеграм.журнал.filter((с) => с === 'exitFullscreen').length
+    }));
+    проверить(закрытие.close === 1 && закрытие.выход === 0, 'нажатие вызвало close один раз, выхода из полного экрана нет (close ' + закрытие.close + ', выход ' + закрытие.выход + ')');
+    // Запасной путь: close недоступен — выходим из полного экрана
+    await страница.evaluate(() => { window.Telegram.WebApp.close = undefined; });
     await страница.click('.свернуть-окно');
     await страница.waitForTimeout(400);
     const после = await страница.evaluate(() => ({
@@ -332,6 +342,8 @@ function m_есть(м) { return !!(м && м.есть); }
     const { окно, страница, красные } = await новаяСтраница(браузер, р390, ПОЛНЫЙ);
     await страница.goto(ссылка('index.html'));
     await страница.waitForTimeout(500);
+    // Переход помнит выбор только в запасном пути (close недоступен): при рабочем close игра закрывается
+    await страница.evaluate(() => { window.Telegram.WebApp.close = undefined; });
     await страница.click('.свернуть-окно');
     await страница.waitForTimeout(300);
     for (const имя of ['монополия.html', 'катан.html']) {
