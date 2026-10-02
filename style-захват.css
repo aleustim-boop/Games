@@ -259,7 +259,7 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
 .захват-игрок {
   --стекло-радиус-капсула: 26px;
   flex: 1 1 calc((100% - 16px) / 3 - 1px); min-width: 0; min-height: 52px; padding: 4px 6px 4px 6px;
-  display: grid; grid-template-columns: auto minmax(46px, max-content) minmax(0, max-content) 1fr;
+  display: grid; grid-template-columns: auto minmax(34px, max-content) minmax(min-content, max-content) 1fr;
   grid-template-areas: "значок имя метка готов" "счёт счёт счёт счёт";
   gap: 0 4px; align-content: center; align-items: center;
 }
@@ -345,7 +345,7 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
 /* Число войск — текст кодом, белый на тёмной середине шайбы; тонкая тёмная обводка букв — на случай трёх цифр. */
 .захват-шайба__число {
   position: relative; display: block;
-  font-size: calc(var(--ш) * 0.44); font-weight: 700; line-height: 1; letter-spacing: -0.02em;
+  font-size: max(12px, calc(var(--ш) * 0.44)); font-weight: 700; line-height: 1; letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--шайба-число, #fff);
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 1px rgba(0, 0, 0, 0.8);
 }
@@ -374,7 +374,7 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
    тесноту поровну (обе колонки «до своей ширины»): иначе «спит» съедало всё и от «Бот» оставалось «Б…».
    Сетка колонок — в блоке «капсулы игроков» выше. Жетон 28, на 320 — 22. */
 .захват-игрок__значок { grid-area: значок; --ш: 28px; align-self: center; }
-@media (max-width: 359px) { .захват-игрок__значок { --ш: 22px; } }
+@media (max-width: 359px) { .захват-игрок__значок { --ш: 20px; } }
 /* Пилюля «+N» над шайбой: пилюля-метки.webp, 192×64. Края по 32 px рисунка (слева и справа) не тянутся, середина
    растягивается под текст; сверху и снизу краёв нет — рисунок на всю высоту. На экране высота 18 px, края 9 px. */
 .захват-пилюля {
@@ -382,7 +382,7 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
   transform: translate(-50%, -100%); margin-top: -1px;
   height: 18px; padding: 0; border-style: solid; border-width: 0 9px;
   border-image: url("img/захват/пилюля-метки.webp?v=1") 0 32 fill / 0 9px / 0 stretch;
-  font-size: 11px; font-weight: 700; line-height: 18px; white-space: nowrap; text-align: center;
+  font-size: 12px; font-weight: 700; line-height: 18px; white-space: nowrap; text-align: center;
   font-variant-numeric: tabular-nums; color: var(--сб-акцент); pointer-events: none;
 }
 /* Над шайбой не влезло (верхний край холста) — стол ставит класс и якорь в низ шайбы: пилюля под ней. */
@@ -397,8 +397,8 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
 /* Подпись остатка («Столица Пик · 3 очка») длиннее имени: без потолка ширины и шрифтом как у «+N»,
    иначе на 360 режется «…». */
 .захват-пилюля.захват-пилюля--подпись.захват-пилюля--остаток {
-  width: max-content; max-width: 90px; height: auto; min-height: 18px; overflow: visible;
-  white-space: normal; font-size: 11px; line-height: 14px; padding: 2px 0;
+  width: max-content; max-width: 100px; height: auto; min-height: 18px; overflow: visible;
+  white-space: normal; font-size: 12px; line-height: 15px; padding: 2px 0;
 }
 /* Число войск на стрелке своего приказа: по центру точки (--x, --y в px карты, середина стрелки), та же картинка
    пилюли, что у «+N». Касание не ловит — стрелку трогает стол. Удар — салатовый текст, перевод — белый. */
@@ -574,7 +574,9 @@ body.захват #захват-пульт #кнопка-эмоции::before {
   border-radius: 999px; background: rgba(255, 255, 255, 0.4);
 }
 /* Пока лист открыт — пульт и подсказка новичка под ним скрыты (класс ставит код на #экран-игры). */
-#экран-игры.экран-игры--лист > :is(.захват-пульт, .захват-совет) { display: none; }
+/* Селектор с «body.захват» нарочно: правила «body.захват #экран-игры > .захват-пульт / .захват-совет» с display: flex
+   сильнее короткого, и без него пульт и подсказка оставались под листом (вопрос об остатке ложился на панель). */
+body.захват #экран-игры.экран-игры--лист > :is(.захват-пульт, .захват-совет) { display: none; }
 .захват-лист > h2 { font-size: 20px; font-weight: 700; line-height: 1.25; text-align: left; }
 .захват-лист > p { font-size: 15px; line-height: 1.4; }
 .захват-лист > p:empty { display: none; }
@@ -722,7 +724,7 @@ body.захват dialog .захват-итог-плюс { flex: 0 0 auto; font-
 /* ---------- Узкие и низкие экраны (320 точек, 568 высоты) ---------- */
 @media (max-width: 359px) {
   /* Капсулы игроков втроём: в ряду всего 93 px, поля и промежутки узкие, имя 13 (не мельче 12), счёт 12. */
-  .захват-игрок { padding: 4px 3px; column-gap: 3px; }
+  .захват-игрок { padding: 4px 3px; column-gap: 2px; }
   .захват-игрок__имя { font-size: 13px; }
   .захват-панель { padding: 14px; }
   /* На 320 «Сложные» заполняло пилюлю целиком — поля внутри у́же, чтобы слово не вылезало. */
