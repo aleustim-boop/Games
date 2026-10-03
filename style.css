@@ -17600,9 +17600,44 @@ html.в-телеграме #экран-профиля-игрока #кнопка
   text-align: left;
 }
 
+/* Подсказка под плашкой «Ищем соперника…» и правило очков под таблицей —
+   мелко и тихо, чтобы новичок понял, что делать и как считаются очки. */
+.турнир-подсказка,
+.турнир-правило {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--сб-текст-тихий);
+  overflow-wrap: anywhere;
+}
+
+/* Подписи колонок — те же четыре колонки, что у строки таблицы
+   (отступ и кромка такие же, чтобы столбцы стояли друг под другом). */
+.турнир-подписи {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 64px 38px;
+  column-gap: 8px;
+  padding: 0 11px;
+  box-sizing: border-box;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--сб-текст-тихий);
+}
+
+.турнир-подписи .турнир-имя,
+.турнир-подписи .турнир-партий,
+.турнир-подписи .турнир-очки {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--сб-текст-тихий);
+}
+
+.турнир-подписи .турнир-партий,
+.турнир-подписи .турнир-очки { text-align: right; }
+
 .турнир-строка {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) auto 38px;
+  grid-template-columns: 28px minmax(0, 1fr) 64px 38px;
   align-items: center;
   column-gap: 8px;
   min-height: 44px;
@@ -17636,6 +17671,7 @@ html.в-телеграме #экран-профиля-игрока #кнопка
 
 .турнир-партий {
   font-size: 12.5px;
+  text-align: right;
   white-space: nowrap;
   color: var(--сб-текст-тихий);
 }
