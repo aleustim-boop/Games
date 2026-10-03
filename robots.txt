@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /tests/
+Disallow: /%D1%88%D1%82%D0%B0%D0%B1/
+Disallow: /server/
+Disallow: /bot/
+
+Sitemap: https://igra.medart.com.ua/sitemap.xml
