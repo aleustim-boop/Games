@@ -24,12 +24,28 @@
   }
   if(!game)return;
   const session=crypto.randomUUID();let seq=0,pending=0,previous=performance.now(),wasPlaying=false,entered=false,wasEntered=false,lastSend=0,telegramActive=true;
+  // Гость из браузера: ид из 16 знаков [a-z0-9] живёт в памяти браузера. Память может бросить
+  // исключение или быть пустой — тогда ид держим в переменной до закрытия страницы.
+  const guestKey='guest_id';let guestMemo='';
+  function newGuestId(){
+    const letters='abcdefghijklmnopqrstuvwxyz0123456789',bytes=new Uint8Array(16);
+    try{crypto.getRandomValues(bytes);}catch{for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);}
+    return Array.from(bytes,b=>letters[b%36]).join('');
+  }
+  function guestId(){
+    if(guestMemo)return guestMemo;
+    try{const saved=localStorage.getItem(guestKey);if(/^[a-z0-9]{16,32}$/.test(saved||''))return guestMemo=saved;}catch{}
+    guestMemo=newGuestId();
+    try{localStorage.setItem(guestKey,guestMemo);}catch{}
+    return guestMemo;
+  }
   function send(){
     const initData=window.Telegram?.WebApp?.initData;
-    if(!initData)return;
-    const seconds=Math.min(60,pending);pending=0;lastSend=performance.now();
+    // Без Telegram — пульс гостя: только ид и игра, без подписи и без данных каталога.
+    const body=initData?{initData,игра:game,каталог:{сеанс:session,номер:seq++,секунд:Math.min(60,pending)}}:{гость:guestId(),игра:game};
+    pending=0;lastSend=performance.now();
     fetch(endpoint('/пульс'),{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,
-      body:JSON.stringify({initData,игра:game,каталог:{сеанс:session,номер:seq++,секунд:seconds}})}).catch(()=>{});
+      body:JSON.stringify(body)}).catch(()=>{});
     return true;
   }
   function tick(){
