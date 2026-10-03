@@ -36,6 +36,15 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+/* Одиночные страницы берём из таблицы сервера (server/названия.js), а не из
+   «слов, которых нет в МЕТКИ_ИГР»: с меткой «Похвастаться» все десять уже
+   там, и прежняя охрана следила бы лишь за тремя спрятанными. Спрятанные с
+   витрины (владелец 29.09) названы здесь руками — в таблице сервера их нет. */
+const названия = require(path.join(__dirname, '..', 'server', 'названия.js'));
+const СКРЫТЫЕ_ГОЛОВОЛОМКИ = ['блоки', 'три-в-ряд', 'змейка'];
+const ГОЛОВОЛОМКИ = new Set(названия.одиночныеИгры().concat(СКРЫТЫЕ_ГОЛОВОЛОМКИ));
+const ЖДЁМ_ГОЛОВОЛОМОК = названия.одиночныеИгры().length + СКРЫТЫЕ_ГОЛОВОЛОМКИ.length;
+
 // Разберу аргументы: --папка <путь> или --сломать
 let targetFolder = path.join(__dirname, '..');
 let shouldBreak = false;
@@ -150,7 +159,7 @@ if (shouldBreak) {
     if (!gameMatch) continue; // Нет явного объявления
 
     const gameName = gameMatch[1];
-    if (!ruNamesSet.has(gameName)) {
+    if (ГОЛОВОЛОМКИ.has(gameName)) {
       // Это головоломка! Добавить запрещённое подключение
       brokenHtmlFile = htmlFile;
       const modifiedContent = content.replace(
@@ -189,10 +198,11 @@ for (const htmlFile of htmlFiles) {
   const gameName = gameMatch ? gameMatch[1] : null;
 
   // 2.2. Проверить, в ли это МЕТКИ_ИГР или дурак
-  const isKnown = gameName && ruNamesSet.has(gameName);
+  const isPuzzle = Boolean(gameName) && ГОЛОВОЛОМКИ.has(gameName);
+  const isKnown = Boolean(gameName) && !isPuzzle;
   const isDurak = !gameName; // Явно не сказано → дурак по умолчанию
 
-  if (!isKnown && !isDurak) {
+  if (isPuzzle) {
     // Это головоломка!
     puzzlePages.push({ file: htmlFile, name: fileName, gameName });
 
@@ -258,10 +268,10 @@ if (shouldBreak) {
 let totalChecks = 0;
 let totalFails = 0;
 
-// Проверка: головоломки найдены
-if (puzzlePages.length === 0 && !shouldBreak) {
-  console.error('ПЛОХО — ноль страниц-головоломок найдено (проверка ослепла)');
-  errors.push('Ноль головоломок');
+// Проверка: найдены ВСЕ головоломки (10 одиночных + 3 спрятанных), не меньше
+if (puzzlePages.length !== ЖДЁМ_ГОЛОВОЛОМОК) {
+  console.error('ПЛОХО — страниц-головоломок найдено ' + puzzlePages.length + ', ждали ' + ЖДЁМ_ГОЛОВОЛОМОК + ' (проверка ослепла или страницу потеряли)');
+  errors.push('Головоломок ' + puzzlePages.length + ' из ' + ЖДЁМ_ГОЛОВОЛОМОК);
   totalFails++;
   totalChecks++;
 } else {

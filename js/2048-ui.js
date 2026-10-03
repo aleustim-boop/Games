@@ -74,6 +74,7 @@
   $('announce').textContent=`Счёт ${state.score}. Самая большая плитка ${Math.max(...state.board)}.${state.over?' Ходов больше нет.':''}`;
   const bonus=result?.bonuses?.at(-1);if(bonus){const notice=$('merge-bonus');notice.textContent=`БОНУС! ${bonus.blocks} × ${bonus.input} → ${bonus.value}`;notice.hidden=false;$('announce').textContent+=` Бонус: ${bonus.blocks} блока по ${bonus.input} дали ${bonus.value}.`;if(effects()){notice.animate([{opacity:0,transform:'translateY(10px) scale(.85)'},{opacity:1,transform:'translateY(0) scale(1)',offset:.3},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:600,easing:'ease-out'});sparks(result.merged);}bonusTimer=setTimeout(()=>notice.hidden=true,1800);}
   if(state.over)сдатьСчётПартии();
+  отметитьЯрлык();
   if(playing&&!$('dialog').open)showResult();
  }
  function move(direction){
@@ -105,9 +106,27 @@
   ручкиСчёта[mode]=null;
   try{window.ОчкиРейтинга?.сдатьСчёт(ручка,{счёт});}catch{}
  }
+ /* «Похвастаться» и ярлык на рабочий стол. Отмена хода убирает честность счёта,
+    поэтому после неё в этой партии кнопки нет. Ярлык считает партию один раз:
+    флаг сбрасывается только с новой партией. */
+ let отменяли=false,ярлыкОтмечен=false;
+ function внутриTelegram(){try{return Boolean(window.Telegram?.WebApp?.initData);}catch{return false;}}
+ function отметитьЯрлык(){
+  if(ярлыкОтмечен||!state||!(state.over||(state.won&&!state.continued)))return;
+  ярлыкОтмечен=true;
+  try{window.Ярлык?.партияСыграна?.('2048');}catch{}
+ }
+ function кнопкаПохвастаться(body){
+  const b=button(body,'Похвастаться',()=>{
+   if(b.disabled||!window.Сеть?.похвастаться)return;
+   b.disabled=true;
+   const вернуть=ответ=>{b.textContent=ответ&&ответ.отправлено===true?'Отправлено':ответ&&ответ.способ==='буфер'?'Ссылка скопирована':ответ&&ответ.способ==='чат'?'Выбираем чат…':'Похвастаться';b.disabled=false;};
+   Promise.resolve().then(()=>window.Сеть.похвастаться({игра:'2048',исход:'победа',мера:'очки',значение:state.score,режим:mode})).then(вернуть,()=>вернуть(null));
+  },'secondary');
+ }
  function start(fresh=false){
   const returning=!!state&&!fresh;
-  if(fresh||!state){state=R.create(seed());взятьБилетСчёта();}resultShown=false;playing=true;configureMode();
+  if(fresh||!state){state=R.create(seed());взятьБилетСчёта();отменяли=false;ярлыкОтмечен=false;}resultShown=false;playing=true;configureMode();
   setPaused(mode==='falling'&&returning);
   $('экран-лобби').hidden=true;$('экран-лобби').classList.remove('экран--виден');$('экран-игры').hidden=false;$('экран-игры').classList.add('экран--виден');
   save();paint();window.scrollTo(0,0);$('board').focus({preventScroll:true});showResult();
@@ -124,7 +143,7 @@
  function text(body,value,className){const p=document.createElement('p');p.textContent=value;if(className)p.className=className;body.append(p);return p;}
  function button(body,label,fn,style='primary'){const b=document.createElement('button');b.className=style;b.textContent=label;b.onclick=fn;body.append(b);return b;}
  function close(){ $('dialog').close();nextFall=performance.now()+fallDelay();if(playing)$('board').focus({preventScroll:true}); }
- function undo(){if(busy||!state?.previous)return;state=R.undo(state);resultShown=false;nextFall=performance.now()+fallDelay();save();paint();$('announce').textContent='Последний ход отменён.';}
+ function undo(){if(busy||!state?.previous)return;отменяли=true;state=R.undo(state);resultShown=false;nextFall=performance.now()+fallDelay();save();paint();$('announce').textContent='Последний ход отменён.';}
  function showResult(){
   if(resultShown||!state||(state.won&&state.continued&&!state.over)||(!state.won&&!state.over))return;
   resultShown=true;const win=state.won&&!state.continued,body=modal(win?'Вы собрали 2048!':'Каждый ход — опыт');
@@ -133,6 +152,7 @@
   if(win)button(body,'Продолжить к 4096',()=>{state=R.continueGame(state);resultShown=false;save();close();if(state.over)showResult();});
   else if(state.previous)button(body,'Отменить последний ход',()=>{close();undo();});
   button(body,'Новая игра',()=>{close();start(true);},win?'secondary':'primary');
+  if(state.score>0&&!отменяли&&внутриTelegram()&&typeof window.Сеть?.похвастаться==='function')кнопкаПохвастаться(body);
  }
  function help(){const body=modal('Как играть');if(mode==='falling'){text(body,'Числа падают сверху на поле 5 × 7. Двигайте текущий блок стрелками ← → или свайпами. Касание столбца перемещает блок туда, если путь свободен. Контур показывает место приземления.');text(body,'Кнопка «Сбросить блок», пробел или свайп вниз сразу опускают блок. Стрелка ↓ ускоряет падение на одну клетку. После приземления блок одновременно забирает всех равных соседей, которых касается стороной. Каждый сосед удваивает число: падающая 8 + одна 8 = 16; + две 8 = 32; + три 8 = 64. По диагонали слияния нет. Блоки над пустотами падают — так возникают цепочки. Линии не удаляются.');text(body,'Соберите 2048 и продолжайте дальше. Партия заканчивается, когда заблокировано место появления блока вверху по центру. Скорость постепенно растёт; есть пауза и возврат последнего блока.');button(body,'Понятно',close);return;}text(body,'Сдвигайте плитки свайпом или стрелками. Два одинаковых числа объединяются в одно: 2 + 2 = 4. За слияние вы получаете столько очков, сколько написано на новой плитке.');const example=document.createElement('div');example.className='rule-example';example.innerHTML='<b>2</b><span>+</span><b>2</b><span>→</span><b>4</b>';body.append(example);text(body,'После успешного хода появляется 2 или 4. Каждая плитка объединяется только один раз за ход. Соберите 2048 — и при желании играйте дальше. Если свободных клеток и слияний нет, партия завершена.');text(body,'Подсказка: держите самое большое число в одном углу и старайтесь не заполнять всё поле. Доступна отмена одного последнего хода.');button(body,'Понятно',close);}
  function applyPrefs(){document.body.classList.toggle('no-effects',!prefs.effects||reduced.matches);}

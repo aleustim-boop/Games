@@ -40,6 +40,20 @@
  function сдатьВремяРейтинга(){if(!билетПартии||билетПартии.партия!==state||!билетПартии.ручка||state.hints)return;const ручка=билетПартии.ручка;билетПартии.ручка=null;try{window.ОчкиРейтинга.сдатьСчёт(ручка,{секунд:Math.floor(state.seconds)});}catch{}}
  function complete(){document.body.classList.add('complete');сдатьВремяРейтинга();if(!state.hints){const prev=records[state.level];if(!Number.isFinite(prev)||state.seconds<prev){records[state.level]=Math.floor(state.seconds);write(BEST,records);}}
   window.Телеграм?.отклик?.('взятка');const body=modal('Всё на своих местах!'),symbol=document.createElement('div');symbol.className='win-symbol';symbol.textContent='✦';body.append(symbol);paragraph(body,`${labels[state.level]} · ${time(state.seconds)} · подсказок: ${state.hints}. Судоку решено правильно.`);action(body,'Ещё одна задача',()=>{close();start(true);});action(body,'Выбрать сложность',()=>{close();back();},'secondary');
+  // Ярлык на рабочий стол: complete() зовётся один раз на решённую партию.
+  try{window.Ярлык?.партияСыграна?.('судоку');}catch{}
+  // «Похвастаться» — только честное решение (без подсказок), только внутри Telegram.
+  if(!state.hints&&Math.floor(state.seconds)>0&&Boolean(window.Telegram?.WebApp?.initData)&&typeof window.Сеть?.похвастаться==='function')кнопкаПохвастаться(body);
+ }
+ function кнопкаПохвастаться(body){
+  const b=document.createElement('button');b.className='secondary';b.textContent='Похвастаться';
+  b.onclick=()=>{
+   if(b.disabled||!window.Сеть?.похвастаться)return;
+   b.disabled=true;
+   const вернуть=ответ=>{b.textContent=ответ&&ответ.отправлено===true?'Отправлено':ответ&&ответ.способ==='буфер'?'Ссылка скопирована':ответ&&ответ.способ==='чат'?'Выбираем чат…':'Похвастаться';b.disabled=false;};
+   Promise.resolve().then(()=>window.Сеть.похвастаться({игра:'судоку',исход:'победа',мера:'секунд',значение:Math.floor(state.seconds),режим:state.level})).then(вернуть,()=>вернуть(null));
+  };
+  body.append(b);
  }
  function input(n){if(!canPlay())return;if(selected<0){message('Сначала выберите клетку на поле');return;}if(state.puzzle[selected]){message('Исходные цифры изменять нельзя');return;}if(R.enter(state,selected,n,noteMode&&n!==0)){checked.clear();save();render();window.Телеграм?.отклик?.('карта');const bad=R.mistakes(state);message(bad.length?'Исправьте цифру или нажмите «Отмена».':noteMode&&n!==0?'Заметка сохранена':'Ход сохранён');if(state.completed)complete();}}
  function start(fresh=false){if(fresh||!state||state.completed){state=R.create(level,window.SudokuPuzzles,crypto.getRandomValues(new Uint32Array(1))[0]);noteMode=false;}level=state.level;взятьБилетРейтинга();selected=state.board.indexOf(0);checked.clear();document.body.classList.remove('complete');screens(true);setPaused(false);render();save();message('Выберите клетку и цифру');}
