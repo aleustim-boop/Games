@@ -17373,3 +17373,65 @@ html.в-телеграме #экран-профиля-игрока #кнопка
   backdrop-filter: none;
 }
 
+
+/* ---------- Мост в Telegram (js/мост-в-телеграм.js) ----------
+   Карточка для гостя из браузера: «Играйте в Telegram». Внутри Telegram
+   её не создают вовсе. Вид — как у соседних карточек лобби (плитка,
+   кромка, скругление 18); салатовый — только на кнопке. */
+.мост-в-телеграм {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  color: var(--сб-текст, #f8f5eb);
+  background: var(--плитка, #1e2226);
+  border: 1px solid var(--плитка-кромка, rgba(248, 245, 235, 0.12));
+  border-radius: 18px;
+}
+
+.мост-в-телеграм__текст {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.мост-в-телеграм__название {
+  font-size: clamp(16px, 4.6vw, 19px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.мост-в-телеграм__подпись {
+  font-size: clamp(12px, 3.5vw, 14px);
+  line-height: 1.25;
+  color: var(--сб-текст-тихий, rgba(248, 245, 235, 0.62));
+}
+
+.мост-в-телеграм__кнопка {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  color: var(--сб-акцент-текст, #10130a);
+  background: var(--сб-акцент, #d2f76b);
+  border-radius: 12px;
+}
+
+.мост-в-телеграм__кнопка:active { filter: brightness(0.95); }
+
+/* Узкий экран: кнопка уходит под текст на всю ширину, ничего не жмётся. */
+@media (max-width: 360px) {
+  .мост-в-телеграм { flex-wrap: wrap; }
+  .мост-в-телеграм__кнопка { flex: 1 1 100%; }
+}
