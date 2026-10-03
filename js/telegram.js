@@ -2841,10 +2841,35 @@
 
   /** Разослать страницам «сейчас закроемся», чтобы игры успели сохранить партию. */
   function объявитьПередЗакрытием() {
+    /* Ошибка подписчика при dispatchEvent уходит в window.onerror, и страница,
+       которая показывает ошибки поверх экрана, показала бы её игроку прямо
+       перед закрытием. На время рассылки перехватываем её первыми (capture) и
+       подменяем onerror, пишем в console.warn; потом всё возвращаем как было. */
+    var прежнийOnerror = window.onerror;
+    var поймать = function (событие) {
+      if (событие && typeof событие.stopImmediatePropagation === 'function') событие.stopImmediatePropagation();
+      if (событие && typeof событие.preventDefault === 'function') событие.preventDefault();
+      console.warn('Подписчик «перед-закрытием» упал:', событие && (событие.message || событие.error));
+      return true;
+    };
+    var слушаем = false;
     try {
       if (typeof window.dispatchEvent !== 'function' || typeof CustomEvent !== 'function') return;
+      if (typeof window.addEventListener === 'function') {
+        window.addEventListener('error', поймать, true);
+        слушаем = true;
+      }
+      window.onerror = function (сообщение, файл, строка, столбец, ошибка) {
+        return поймать({ message: сообщение, error: ошибка });
+      };
       window.dispatchEvent(new CustomEvent('перед-закрытием'));
     } catch (ошибка) { /* не вышло оповестить — закрытие важнее */ }
+    finally {
+      try {
+        if (слушаем && typeof window.removeEventListener === 'function') window.removeEventListener('error', поймать, true);
+        window.onerror = прежнийOnerror;
+      } catch (ошибка) { /* возврат прежнего не удался — не мешаем закрытию */ }
+    }
   }
 
   /** Запасной путь: запомнить выбор и вернуть шапку Telegram.
