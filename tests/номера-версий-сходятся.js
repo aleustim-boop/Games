@@ -93,7 +93,7 @@ function собратьПодключения(файлы, получитьСод
       let filePath = fullUrl;
       let version = null;
 
-      const versionMatch = fullUrl.match(/\?v=(\d+)$/);
+      const versionMatch = fullUrl.match(/\?v=([^"'&?#\s]+)$/);
       if (versionMatch) {
         version = versionMatch[1];
         filePath = fullUrl.substring(0, versionMatch.index);
