@@ -272,7 +272,12 @@ function проверитьЖалобуНаДиск() {
   const письма = require(пути);
 
   /* Диск «сломан»: на месте папки лежит файл, создать папку внутри нельзя. */
-  const файлВместоПапки = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'ночь-2-диск-')), 'файл.txt');
+  const папкаДиска = fs.mkdtempSync(path.join(os.tmpdir(), 'ночь-2-диск-'));
+  // Уборка по выходу из процесса — сработает и при провале проверки.
+  process.on('exit', function () {
+    try { fs.rmSync(папкаДиска, { recursive: true, force: true }); } catch (ошибка) { /* не мешаем итогу */ }
+  });
+  const файлВместоПапки = path.join(папкаДиска, 'файл.txt');
   fs.writeFileSync(файлВместоПапки, 'x', 'utf8');
   let часы = Date.UTC(2026, 9, 5, 12, 0, 0);
   письма.подключить({
