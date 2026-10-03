@@ -283,6 +283,19 @@
         </span>
         <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
       </button>
+      <!-- Турнир дня (штаб/план-турниры.md, Э8): открывает экран турнира
+           (js/турнир-экран.js, ТурнирЭкран.открыть()). Спрятана, пока
+           js/game.js не убедится, что экран турнира загрузился, — мёртвой
+           кнопки не бывает («освежитьКарточкуТурнира»). Значок-кубок рисует
+           оформление (style.css), в разметке он пустой. -->
+      <button id="карточка-турнира" type="button" class="карточка-входа карточка-входа--турнир скрыт">
+        <span class="карточка-входа__значок" aria-hidden="true"></span>
+        <span class="карточка-входа__текст">
+          <span class="карточка-входа__название">Турнир дня</span>
+          <span class="карточка-входа__подпись">Каждый день в 20:00 МСК</span>
+        </span>
+        <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
+      </button>
       <button id="лобби-друзья" type="button" class="карточка-входа карточка-входа--друзья">
         <span class="карточка-входа__значок" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="6" r="3"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><path d="M6 21v-5c0-6 12-6 12 0v5ZM1 20v-5c0-2 1-3 3-3M23 20v-5c0-2-1-3-3-3"/></svg></span>
         <span class="карточка-входа__текст">
@@ -1274,7 +1287,7 @@
 <!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
      подключает его к странице и отдаёт ему свои двери. -->
 <script src="js/дурак-путь.js?v=7"></script>
-<script src="js/game.js?v=razdacha-20261003"></script>
+<script src="js/game.js?v=turnir-20261003"></script>
 <!-- Комната дурака (экран 05): модель и рисование. Порядок с js/сеть.js
      здесь не жёсткий: сеть спрашивает window.ДуракКомната не при своей
      загрузке, а прямо в момент показа прихожей (когда все теги внизу
