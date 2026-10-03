@@ -90,12 +90,29 @@ function подпись(номер, имя) {
   return Object.keys(всё).map(function (к) { return encodeURIComponent(к) + '=' + encodeURIComponent(всё[к]); }).join('&');
 }
 
+/* Без повторного использования соединений: тогда «открытых соединений нет» значит «все опросы закрыты». */
+const безПовторов = new http.Agent({ keepAlive: false });
+let серверПроверки = null;
+
+/* Оборванный клиентом долгий опрос на сервере живёт, пока тот не заметит разрыв. Сервер в этом же процессе:
+   если сдвинуть часы раньше, такой «призрак» увидит новое время, посадит личину и отдаст ответ в мёртвый сокет —
+   следующий опрос получит «не_найдено» (плавающий провал сводной под нагрузкой). Поэтому перед сдвигом ждём закрытия. */
+async function дождатьсяТишины() {
+  const конец = настоящееВремя() + 5000;
+  while (настоящееВремя() < конец) {
+    const открыто = await new Promise(function (г) { серверПроверки.getConnections(function (е, н) { г(е ? 0 : н); }); });
+    if (открыто === 0) break;
+    await new Promise(function (г) { setTimeout(г, 10); });
+  }
+  await new Promise(function (г) { setTimeout(г, 50); });
+}
+
 function спросить(путь, тело, терпениеМс) {
   return new Promise(function (готово, беда) {
     const данные = Buffer.from(JSON.stringify(тело || {}), 'utf8');
     let конец = false;
     const запрос = http.request({
-      host: АДРЕС, port: ПОРТ, path: encodeURI(путь), method: 'POST',
+      host: АДРЕС, port: ПОРТ, path: encodeURI(путь), method: 'POST', agent: безПовторов,
       headers: { 'Content-Type': 'application/json', 'Content-Length': данные.length }
     }, function (ответ) {
       let текст = '';
@@ -116,7 +133,7 @@ function спросить(путь, тело, терпениеМс) {
 
 function получить(путь) {
   return new Promise(function (готово, беда) {
-    http.get({ host: АДРЕС, port: ПОРТ, path: encodeURI(путь) }, function (ответ) {
+    http.get({ host: АДРЕС, port: ПОРТ, path: encodeURI(путь), agent: безПовторов }, function (ответ) {
       const куски = [];
       ответ.on('data', function (к) { куски.push(к); });
       ответ.on('end', function () { готово({ код: ответ.statusCode, тип: ответ.headers['content-type'], байты: Buffer.concat(куски) }); });
@@ -132,6 +149,7 @@ async function встатьИДождаться(номер, имя, игра) {
   // 1) Раньше 8 секунд — никого.
   const рано = await спросить('/подбор-новости', { ключОжидания: ключ }, 1500);
   проверить(рано.оборван || рано.тело.изменилось === false, имя + ': раньше 8 с личины нет');
+  await дождатьсяТишины();
 
   // 2) Через 21 с — свели. Часы двигаем шагами по 4 с с опросом между ними:
   //    запись очереди без опроса дольше 15 с уходит (server/подбор.js).
@@ -139,6 +157,7 @@ async function встатьИДождаться(номер, имя, игра) {
   for (let шаг = 0; шаг < 6; шаг++) {
     сдвиг += 4000;
     поздно = await спросить('/подбор-новости', { ключОжидания: ключ }, 1500);
+    await дождатьсяТишины();
     if (поздно.тело.статус === 'свели') break;
     проверить(шаг >= 1 || поздно.оборван || поздно.тело.изменилось === false, имя + ': на 4-й секунде ещё ждёт');
   }
@@ -230,6 +249,7 @@ async function проверитьВсё() {
   const сервер = сервера.создатьСервер();
   await new Promise(function (готово, беда) { сервер.once('error', беда); сервер.listen(0, АДРЕС, готово); });
   ПОРТ = сервер.address().port;
+  серверПроверки = сервер;
   let сбой = null;
   try { await проверитьВсё(); } catch (б) { сбой = б; }
   сервер.close();
