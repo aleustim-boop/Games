@@ -10,9 +10,6 @@
 .море button { touch-action: manipulation; }
 .море button:focus-visible { outline: 3px solid #d2f76b; outline-offset: 2px; }
 .море button:disabled { opacity: .45; cursor: default; }
-.море-верх { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 36px; }
-.море-верх button { background: transparent; border: 0; color: inherit; font-size: 25px; min-width: 40px; height: 36px; }
-html.в-телеграме .море-верх { display: none; }
 .море-тихо { color: #9aa8b3; font-size: 13px; line-height: 1.5; }
 .море-вход { display: flex; flex-direction: column; gap: 6px; padding: 20px; text-align: left; width: 100%; }
 .море-вход strong { font-size: 22px; }
@@ -23,11 +20,10 @@ html.в-телеграме .море-верх { display: none; }
 .море-выбор [aria-checked=true] { border-color: #d2f76b; color: #d2f76b; background: #d2f76b12; }
 .море-панель { padding: 14px; border: 1px solid #ffffff22; border-radius: 16px; background: #171f23; width: 100%; display: grid; gap: 12px; }
 .море #экран-игры { --поле: min(calc(100vw - 24px),calc((100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 202px)/1.49),500px); gap: 8px; height: 100dvh; min-height: 0; overflow: auto; align-items: center; }
-.море-шапка { display: flex; align-items: center; justify-content: space-between; width: min(100%,560px); gap: 8px; }
-.море-шапка h1 { font-size: 23px; }
-.море #экран-игры > .море-верх { display: none; }
-@media (max-width: 400px) { .море-шапка h1 { font-size: 19px; white-space: nowrap; } .море-шапка { gap: 5px; } .море-шапка button { padding: 5px; font-size: 11px; } .море-сводка { padding: 7px; gap: 6px; } .море-сводка .море-тихо { font-size: 10px; } }
-.море-шапка button { background: transparent; color: #aebcc7; border: 1px solid #ffffff25; border-radius: 10px; padding: 7px; }
+.море-заголовок { display: flex; align-items: center; justify-content: space-between; width: min(100%,560px); gap: 8px; }
+.море-заголовок h1 { font-size: 23px; margin-right: auto; }
+@media (max-width: 400px) { .море-заголовок h1 { font-size: 19px; white-space: nowrap; } .море-заголовок { gap: 5px; } .море-заголовок button { padding: 5px; font-size: 11px; } .море-сводка { padding: 7px; gap: 6px; } .море-сводка .море-тихо { font-size: 10px; } }
+.море-заголовок button { background: transparent; color: #aebcc7; border: 1px solid #ffffff25; border-radius: 10px; padding: 7px; }
 .море-стол { width: var(--поле); min-width: 260px; display: grid; gap: 8px; }
 .море-имя { display: flex; justify-content: space-between; align-items: center; font-size: 13px; min-height: 27px; gap: 6px; }
 .море-имя span { color: #a8b9c7; font-size: 11px; }
@@ -128,7 +124,7 @@ html.в-телеграме .море-верх { display: none; }
 .море-корабль-подпись { font-size: 11px; white-space: nowrap; }
 .море-сетка:has(.море-клетка[aria-pressed=true]) { border-color: #b5dd68; }
 .море-клетка[aria-pressed=true] { background: radial-gradient(circle,#d2f76b38,#d2f76b12); outline: 2px solid #d2f76b; outline-offset: -3px; }
-.море-шапка h1 { letter-spacing: -.6px; }
+.море-заголовок h1 { letter-spacing: -.6px; }
 .море-сводка { background: linear-gradient(135deg,#1c2e34,#101c23); border-color: #48657180; }
 .море-имя > strong { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .море-всплеск { position: absolute; z-index: 5; pointer-events: none; width: 0; height: 0; }

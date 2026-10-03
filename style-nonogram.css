@@ -12,3 +12,4 @@
  body[data-nonogram-size='15'] .nonogram-app #board-scroll{max-height:max(230px,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 440px))}
  .nonogram-app .brushes{margin:5px 0}.nonogram-app .tools{margin:4px 0}.nonogram-app .tools button{min-height:40px}.nonogram-app #message{min-height:30px;padding:6px 0 3px;font-size:11px}.nonogram-app .bottom-actions{margin-top:7px}
 }
+dialog button.secondary{font-size:16px}
