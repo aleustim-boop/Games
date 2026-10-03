@@ -16370,8 +16370,9 @@ html.в-телеграме #экран-открытые-столы > .загол
 #открытые-столы-список .таблица__строка {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   grid-template-areas:
+    "лица      лица      кнопка"
     "игроки    игроки    кнопка"
     "счёт      время     кнопка"
     "сложность сложность кнопка";
@@ -16383,6 +16384,47 @@ html.в-телеграме #экран-открытые-столы > .загол
   border: 1px solid var(--плитка-кромка);
   border-radius: 14px;
   box-shadow: none;
+}
+
+/* Ряд кружков с фото сидящих — над именами. Соседние кружки слегка
+   налезают друг на друга, обводка в тон тёмной страницы отделяет их. */
+#открытые-столы-список .открытые-столы__лица {
+  grid-area: лица;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin-bottom: 2px;
+}
+
+#открытые-столы-список .открытые-столы__лицо {
+  flex: none;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--сб-фон);
+  object-fit: cover;
+  background-color: var(--плитка-кромка);
+}
+
+#открытые-столы-список .открытые-столы__лицо + .открытые-столы__лицо {
+  margin-left: -8px;
+}
+
+/* Общий силуэт без фото: тот самый значок-аватар сборника (--значок-аватар)
+   через маску, но на вложенном слое — маска на самом кружке обрезала бы
+   его обводку. Кружок даёт подложку и обводку, слой — тихий значок. */
+#открытые-столы-список .открытые-столы__лицо--пусто {
+  position: relative;
+}
+
+#открытые-столы-список .открытые-столы__лицо--пусто::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--сб-текст-тихий);
+  -webkit-mask: var(--значок-аватар) center / contain no-repeat;
+  mask: var(--значок-аватар) center / contain no-repeat;
 }
 
 #открытые-столы-список .таблица__очки {
