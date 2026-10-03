@@ -106,6 +106,8 @@ const Module = require('module');
 
 /* Данные уводим ДО подключения сервера — там настоящие имена живых людей. */
 process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'подбор-бот-кнопка-' + process.pid);
+/* Копия igra2: личины (server/личины.js) здесь выключены — кнопка проверяется отдельно от них. */
+process.env.ЛИЧИНЫ = 'выкл';
 
 const КОРЕНЬ = path.join(__dirname, '..');
 const ПУТЬ_СЕРВЕРА = path.join(КОРЕНЬ, 'server', 'сервер.js');

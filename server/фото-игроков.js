@@ -40,6 +40,7 @@
 
 const crypto = require('crypto');
 const https = require('https');
+const личины = require('./личины.js');
 
 const ПРЕДЕЛ_БАЙТ = 64 * 1024;               // больше — не аватар, а история
 const КЭШ_ЕСТЬ_НЕТ_МС = 24 * 60 * 60 * 1000;  // сутки: свой не меняет фото каждый час
@@ -124,8 +125,12 @@ function создать(настройки) {
 
   /** Байты фото по ключу — из кэша, либо новым походом в Telegram. Чужой/кривой ключ — сразу null. */
   function отдать(ключ) {
-    if (!умею()) return Promise.resolve(null);
     if (typeof ключ !== 'string' || !КЛЮЧ_РЕГ.test(ключ)) return Promise.resolve(null);
+    /* Личина (server/личины.js) — не человек из Telegram: её фото лежит
+       в img/личины/, в Bot API за ним не ходим никогда. */
+    const номерЛичины = ключИНомер.get(ключ);
+    if (номерЛичины && личины.этоЛичина(номерЛичины)) return Promise.resolve(личины.фото(номерЛичины));
+    if (!умею()) return Promise.resolve(null);
     const номер = ключИНомер.get(ключ);
     if (!номер) return Promise.resolve(null);
 
