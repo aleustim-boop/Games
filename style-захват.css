@@ -432,30 +432,29 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
 /* ---------- Стол: капсулы игроков ----------
    Капсулы стекла (общий класс стекло-капсула) высотой 52, скругление 26, зазор 8. Ряды по ТЗ 8.4:
    2–3 игрока — один ряд, 4 = 2 + 2, 5 = 3 + 2, 6 = 3 + 3 (второй ряд растягивается на всю ширину).
-   Внутри: сверху жетон (значок цвета игрока), имя, метка («бот», «спит»), галка «готов»;
-   снизу на всю ширину счёт «5 обл · 8 оч». Жетон 28 (на 320 — 22), а не 32: с 32 имя и метка
-   в капсуле втроём на 390 не помещаются. Счёт не мельче 12 и не переносится. */
+   Внутри: сверху имя на всю ширину капсулы (задача 71: рядом с жетоном и меткой «Бот 2» резалось до «Бо…»);
+   под ним жетон (значок цвета игрока), счёт и галка «готов»; ещё ниже «ведёт», а метка («бот», «спит»)
+   стоит справа на этой же нижней строке и сетку не двигает. Счёт не мельче 12 и не переносится. */
 .захват-игроки { display: flex; flex-wrap: wrap; gap: 8px; }
 .захват-игрок {
   --стекло-радиус-капсула: 26px;
-  flex: 1 1 calc((100% - 16px) / 3 - 1px); min-width: 0; min-height: 52px; padding: 4px 6px 4px 6px;
-  display: grid; grid-template-columns: auto minmax(34px, max-content) minmax(min-content, max-content) 1fr;
-  grid-template-areas: "значок имя метка готов" "счёт счёт счёт счёт";
+  position: relative;
+  flex: 1 1 calc((100% - 16px) / 3 - 1px); min-width: 0; min-height: 52px; padding: 4px 8px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "имя имя имя" "значок счёт готов" "ведёт ведёт ведёт";
   gap: 0 4px; align-content: center; align-items: center;
 }
 .захват-игроки:has(> :nth-child(4):not(.скрыт)):not(:has(> :nth-child(5):not(.скрыт))) > .захват-игрок { flex-basis: calc(50% - 4px); }
 .захват-игрок__имя { grid-area: имя; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 700; line-height: 1.2; }
 .захват-игрок__готов { grid-area: готов; min-width: 0; text-align: right; color: var(--сб-текст); font-size: 15px; font-weight: 700; line-height: 1; }
-.захват-игрок__метка { grid-area: метка; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--сб-текст-тихий); }
+/* Метка вынута из сетки: стоит справа внизу и не отнимает ширину у имени; слева от неё место под «ведёт». */
+.захват-игрок__метка { position: absolute; right: 8px; bottom: 4px; max-width: calc(100% - 64px); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; line-height: 15px; color: var(--сб-текст-тихий); }
 .захват-игрок__счёт { grid-area: счёт; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; line-height: 1.25; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--сб-текст); }
 /* Это вы: салатовая кромка и салатовое имя (акцент — «здесь вы»), чуть светится. */
 .захват-игрок.захват-игрок--я { border-color: var(--сб-акцент); box-shadow: inset 0 0 0 1px var(--сб-акцент), 0 0 14px rgba(210, 247, 107, 0.28), var(--стекло-тень-малая); }
 .захват-игрок.захват-игрок--я .захват-игрок__имя { color: var(--сб-акцент); }
 /* Ведёт (очков строго больше всех): под строкой счёта слово «ведёт» салатовым, 12 px. Рамка не меняется.
-   Слово рисуется отдельной третьей строкой сетки, чтобы не резаться «…» вместе со счётом на 320. */
-.захват-игрок {
-  grid-template-areas: "значок имя метка готов" "счёт счёт счёт счёт" "ведёт ведёт ведёт ведёт";
-}
+   Слово рисуется отдельной третьей строкой сетки (areas — в блоке капсулы выше), чтобы не резаться «…» вместе со счётом на 320. */
 /* Третья строка есть у каждой капсулы (у не-лидера пустая): при смене лидера высота окна карты не прыгает. */
 .захват-игрок::after { content: ""; grid-area: ведёт; min-height: 15px; }
 .захват-игрок--ведёт::after {
@@ -564,7 +563,9 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
    Нижняя строка целиком — счёт в одну строку. Тесно — ужимаются имя и метка, не счёт. Имя и метка делят
    тесноту поровну (обе колонки «до своей ширины»): иначе «спит» съедало всё и от «Бот» оставалось «Б…».
    Сетка колонок — в блоке «капсулы игроков» выше. Жетон 28, на 320 — 22. */
-.захват-игрок__значок { grid-area: значок; --ш: 28px; align-self: center; }
+/* Место для ломающего запуска проверки tests/захват-вид-удара.js: в копию сюда вписывают порчу имени. */
+/*порча:имя*/
+.захват-игрок__значок { grid-area: значок; --ш: 24px; align-self: center; }
 @media (max-width: 359px) { .захват-игрок__значок { --ш: 20px; } }
 /* Пилюля «+N» над шайбой: пилюля-метки.webp, 192×64. Края по 32 px рисунка (слева и справа) не тянутся, середина
    растягивается под текст; сверху и снизу краёв нет — рисунок на всю высоту. На экране высота 18 px, края 9 px. */
@@ -590,6 +591,40 @@ body.захват #экран-игры > .верх-игры > [data-меню] { 
 .захват-пилюля.захват-пилюля--подпись.захват-пилюля--остаток {
   width: max-content; max-width: 100px; height: auto; min-height: 18px; overflow: visible;
   white-space: normal; font-size: 12px; line-height: 15px; padding: 2px 0;
+}
+/* Крупная стрелка удара в итоге раунда (задача 69). Узел стоит в центре области нападавшего (--x, --y),
+   повёрнут к цели (--угол, градусы) и тянется на --длина px до края таблички цели. Цвет нападавшего — переменная
+   --цвет-стрелки по классу цвета; линия плотная (непрозрачность 1) и в 10 px, кружок-начало — на самой табличке
+   нападавшего, с белой каймой, чтобы начало было видно на любой заливке. */
+.захват-стрелка-итога {
+  --цвет-стрелки: #ffffff;
+  position: absolute; left: calc(var(--x, 0) * 1px); top: calc(var(--y, 0) * 1px);
+  width: calc(var(--длина, 0) * 1px); height: 0; z-index: 3;
+  transform-origin: 0 0; transform: rotate(calc(var(--угол, 0) * 1deg)); pointer-events: none;
+}
+.захват-стрелка-итога--коралл { --цвет-стрелки: #ff5a4d; }
+.захват-стрелка-итога--лазурь { --цвет-стрелки: #3aa0ff; }
+.захват-стрелка-итога--янтарь { --цвет-стрелки: #ffb020; }
+.захват-стрелка-итога--аметист { --цвет-стрелки: #b37aff; }
+.захват-стрелка-итога--бирюза { --цвет-стрелки: #20d6c0; }
+.захват-стрелка-итога--роза { --цвет-стрелки: #ff6aa8; }
+.захват-стрелка-итога__линия {
+  position: absolute; left: 0; right: 12px; top: -5px;
+  background: var(--цвет-стрелки); border-radius: 5px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55);
+  /*порча:тонкая*/ height: 10px;
+  /*порча:бледная*/ opacity: 1;
+}
+.захват-стрелка-итога__остриё {
+  position: absolute; right: 0; top: -13px; width: 0; height: 0;
+  border-style: solid; border-width: 13px 0 13px 20px;
+  border-color: transparent transparent transparent var(--цвет-стрелки);
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.7));
+}
+.захват-стрелка-итога__начало {
+  position: absolute; left: 0; top: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+  box-sizing: border-box; border-radius: 50%; background: var(--цвет-стрелки); border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
 /* Число войск на стрелке своего приказа: по центру точки (--x, --y в px карты, середина стрелки), та же картинка
    пилюли, что у «+N». Касание не ловит — стрелку трогает стол. Удар — салатовый текст, перевод — белый. */
@@ -773,9 +808,9 @@ body.захват #захват-пульт #кнопка-эмоции::before {
   position: fixed; left: 0; right: 0; z-index: 40; margin-inline: auto;
   bottom: calc(var(--захват-поле, 12px) + var(--отступ-снизу, 0px));
   width: min(520px, calc(100% - 2 * var(--захват-поле, 12px) - var(--отступ-слева, 0px) - var(--отступ-справа, 0px)));
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 6px;
   max-height: min(75%, calc(100% - 140px)); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
-  padding: 26px var(--захват-пульт-отступ, 16px) var(--захват-пульт-отступ, 16px);
+  padding: 22px var(--захват-пульт-отступ, 16px) 12px;
   animation: лист-ещё-вверх 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 /* Ручка 36×4 сверху. */
@@ -787,12 +822,14 @@ body.захват #захват-пульт #кнопка-эмоции::before {
 /* Селектор с «body.захват» нарочно: правила «body.захват #экран-игры > .захват-пульт / .захват-совет» с display: flex
    сильнее короткого, и без него пульт и подсказка оставались под листом (вопрос об остатке ложился на панель). */
 body.захват #экран-игры.экран-игры--лист > :is(.захват-пульт, .захват-совет) { display: none; }
-.захват-лист > h2 { font-size: 20px; font-weight: 700; line-height: 1.25; text-align: left; }
-.захват-лист > p { font-size: 15px; line-height: 1.4; }
+.захват-лист > h2 { font-size: 18px; font-weight: 700; line-height: 1.2; text-align: left; }
+.захват-лист > p { font-size: 14px; line-height: 1.3; }
 .захват-лист > p:empty { display: none; }
+/* Место для ломающего запуска проверки tests/захват-вид-удара.js: в копию сюда вписывают порчу листа. */
+/*порча:лист*/
 /* Селекторы кнопок листа начинаются с «body.захват #экран-игры» нарочно: общие правила кнопок выше
    («.кнопка:not(…)», «.кнопка--главная») сильны, и без id лист проигрывал бы им по высоте и цвету. */
-body.захват #экран-игры .захват-лист > .кнопка { width: 100%; max-width: none; min-height: 56px; margin: 0; padding: 0 14px; font-size: 17px; border-radius: 16px; }
+body.захват #экран-игры .захват-лист > .кнопка { width: 100%; max-width: none; min-height: 46px; margin: 0; padding: 0 14px; font-size: 17px; border-radius: 14px; }
 /* Кнопки листа — тёмное стекло. Салатовая здесь одна — «Ударить» (общий класс стекло-акцент); остальные,
    даже «Поставить» и «Досмотреть быстро», светлее соседей и жирнее, но не салатовые. */
 body.захват #экран-игры .захват-лист > .кнопка:not(.стекло-акцент) {
@@ -847,7 +884,7 @@ body.захват .захват-приказ-счётчик > .кнопка { fo
 body.захват .захват-приказ-счётчик > .кнопка:disabled { opacity: 0.55; cursor: default; }
 /* Ползунок: светлая дорожка и белый бегунок (как на макете), не салатовый. Касание — полоса высотой 44. */
 .захват-приказ-счётчик > input[type="range"] {
-  -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 44px; margin: 0;
+  -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 40px; margin: 0;
   background: transparent; cursor: pointer;
 }
 .захват-приказ-счётчик > input[type="range"]::-webkit-slider-runnable-track {
@@ -865,9 +902,9 @@ body.захват .захват-приказ-счётчик > .кнопка:disa
   width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0%, #dbe4f6 70%);
   border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 2px 8px rgba(4, 12, 38, 0.6);
 }
-.захват-приказ-число { font-size: 28px; font-weight: 700; line-height: 1.15; text-align: left; color: var(--сб-текст); font-variant-numeric: tabular-nums; }
+.захват-приказ-число { font-size: 24px; font-weight: 700; line-height: 1.1; text-align: left; color: var(--сб-текст); font-variant-numeric: tabular-nums; }
 .захват-приказ-счётчик > .захват-приказ-число { flex: 1 1 auto; text-align: center; }
-.захват-приказ-шанс { font-size: 17px; font-weight: 700; text-align: left; }
+.захват-приказ-шанс { font-size: 16px; font-weight: 700; text-align: left; }
 .захват-приказ-потери { font-size: 14px; text-align: left; color: var(--захват-тихо, #b9c1dc); }
 .захват-лист > .захват-тихо { color: var(--захват-тихо, #b9c1dc); font-size: 14px; }
 /* Журнал: длинный список строк событий прокручивается внутри листа. */
