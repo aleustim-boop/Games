@@ -56,7 +56,22 @@ const { chromium, подготовитьПодделку, безTelegram } = req
       }
       assert.deepEqual(ошибки, []);
       await страница.goto(стенд.url + '/index.html');
-      await страница.locator('#экран-витрины .выбор-языка select').selectOption('ru');
+      // Язык теперь выбирается строкой «Язык» в листе «⋯» витрины: она листает
+      // по кругу, поэтому жмём, пока не придём к русскому (uk → en → ru, en → ru).
+      // Внутри поддельного Telegram кнопка «⋯» спрятана (там пункт «Настройки»),
+      // поэтому лист открываем той же функцией, что вешается на неё.
+      await страница.evaluate(() => открытьЛистЕщё());
+      assert.equal(await страница.locator('#экран-витрины .выбор-языка').count(), 0, 'старого поля над витриной нет');
+      const строкаЯзыка = страница.locator('#кнопка-лист-язык');
+      assert.equal(await строкаЯзыка.count(), 1, 'в листе витрины есть строка «Язык»');
+      const названия = { uk: 'Українська', en: 'English', ru: 'Русский' };
+      assert.equal((await страница.locator('#лист-язык-состояние').innerText()).trim(), названия[язык]);
+      for (let нажатий = 0; нажатий < 3 && await страница.locator('html').getAttribute('lang') !== 'ru'; нажатий++) {
+        await строкаЯзыка.click();
+        assert.equal(await страница.locator('#лист-ещё').evaluate(у => у.classList.contains('скрыт')), false, 'лист не закрылся');
+      }
+      assert.equal(await страница.locator('html').getAttribute('lang'), 'ru');
+      assert.equal((await страница.locator('#лист-язык-состояние').innerText()).trim(), 'Русский');
       await страница.reload();
       assert.equal(await страница.locator('html').getAttribute('lang'), 'ru');
       await страница.close();

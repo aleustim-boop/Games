@@ -391,13 +391,20 @@
 Соперники|Суперники|Opponents
 Напарник|Напарник|Partner
 За столом|За столом|At the table
+Язык|Мова|Language
 `;
   const словарь = Object.create(null);
   function норм(с) { return String(с).replace(/\s+/g, ' ').trim(); }
-  for (const строка of строки.trim().split('\n')) {
-    const [ru, uk, en] = строка.split('|');
-    словарь[норм(ru)] = { ru, uk, en };
+  /* Дописать в словарь строки вида «ru|uk|en» (по одной на строку);
+     пустые строки пропускаются. Словари игр лягут отдельными файлами. */
+  function добавить(текстСтрок) {
+    for (const строка of String(текстСтрок).trim().split('\n')) {
+      if (!строка.trim()) continue;
+      const [ru, uk, en] = строка.split('|');
+      словарь[норм(ru)] = { ru, uk, en };
+    }
   }
+  добавить(строки);
   function язык(значение) {
     const код = String(значение || '').toLowerCase().split(/[-_]/)[0];
     return ['ru', 'uk', 'en'].includes(код) ? код : 'ru';
@@ -417,6 +424,11 @@
     [/^Сейчас ходит (.+)$/, 'Зараз ходить $1', '$1 is playing'],
     [/^За столом мест: (\d+)$/, 'Місць за столом: $1', 'Seats: $1']
   ];
+  /* Дописать шаблоны в конец общего перебора: записи вида
+     [RegExp, 'uk с $1', 'en с $1'] — для фраз с именами и числами. */
+  function добавитьШаблоны(список) {
+    for (const запись of список) шаблоны.push(запись);
+  }
   function числоСоСловом(число, формы) {
     const n = Number(число);
     return число + ' ' + формы[n % 100 >= 11 && n % 100 <= 14 ? 2 : n % 10 === 1 ? 0 : n % 10 >= 2 && n % 10 <= 4 ? 1 : 2];
@@ -460,7 +472,7 @@
     }
     return исходник;
   }
-  const api = { язык, текст, словарь, норм };
+  const api = { язык, текст, словарь, норм, добавить, добавитьШаблоны };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else корень.Языки = api;
 })(typeof window === 'undefined' ? globalThis : window);

@@ -36,9 +36,9 @@
 <link rel="stylesheet" href="style-коллекция.css?v=2">
 <link rel="stylesheet" href="style-витрина.css?v=zahvat-20261002">
 <link rel="stylesheet" href="style-аватар.css?v=1">
-<link rel="stylesheet" href="style-языки.css?v=1">
-<script defer src="js/языки.js?v=1"></script>
-<script defer src="js/язык-интерфейса.js?v=1"></script></head>
+<link rel="stylesheet" href="style-языки.css?v=2">
+<script defer src="js/языки.js?v=2"></script>
+<script defer src="js/язык-интерфейса.js?v=2"></script></head>
 <body>
 <noscript>
 <h1>Дурак онлайн с друзьями в Telegram</h1>
@@ -205,6 +205,12 @@
         <button id="кнопка-лист-звук" type="button" class="лист-ещё__строка" role="switch" aria-checked="true">
           <span class="лист-ещё__подпись">Звук</span>
           <span id="лист-звук-состояние" class="лист-ещё__значение">вкл</span>
+        </button>
+        <!-- Язык интерфейса: нажатие листает Русский → Українська → English;
+             оживляет js/язык-интерфейса.js, лист не закрывается. -->
+        <button id="кнопка-лист-язык" type="button" class="лист-ещё__строка">
+          <span class="лист-ещё__подпись">Язык</span>
+          <span id="лист-язык-состояние" class="лист-ещё__значение" data-no-translate>Русский</span>
         </button>
         <button id="кнопка-лист-рейтинг" type="button" class="лист-ещё__строка">
           <span class="лист-ещё__подпись">Рейтинг</span>
@@ -1307,7 +1313,7 @@
 <script src="js/ярлык.js?v=1"></script>
 <!-- Лист «Ещё» стола — общий модуль (тот же, что у шашек/шахмат/нард).
      СТРОГО ДО js/game.js: он при старте зовёт window.ЛистЕщё.подключить(). -->
-<script src="js/лист-ещё.js?v=15"></script>
+<script src="js/лист-ещё.js?v=16"></script>
 <!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
      подключает его к странице и отдаёт ему свои двери. -->
 <script src="js/дурак-путь.js?v=languages-20261004"></script>
