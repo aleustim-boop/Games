@@ -108,6 +108,7 @@
 Выделенные карты можно перенести|Виділені карти можна перенести|The selected cards can be moved
 в дом|до дому|to a foundation
 в свободную ячейку|у вільну комірку|to a free cell
+4 свободные ячейки|4 вільні комірки|4 free cells
 в столбец|у стовпець|to a column
 Карту в дом|Карту до дому|Card to foundation
 Сейчас нет карты, которую можно перенести в дом.|Зараз немає карти, яку можна перенести до дому.|There is no card that can go to a foundation right now.

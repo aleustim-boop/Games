@@ -19,6 +19,7 @@
 ИГРЫ С ДРУЗЬЯМИ|ІГРИ З ДРУЗЯМИ|GAMES WITH FRIENDS
 РИСУЙТЕ ЛОГИКОЙ|МАЛЮЙТЕ ЛОГІКОЮ|DRAW WITH LOGIC
 Японский|Японський|Japanese
+кроссворд|кросворд|crossword
 От нескольких цифр —|Від кількох цифр —|From a few numbers —
 к целой картине.|до цілої картини.|to a whole picture.
 КАЖДАЯ КЛЕТКА — ЧАСТЬ ОТКРЫТИЯ.|КОЖНА КЛІТИНКА — ЧАСТИНА ВІДКРИТТЯ.|EVERY CELL IS PART OF A DISCOVERY.

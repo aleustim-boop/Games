@@ -18,6 +18,7 @@
 Бастион прилива — оборона маяка|Бастіон припливу — оборона маяка|Tide Bastion — lighthouse defense
 ИГРЫ С ДРУЗЬЯМИ|ІГРИ З ДРУЗЯМИ|GAMES WITH FRIENDS
 Бастион|Бастіон|Bastion
+прилива|припливу|of the Tide
 Хранитель маяка|Охоронець маяка|Lighthouse keeper
 Продолжить оборону|Продовжити оборону|Continue defense
 ЛАЗУРНЫЙ БЕРЕГ · ОСТРОВ 1|ЛАЗУРНИЙ БЕРЕГ · ОСТРІВ 1|AZURE COAST · ISLAND 1
