@@ -10,6 +10,8 @@
   'use strict';
   const Языки = typeof module !== 'undefined' && module.exports ? require('./языки') : корень.Языки;
   const строки = `
+Фильтр по типу игр|Фільтр за типом ігор|Filter by game type
+Разделы|Розділи|Sections
 Соперник переподключается…|Суперник перепідключається…|Opponent is reconnecting…
 Соперник пропал со связи — ждём, партия сохранена|Суперник зник зі зв'язку — чекаємо, партію збережено|Opponent lost connection — waiting, the game is saved
 Остальные игроки переподключаются…|Решта гравців перепідключається…|The other players are reconnecting…
