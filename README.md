@@ -1,5 +1,21 @@
 # Games — сборник игр для Telegram
 
+<!-- ВХОД-ДЛЯ-ИГРОКОВ -->
+
+**[Играть в Telegram](https://t.me/BoardingGames_bot?start=src_github_readme)** · **[Открыть сайт](https://igra.medart.com.ua/)** · [Правила игр](https://igra.medart.com.ua/rules/) · [Лидеры недели](https://igra.medart.com.ua/top)
+
+Чтобы начать, откройте бота, нажмите «Играть» и выберите игру. Для партии с другом создайте стол и отправьте приглашение из комнаты. Если друзья заняты, доступны игры с ботами и одиночные головоломки.
+
+Приглашение из переписки: введите `@BoardingGames_bot` и пробел в поле сообщения Telegram, затем выберите карточку игры.
+
+**Українською:** настільні та карткові ігри з друзями або ботами, судоку та 2048. [Відкрити в Telegram](https://t.me/BoardingGames_bot?start=src_github_uk).
+
+**English:** board and card games with friends or bots, plus solo puzzles including Sudoku and 2048. [Play in Telegram](https://t.me/BoardingGames_bot?start=src_github_en).
+
+Контакт проекта / Project contact: [@west_kr](https://t.me/west_kr).
+
+<!-- /ВХОД-ДЛЯ-ИГРОКОВ -->
+
 Games — сборник карточных и настольных игр для Telegram: дурак, шахматы, шашки,
 нарды, домино, морской бой, катан, монополия, деберц, покер, а также одиночные
 головоломки вроде 2048, судоку, сапёра и косынки. Полный список — в разделе
