@@ -35,7 +35,10 @@
   <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="style-коллекция.css?v=2">
 <link rel="stylesheet" href="style-витрина.css?v=zahvat-20261002">
-<link rel="stylesheet" href="style-аватар.css?v=1"></head>
+<link rel="stylesheet" href="style-аватар.css?v=1">
+<link rel="stylesheet" href="style-языки.css?v=1">
+<script defer src="js/языки.js?v=1"></script>
+<script defer src="js/язык-интерфейса.js?v=1"></script></head>
 <body>
 <noscript>
 <h1>Дурак онлайн с друзьями в Telegram</h1>
@@ -1307,7 +1310,7 @@
 <script src="js/лист-ещё.js?v=15"></script>
 <!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
      подключает его к странице и отдаёт ему свои двери. -->
-<script src="js/дурак-путь.js?v=7"></script>
+<script src="js/дурак-путь.js?v=languages-20261004"></script>
 <script src="js/game.js?v=bito-20261004"></script>
 <!-- Комната дурака (экран 05): модель и рисование. Порядок с js/сеть.js
      здесь не жёсткий: сеть спрашивает window.ДуракКомната не при своей
@@ -1331,7 +1334,7 @@
 </script>
 <!-- Игра вдвоём. Подключается последней и только добавляет второй режим:
      без этого файла игра против бота работает как прежде. -->
-<script src="js/сеть.js?v=dveri-20261004"></script>
+<script src="js/сеть.js?v=inline-20261004"></script>
 <!-- Экран «Найти игру»: список открытых столов и посадка за один из них.
      Строго после js/сеть.js — берёт у него все три двери (открытыеСтолы,
      сестьЗаСтол, создатьОткрытыйСтол) и без него не подключает кнопку. -->
@@ -1382,5 +1385,6 @@
     });
   })();
 </script>
-<script src="js/популярность.js?v=2" data-game="дурак"></script></body>
+<script src="js/популярность.js?v=2" data-game="дурак"></script>
+<script src="js/вход-со-страниц.js?v=1"></script></body>
 </html>

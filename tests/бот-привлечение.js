@@ -143,6 +143,9 @@ function собратьСтенд(ломка) {
   }
 
   fs.copyFileSync(ИСХОДНЫЕ_НАЗВАНИЯ, path.join(папкаСервера, 'названия.js'));
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), 'inline-столы.js'), path.join(папкаСервера, 'inline-столы.js'));
+  fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), '..', 'js', 'языки.js'), path.join(папкаСервера, '..', 'js', 'языки.js'));
   fs.writeFileSync(path.join(папкаБота, '.env'),
     'BOT_TOKEN=' + выдуманныйТокен() + '\nGAME_URL=' + GAME_URL + '\nOWNER_ID=' + ВЛАДЕЛЕЦ + '\n', 'utf8');
 
@@ -263,6 +266,20 @@ async function всеСценарии(ломка, печатать) {
     !!кнопкаВЧат && кнопкаВЧат.url === 'https://t.me/ТестБот?startgroup=src_group',
     'url был: ' + (кнопкаВЧат && кнопкаВЧат.url));
   проверить('кнопка «Играть» осталась первой', !!клавиши[0] && клавиши[0][0].text === 'Играть');
+  проверить('из приветствия можно позвать в другой чат', всеКнопки.some(к => к.text === 'Позвать в другом чате' && к.switch_inline_query === ''));
+  const inline = await прогнать(ломка, [{ update_id: ++номерАпдейта, inline_query: { id: 'inline-test', from: { id: 115 }, query: 'ШАХМАТЫ' } }]);
+  const карточка = inline.сказано.find(з => з.метод === 'answerInlineQuery');
+  проверить('inline ищет игру и даёт ссылку на общий стол', !!карточка && карточка.тело.results.length === 1 &&
+    карточка.тело.results[0].reply_markup.inline_keyboard[0][0].url.includes('shahmaty_src_inline_'));
+  for (const [язык, привет, играть] of [['uk', 'Привіт', 'Грати'], ['en', 'Hello', 'Play']]) {
+    const апдейт = сообщение(116, 'private', 116, '/start');
+    апдейт.message.from.language_code = язык;
+    const проверкаЯзыка = await прогнать(ломка, [апдейт]);
+    const ответ = ответыВЧат(проверкаЯзыка.сказано, 116)[0];
+    проверить('приветствие и кнопка на языке ' + язык, текстОтвета(ответ).startsWith(привет) && ответ.тело.reply_markup.inline_keyboard[0][0].text === играть);
+    проверить('описание на языке ' + язык, проверкаЯзыка.сказано.some(з => з.метод === 'setMyDescription' && з.тело.language_code === язык && з.тело.description.length <= 512));
+    проверить('команды на языке ' + язык, проверкаЯзыка.сказано.some(з => з.метод === 'setMyCommands' && з.тело.language_code === язык && з.тело.commands.length > 2));
+  }
 
   const люди = (личка.статистика && личка.статистика.люди) || {};
   проверить('пришедший по размеченной ссылке записан с источником «ссылка» и меткой habr',
@@ -294,7 +311,7 @@ async function всеСценарии(ломка, печатать) {
   проверить('короткая строка поставлена и влезает в 120 знаков',
     короткое.length > 0 && короткое.length <= 120, 'длина: ' + короткое.length);
 
-  const спискиКоманд = вызовы('setMyCommands');
+  const спискиКоманд = вызовы('setMyCommands').filter(з => !з.тело.language_code);
   const области = спискиКоманд.map(function (з) { return з.тело.scope && з.тело.scope.type; }).sort();
   проверить('подсказки команд поставлены и для личек, и для групп',
     JSON.stringify(области) === JSON.stringify(['all_group_chats', 'all_private_chats']),

@@ -221,7 +221,7 @@ function текстПодделки(настройки) {
     '    isFullscreen: false, isOrientationLocked: false,\n' +
     '    safeAreaInset: ' + JSON.stringify(отступыСистемы) + ',\n' +
     '    contentSafeAreaInset: ' + JSON.stringify(отступыСодержимого) + ',\n' +
-    '    initData: ' + JSON.stringify(подпись) + ', initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester" }' +
+    '    initData: ' + JSON.stringify(подпись) + ', initDataUnsafe: { user: { id: 424242, first_name: "Проверяющий", username: "tester", language_code: ' + JSON.stringify(н.язык || 'ru') + ' }' +
       (стартовыйПараметр ? ', start_param: ' + JSON.stringify(стартовыйПараметр) : '') + ' },\n' +
     '    ready: function () { дневник.ready++; записать("ready"); },\n' +
     '    expand: function () { this.isExpanded = true; this.viewportHeight = 844; this.viewportStableHeight = 844; дневник.expand++; записать("expand"); },\n' +

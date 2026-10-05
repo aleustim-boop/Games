@@ -59,6 +59,9 @@ function собратьСтенд(sНазваниями) {
     const папкаСервера = path.join(рут, 'server');
     fs.mkdirSync(папкаСервера);
     fs.copyFileSync(ИСХОДНЫЕ_НАЗВАНИЯ, path.join(папкаСервера, 'названия.js'));
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), 'inline-столы.js'), path.join(папкаСервера, 'inline-столы.js'));
+  fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), '..', 'js', 'языки.js'), path.join(папкаСервера, '..', 'js', 'языки.js'));
   }
   return { рут: рут, бот: path.join(папкаБота, 'бот.js'), папкаБота: папкаБота };
 }

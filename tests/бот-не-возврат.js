@@ -153,6 +153,9 @@ function собратьСтенд(ломка) {
   }
 
   fs.copyFileSync(ИСХОДНЫЕ_НАЗВАНИЯ, path.join(папкаСервера, 'названия.js'));
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), 'inline-столы.js'), path.join(папкаСервера, 'inline-столы.js'));
+  fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), '..', 'js', 'языки.js'), path.join(папкаСервера, '..', 'js', 'языки.js'));
   fs.writeFileSync(path.join(папкаБота, '.env'),
     'BOT_TOKEN=' + ТОКЕН + '\nGAME_URL=' + GAME_URL + '\n', 'utf8');
 

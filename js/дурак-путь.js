@@ -819,7 +819,7 @@
           if (м.подпись) {
             const имя = document.createElement('span');
             имя.className = 'рассадка__имя';
-            имя.textContent = м.подпись;
+            имя.textContent = window.ЯзыкИнтерфейса ? window.ЯзыкИнтерфейса.текст(м.подпись) : м.подпись;
             место.appendChild(имя);
           }
           рассадка.appendChild(место);

@@ -159,6 +159,9 @@ function собратьСтенд(сломать, безАдресаСервер
   }
 
   fs.copyFileSync(ИСХОДНЫЕ_НАЗВАНИЯ, path.join(папкаСервера, 'названия.js'));
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), 'inline-столы.js'), path.join(папкаСервера, 'inline-столы.js'));
+  fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), '..', 'js', 'языки.js'), path.join(папкаСервера, '..', 'js', 'языки.js'));
   const адресИгрыДляСтенда = безАдресаСервера ? GAME_URL_БЕЗ_АДРЕСА : GAME_URL;
   fs.writeFileSync(path.join(папкаБота, '.env'),
     'BOT_TOKEN=' + ТОКЕН + '\nGAME_URL=' + адресИгрыДляСтенда + '\n', 'utf8');
