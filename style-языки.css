@@ -1,1 +1,6 @@
 html[lang=en] .кнопка,html[lang=uk] .кнопка{white-space:normal;overflow-wrap:anywhere}
+
+/* Строка «Язык» в окнах страниц без общего листа (js/язык-строка.js) */
+.язык-строка{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;margin:8px 0 0;padding:10px 14px;box-sizing:border-box;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.06);color:inherit;font:inherit;text-align:left;cursor:pointer}
+.язык-строка__значение{color:var(--сб-акцент,#d2f76b);font-weight:700}
+.язык-строка:focus-visible{outline:2px solid var(--сб-акцент,#d2f76b);outline-offset:2px}
