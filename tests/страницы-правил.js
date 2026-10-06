@@ -4,7 +4,22 @@ const fs = require('fs');
 const path = require('path');
 const { игры } = require('../scripts/страницы-правил');
 const корень = path.join(__dirname, '..');
-const карта = fs.readFileSync(path.join(корень, 'sitemap.xml'), 'utf8');
+// --карта=<файл> и --реестр=<файл>: испорченные копии для ломающих запусков
+let путьКарты = path.join(корень, 'sitemap.xml');
+let путьРеестра = path.join(корень, 'js', 'игры-реестр.js');
+for (const довод of process.argv.slice(2)) {
+  if (довод.startsWith('--карта=')) путьКарты = path.resolve(довод.substring('--карта='.length));
+  if (довод.startsWith('--реестр=')) путьРеестра = path.resolve(довод.substring('--реестр='.length));
+}
+const карта = fs.readFileSync(путьКарты, 'utf8');
+const реестр = require(путьРеестра);
+// Спрятанная с витрины игра (поле «спрятана», владелец 06.10): её страницы правил остаются
+// на диске для старых ссылок, но в sitemap.xml их быть не должно. Остальные — обязаны быть.
+function спрятана(игра) {
+  const записи = реестр.все().filter((и) => и.страница === игра);
+  assert.ok(записи.length === 1, 'игры «' + игра + '» нет в реестре (или она там не одна)');
+  return Boolean(записи[0].спрятана);
+}
 function проверить(html, метка, игра) {
   const статья = html.match(/<article>([\s\S]*?)<\/article>/)[1];
   const слов = статья.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).length;
@@ -15,7 +30,8 @@ function проверить(html, метка, игра) {
   assert.equal((html.match(/>Сыграть сейчас<\/a>/g) || []).length, 2);
   assert.equal((html.match(new RegExp('start=src_rules_' + метка, 'g')) || []).length, 2);
   assert.ok(html.includes('href="/' + encodeURI(игра) + (метка === 'durak' ? '?game=durak' : '') + '"'));
-  assert.ok(карта.includes('/rules/' + метка + '/'));
+  assert.equal(карта.includes('/rules/' + метка + '/'), !спрятана(игра),
+    метка + (спрятана(игра) ? ': игра спрятана, а её правила лежат в sitemap.xml' : ': правил видимой игры нет в sitemap.xml'));
   assert.ok(!html.includes('<script'), 'правила читаются без JS');
   const картинка = new URL(html.match(/property="og:image" content="([^"]+)"/)[1]);
   assert.ok(fs.existsSync(path.join(корень, decodeURIComponent(картинка.pathname))));
