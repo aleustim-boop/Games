@@ -489,6 +489,44 @@ async function главное() {
     [/process\.on\('SIGINT'/.test(исходник), /process\.on\('SIGTERM'/.test(исходник)], [true, true]);
 
   console.log('');
+  console.log('е. Адрес сервера комнат: хвостика нет — сервер там же, где игра (как запаснойАдрес в js/сеть.js)');
+  const адресаСервера = [
+    ['https://igra.medart.com.ua/', 'https://igra.medart.com.ua'],
+    ['https://igra.medart.com.ua/index.html?v=3', 'https://igra.medart.com.ua'],
+    ['https://x.github.io/Games/', ''],
+    ['https://x.github.io/Games/?сервер=https://a.example', 'https://a.example'],
+    ['https://x.github.io/Games/?server=https://a.example', 'https://a.example'],
+    ['http://localhost:8080/', 'http://127.0.0.1:8790'],
+    ['не адрес', '']
+  ];
+  for (const пара of адресаСервера) {
+    проверить('адрес игры ' + пара[0] + ' → сервер «' + пара[1] + '»', Бот.адресСервераИзАдресаИгры(пара[0]), пара[1]);
+  }
+  проверить('ссылка за стол для боевого адреса несёт буквы адреса сервера',
+    (function () {
+      const настройки = Бот.настройки();
+      const былоАдресИгры = настройки.адресИгры;
+      настройки.адресИгры = 'https://igra.medart.com.ua/';
+      try { return Бот.хвостикСАдресом('durak'); } finally { настройки.адресИгры = былоАдресИгры; }
+    })(),
+    'durak_-' + Buffer.from('https://igra.medart.com.ua').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''));
+
+  // Сквозной: адрес игры на своём домене без хвостика — /durak просит стол у сервера комнат по origin
+  const настройкиБота = Бот.настройки();
+  const прежнийАдресИгры = настройкиБота.адресИгры;
+  настройкиБота.адресИгры = 'https://igra.medart.com.ua/';
+  try {
+    await написать('/' + видимаяСтрока[0].метка, 'ru', 'private');
+    const кСерверу = кСерверуКомнат();
+    const сказалиНедоступен = телеграмные('sendMessage').some(function (з) { return содержит(з.данные.text, 'недоступен'); });
+    проверить('/' + видимаяСтрока[0].метка + ' на своём домене: запрос ушёл на igra.medart.com.ua, а не «недоступен»',
+      [кСерверу.length > 0, кСерверу.length > 0 && кСерверу.every(function (з) { return з.хост === 'igra.medart.com.ua'; }), сказалиНедоступен],
+      [true, true, false]);
+  } finally {
+    настройкиБота.адресИгры = прежнийАдресИгры;
+  }
+
+  console.log('');
   console.log('Проверок: ' + всего + ', неудачных: ' + провалов);
   console.log('Временная папка прогона (можно удалить): ' + папка);
   console.log('');
