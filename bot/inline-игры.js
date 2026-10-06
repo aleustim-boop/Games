@@ -21,7 +21,8 @@ function карточки(запрос, настройки) {
     en: ['Play ', 'One table for everyone using this link. The invitation lasts 24 hours.', 'Open the table and join. The first player chooses settings and starts the game.', 'Join the table']
   }[язык];
   const поиск = String(запрос.query || '').trim().toLocaleLowerCase('ru');
-  return названия.ИГРЫ.filter(и => [и.название, и.вИгру, и.метка, языки.текст(и.название, 'uk'), языки.текст(и.название, 'en')].join(' ').toLocaleLowerCase('ru').includes(поиск)).map(и => {
+  // спрятанные игры (поле «спрятана» реестра) в карточки не попадают
+  return названия.видимыеИгры().filter(и => [и.название, и.вИгру, и.метка, языки.текст(и.название, 'uk'), языки.текст(и.название, 'en')].join(' ').toLocaleLowerCase('ru').includes(поиск)).map(и => {
     const билет = билеты.билет(и.метка, настройки.секрет);
     const адрес = Buffer.from(настройки.сервер).toString('base64url');
     const ссылка = 'https://t.me/' + настройки.бот + '/' + настройки.приложение + '?startapp=' + билет + '-' + адрес;

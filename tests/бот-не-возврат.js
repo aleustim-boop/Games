@@ -152,6 +152,8 @@ function собратьСтенд(ломка) {
     fs.writeFileSync(path.join(папкаБота, имя), текст, 'utf8');
   }
 
+  fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
+  fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), '..', 'js', 'игры-реестр.js'), path.join(папкаСервера, '..', 'js', 'игры-реестр.js'));
   fs.copyFileSync(ИСХОДНЫЕ_НАЗВАНИЯ, path.join(папкаСервера, 'названия.js'));
   fs.copyFileSync(path.join(path.dirname(ИСХОДНЫЕ_НАЗВАНИЯ), 'inline-столы.js'), path.join(папкаСервера, 'inline-столы.js'));
   fs.mkdirSync(path.join(папкаСервера, '..', 'js'), { recursive: true });
@@ -199,7 +201,9 @@ async function спросить(апдейт, ломка) {
   const началоСерверу = СЕРВЕРУ.length;
   const счётДоЗапроса = счётЗапросовGetUpdates;
 
-  require(путьКБоту);   // запускает работать() тут же, внутри процесса проверки
+  /* Бот запускается, только когда его открыли как программу (require.main === module):
+     открываем стендового бота так же, как «node bot/бот.js» — главным файлом. */
+  require('module')._load(путьКБоту, null, true);
 
   for (let раз = 0; раз < 300 && счётЗапросовGetUpdates < счётДоЗапроса + 2; раз++) {
     await пауза(10);
