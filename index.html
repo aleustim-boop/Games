@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="style-витрина.css?v=zahvat-20261002">
 <link rel="stylesheet" href="style-аватар.css?v=1">
 <link rel="stylesheet" href="style-языки.css?v=3">
-<script defer src="js/языки.js?v=3"></script>
+<script defer src="js/языки.js?v=4"></script>
 <script defer src="js/языки-общие.js?v=3"></script>
 <script defer src="js/язык-интерфейса.js?v=2"></script></head>
 <body>
@@ -320,7 +320,7 @@
         <span class="карточка-входа__значок" aria-hidden="true"></span>
         <span class="карточка-входа__текст">
           <span class="карточка-входа__название">Турнир дня</span>
-          <span class="карточка-входа__подпись">Каждый день в 20:00 МСК</span>
+          <span class="карточка-входа__подпись">Каждый день в 20:00</span>
         </span>
         <span class="карточка-входа__стрелка" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 4 8 8-8 8"/></svg></span>
       </button>
@@ -1318,7 +1318,7 @@
 <!-- Путь до партии: лобби и три шага. Раньше js/game.js: игра при запуске
      подключает его к странице и отдаёт ему свои двери. -->
 <script src="js/дурак-путь.js?v=languages-20261004"></script>
-<script src="js/game.js?v=bito-20261004"></script>
+<script src="js/game.js?v=bito-20261006"></script>
 <!-- Комната дурака (экран 05): модель и рисование. Порядок с js/сеть.js
      здесь не жёсткий: сеть спрашивает window.ДуракКомната не при своей
      загрузке, а прямо в момент показа прихожей (когда все теги внизу
@@ -1351,7 +1351,7 @@
      отменитьПодбор и без него не подключает карточку. -->
 <script src="js/подбор-экран.js?v=5"></script>
 <!-- Экран турнира по расписанию (открывается и по #турнир). После js/сеть.js — берёт Сеть.турнир*. -->
-<script src="js/турнир-экран.js?v=2"></script>
+<script src="js/турнир-экран.js?v=3"></script>
 <!-- «Похвастаться победой»: дверь «Сеть.похвастаться» живёт здесь, а не в сети.
      СТРОГО ПОСЛЕ js/сеть.js: внутри стоит страховка «if (window.Сеть) return»,
      и, встань файл раньше, она ослепла бы на упавшем сеть.js. -->
