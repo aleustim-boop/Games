@@ -1,4 +1,5 @@
-.тг-аватар { position:relative!important; background-image:none!important; filter:none!important; border-radius:50%; }
+/* Маску-человечка (общий «.аватар» в style.css) с настоящего фото снимаем: иначе она вырезает фото по силуэту, а не по кругу. Круг даёт только border-radius + overflow. */
+.тг-аватар { position:relative!important; background-image:none!important; filter:none!important; border-radius:50%; -webkit-mask:none!important; mask:none!important; overflow:hidden; }
 .тг-аватар::before,.тг-аватар::after { display:none!important; }
 .тг-аватар>img.тг-аватар-фото { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; max-width:none!important; padding:0!important; border:0!important; object-fit:cover; border-radius:inherit; filter:none!important; z-index:2; }
 img.тг-аватар { object-fit:cover; }
