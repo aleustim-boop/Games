@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот'),М=require('../js/катан-память'),Ч=require('../js/катан-часы'),А=require('../server/игры/катан');
+const assert=require('node:assert/strict'),П=require('../игры/катан/катан-правила'),Б=require('../игры/катан/катан-бот'),М=require('../игры/катан/катан-память'),Ч=require('../игры/катан/катан-часы'),А=require('../server/игры/катан');
 for(const n of [3,4])for(const friendlyRobber of [false,true])for(const easyStart of [false,true]){
   const options={friendlyRobber,easyStart,turnSeconds:60},seed=n*100+Number(friendlyRobber)*10+Number(easyStart)+1,g=П.создать(n,seed,false,2,options),record={version:1,rules:2,n,seed,options,level:'сложный',actions:[]};
   let steps=0;

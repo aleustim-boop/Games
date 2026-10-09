@@ -3,7 +3,7 @@
 // Решения бота и публичный legal не используются как эталон результата.
 const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 let dice=[];const moduleMock={exports:{}};
-vm.runInNewContext(fs.readFileSync(require.resolve('../js/катан-правила'),'utf8'),{module:moduleMock,require:id=>{assert.equal(id,'node:crypto');return{randomInt:()=>{assert(dice.length,'Неожиданный случайный выбор');return dice.shift();}};}});
+vm.runInNewContext(fs.readFileSync(require.resolve('../игры/катан/катан-правила'),'utf8'),{module:moduleMock,require:id=>{assert.equal(id,'node:crypto');return{randomInt:()=>{assert(dice.length,'Неожиданный случайный выбор');return dice.shift();}};}});
 const П=moduleMock.exports,copy=x=>JSON.parse(JSON.stringify(x));
 const game=()=>{const g=П.создать(4,37);g.phase='roll';g.turn=0;g.secure=true;g.buildings.fill(null);g.roads.fill(-1);return g;};
 const roll=(g,a,b)=>{dice=[Math.floor((a-.5)/6*4294967296),Math.floor((b-.5)/6*4294967296)];П.действие(g,g.turn,{type:'roll'});assert.equal(dice.length,0);};

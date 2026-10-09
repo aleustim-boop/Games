@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),R=require('../js/sudoku-rules'),F=require('./sudoku-photo-fixture');
+const assert=require('node:assert/strict'),R=require('../игры/sudoku/sudoku-rules'),F=require('./sudoku-photo-fixture');
 assert.deepEqual(F.puzzle,F.mapped,'Original clues must match the shipped puzzle bank');
 const s=F.state();assert(s);assert.equal(R.solve(s.puzzle).count,1);assert.equal(s.solution[10],5);assert.deepEqual(R.conflicts(s.board),[]);assert.deepEqual(R.mistakes(s),[60,65]);
 assert.equal(s.solution[60],3);assert.equal(s.solution[65],5);

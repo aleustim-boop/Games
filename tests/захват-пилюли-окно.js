@@ -17,7 +17,7 @@
    Ломающий запуск (обязан краснеть, код 1):
             node tests/захват-пилюли-окно.js --сломать            (копию со старой границей делает сама, во временной папке)
             node tests/захват-пилюли-окно.js --сломать <путь копии стола>
-   Файл проекта js/захват-стол.js не трогается: запрос к нему подменяется копией.
+   Файл проекта игры/захват/захват-стол.js не трогается: запрос к нему подменяется копией.
    ===================================================================== */
 const fs = require('fs');
 const os = require('os');
@@ -33,7 +33,7 @@ if (иС >= 0) {
   if (арг[иС + 1] && !арг[иС + 1].startsWith('--')) КОПИЯ = path.resolve(арг[иС + 1]);
   else {
     // Встроенная порча: страховка выкинута, штраф вне окна = 1 (как было до Р27). Делаем КОПИЮ во временной папке.
-    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'захват-стол.js'), 'utf8');
+    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'игры', 'захват', 'захват-стол.js'), 'utf8');
     const а = '      вписатьПилюлиВОкно(пилюли);\n';
     const б = 'const ШТРАФ_ЗА_ВЫХОД_ИЗ_ОКНА = 50;';
     if (исходник.split(а).length !== 2 || исходник.split(б).length !== 2) {
@@ -88,7 +88,7 @@ async function перебор(браузер, порт, ш, в, мест, поп
   с.on('pageerror', е => ошибки.push(е.message));
   await подготовитьПодделку(с, {});
   if (КОПИЯ) {
-    await с.route(а => { try { return /\/js\/захват-стол\.js/.test(decodeURIComponent(а.pathname)); } catch (_) { return false; } },
+    await с.route(а => { try { return /\/игры\/захват\/захват-стол\.js/.test(decodeURIComponent(а.pathname)); } catch (_) { return false; } },
       м => м.fulfill({ status: 200, contentType: 'application/javascript; charset=utf-8', body: fs.readFileSync(КОПИЯ) }));
   }
   await с.addInitScript(() => { try { localStorage.setItem('zahvat-learned', '1'); } catch (_) { /* пусто */ } });

@@ -7,8 +7,8 @@ const os = require('os');
 const path = require('path');
 
 const КОРЕНЬ = path.join(__dirname, '..');
-const НАСТОЯЩИЙ = path.join(КОРЕНЬ, 'js', 'захват-знаки.js');
-const ДЕБЕРЦ = path.join(КОРЕНЬ, 'js', 'деберц-знаки.js');
+const НАСТОЯЩИЙ = path.join(КОРЕНЬ, 'игры', 'захват', 'захват-знаки.js');
+const ДЕБЕРЦ = path.join(КОРЕНЬ, 'общее', 'js', 'деберц-знаки.js');
 const КОМНАТА = path.join(КОРЕНЬ, 'server', 'комнаты.js');
 
 // Фразы ТЗ, раздел 6, в порядке таблицы. Переписаны сюда руками: ТЗ — источник, тест — сторож.

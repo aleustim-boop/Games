@@ -1,6 +1,6 @@
 /* Техническая подготовка сгенерированных PNG: размер, WebP и контрольный лист маршрутов. */
 'use strict';
-const fs=require('node:fs'),{chromium}=require('./браузер-робот.js'),R=require('../js/бастион-правила.js');
+const fs=require('node:fs'),{chromium}=require('./браузер-робот.js'),R=require('../игры/бастион/бастион-правила.js');
 (async()=>{const server=await require('./бастион-стенд.js')(),browser=await chromium.launch({headless:true});try{
  const p=await browser.newPage();await p.goto(server.url+'/');
  const jobs=Object.keys(R.ENEMIES).map(type=>({source:type+'-stride-'+(type==='crab'?'v6b':'v6')+'.png',target:type+'-stride-v6.webp',w:1600,h:800}));

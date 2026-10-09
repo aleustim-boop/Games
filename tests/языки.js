@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const vm = require('vm');
-const оригинал = fs.readFileSync(require.resolve('../js/языки'), 'utf8');
+const оригинал = fs.readFileSync(require.resolve('../общее/js/языки'), 'utf8');
 function проверить(код) {
   const среда = { module: { exports: {} } };
   vm.runInNewContext(код, среда);

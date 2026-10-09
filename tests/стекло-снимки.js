@@ -31,7 +31,7 @@ function проверка(название, ок, подробность) {
 const КАРТА = '/img/захват/макет-партия-парящий.png';
 const СТРАНИЦА_СТЕКЛА = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/общее/css/style.css">
 <style>
 html,body{margin:0;padding:0;background:#0b0e12}
 #сцена{position:relative;width:390px;height:780px;overflow:hidden;background:#0b0e12 url('${КАРТА}') center/cover no-repeat;font-family:system-ui,sans-serif;color:#f4f4ed}
@@ -67,7 +67,7 @@ function сервер(папкаСтиля) {
     const адрес = decodeURIComponent(зап.url.split('?')[0]);
     if (адрес === '/стекло.html') { отв.writeHead(200, { 'Content-Type': ТИПЫ['.html'] }); return отв.end(СТРАНИЦА_СТЕКЛА); }
     if (адрес === '/значки.html') { отв.writeHead(200, { 'Content-Type': ТИПЫ['.html'] }); return отв.end(СТРАНИЦА_ЗНАЧКОВ); }
-    const база = (адрес === '/style.css' && папкаСтиля) ? папкаСтиля : КОРЕНЬ;
+    const база = (адрес === '/общее/css/style.css' && папкаСтиля) ? папкаСтиля : КОРЕНЬ;
     const файл = path.join(база, адрес);
     if (!файл.startsWith(база) || !fs.existsSync(файл) || fs.statSync(файл).isDirectory()) { отв.writeHead(404); return отв.end('нет'); }
     отв.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл)] || 'application/octet-stream' });
@@ -145,7 +145,7 @@ async function снять(папкаСтиля, куда) {
     // порченая копия css: размытие вырезано отовсюду
     const папкаСтиля = path.join(врем, 'css');
     fs.mkdirSync(папкаСтиля, { recursive: true });
-    const css = fs.readFileSync(path.join(КОРЕНЬ, 'style.css'), 'utf8');
+    const css = fs.readFileSync(path.join(КОРЕНЬ, 'общее/css/style.css'), 'utf8');
     fs.writeFileSync(path.join(папкаСтиля, 'style.css'), css.replace(/(-webkit-)?backdrop-filter\s*:[^;}]*;/g, ''));
     const порча = await снять(папкаСтиля, куда);
     проверка('чистая копия: размытие у всех 5 классов (опора для сравнения)', чистая.размытий.обычный === КЛАССЫ.length, 'у ' + чистая.размытий.обычный);

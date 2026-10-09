@@ -41,8 +41,8 @@ if (путьКопии) {
 }
 
 const Д = require(НАСТОЯЩИЙ);
-const П = require(path.join(КОРЕНЬ, 'js', 'домино-правила'));
-const Б = require(path.join(КОРЕНЬ, 'js', 'домино-бот'));
+const П = require(path.join(КОРЕНЬ, 'игры', 'домино', 'домино-правила'));
+const Б = require(path.join(КОРЕНЬ, 'игры', 'домино', 'домино-бот'));
 
 let проверок = 0;
 let провалов = 0;

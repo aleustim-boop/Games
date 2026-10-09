@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),S=require('../js/solitaire-core'),{chromium,подготовитьПодделку}=require('./браузер-робот'),base=process.env.CASUAL_BASE||'http://127.0.0.1:8137';
+const assert=require('node:assert/strict'),S=require('../общее/casual/solitaire-core'),{chromium,подготовитьПодделку}=require('./браузер-робот'),base=process.env.CASUAL_BASE||'http://127.0.0.1:8137';
 (async()=>{const b=await chromium.launch();try{for(const id of ['klondike','spider','freecell']){
  const G=require('../js/game-'+id);let state,move;for(let seed=1;seed<100;seed++){state=G.create(G.modes[0].id,seed);move=S.moves(state).find(a=>a.type==='move'&&a.from.area==='piles'&&a.to.area==='piles');if(move)break;}assert(move);
  const p=await b.newPage({viewport:{width:390,height:844}});await подготовитьПодделку(p);await p.addInitScript(({id,state})=>localStorage.setItem('casual-'+id+'-v1',JSON.stringify({state,history:[]})),{id,state});await p.goto(base+'/'+id+'.html');await p.locator('#continue').click();

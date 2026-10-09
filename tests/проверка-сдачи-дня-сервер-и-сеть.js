@@ -1,7 +1,7 @@
 'use strict';
 
 /* Проверка сдачи дня (серверная половина): двери сервера по HTTP и дверь
-   Сеть.раздачаДня настоящим js/сеть.js в имитации страницы. Свой сервер
+   Сеть.раздачаДня настоящим общее/js/сеть.js в имитации страницы. Свой сервер
    на 8799. Имя файла длинное нарочно: короткое имя в этой папке уже занял
    другой исполнитель. */
 
@@ -240,7 +240,7 @@ async function браузернаяЧасть(день) {
     AbortController: AbortController, Promise: Promise, JSON: JSON, Date: Date, Math: Math
   };
   окружение.globalThis = окружение;
-  vm.runInNewContext(fs.readFileSync(path.join(КОРЕНЬ, 'js/сеть.js'), 'utf8'), окружение, { filename: 'js/сеть.js' });
+  vm.runInNewContext(fs.readFileSync(path.join(КОРЕНЬ, 'общее/js/сеть.js'), 'utf8'), окружение, { filename: 'общее/js/сеть.js' });
   проверить('дверь есть', typeof окно.Сеть.раздачаДня === 'function');
 
   const сводка = await окно.Сеть.раздачаДня({ день: день });

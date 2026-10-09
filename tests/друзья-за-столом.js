@@ -70,7 +70,7 @@ function собратьКопию() {
     // Настоящие данные игроков копии не нужны.
     filter: function (откуда) { return откуда !== ПАПКА_ДАННЫХ && !откуда.startsWith(ПАПКА_ДАННЫХ + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   fs.copyFileSync(КОПИЯ_СЕРВЕРА, path.join(врем, 'server', 'сервер.js'));
   return врем;
 }

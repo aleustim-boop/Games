@@ -1,8 +1,8 @@
 'use strict';
-const П=require('../../js/катан-правила');
-const Б=require('../../js/катан-бот');
-const З=require('../../js/деберц-знаки');
-const Ч=require('../../js/катан-часы');
+const П=require('../../игры/катан/катан-правила');
+const Б=require('../../игры/катан/катан-бот');
+const З=require('../../общее/js/деберц-знаки');
+const Ч=require('../../игры/катан/катан-часы');
 const {номерМеста}=require('../партия-по-сети');
 /* Обычная Error из правил (throw Error('текст')) уже по-русски — показываем
    как есть. Техническую ошибку JS (TypeError, RangeError, ReferenceError,

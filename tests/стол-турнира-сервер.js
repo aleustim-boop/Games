@@ -138,7 +138,7 @@ const сервера = require(path.join(КОРЕНЬ, 'server', 'сервер.j
 const комнаты = require(path.join(КОРЕНЬ, 'server', 'комнаты.js'));
 const партии = require(path.join(КОРЕНЬ, 'server', 'партия-по-сети.js'));
 const личины = require(path.join(КОРЕНЬ, 'server', 'личины.js'));
-const правила = require(path.join(КОРЕНЬ, 'js', 'game.js'));
+const правила = require(path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js'));
 
 /* Личина думает и прощается быстро — проверке незачем ждать секунды
    «как человек». Её решение после партии — всегда «ещё»: так видно, что

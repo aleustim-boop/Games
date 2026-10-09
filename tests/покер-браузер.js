@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const b=await chromium.launch();try{const p=await b.newPage();await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.POKER_TEST_URL||'http://127.0.0.1:8137/покер.html');await p.locator('#pk-bots').click();await p.locator('#pk-count').selectOption('6');await p.locator('#pk-start').click();await p.waitForTimeout(600);
 const g=P.create(6,79);while(g.turn!==0)P.action(g,g.turn,{type:'call'});const v=P.view(g,0);
 await p.evaluate(v=>ИграПоСети.показатьВид({код:'test-poker',версия:1,покер:v}),v);

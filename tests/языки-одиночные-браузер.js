@@ -168,7 +168,7 @@ async function проверитьСтраницу(браузер, стенд, ф
     if (!папка) { console.error('Укажите временную папку: --сломать <папка>'); process.exit(2); }
     fs.mkdirSync(папка, { recursive: true });
     const исх = fs.readFileSync(path.join(КОРЕНЬ, '2048.html'), 'utf8');
-    const порча = исх.replace(/<script[^>]*src="js\/языки-2048\.js[^"]*"[^>]*><\/script>/, '');
+    const порча = исх.replace(/<script[^>]*src="игры\/2048\/языки-2048\.js[^"]*"[^>]*><\/script>/, '');
     if (порча === исх) { console.error('Ломающий: не нашёл подключение языки-2048.js в 2048.html'); process.exit(2); }
     const копия = path.join(папка, '2048.html');
     fs.writeFileSync(копия, порча);

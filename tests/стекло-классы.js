@@ -16,7 +16,7 @@ const ПРЕДЕЛ_РАЗМЫТИЯ = 20;
 const ПЕРЕКЛЮЧАТЕЛЬ = 'стекло-без-размытия';
 
 // ---- путь к css ----
-let путь = path.join(__dirname, '..', 'style.css');
+let путь = path.join(__dirname, '..', 'общее/css/style.css');
 const ай = process.argv.indexOf('--css');
 if (ай >= 0) {
   if (!process.argv[ай + 1]) { console.log('Не указан путь после --css'); process.exit(2); }

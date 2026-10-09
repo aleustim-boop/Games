@@ -4,15 +4,15 @@ const path = require('node:path');
 if (process.argv[2] === '--самопроверка') {
   const fs = require('node:fs'), os = require('node:os'), { spawnSync } = require('node:child_process');
   const файл = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'deberts-many-')), 'rules.js');
-  const код = fs.readFileSync(path.join(__dirname, '../js/деберц-правила.js'), 'utf8');
+  const код = fs.readFileSync(path.join(__dirname, '../игры/деберц/деберц-правила.js'), 'utf8');
   assert(код.includes('игра.стол.length === мест(игра)'));
   fs.writeFileSync(файл, код.replace('игра.стол.length === мест(игра)', 'игра.стол.length === 2'));
   const ответ = spawnSync(process.execPath, [__filename, файл], { encoding: 'utf8' });
   assert.equal(ответ.status, 1); assert(ответ.stderr.includes('AssertionError'));
   console.log('Самопроверка: преждевременное завершение взятки на копии обнаружено — OK'); process.exit(0);
 }
-const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../js/деберц-правила.js');
-const М = require('../js/деберц-память.js');
+const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../игры/деберц/деберц-правила.js');
+const М = require('../игры/деберц/деберц-память.js');
 const И = require('../server/игры/деберц.js');
 const к = (имя, масть = '♠') => ({ id: масть + имя, имя, масть });
 let seed = 83231;

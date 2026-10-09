@@ -46,8 +46,8 @@ const http = require('http');
 const { chromium, безTelegram } = require('./браузер-робот.js');
 
 const КОРЕНЬ = path.join(__dirname, '..');
-const ПУТЬ_STYLE = path.join(КОРЕНЬ, 'style.css');
-const ПУТЬ_КОЛЛЕКЦИЯ = path.join(КОРЕНЬ, 'style-коллекция.css');
+const ПУТЬ_STYLE = path.join(КОРЕНЬ, 'общее/css/style.css');
+const ПУТЬ_КОЛЛЕКЦИЯ = path.join(КОРЕНЬ, 'общее/css/style-коллекция.css');
 const ИМЯ_ПЕРЕМЕННОЙ = '--сб-текст';
 const АДРЕС_ХОЗЯИНА = '127.0.0.1';
 const ЗАПРЕЩЁННЫЕ_ПОРТЫ = [8790, 8791];

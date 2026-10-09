@@ -82,8 +82,8 @@ function путьКРейтингу() {
   });
   папкиНаУдаление.push(врем);
   // server/игры/умолчания.js берёт список игр из общего реестра.
-  fs.mkdirSync(path.join(врем, 'js'), { recursive: true });
-  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'игры-реестр.js'), path.join(врем, 'js', 'игры-реестр.js'));
+  require('./пути-проекта.js').создатьПапкиКода(врем);
+  fs.copyFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'игры-реестр.js'), path.join(врем, 'общее', 'js', 'игры-реестр.js'));
   const копия = path.join(врем, 'server', 'рейтинг.js');
   const исходник = fs.readFileSync(копия, 'utf8');
   const было = '  сообщитьСлушателямПартий(игра, застольем, источник);';

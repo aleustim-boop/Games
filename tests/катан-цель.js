@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила');
 for(const targetPoints of [10,12,15]){
  const g=P.создать(3,123,false,2,{targetPoints});g.phase='roll';g.turn=0;
  g.players[0].dev=Array.from({length:targetPoints-1},()=>({type:'vp',bought:-1}));

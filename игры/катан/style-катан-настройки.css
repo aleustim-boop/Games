@@ -1,0 +1,155 @@
+/* Стол и лобби Катана: тёплое дерево, латунь, ясные действия. */
+.катан #экран-лобби,.катан #кат-настройки,.катан #экран-друга,.катан #экран-комнаты,.катан #экран-поиска-игры {
+ background:linear-gradient(110deg,#181410eb,#171914e8),url('../../img/катан/материалы-v3.webp') left center/200% 100%;
+}
+.катан #экран-лобби h1,.катан .кат-настройки-шапка h1 { color:#f4d49a; font-family:Georgia,serif; letter-spacing:.025em; text-shadow:0 2px 0 #614424; }
+.катан .кат-обложка { border-color:#b59154; box-shadow:0 12px 36px #0008,inset 0 0 0 2px #d8b47d; }
+.катан .кат-обложка figcaption span,.катан .кат-настройки-шапка>small { color:#d2b57c; }
+.катан .кат-факты span { border-color:#cda86355; color:#f3dfb1; background:#241c12cc; }
+.катан .карточка-профиля,.катан .карточка-входа,.катан .кат-панель { background:linear-gradient(125deg,#363123,#1b201b); border:1px solid #b3945755; }
+.катан .карточка-входа--играть-онлайн { background:linear-gradient(120deg,#d7b775,#a67b39); color:#20180d; box-shadow:0 6px 20px #0006,inset 0 1px #fff1c4; }
+.катан .карточка-входа--играть-онлайн small { color:#3e311c; }
+.катан .нижние-вкладки { background:#191b16ed; border-color:#a28b4d44; }
+.катан .кат-правила-стола { margin:18px 0; padding:20px; background:linear-gradient(135deg,#302b20eF,#171e19); border:1px solid #aa8d5366; border-radius:20px; box-shadow:0 8px 22px #0004; }
+.кат-правила-стола>small { font-size:10px; letter-spacing:.16em; color:#c4a571; }.кат-правила-стола h2 { color:#f2ddb4; font:600 25px Georgia,serif; margin:6px 0 16px; }
+.кат-правило { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 0; border-top:1px solid #b497592e; }
+.кат-правило>span { display:grid; gap:6px; flex:1; }.кат-правило b { color:#f7edda; font-size:16px; }.кат-правило small { color:#c1b89e; font-size:12px; line-height:1.5; }
+.кат-правило input { appearance:none; flex:0 0 46px; width:46px; height:27px; border:1px solid #958164; border-radius:18px; background:#25291f; cursor:pointer; position:relative; }
+.кат-правило input::after { content:''; position:absolute; width:19px; height:19px; top:3px; left:3px; background:#bcb69f; border-radius:50%; transition:transform .15s; }
+.кат-правило input:checked { background:#b59954; }.кат-правило input:checked::after { transform:translateX(19px); background:#fff8dc; }
+.кат-правило select { max-width:145px; min-height:44px; padding:7px; background:#343728; color:#f6e6c5; border:1px solid #b09156; border-radius:10px; }
+.кат-правила-стола>.кат-ссылка { min-height:44px; width:100%; margin-top:8px; color:#e6ce9d; border:1px solid #ac8c5755; border-radius:10px; }
+.катан .кат-переключатель button { position:relative; width:auto; min-width:0; }
+.катан .кат-переключатель button[aria-checked=true] { border:1px solid #edcb88; background:linear-gradient(#e4c787,#b58a43); color:#201a10; box-shadow:inset 0 1px 0 #fff0c5,0 0 0 1px #e4c78755; }
+.катан .кат-переключатель button[aria-checked=true]::after { content:'✓'; position:absolute; top:2px; right:5px; font-size:10px; line-height:12px; }
+.катан .кат-рассадка { background:radial-gradient(ellipse at 50% 30%,#27859d,#14566d 58%,#082f48);background-image:radial-gradient(ellipse at 50% 30%,#27859da8,#082f48e0),url('../../img/монополия/сукно-v2.webp');background-size:cover;background-blend-mode:color,normal; border-color:#b49657; box-shadow:inset 0 0 0 5px #372a1f,0 15px 28px #0005; }
+.кат-рассадка .кат-превью > image { display:none; }
+.катан #кат-доп-настройки { background:linear-gradient(110deg,#181410eb,#171914e8),url('../../img/катан/материалы-v3.webp') left center/200% 100%; }
+.катан #кат-доп-настройки > .кнопка--главная,
+.катан #кат-диалог .кнопка--главная { background:linear-gradient(#e1c487,#b58d46); border:1px solid #f3d699; color:#221a10; box-shadow:inset 0 1px #ffedb9,0 6px 16px #0005; }
+.катан #кат-диалог input[type=checkbox] { accent-color:#d6b471; }
+.катан .кат-доп-настройки-кнопка { margin:12px 0; border:1px solid #a78b5566; background:#24271e; color:#efd9ae; }
+.катан #кат-начать,.катан #кнопка-создать-игру { background:linear-gradient(#e1c487,#b58d46); border:1px solid #f3d699; color:#221a10; box-shadow:inset 0 1px #ffedb9,0 6px 16px #0005; }
+.кат-сцена #кат-кубики { display:grid; grid-template-columns:32px 32px auto; gap:4px 6px; padding:7px 9px; border:1px solid #d3b77a88; background:#191d19ef; box-shadow:0 4px 15px #0007; border-radius:12px; }
+.кат-сцена #кат-кубики .кат-кубик { width:32px; height:32px; padding:6px; gap:2px; border-radius:7px; }
+.кат-сцена #кат-кубики b { font:700 22px Georgia,serif; align-self:center; color:#ffe5b0; }
+.кат-сцена #кат-кубики small { grid-column:1/-1; font-size:10px; color:#e1cda9; white-space:nowrap; max-width:145px; text-overflow:ellipsis; overflow:hidden; }
+.кат-сцена #кат-кубики>span:not(.кат-кубик) { grid-column:1/-1; max-width:none; }
+.кат-сцена .кат-игрок.ходит { outline:2px solid #e3ff87; border-color:#ecffc4; box-shadow:0 0 0 4px #1a2817,0 0 26px #c5ec5555; }
+.кат-сцена .кат-игрок.ходит .кат-игрок-статус { color:#edffa5; font-weight:800; text-transform:uppercase; letter-spacing:.035em; }
+.катан #экран-игры .кат-ход { position:relative; border:1px solid #c4a16a77; border-radius:12px; background:#393627ed; padding:3px 8px; }
+.катан #экран-игры .кат-ход.ваш { border-color:#cce777; background:linear-gradient(120deg,#425026ef,#283b20f5); box-shadow:0 0 13px #c4e35522; }
+.катан #экран-игры .кат-ход strong { font-size:22px; line-height:24px; color:#fff0c8; }
+.катан #экран-игры .кат-ход.ваш strong { color:#e6ffa0; }
+.катан .кат-таймер { position:absolute; right:7px; top:-15px; padding:3px 8px; border-radius:9px; border:1px solid #b9a77d; background:#21291e; color:#f4eacb; font:bold 13px system-ui; font-variant-numeric:tabular-nums; }
+.катан .кат-таймер.истекает { background:#743b25; color:#fff1c7; }
+.катан #экран-игры .кат-карта-низ { gap:6px; }.катан #кат-фильтр { margin-left:auto; }
+.кат-ход.ожидание strong::after { content:none; }
+@media(min-width:700px) and (orientation:portrait) { .кат-сцена #кат-кубики { grid-template-columns:44px 44px auto; padding:10px; }.кат-сцена #кат-кубики .кат-кубик { width:44px; height:44px; padding:8px; gap:3px; }.кат-сцена #кат-кубики small { font-size:13px; }.катан #экран-игры .кат-ход strong { font-size:26px; line-height:29px; } }
+@media(max-width:359px) { .кат-правила-стола { padding:12px!important; }.кат-правило { gap:8px; }.кат-правило select { max-width:110px; font-size:12px; }.кат-обмен-карты { gap:3px; }.кат-обмен-карта .кат-рисунок { width:32px; height:32px; }.кат-обмен-карта b { font-size:10px; }.кат-обмен-карта small { font-size:8px; }.катан #кат-диалог { padding:12px; }.катан #экран-игры .кат-ход strong { font-size:19px; } }
+@media(min-width:600px) and (max-height:520px) { .кат-сцена #кат-кубики { grid-template-columns:25px 25px auto; padding:4px 6px; }.кат-сцена #кат-кубики .кат-кубик { width:25px; height:25px; padding:4px; }.кат-сцена #кат-кубики small { font-size:8px; }.катан #экран-игры .кат-ход strong { font-size:17px; line-height:18px; } }
+
+/* Размер острова задаёт ширина сцены, а не остаток после фиксированных панелей.
+   На коротком экране прокручивается весь стол, карта никогда не схлопывается. */
+.катан #экран-игры.экран--виден,
+.катан #экран-игры.расстановка.экран--виден {
+ display:grid; grid-template-columns:minmax(0,720px); grid-template-rows:48px auto auto;
+ justify-content:center; align-content:start; gap:10px; overflow-y:auto; overflow-x:hidden;
+ padding-inline:max(10px,var(--отступ-слева,0px),var(--отступ-справа,0px));
+}
+.катан #экран-игры .кат-верх { justify-content:space-between; }
+.катан #экран-игры .кат-верх h1 { font-size:36px; }
+.катан #экран-игры #кат-раунд { font-size:11px; }
+.катан #экран-игры .кат-титул { display:block; }
+.в-телеграме .катан #экран-игры .кат-верх [data-back] { visibility:hidden; pointer-events:none; }
+.катан #экран-игры .кат-сцена {
+ --карточка-высота:90px; width:100%; height:auto; min-height:0; grid-column:1; grid-row:2;
+ aspect-ratio:auto; padding-top:calc(93.333333% + 298px); margin:0;
+}
+.кат-сцена .кат-игроки { grid-template-rows:90px minmax(0,1fr) 90px; column-gap:8%; row-gap:0; }
+.кат-сцена .кат-игрок { grid-template-columns:28px minmax(0,1fr) 28px; grid-template-rows:26px 34px 16px; padding:5px 7px; }
+.кат-сцена .кат-игрок .кат-аватар { width:26px; height:26px; }
+.кат-сцена .кат-игрок b { font-size:12px; line-height:16px; }
+.кат-сцена .кат-игрок-статус { font-size:10px; line-height:14px; }
+.кат-сцена .кат-игрок strong { font-size:25px; }
+.кат-сцена .кат-карта:not(.увеличена) { inset:130px 0 168px; }
+.кат-сцена .кат-карта:not(.увеличена) .кат-карта-низ { bottom:-74px; height:34px; min-height:34px; gap:5px; }
+.кат-сцена .кат-карта:not(.увеличена) .кат-карта-верх { top:auto; bottom:-38px; height:34px; min-height:34px; }
+.кат-сцена #кат-кубики { grid-template-columns:23px 23px auto; padding:4px 6px; gap:4px; min-height:32px; max-width:130px; }
+.кат-сцена #кат-кубики .кат-кубик { width:23px; height:23px; padding:4px; gap:1px; }
+.кат-сцена #кат-кубики b { font-size:19px; }
+.кат-сцена #кат-кубики small { display:none; }
+.кат-сцена #кат-кубики::after { content:none; }
+.катан #экран-игры .кат-управление,
+.катан #экран-игры.расстановка .кат-управление {
+ grid-column:1; grid-row:3; display:flex; flex-direction:column; width:100%; height:auto;
+ padding:12px; gap:8px; margin:0; overflow:visible; border-radius:17px;
+}
+.катан #экран-игры .кат-ход { flex:none; min-height:58px; padding:8px; gap:4px; }
+.катан #экран-игры .кат-ход strong { font-size:20px; line-height:24px; }
+.катан #экран-игры .кат-ход small { font-size:12px; line-height:16px; }
+.катан #экран-игры .кат-шаги { font-size:12px; line-height:16px; gap:5px; }
+.катан #экран-игры .кат-шаги span { padding:2px 10px; }
+.катан #экран-игры .кат-событие { height:auto; max-height:36px; flex:none; font-size:11px; line-height:16px; }
+.катан #экран-игры .кат-ресурсы { height:76px; flex:none; max-height:none; width:min(100%,430px); padding:5px 7px; gap:7px; }
+.катан #экран-игры .кат-ресурс strong { font-size:20px; }
+.катан #экран-игры .кат-инструменты { flex:none; }
+.катан #экран-игры .кат-инструменты .кнопка { font-size:12px; min-height:38px; }
+.катан #экран-игры .кат-действия { flex:none; min-height:46px; }
+.катан #экран-игры .кат-действия .кнопка--главная { font-size:16px; height:auto; min-height:46px; }
+.катан #экран-игры #кат-предложение { position:static; flex:none; margin:0; padding:8px; }
+.катан #экран-игры #кат-ошибка:not(:empty),.катан #экран-игры #строка-связи:not(:empty) { position:static; }
+@media(min-width:1000px) and (orientation:landscape) {
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден {
+  grid-template-columns:minmax(460px,min(880px,calc((100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 370px)*1.07143))) 300px;
+  grid-template-rows:48px auto; column-gap:20px;
+ }
+ .катан #экран-игры .кат-управление,.катан #экран-игры.расстановка .кат-управление { grid-column:2; grid-row:2; align-self:center; }
+}
+.кат-сцена .кат-карта .кат-карта-низ #кат-масштаб { font-size:0; width:32px; min-width:32px; padding:4px; margin-right:auto; }
+.кат-сцена .кат-карта .кат-карта-низ #кат-масштаб::after { content:'⤢'; font:22px/1 system-ui; }
+.катан #экран-игры .кат-карта-низ { justify-content:flex-end; }
+@media(max-width:359px) { .кат-сцена .кат-карта .кат-карта-низ .кат-ссылка { padding:6px; font-size:11px; } }
+@media(min-width:700px) and (orientation:portrait) {
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден {
+  grid-template-columns:minmax(0,min(720px,max(460px,calc((100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 390px)*1.07143))));
+ }
+}
+.кат-сцена .кат-карта.увеличена .кат-карта-низ #кат-масштаб::after { content:'↙'; }
+
+/* На вертикальном телефоне остров использует всю ширину; отступы остаются
+   только у карточек и кнопок. Планшетная композиция определяется выше. */
+@media(max-width:699px) and (orientation:portrait) {
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден {
+  grid-template-columns:minmax(0,1fr); padding-left:0; padding-right:0;
+ }
+ .катан #экран-игры .кат-верх {
+  margin-left:max(10px,var(--отступ-слева,0px)); margin-right:max(10px,var(--отступ-справа,0px));
+ }
+ .кат-сцена .кат-игроки {
+  left:max(10px,var(--отступ-слева,0px)); right:max(10px,var(--отступ-справа,0px));
+ }
+ .кат-сцена .кат-карта:not(.увеличена) .кат-карта-низ {
+  left:max(10px,var(--отступ-слева,0px)); right:max(10px,var(--отступ-справа,0px));
+ }
+ .кат-сцена .кат-карта:not(.увеличена) #кат-окно-карты { mask-image:none; }
+ .катан #экран-игры .кат-управление,.катан #экран-игры.расстановка .кат-управление {
+  width:calc(100% - max(10px,var(--отступ-слева,0px)) - max(10px,var(--отступ-справа,0px)));
+  margin-inline:auto;
+ }
+}
+
+/* Меню Telegram уже содержит настройки игры; второй кнопки ⋯ не нужно. */
+.в-телеграме:not(.без-настроек) .катан .кат-верх [data-menu] { visibility:hidden; pointer-events:none; }
+.катан #экран-игры.кат-заголовок-в-телеграме.экран--виден { grid-template-rows:20px auto auto; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх { justify-content:center; min-height:0; height:20px; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх>button { display:none; }
+.катан #экран-игры.кат-заголовок-в-телеграме .кат-верх h1 {
+ position:fixed; top:var(--кат-система-сверху); left:96px; right:96px;
+ height:var(--кат-шапка-телеграма); display:flex; align-items:center; justify-content:center;
+ margin:0; font-size:clamp(22px,6vw,30px); line-height:1; letter-spacing:.025em;
+ pointer-events:none; z-index:10;
+}
+@media(min-width:1000px) and (orientation:landscape) {
+ .катан #экран-игры.кат-заголовок-в-телеграме.экран--виден { grid-template-rows:20px auto; }
+}

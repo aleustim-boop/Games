@@ -7,9 +7,9 @@ const fs = require('fs');
 const path = require('path');
 module.exports = function (путьСтола) {
 const КОРЕНЬ = path.join(__dirname, '..');
-const Правила = require(path.join(КОРЕНЬ, 'js', 'захват-правила.js'));
-const Карты = require(path.join(КОРЕНЬ, 'js', 'захват-карты.js'));
-const КартаВид = require(path.join(КОРЕНЬ, 'js', 'захват-карта-вид.js'));
+const Правила = require(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-правила.js'));
+const Карты = require(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-карты.js'));
+const КартаВид = require(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-карта-вид.js'));
 const ЗахватСтол = require(путьСтола);
 let пройдено = 0;
 const провалы = [];
@@ -33,7 +33,7 @@ let стильЭкранаВПроверке = null;
 let ширинаРядаЧипов = 0;
 // Зазор ряда чипов — из настоящего style-захват.css: своей копии числа у проверки нет.
 const ЗАЗОР_ЧИПОВ_ИЗ_CSS = (function () {
-  const css = fs.readFileSync(path.join(КОРЕНЬ, 'style-захват.css'), 'utf8');
+  const css = fs.readFileSync(path.join(КОРЕНЬ, 'игры/захват/style-захват.css'), 'utf8');
   const найдено = /(^|\n)\.захват-чипы\s*\{[^}]*?(^|[\s;])gap:\s*([\d.]+)px/.exec(css);
   return найдено ? Number(найдено[3]) : 0;
 })();

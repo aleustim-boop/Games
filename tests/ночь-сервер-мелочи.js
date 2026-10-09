@@ -66,7 +66,7 @@ function сделатьИспорченнуюКопию() {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ_ПРОЕКТА, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ_ПРОЕКТА, врем, 'js');
 
   const файл = path.join(врем, 'server', 'сервер.js');
   let текст = fs.readFileSync(файл, 'utf8').replace(/\r\n/g, '\n');

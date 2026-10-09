@@ -209,7 +209,7 @@ async function открыть(браузер, порт, окно, ошибки, 
   const страница = await контекст.newPage();
   await подготовитьПодделку(страница, {});
   if (выучено) await страница.addInitScript(() => { try { localStorage.setItem('zahvat-learned', '1'); } catch (_) { /* пусто */ } });
-  // «В Telegram»: класс на <html> до работы скриптов страницы, как делает js/telegram.js внутри Telegram.
+  // «В Telegram»: класс на <html> до работы скриптов страницы, как делает общее/js/telegram.js внутри Telegram.
   if (окно.тг) await страница.addInitScript(() => {
     const поставить = () => { if (!document.documentElement) return false; document.documentElement.classList.add('в-телеграме'); return true; };
     if (!поставить()) { const н = new MutationObserver(() => { if (поставить()) н.disconnect(); }); н.observe(document, { childList: true, subtree: true }); }

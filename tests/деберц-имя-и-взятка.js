@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict'), { chromium, безTelegram } = require('./браузер-робот');
-const И = require('../server/игры/деберц'), П = require('../js/деберц-правила');
+const И = require('../server/игры/деберц'), П = require('../игры/деберц/деберц-правила');
 (async () => {
   const b = await chromium.launch();
   try {

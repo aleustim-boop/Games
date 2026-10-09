@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),cp=require('node:child_process'),Module=require('node:module'),path=require('node:path');
-const P=require('../js/катан-правила'),B=require('../js/катан-бот'),M=require('../js/катан-память'),C=require('../js/катан-часы'),A=require('../server/игры/катан');
+const P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),M=require('../игры/катан/катан-память'),C=require('../игры/катан/катан-часы'),A=require('../server/игры/катан');
 const clone=x=>JSON.parse(JSON.stringify(x));
 const stable=g=>{const x=clone(g);delete x._undo;delete x.log;delete x.serial;if(x.options)delete x.options.harbors;return x;};
 function checkMap(g){
@@ -27,9 +27,9 @@ for(let seed=1;seed<=150;seed++)for(const harbors of ['fixed','random']){
 }
 assert(randomMaps.size>100);
 // Старые сохранения должны воспроизводить прежний остров и случайность.
-const filename=path.resolve(__dirname,'../js/катан-правила.js'),legacy=new Module(filename);
+const filename=path.resolve(__dirname,'../игры/катан/катан-правила.js'),legacy=new Module(filename);
 legacy.filename=filename;legacy.paths=module.paths;
-legacy._compile(cp.execFileSync('git',['show','2939834:js/катан-правила.js'],{encoding:'utf8'}),filename);
+legacy._compile(cp.execFileSync('git',['show','2939834:игры/катан/катан-правила.js'],{encoding:'utf8'}),filename);
 for(const rules of [1,2])for(const seed of [1,19,12345]){
   const old=legacy.exports.создать(4,seed,false,rules),now=P.создать(4,seed,false,rules);
   for(let i=0;i<45;i++){assert.deepEqual(stable(now),stable(old));const p=P.кто(old),a=B.ход(legacy.exports.вид(old,p),'обычный');legacy.exports.действие(old,p,a);P.действие(now,p,a);}

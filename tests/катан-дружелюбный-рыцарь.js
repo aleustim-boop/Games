@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),S=require('../server/игры/катан');
+const A=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),S=require('../server/игры/катан');
 for(let seed=1;seed<=40;seed++){
  const g=P.создать(3,seed,false,3,{friendlyRobber:true});while(g.phase.startsWith('setup'))P.действие(g,P.кто(g),B.ход(P.вид(g,P.кто(g))));
  g.phase='main';g.round=10;g.turn=1;g.players[1].dev=[{type:'knight',bought:0}];g.players[0].dev=[{type:'vp',bought:0},{type:'vp',bought:0}];g.players.forEach(p=>p.resources=[1,1,1,1,1]);g.bank=[16,16,16,16,16];

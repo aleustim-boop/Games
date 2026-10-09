@@ -1,8 +1,8 @@
 'use strict';
 const assert = require('node:assert/strict');
-const З = require('../js/деберц-знаки.js');
+const З = require('../общее/js/деберц-знаки.js');
 const fs = require('node:fs'), vm = require('node:vm');
-const эталон = fs.readFileSync(require.resolve('../js/game.js'), 'utf8');
+const эталон = fs.readFileSync(require.resolve('../игры/дурак/game.js'), 'utf8');
 for (const имя of ['ЭМОЦИИ', 'ФРАЗЫ', 'БРОСКИ']) {
   const от = эталон.indexOf('const ' + имя + ' = [');
   const до = имя === 'ЭМОЦИИ' ? эталон.indexOf(';', от) + 1 : эталон.indexOf('\n];', от) + 3;

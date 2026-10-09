@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
-const П = require('../js/деберц-правила.js');
-const М = require('../js/деберц-память.js');
+const П = require('../игры/деберц/деберц-правила.js');
+const М = require('../игры/деберц/деберц-память.js');
 const И = require('../server/игры/деберц.js');
 const к = (имя, масть = '♠') => ({ id: масть + имя, имя, масть });
 function последняя(цель, счёт) {

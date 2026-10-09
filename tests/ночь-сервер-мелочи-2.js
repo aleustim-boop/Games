@@ -89,7 +89,7 @@ function сделатьИспорченнуюКопию() {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ_ПРОЕКТА, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ_ПРОЕКТА, врем, 'js');
 
   const порча = ПОРЧИ[ИМЯ_ПОРЧИ];
   const файл = path.join(врем, 'server', порча.файл);

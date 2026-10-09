@@ -83,16 +83,16 @@ function поднятьСервер(корень) {
 /** Копия проекта с пустым списком кнопок «продолжить» (img и шрифты — ссылкой-«junction»). */
 function сделатьСломаннуюКопию(папка) {
   fs.mkdirSync(папка, { recursive: true });
-  fs.cpSync(path.join(КОРЕНЬ_ПРОЕКТА, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ_ПРОЕКТА, папка, 'js');
   for (const ф of fs.readdirSync(КОРЕНЬ_ПРОЕКТА)) {
     if (/\.(html|css)$/.test(ф)) fs.copyFileSync(path.join(КОРЕНЬ_ПРОЕКТА, ф), path.join(папка, ф));
   }
-  for (const д of ['img', 'шрифты', 'rules']) {
+  for (const д of ['img', ...require('./пути-проекта.js').папкиКода('шрифты'), 'rules']) {
     const из = path.join(КОРЕНЬ_ПРОЕКТА, д);
     const куда = path.join(папка, д);
     if (fs.existsSync(из) && !fs.existsSync(куда)) fs.symlinkSync(из, куда, 'junction');
   }
-  const файл = path.join(папка, 'js', 'возврат-после-свернуть.js');
+  const файл = path.join(папка, 'общее', 'js', 'возврат-после-свернуть.js');
   const было = fs.readFileSync(файл, 'utf8');
   const стало = было.replace(/var КНОПКИ_ПРОДОЛЖИТЬ = \[[\s\S]*?\];/, 'var КНОПКИ_ПРОДОЛЖИТЬ = [];');
   if (стало === было) throw new Error('в копии не нашлось списка КНОПКИ_ПРОДОЛЖИТЬ — порча не сделана');

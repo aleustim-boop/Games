@@ -32,8 +32,8 @@ const путьКопии = номерДовода > 0 ? process.argv[номер�
 process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'domino-uroven-' + process.pid);
 
 const Д = require(путьКопии ? path.resolve(путьКопии) : НАСТОЯЩИЙ);
-const П = require(path.join(КОРЕНЬ, 'js', 'домино-правила'));
-const Б = require(path.join(КОРЕНЬ, 'js', 'домино-бот'));
+const П = require(path.join(КОРЕНЬ, 'игры', 'домино', 'домино-правила'));
+const Б = require(path.join(КОРЕНЬ, 'игры', 'домино', 'домино-бот'));
 
 let проверок = 0;
 let провалов = 0;

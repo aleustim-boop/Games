@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const browser=await chromium.launch();try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await безTelegram(page);await page.clock.install();await page.goto('http://127.0.0.1:8137/катан.html');await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
  let g;for(let seed=1;seed<100;seed++){g=P.создать(3,seed,false,3);while(g.phase.startsWith('setup'))P.действие(g,g.turn,B.ход(P.вид(g,g.turn)));g.turn=0;g.phase='roll';const trial=JSON.parse(JSON.stringify(g));P.действие(trial,0,{type:'roll'});if(trial.log.at(-1).gains?.some(a=>P.сумма(a)))break;}

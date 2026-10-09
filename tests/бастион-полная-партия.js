@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict');const {chromium,безTelegram}=require('./браузер-робот.js'),R=require('../js/бастион-правила.js');
+const assert=require('node:assert/strict');const {chromium,безTelegram}=require('./браузер-робот.js'),R=require('../игры/бастион/бастион-правила.js');
 function order(map){return R.pads(map).map((p,i)=>{let coverage=0;for(let d=0;d<R.geometry(map).length;d+=35){const q=R.position(map,d);if(Math.hypot(q.x-p.x,q.y-p.y)<220)coverage++;}return {i,coverage};}).sort((a,b)=>b.coverage-a.coverage).map(x=>x.i);}
 (async()=>{const server=await require('./бастион-стенд.js')(),browser=await chromium.launch({headless:true});try{const p=await browser.newPage({viewport:{width:1280,height:960}});await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.clock.install();await p.goto(server.url+'/'+encodeURIComponent('бастион')+'.html');await p.waitForFunction(()=>БастионИгра.готов());await p.click('#start');const pads=order(0),cycle=['mortar','tide','ballista','mortar','ballista','tide'];let steps=0;
  while(steps++<300){let s=await p.evaluate(()=>БастионИгра.состояние());if(['won','lost'].includes(s.phase))break;

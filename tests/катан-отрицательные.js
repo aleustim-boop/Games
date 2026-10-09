@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const real=require('../js/катан-правила'),source=fs.readFileSync(require.resolve('../js/катан-правила'),'utf8');
+const real=require('../игры/катан/катан-правила'),source=fs.readFileSync(require.resolve('../игры/катан/катан-правила'),'utf8');
 function mutant(from,to){assert(source.includes(from));const ctx={module:{exports:{}},require};vm.runInNewContext(source.replace(from,to),ctx);return ctx.module.exports;}
 function turn(П){const g=П.создать(3,1);g.phase='main';g.turn=0;assert.throws(()=>П.действие(g,1,{type:'end'}));}
 function bank(П){const g=П.создать(3,1);g.phase='main';g.turn=0;g.players[0].resources=[4,0,0,0,0];g.bank[0]=15;П.действие(g,0,{type:'bank',give:0,want:1});for(let r=0;r<5;r++)assert.equal(g.bank[r]+g.players.reduce((s,p)=>s+p.resources[r],0),19);}

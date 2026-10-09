@@ -1,7 +1,7 @@
 'use strict';
-const П = require('../../js/морской-бой-правила');
-const Б = require('../../js/морской-бой-бот');
-const З = require('../../js/деберц-знаки');
+const П = require('../../игры/морской-бой/морской-бой-правила');
+const Б = require('../../игры/морской-бой/морской-бой-бот');
+const З = require('../../общее/js/деберц-знаки');
 const { номерМеста } = require('../партия-по-сети');
 /* Обычная Error из правил (throw Error('текст')) уже по-русски — показываем
    как есть. Техническую ошибку JS (TypeError, RangeError, ReferenceError,

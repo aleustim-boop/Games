@@ -38,7 +38,7 @@ const МЕТКА = '[понятный-стол]';
 
 async function прогнать(портФайлов, портКомнат) {
   const И = require(path.join(ПРОЕКТ, 'server', 'игры', 'деберц.js'));
-  const П = require(path.join(ПРОЕКТ, 'js', 'деберц-правила.js'));
+  const П = require(path.join(ПРОЕКТ, 'игры', 'деберц', 'деберц-правила.js'));
   const b = await chromium.launch({ headless: true });
   try {
     const p = await b.newPage(); const ошибки = [];
@@ -80,7 +80,7 @@ async function прогнать(портФайлов, портКомнат) {
 
 /* ---------- Ломающий прогон: портим id «деберц-обяз» в копии деберц.html ---------- */
 function сделатьКопиюПроекта(папка) {
-  for (const часть of ['server', 'js', 'img', 'шрифты', 'tests']) {
+  for (const часть of ['server', ...require('./пути-проекта.js').папкиКода(), 'img', 'tests']) {
     const откуда = path.join(ПРОЕКТ, часть);
     if (!fs.existsSync(откуда)) continue;
     fs.cpSync(откуда, path.join(папка, часть), {

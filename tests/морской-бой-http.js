@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict'), path = require('node:path'), os = require('node:os');
 process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'sea-http-' + process.pid);
-const server = require('../server/сервер').создатьСервер(), П = require('../js/морской-бой-правила'), Б = require('../js/морской-бой-бот');
+const server = require('../server/сервер').создатьСервер(), П = require('../игры/морской-бой/морской-бой-правила'), Б = require('../игры/морской-бой/морской-бой-бот');
 (async () => {
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port;

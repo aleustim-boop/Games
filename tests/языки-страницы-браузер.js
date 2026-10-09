@@ -107,7 +107,7 @@ async function проверитьСтраницу(браузер, стенд, [�
     await безTelegram(страница);
     await страница.addInitScript(л => { try { localStorage.setItem('games_language', л); } catch (_) {} }, язык);
     await страница.route('https://igra.medart.com.ua/**', м => м.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
-    if (опции.подмена) await страница.route(у => decodeURIComponent(у.pathname).endsWith('/js/языки-шахматы.js'), м => м.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: опции.подмена }));
+    if (опции.подмена) await страница.route(у => decodeURIComponent(у.pathname).endsWith('/игры/шахматы/языки-шахматы.js'), м => м.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: опции.подмена }));
     страница.on('pageerror', е => итог.консоль.push('pageerror: ' + е.message));
     страница.on('console', с => { if (с.type() === 'error' && !/503|net::ERR_FAILED/.test(с.text())) итог.консоль.push('console: ' + с.text()); });
     страница.on('response', о => { if (о.url().startsWith(стенд.url) && о.status() >= 400) итог.консоль.push('HTTP ' + о.status() + ': ' + о.url().replace(стенд.url, '')); });
@@ -170,7 +170,7 @@ async function проверитьСтраницу(браузер, стенд, [�
     const папка = process.argv[иск + 1];
     if (!папка) { console.error('Укажите временную папку: --сломать <папка>'); process.exit(2); }
     fs.mkdirSync(папка, { recursive: true });
-    const строки = fs.readFileSync(path.join(КОРЕНЬ, 'js', 'языки-шахматы.js'), 'utf8').split('\n');
+    const строки = fs.readFileSync(path.join(КОРЕНЬ, 'игры', 'шахматы', 'языки-шахматы.js'), 'utf8').split('\n');
     let н = 0;
     const ост = строки.filter(с => !(/^[^|\n]+\|[^|\n]+\|[^|\n]+$/.test(с) && (н++ % 2 === 0)));
     подмена = ост.join('\n');

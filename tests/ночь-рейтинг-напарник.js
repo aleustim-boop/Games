@@ -121,7 +121,7 @@ function папкаКода() {
     return имя !== 'данные' && имя !== 'node_modules';
   };
   fs.cpSync(path.join(ПРОЕКТ, 'server'), path.join(папка, 'server'), { recursive: true, filter: безДанных });
-  fs.cpSync(path.join(ПРОЕКТ, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(ПРОЕКТ, папка, 'js');
   заменитьРовноОдин(path.join(папка, порча.файл), порча.было, порча.стало);
   console.log('*** ЛОМАЮЩИЙ ЗАПУСК ' + ПОРЧА + ' (' + порча.что + '): код из копии ' + папка +
     ' — прогон обязан провалиться ***\n');

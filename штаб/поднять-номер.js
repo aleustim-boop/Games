@@ -1,5 +1,5 @@
 /*
-  Поднимает номер ?v=N у общего файла (style.css, js/*.js) сразу во всех
+  Поднимает номер ?v=N у общего файла (общее/css/style.css, общее/js/*.js, игры/<игра>/*.js) сразу во всех
   страницах корня, которые его подключают.
 
   Зачем. Правило проекта: правишь общий файл — поднимай ?v= у ВСЕХ страниц,
@@ -14,7 +14,8 @@
 
       node штаб/поднять-номер.js <файл> [--показать] [--в-индекс] [--выровнять]
 
-  <файл>      путь как в разметке: style.css, js/рейтинг-экран.js
+  <файл>      путь как в разметке: общее/css/style.css, общее/js/сеть.js,
+              игры/шашки/шашки-экран.js
   --показать  только печать, ничего не пишет ни на диск, ни в git
   --в-индекс  вдобавок кладёт в индекс git версию «HEAD + только смена
               номера» для каждой найденной страницы (см. ниже)
@@ -52,9 +53,9 @@ function экранироватьRegExp(строка) {
 }
 
 /* Паттерн ищет подстроку строго внутри пары одинаковых кавычек (двойных
-   или одинарных) — так href="style.css?v=72" не путается со случайным
+   или одинарных) — так href="общее/css/style.css?v=72" не путается со случайным
    совпадением где-то в тексте. \b здесь не годится: он не знает кириллицы
-   (в путях бывает «js/рейтинг-экран.js»), поэтому не используем его вовсе.
+   (в путях бывает «общее/js/рейтинг-экран.js»), поэтому не используем его вовсе.
    Группа 1 — кавычка, группа 2 — число версии. */
 function построитьПаттерн(файл) {
   const экранированный = экранироватьRegExp(файл);
@@ -269,8 +270,8 @@ function самопроверка() {
     выполнитьГит(['config', 'core.autocrlf', 'false'], врем);
 
     const шаблон = '<!doctype html>\n<html><head>\n'
-      + '<link rel="stylesheet" href="style.css?v=5">\n'
-      + '</head><body>\n<script src="js/игра.js?v=2"></script>\n</body></html>\n';
+      + '<link rel="stylesheet" href="общее/css/style.css?v=5">\n'
+      + '</head><body>\n<script src="игры/игра/игра.js?v=2"></script>\n</body></html>\n';
     fs.writeFileSync(path.join(врем, 'а.html'), шаблон, 'utf8');
     fs.writeFileSync(path.join(врем, 'б.html'), шаблон, 'utf8');
 
@@ -283,25 +284,25 @@ function самопроверка() {
 
     const путьКПрограмме = __filename;
 
-    // --- (1)+(2)+(3): --в-индекс поднимает style.css, не трогая js/игра.js
+    // --- (1)+(2)+(3): --в-индекс поднимает общее/css/style.css, не трогая игры/игра/игра.js
     //     и не унося постороннюю правку в индекс.
     const запуск1 = spawnSync(process.execPath,
-      [путьКПрограмме, 'style.css', '--в-индекс', '--корень', врем], { encoding: 'utf8' });
+      [путьКПрограмме, 'общее/css/style.css', '--в-индекс', '--корень', врем], { encoding: 'utf8' });
     проверить('--в-индекс завершился кодом 0 (получили ' + запуск1.status + ')', запуск1.status === 0);
 
     const аПосле1 = fs.readFileSync(path.join(врем, 'а.html'), 'utf8');
     const бПосле1 = fs.readFileSync(path.join(врем, 'б.html'), 'utf8');
-    проверить('а.html поднят до style.css?v=6', аПосле1.includes('style.css?v=6'));
-    проверить('б.html поднят до style.css?v=6', бПосле1.includes('style.css?v=6'));
-    проверить('js/игра.js?v=2 в а.html не тронут', аПосле1.includes('js/игра.js?v=2'));
-    проверить('js/игра.js?v=2 в б.html не тронут', бПосле1.includes('js/игра.js?v=2'));
+    проверить('а.html поднят до общее/css/style.css?v=6', аПосле1.includes('общее/css/style.css?v=6'));
+    проверить('б.html поднят до общее/css/style.css?v=6', бПосле1.includes('общее/css/style.css?v=6'));
+    проверить('игры/игра/игра.js?v=2 в а.html не тронут', аПосле1.includes('игры/игра/игра.js?v=2'));
+    проверить('игры/игра/игра.js?v=2 в б.html не тронут', бПосле1.includes('игры/игра/игра.js?v=2'));
 
     const вИндексе = выполнитьГит(['diff', '--cached'], врем);
     проверить('git diff --cached содержит ?v=6', вИндексе.includes('v=6'));
     проверить('git diff --cached не содержит постороннюю правку', !вИндексе.includes('посторонняя правка'));
 
     // Смотрим только на добавленные/удалённые строки diff (не на контекстные —
-    // в контексте естественно попадается «js/игра.js?v=2», это не изменение).
+    // в контексте естественно попадается «игры/игра/игра.js?v=2», это не изменение).
     const вРабочейКопии = выполнитьГит(['diff'], врем);
     const изменённыеСтрокиРабочей = вРабочейКопии.split('\n').filter(function (строка) {
       return (строка.startsWith('+') && !строка.startsWith('+++'))
@@ -312,25 +313,25 @@ function самопроверка() {
 
     // --- (4): разъезд номеров — подменяем б.html на v=4.
     const бДоРазъезда = fs.readFileSync(path.join(врем, 'б.html'), 'utf8');
-    fs.writeFileSync(path.join(врем, 'б.html'), бДоРазъезда.replace('style.css?v=6', 'style.css?v=4'), 'utf8');
+    fs.writeFileSync(path.join(врем, 'б.html'), бДоРазъезда.replace('общее/css/style.css?v=6', 'общее/css/style.css?v=4'), 'utf8');
     const снимокА = fs.readFileSync(path.join(врем, 'а.html'), 'utf8');
     const снимокБ = fs.readFileSync(path.join(врем, 'б.html'), 'utf8');
 
     const запускРазъезд = spawnSync(process.execPath,
-      [путьКПрограмме, 'style.css', '--корень', врем], { encoding: 'utf8' });
+      [путьКПрограмме, 'общее/css/style.css', '--корень', врем], { encoding: 'utf8' });
     проверить('разъезд без --выровнять даёт код 1 (получили ' + запускРазъезд.status + ')', запускРазъезд.status === 1);
     проверить('разъезд без --выровнять не меняет а.html', fs.readFileSync(path.join(врем, 'а.html'), 'utf8') === снимокА);
     проверить('разъезд без --выровнять не меняет б.html', fs.readFileSync(path.join(врем, 'б.html'), 'utf8') === снимокБ);
 
     const запускВыровнять = spawnSync(process.execPath,
-      [путьКПрограмме, 'style.css', '--выровнять', '--корень', врем], { encoding: 'utf8' });
+      [путьКПрограмме, 'общее/css/style.css', '--выровнять', '--корень', врем], { encoding: 'utf8' });
     проверить('--выровнять завершился кодом 0 (получили ' + запускВыровнять.status + ')', запускВыровнять.status === 0);
-    проверить('--выровнять поднял а.html до v=7 (max 6 + 1)', fs.readFileSync(path.join(врем, 'а.html'), 'utf8').includes('style.css?v=7'));
-    проверить('--выровнять поднял б.html до v=7 (max 6 + 1)', fs.readFileSync(path.join(врем, 'б.html'), 'utf8').includes('style.css?v=7'));
+    проверить('--выровнять поднял а.html до v=7 (max 6 + 1)', fs.readFileSync(path.join(врем, 'а.html'), 'utf8').includes('общее/css/style.css?v=7'));
+    проверить('--выровнять поднял б.html до v=7 (max 6 + 1)', fs.readFileSync(path.join(врем, 'б.html'), 'utf8').includes('общее/css/style.css?v=7'));
 
     // --- (5): --показать ничего не пишет.
     const доПоказать = fs.readFileSync(path.join(врем, 'а.html'), 'utf8');
-    spawnSync(process.execPath, [путьКПрограмме, 'style.css', '--показать', '--корень', врем], { encoding: 'utf8' });
+    spawnSync(process.execPath, [путьКПрограмме, 'общее/css/style.css', '--показать', '--корень', врем], { encoding: 'utf8' });
     проверить('--показать не меняет а.html', fs.readFileSync(path.join(врем, 'а.html'), 'utf8') === доПоказать);
   } finally {
     fs.rmSync(врем, { recursive: true });
@@ -363,7 +364,7 @@ for (let i = 0; i < доводы.length; i += 1) {
 }
 
 if (!файл) {
-  console.log('нужен довод — файл как в разметке, например style.css или js/рейтинг-экран.js');
+  console.log('нужен довод — файл как в разметке, например style.css или общее/js/рейтинг-экран.js');
   process.exit(1);
 }
 

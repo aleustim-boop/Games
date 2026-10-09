@@ -3,7 +3,7 @@ const assert = require("node:assert/strict"),
   fs = require("node:fs"),
   path = require("node:path"),
   crypto = require("node:crypto"),
-  B = require("../js/монополия-бот");
+  B = require("../игры/монополия/монополия-бот");
 const base = process.env.MONOPOLY_BASE || "https://igra.medart.com.ua",
   players = [];
 const req = async (p, body) => {
@@ -19,14 +19,14 @@ const req = async (p, body) => {
 (async () => {
   for (const file of [
     "монополия.html",
-    "style-монополия.css",
-    "style-монополия-сцена.css",
-    "style-монополия-витрина.css",
-    "js/монополия-данные.js",
-    "js/монополия-правила.js",
-    "js/монополия-бот.js",
-    "js/монополия-поле.js",
-    "js/монополия-экран.js",
+    "игры/монополия/style-монополия.css",
+    "игры/монополия/style-монополия-сцена.css",
+    "игры/монополия/style-монополия-витрина.css",
+    "игры/монополия/монополия-данные.js",
+    "игры/монополия/монополия-правила.js",
+    "игры/монополия/монополия-бот.js",
+    "игры/монополия/монополия-поле.js",
+    "игры/монополия/монополия-экран.js",
     "img/монополия/обложка.webp",
     "img/монополия/город.webp",
     "img/монополия/фишки.webp",

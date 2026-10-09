@@ -22,7 +22,7 @@
    СТЕНД: свой файловый сервер на свободном порту (не 8790 и не 8765), гасится в конце.
 
    ЛОМАЮЩИЕ ПРОГОНЫ: node tests/похвастаться-кроссворд.js --сломать
-   КОПИЯ js/nonogram-ui.js во временной папке подкладывается странице перехватом
+   КОПИЯ игры/nonogram/nonogram-ui.js во временной папке подкладывается странице перехватом
    запроса (настоящий файл не трогаем): (а) без условий «без подсказок и проверок»,
    (б) без условия «внутри Telegram». Обе обязаны покраснеть; строки порчи
    должны найтись ровно по разу. Контрольный прогон по целой копии — зелёный.
@@ -40,7 +40,7 @@ const http = require('http');
 
 const ПРОЕКТ = path.join(__dirname, '..');
 const ПАПКА_СНИМКОВ = path.join(__dirname, 'снимки');
-const ИМЯ_ЭКРАНА = 'js/nonogram-ui.js';
+const ИМЯ_ЭКРАНА = 'игры/nonogram/nonogram-ui.js';
 const ТИПЫ = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
@@ -110,7 +110,7 @@ async function случай(браузер, порт, настройка, под
     if (с.type() === 'error' && !/telegram\.org|Failed to load resource/i.test(с.text())) ошибки.push(с.text());
   });
   if (подмена) {
-    await страница.route('**/js/nonogram-ui.js*', function (путь) {
+    await страница.route('**/игры/nonogram/nonogram-ui.js*', function (путь) {
       путь.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: подмена });
     });
   }

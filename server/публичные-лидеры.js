@@ -18,7 +18,7 @@ function нарисовать(данные) {
   return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title><meta name="description" content="${описание}"><link rel="canonical" href="${САЙТ}/top">
 <meta property="og:type" content="website"><meta property="og:title" content="${title}"><meta property="og:description" content="${описание}"><meta property="og:url" content="${САЙТ}/top"><meta property="og:image" content="${САЙТ}/img/витрина/durak.jpg">
-<link rel="stylesheet" href="/style-публичные.css?v=2"></head><body><main>
+<link rel="stylesheet" href="/общее/css/style-публичные.css?v=2"></head><body><main>
 <nav><a href="/">Все игры</a> · <a href="/rules/">Правила</a></nav><p class="метка">Играйте вместе · соревнуйтесь каждую неделю</p><h1>Кто впереди на этой неделе</h1>
 <p class="вступление">Один удачный вечер может изменить таблицу. Выберите знакомую игру, позовите друзей и поборитесь за место среди лидеров.</p>
 <p>Неделя с ${дата(данные.неделяС)} · результаты по ${дата(данные.сегодня)}. Даты — по времени игрового сервера.</p>

@@ -122,7 +122,7 @@ function приготовитьКопию(родитель, номер) {
       return имя !== 'данные' && имя !== 'node_modules';
     }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, папка, 'js');
   const куда = path.join(папка, файлПорчи(номер));
   let текст = fs.readFileSync(куда, 'utf8');
   for (const [было, стало] of порча.замены) {

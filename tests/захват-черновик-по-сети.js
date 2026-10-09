@@ -128,7 +128,7 @@ function приготовитьКопию(родитель, номер) {
       return имя !== 'данные' && имя !== 'node_modules';
     }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, папка, 'js');
   const куда = path.join(папка, ФАЙЛ_ПОРЧ);
   let текст = fs.readFileSync(куда, 'utf8');
   for (const [было, стало] of порча.замены) {
@@ -236,8 +236,8 @@ const комнаты = require(path.join(ПАПКА, 'server', 'комнаты.j
 const сервер = require(path.join(ПАПКА, 'server', 'сервер.js'));
 const рейтинг = require(path.join(ПАПКА, 'server', 'рейтинг.js'));
 const Захват = require(path.join(ПАПКА, 'server', 'игры', 'захват.js'));
-const Правила = require(path.join(ПАПКА, 'js', 'захват-правила.js'));
-const Карты = require(path.join(ПАПКА, 'js', 'захват-карты.js'));
+const Правила = require(path.join(ПАПКА, 'игры', 'захват', 'захват-правила.js'));
+const Карты = require(path.join(ПАПКА, 'игры', 'захват', 'захват-карты.js'));
 
 // Рейтинг здесь не пишется: в файлы данных лезть незачем.
 рейтинг.учестьПартию = function () {};

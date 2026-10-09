@@ -241,7 +241,7 @@ function собратьКопию() {
     recursive: true,
     filter: function (откуда) { return откуда !== ПАПКА_ДАННЫХ && !откуда.startsWith(ПАПКА_ДАННЫХ + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   const подмены = [['комнаты.js', КОПИЯ_КОМНАТ], ['приглашения.js', КОПИЯ_ПРИГЛАШЕНИЙ], ['сервер.js', КОПИЯ_СЕРВЕРА]];
   for (const [имя, копия] of подмены) {
     if (копия) fs.copyFileSync(копия, path.join(врем, 'server', имя));

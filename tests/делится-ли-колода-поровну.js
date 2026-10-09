@@ -34,7 +34,7 @@
    ===================================================================== */
 
 const path = require('path');
-const игра = require(path.join(__dirname, '..', 'js', 'game.js'));
+const игра = require(path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 const ПАРТИЙ = Number(process.argv[2] || 600);
 const ИГРОКОВ = Number(process.argv[3] || 2);

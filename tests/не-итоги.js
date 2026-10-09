@@ -130,7 +130,7 @@ function испорченнаяКопия(ломка) {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   const файл = path.join(врем, 'server', ломка.файл);
   const текст = fs.readFileSync(файл, 'utf8').replace(/\r\n/g, '\n');
   const сколько = текст.split(ломка.было).length - 1;
@@ -360,9 +360,9 @@ function собратьСтендБота() {
   fs.copyFileSync(path.join(КОРЕНЬ, 'server', 'названия.js'), path.join(рут, 'server', 'названия.js'));
   // бот подключает ещё столы inline, языки и реестр игр (его читает названия.js)
   fs.copyFileSync(path.join(КОРЕНЬ, 'server', 'inline-столы.js'), path.join(рут, 'server', 'inline-столы.js'));
-  fs.mkdirSync(path.join(рут, 'js'));
-  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'языки.js'), path.join(рут, 'js', 'языки.js'));
-  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'игры-реестр.js'), path.join(рут, 'js', 'игры-реестр.js'));
+  require('./пути-проекта.js').создатьПапкиКода(рут);
+  fs.copyFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'языки.js'), path.join(рут, 'общее', 'js', 'языки.js'));
+  fs.copyFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'игры-реестр.js'), path.join(рут, 'общее', 'js', 'игры-реестр.js'));
   fs.writeFileSync(path.join(папкаБота, '.env'),
     'BOT_TOKEN=' + ТОКЕН + '\nGAME_URL=' + АДРЕС_ИГРЫ + '/?server=http://' + ХОСТ + ':' + ПОРТ + '\n', 'utf8');
   return рут;

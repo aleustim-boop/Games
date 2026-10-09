@@ -129,7 +129,7 @@ function собратьКопию() {
     recursive: true,
     filter: function (о) { return о !== ПАПКА_ДАННЫХ && !о.startsWith(ПАПКА_ДАННЫХ + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   if (КОПИЯ_КОМНАТ) fs.copyFileSync(КОПИЯ_КОМНАТ, path.join(врем, 'server', 'комнаты.js'));
   if (КОПИЯ_ПРИГЛАШЕНИЙ) fs.copyFileSync(КОПИЯ_ПРИГЛАШЕНИЙ, path.join(врем, 'server', 'приглашения.js'));
   return врем;

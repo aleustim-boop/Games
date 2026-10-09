@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const R=require(process.argv[2]?require('node:path').resolve(process.argv[2]):'../js/бастион-правила.js');
+const R=require(process.argv[2]?require('node:path').resolve(process.argv[2]):'../игры/бастион/бастион-правила.js');
 const enemy=(id,type,d,hp=100,route='main')=>({id,type,d,hp,maxHp:hp,route,slow:0,slowPower:0,wet:0,burn:0,burnDamage:0,broken:0,heal:2});
 {
  const s=R.create(7);R.build(s,0,'ballista');R.startWave(s);const t=s.towers[0];

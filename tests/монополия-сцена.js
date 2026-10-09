@@ -1,7 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict"),
-  P = require("../js/монополия-правила"),
-  B = require("../js/монополия-бот"),
+  P = require("../игры/монополия/монополия-правила"),
+  B = require("../игры/монополия/монополия-бот"),
   { chromium, безTelegram } = require("./браузер-робот");
 (async () => {
   const browser = await chromium.launch();

@@ -58,7 +58,7 @@ const ПРОЕКТ = path.join(__dirname, '..');
 const ПАПКА_SERVER = path.join(ПРОЕКТ, 'server');
 const НАСТОЯЩИЙ_КОМНАТЫ = path.join(ПАПКА_SERVER, 'комнаты.js');
 const ШАХМАТЫ_ИГРА = path.join(ПАПКА_SERVER, 'игры', 'шахматы.js');
-const ШАХМАТЫ_ПРАВИЛА = path.join(ПРОЕКТ, 'js', 'шахматы-правила.js');
+const ШАХМАТЫ_ПРАВИЛА = path.join(ПРОЕКТ, 'игры', 'шахматы', 'шахматы-правила.js');
 
 function доводПосле(имя) {
   const где = process.argv.indexOf(имя);

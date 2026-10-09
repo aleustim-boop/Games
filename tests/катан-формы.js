@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот'),М=require('../js/катан-память');
+const assert=require('node:assert/strict'),П=require('../игры/катан/катан-правила'),Б=require('../игры/катан/катан-бот'),М=require('../игры/катан/катан-память');
 const {chromium,подготовитьПодделку}=require('./браузер-робот'),{ход}=require('./катан-действия-браузера');
 function fixtures(){
   const found={};

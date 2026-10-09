@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),M=require('../js/бастион-движение.js'),R=require('../js/бастион-правила.js');
+const assert=require('node:assert/strict'),M=require('../игры/бастион/бастион-движение.js'),R=require('../игры/бастион/бастион-правила.js');
 for(const type of Object.keys(R.ENEMIES)){
  const e={type,id:7,d:0},from={x:0,y:0},to={x:1,y:1};
  assert.deepEqual([0,.25,.5,.75].map(k=>M.pose({...e,d:k*M.STRIDE[type]},from,to).frame),[4,5,6,7]);

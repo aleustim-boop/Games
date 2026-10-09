@@ -28,8 +28,8 @@
 
 const path = require('path');
 const КОРЕНЬ = path.join(__dirname, '..');
-const Правила = require(path.join(КОРЕНЬ, 'js', 'шашки-правила.js'));
-const Бот = require(path.join(КОРЕНЬ, 'js', 'шашки-бот.js'));
+const Правила = require(path.join(КОРЕНЬ, 'игры', 'шашки', 'шашки-правила.js'));
+const Бот = require(path.join(КОРЕНЬ, 'игры', 'шашки', 'шашки-бот.js'));
 
 const БЮДЖЕТ_СЛОЖНОГО = 150;
 const ПОТОЛОК_ХОДОВ = 200;

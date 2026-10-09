@@ -3,7 +3,7 @@ const assert = require('node:assert/strict'), path = require('node:path'), os = 
 process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'domino-http-' + process.pid);
 /* Корень проекта. Ломающий запуск даёт путь к КОПИИ: --корень=путь (там папки server и js). */
 const аргКорня = process.argv.find(a => a.startsWith('--корень=')), корень = аргКорня ? аргКорня.slice(9) : path.join(__dirname, '..');
-const server = require(path.join(корень, 'server', 'сервер')).создатьСервер(), Б = require(path.join(корень, 'js', 'домино-бот'));
+const server = require(path.join(корень, 'server', 'сервер')).создатьСервер(), Б = require(path.join(корень, 'игры', 'домино', 'домино-бот'));
 (async () => {
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port;

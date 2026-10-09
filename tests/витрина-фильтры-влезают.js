@@ -85,7 +85,7 @@ const доводПуть = СЛОМАТЬ && process.argv[индексСлома
 
 /** Копия style.css со СТАРЫМИ gap/padding ряда фильтров — во временной папке ОС. */
 function испорченнаяКопияСтиля() {
-  const путь = path.join(КОРЕНЬ, 'style.css');
+  const путь = path.join(КОРЕНЬ, 'общее/css/style.css');
   const исходник = fs.readFileSync(путь, 'utf8');
   const былGap = /gap:\s*clamp\(5px,\s*1\.5vw,\s*8px\);/;
   const былPadding = /padding:\s*0 clamp\(9px,\s*2\.6vw,\s*16px\);/;

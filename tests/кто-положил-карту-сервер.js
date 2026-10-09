@@ -21,7 +21,7 @@
    ===================================================================== */
 const path = require('path');
 const сеть = require(path.join(__dirname, '..', 'server', 'партия-по-сети.js'));
-const правила = require(path.join(__dirname, '..', 'js', 'game.js'));
+const правила = require(path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 const ЛОМАТЬ = process.argv.indexOf('--сломать') !== -1;
 if (ЛОМАТЬ) {

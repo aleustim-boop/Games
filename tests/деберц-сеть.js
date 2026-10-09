@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const И = require('../server/игры/деберц.js');
-const П = require('../js/деберц-правила.js');
+const П = require('../игры/деберц/деберц-правила.js');
 const партия = И.раздать(null, { игроки: ['место-а', 'место-б'] });
 function отказ(кто, намерение) {
   const раньше = JSON.stringify(партия);

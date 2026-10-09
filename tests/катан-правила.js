@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот'),М=require('../js/катан-память');
+const assert=require('node:assert/strict'),П=require('../игры/катан/катан-правила'),Б=require('../игры/катан/катан-бот'),М=require('../игры/катан/катан-память');
 const copy=x=>JSON.parse(JSON.stringify(x));
 let checks=0;function test(name,run){run();checks++;console.log('OK '+name);}
 function game(){const g=П.создать(4,73);g.phase='main';g.turn=0;return g;}

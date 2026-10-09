@@ -40,7 +40,7 @@ const path = require('path');
 
 const ПОРТ = Number(process.argv[2] || 8894);
 const сервер = require(path.join(__dirname, '..', 'server', 'сервер.js'));
-const игра = require(path.join(__dirname, '..', 'js', 'game.js'));
+const игра = require(path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 /* Броски — последняя треть общего списка знаков: сперва смайлики,
    потом фразы, потом предметы. Номер первого предмета считаем так же,

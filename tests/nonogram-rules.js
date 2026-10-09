@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),R=require('../js/nonogram-rules'),bank=require('../js/nonogram-puzzles');
+const assert=require('node:assert/strict'),R=require('../игры/nonogram/nonogram-rules'),bank=require('../игры/nonogram/nonogram-puzzles');
 const key=a=>JSON.stringify(a),groups=a=>{const out=[];let sum=0;for(const n of [...a,0]){if(n===1)sum++;else if(sum){out.push(sum);sum=0;}}return out.length?out:[0];};
 // Exhaustive independent enumeration: compare all 512 possible 3x3 pictures.
 const counts=new Map();for(let mask=0;mask<512;mask++){const a=Array.from({length:9},(_,i)=>mask>>i&1),h={rows:[0,1,2].map(r=>groups(a.slice(r*3,r*3+3))),cols:[0,1,2].map(c=>groups([a[c],a[c+3],a[c+6]]))},k=key(h);counts.set(k,{h,count:(counts.get(k)?.count||0)+1});}

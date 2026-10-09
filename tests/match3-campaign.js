@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),G=require('../js/game-match3'),U=require('../js/casual-core');
+const assert=require('node:assert/strict'),G=require('../игры/match3/game-match3'),U=require('../общее/casual/casual-core');
 function board(){return Array.from({length:64},(_,i)=>(i%8+(i>>3)*2)%6);}
 function fixture(cells,a,b){for(let seed=1;seed<1000;seed++){const s=G.create('calm',seed);cells.forEach(i=>s.grid[i]=2);s.grid[a]=2;s.grid[b]=1;if(G.matches(s.grid).length)continue;assert(G.act(s,{type:'swap',a,b}));return s;}throw Error('Fixture generation failed');}
 for(const [cells,a,b,type] of [[[24,25,26,27],18,26,1],[[3,11,19,27],18,19,2],[[24,25,26,27,28],18,26,4],[[25,26,27,18,10],34,26,3]]){const s=fixture(cells,a,b);const clear=s.frames.find(f=>f.kind==='clear');assert(clear.born.some(v=>v.type===type&&v.at===b));assert(!clear.removed.includes(b));assert(s.created>=1);assert(G.validate(s));}

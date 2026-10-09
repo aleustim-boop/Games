@@ -113,7 +113,7 @@ function испорченнаяКопия(порча) {
   }
   const файл = path.join(врем, 'итог-в-бот.js');
   // Зависимость словаря остаётся настоящей; портим только проверяемый модуль.
-  fs.writeFileSync(файл, fs.readFileSync(файл, 'utf8').replace("require('../js/языки')", 'require(' + JSON.stringify(path.join(КОРЕНЬ, 'js', 'языки.js')) + ')'));
+  fs.writeFileSync(файл, fs.readFileSync(файл, 'utf8').replace("require('../общее/js/языки')", 'require(' + JSON.stringify(path.join(КОРЕНЬ, 'общее', 'js', 'языки.js')) + ')'));
   const текст = fs.readFileSync(файл, 'utf8').replace(/\r\n/g, '\n');
   const сколько = текст.split(порча.было).length - 1;
   if (сколько !== 1) {

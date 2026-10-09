@@ -169,7 +169,7 @@ function приготовитьКопию(родитель, номер) {
       return имя !== 'данные' && имя !== 'node_modules';
     }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, папка, 'js');
   const куда = path.join(папка, поломка.файл);
   const текст = fs.readFileSync(куда, 'utf8');
   const нашлось = сколькоРаз(текст, поломка.было);
@@ -254,8 +254,8 @@ const комнаты = require(path.join(ПАПКА, 'server', 'комнаты.j
 const рейтинг = require(path.join(ПАПКА, 'server', 'рейтинг.js'));
 const режиссёр = require(path.join(ПАПКА, 'server', 'живые-лобби.js'));
 const Д = require(path.join(ПАПКА, 'server', 'игры', 'домино.js'));
-const П = require(path.join(ПАПКА, 'js', 'домино-правила'));
-const Б = require(path.join(ПАПКА, 'js', 'домино-бот'));
+const П = require(path.join(ПАПКА, 'игры', 'домино', 'домино-правила'));
+const Б = require(path.join(ПАПКА, 'игры', 'домино', 'домино-бот'));
 
 /* Рейтинг здесь не пишется. */
 рейтинг.учестьПартию = function () {};

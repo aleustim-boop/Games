@@ -1,8 +1,8 @@
 "use strict";
 const assert = require("node:assert/strict"),
-  P = require("../js/монополия-правила"),
-  D = require("../js/монополия-данные"),
-  B = require("../js/монополия-бот");
+  P = require("../игры/монополия/монополия-правила"),
+  D = require("../игры/монополия/монополия-данные"),
+  B = require("../игры/монополия/монополия-бот");
 function game() {
   const g = P.create(3, 123);
   g.turn = 0;

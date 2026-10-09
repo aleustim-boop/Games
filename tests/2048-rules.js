@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),R=require('../js/2048-rules');
+const assert=require('node:assert/strict'),R=require('../игры/2048/2048-rules');
 function game(board){return {...R.create(15),board:[...board,...Array(16-board.length).fill(0)],score:0,moves:0};}
 const merge=R.move(game([2,2,2,2]),'left');
 assert.equal(merge.gain,8);assert.deepEqual(merge.merged,[0,1]);assert.equal(merge.state.board[0],4);assert.equal(merge.state.board[1],4);

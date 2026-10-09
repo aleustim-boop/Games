@@ -11,7 +11,7 @@
  *   node tests/возврат-к-боту.js [--тестовая-папка=ПУТЬ]
  *
  * Ломающий запуск:
- *   Портит копию js/game.js во временной папке (удаляет связку очереди),
+ *   Портит копию игры/дурак/game.js во временной папке (удаляет связку очереди),
  *   убеждается, что проверка краснеет на этом.
  */
 
@@ -43,7 +43,7 @@ const проектПапка = path.join(__dirname, '..');
    ===================================================================== */
 
 function загрузитьМодульИгры(папка = проектПапка) {
-  let путь = path.join(папка, 'js', 'game.js');
+  let путь = path.join(папка, 'игры', 'дурак', 'game.js');
 
   // Если файл не найден по стандартному пути, ищем game.js напрямую в папке
   if (!fs.existsSync(путь) && fs.existsSync(path.join(папка, 'game.js'))) {
@@ -528,7 +528,7 @@ async function запуститьЛомающийТестОчередь() {
   const временнаяПапка = path.join(require('os').tmpdir(), `тест-очередь-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   fs.mkdirSync(временнаяПапка, { recursive: true });
 
-  const оригиналПут = path.join(проектПапка, 'js', 'game.js');
+  const оригиналПут = path.join(проектПапка, 'игры', 'дурак', 'game.js');
   const копияПут = path.join(временнаяПапка, 'game.js');
 
   fs.copyFileSync(оригиналПут, копияПут);
@@ -598,7 +598,7 @@ async function запуститьЛомающийТестКозырь() {
   const временнаяПапка = path.join(require('os').tmpdir(), `тест-козырь-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   fs.mkdirSync(временнаяПапка, { recursive: true });
 
-  const оригиналПут = path.join(проектПапка, 'js', 'game.js');
+  const оригиналПут = path.join(проектПапка, 'игры', 'дурак', 'game.js');
   const копияПут = path.join(временнаяПапка, 'game.js');
 
   fs.copyFileSync(оригиналПут, копияПут);
@@ -679,7 +679,7 @@ async function запуститьЛомающийТестКарты() {
   const временнаяПапка = path.join(require('os').tmpdir(), `тест-карты-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   fs.mkdirSync(временнаяПапка, { recursive: true });
 
-  const оригиналПут = path.join(проектПапка, 'js', 'game.js');
+  const оригиналПут = path.join(проектПапка, 'игры', 'дурак', 'game.js');
   const копияПут = path.join(временнаяПапка, 'game.js');
 
   fs.copyFileSync(оригиналПут, копияПут);
@@ -763,7 +763,7 @@ async function запуститьЛомающийТестКарты() {
 async function main() {
   console.log('╔════════════════════════════════════════════════════════════════╗');
   console.log('║  Проверка возврата к незаконченной партии с ботом             ║');
-  console.log('║  Файл: js/game.js                                              ║');
+  console.log('║  Файл: игры/дурак/game.js                                              ║');
   console.log('║  Функции: собратьЗаписьПартии, разобратьЗаписьПартии         ║');
   console.log('╚════════════════════════════════════════════════════════════════╝');
 

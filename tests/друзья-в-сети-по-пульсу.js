@@ -133,7 +133,7 @@ function приготовитьИспорченнуюКопию() {
   const временная = fs.mkdtempSync(path.join(os.tmpdir(), 'друзья-в-сети-по-пульсу-сломать-'));
   try {
     fs.cpSync(path.join(КОРЕНЬ_ПРОЕКТА, 'server'), path.join(временная, 'server'), { recursive: true });
-    fs.cpSync(path.join(КОРЕНЬ_ПРОЕКТА, 'js'), path.join(временная, 'js'), { recursive: true });
+    require('./пути-проекта.js').скопироватьКод(КОРЕНЬ_ПРОЕКТА, временная, 'js');
     испортитьКопиюСервера(path.join(временная, 'server', 'сервер.js'));
   } catch (беда) {
     console.error('ЛОМАЮЩИЙ ЗАПУСК: ' + беда.message + ' — сразу провал');

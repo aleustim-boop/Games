@@ -1,5 +1,5 @@
 'use strict';
-const языки = require('../js/языки');
+const языки = require('../общее/js/языки');
 const { AsyncLocalStorage } = require('async_hooks');
 const контекст = new AsyncLocalStorage();
 const фразы = {

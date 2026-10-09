@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),G=require('../js/game-snake'),U=require('../js/casual-core');
+const assert=require('node:assert/strict'),G=require('../игры/snake/game-snake'),U=require('../общее/casual/casual-core');
 const s=G.create('classic',1);assert(!G.act(s,{type:'tick'}));assert(!G.act(s,{type:'turn',dir:2}));s.food=s.body[0]+1;G.act(s,{type:'start'});G.act(s,{type:'tick'});assert.equal(s.body.length,5);assert.equal(s.score,100);assert(!s.body.includes(s.food));assert(G.act(s,{type:'turn',dir:3}));assert(!G.act(s,{type:'turn',dir:2}));G.act(s,{type:'tick'});assert(G.act(s,{type:'turn',dir:2}));
 for(const mode of ['classic','wrap']){const b=G.create(mode,1);b.body=[15,14,13,12];b.food=100;b.running=true;G.act(b,{type:'tick'});if(mode==='wrap'){assert.equal(b.body[0],0);assert(!b.lost);}else assert(b.lost);}
 const tail=G.create('wrap',1);tail.body=[17,16,0,1];tail.dir=3;tail.food=100;tail.running=true;assert(G.act(tail,{type:'tick'}));assert(!tail.lost);const collision=G.create('classic',1);collision.body=[17,18,2,1,0,16];collision.eaten=2;collision.dir=3;collision.running=true;collision.food=100;G.act(collision,{type:'tick'});assert(collision.lost);

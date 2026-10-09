@@ -2,7 +2,7 @@
 
 /* Проверка без браузера: лобби и итог партии нард сделаны как у дурака
    (владелец 02.10, образец — шахматы, коммит 739e74b). Читает разметку и код
-   как текст; слова о месте в рейтинге берёт из самого js/нарды-лобби.js.
+   как текст; слова о месте в рейтинге берёт из самого игры/нарды/нарды-лобби.js.
 
    Запуск:  node tests/нарды-как-дурак.js [нарды.html] [нарды-экран.js] [нарды-лобби.js] [style-нарды.css]
    Пути нужны для «красного» запуска: проверка на КОПИЯХ, где поломку вернули,
@@ -15,9 +15,9 @@ const path = require('path');
 
 const корень = path.join(__dirname, '..');
 const путьHtml = process.argv[2] ? path.resolve(process.argv[2]) : path.join(корень, 'нарды.html');
-const путьЭкрана = process.argv[3] ? path.resolve(process.argv[3]) : path.join(корень, 'js', 'нарды-экран.js');
-const путьЛобби = process.argv[4] ? path.resolve(process.argv[4]) : path.join(корень, 'js', 'нарды-лобби.js');
-const путьCss = process.argv[5] ? path.resolve(process.argv[5]) : path.join(корень, 'style-нарды.css');
+const путьЭкрана = process.argv[3] ? path.resolve(process.argv[3]) : path.join(корень, 'игры', 'нарды', 'нарды-экран.js');
+const путьЛобби = process.argv[4] ? path.resolve(process.argv[4]) : path.join(корень, 'игры', 'нарды', 'нарды-лобби.js');
+const путьCss = process.argv[5] ? path.resolve(process.argv[5]) : path.join(корень, 'игры/нарды/style-нарды.css');
 const html = fs.readFileSync(путьHtml, 'utf8');
 const экран = fs.readFileSync(путьЭкрана, 'utf8');
 const лоббиКод = fs.readFileSync(путьЛобби, 'utf8');
@@ -56,7 +56,7 @@ const лобби = кусок(html, '<section id="экран-лобби"', '</se
 console.log('\n2. Лобби: слова места (из самого файла)');
 let слова = null;
 try { слова = require(путьЛобби).словаМеста; } catch (ошибка) { слова = null; }
-проверить(typeof слова === 'function', 'js/нарды-лобби.js отдаёт словаМеста наружу');
+проверить(typeof слова === 'function', 'игры/нарды/нарды-лобби.js отдаёт словаМеста наружу');
 if (typeof слова === 'function') {
   проверить(слова({ место: 12, всего: 340 }) === '12-е место из 340', '«12-е место из 340»');
   проверить(слова({ место: 1 }) === '1-е место', 'без «всего» — «1-е место»');
@@ -111,8 +111,8 @@ console.log('\n5. Итог партии: код');
 проверить(/узел\('кнопка-рекорды-итог'\)\.addEventListener/.test(экран) && /открытьСчёт\('нарды'\)/.test(экран), '«Рекорды» открывает личный счёт нард');
 
 console.log('\n6. Подключения на странице');
-проверить(/<script src="js\/очки-рейтинга\.js/.test(html), 'подключён js/очки-рейтинга.js');
-проверить(/<script src="js\/похвастаться\.js/.test(html), 'подключён js/похвастаться.js');
+проверить(/<script src="общее\/js\/очки-рейтинга\.js/.test(html), 'подключён общее/js/очки-рейтинга.js');
+проверить(/<script src="общее\/js\/похвастаться\.js/.test(html), 'подключён общее/js/похвастаться.js');
 
 console.log('\nИтого проверок: ' + всего + ', провалов: ' + провалов);
 process.exit(провалов ? 1 : 0);

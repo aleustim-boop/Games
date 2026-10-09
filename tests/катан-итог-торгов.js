@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
 function state(){const g=P.создать(3,72,false,3);while(g.phase.startsWith('setup'))P.действие(g,P.кто(g),B.ход(P.вид(g,P.кто(g))));g.phase='main';g.turn=0;g.players.forEach(p=>p.resources=[3,3,3,3,3]);g.bank=[10,10,10,10,10];return g;}
 function offer(g,to=-1){P.действие(g,0,{type:'offer',to,give:[1,0,0,0,0],want:[0,1,0,0,0],confirmation:true});}
 for(const reason of ['cancelled','rejected','turnEnded','changed','replaced','finished']){const g=state();offer(g);const id=g.offer.id;

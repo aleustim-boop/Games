@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const {chromium,безTelegram,подготовитьПодделку}=require('./браузер-робот.js');
-const R=require('../js/бастион-правила.js');
+const R=require('../игры/бастион/бастион-правила.js');
 const BASE=process.argv[2];
 async function main(){const server=BASE?null:await require('./бастион-стенд.js')(),base=BASE||server.url,browser=await chromium.launch({headless:true});const errors=[];try{
  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true});const page=await context.newPage();await безTelegram(page);page.on('pageerror',e=>errors.push(e.message));

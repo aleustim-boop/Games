@@ -17,7 +17,7 @@ const path = require('path');
 const vm = require('vm');
 const { execFileSync } = require('child_process');
 
-const ЖИВОЙ_ФАЙЛ = path.join(__dirname, '..', 'js', 'открытые-столы.js');
+const ЖИВОЙ_ФАЙЛ = path.join(__dirname, '..', 'общее', 'js', 'открытые-столы.js');
 const АДРЕС = 'https://сервер.пример';
 const К1 = 'a1b2c3d4e5f60718293a4b5c';
 const К2 = '00112233445566778899aabb';

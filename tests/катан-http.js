@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os');
 process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'catan-http-'+process.pid);
-const server=require('../server/сервер').создатьСервер(),Б=require('../js/катан-бот');
+const server=require('../server/сервер').создатьСервер(),Б=require('../игры/катан/катан-бот');
 (async()=>{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
   const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,200,JSON.stringify(data));return data;};

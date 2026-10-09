@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),os=require('node:os'),path=require('node:path');
 process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'catan-browser-'+process.pid);
 const adapter=require('../server/игры/катан');adapter.темпБота.обычный=80;adapter.темпБота.внеОчереди=80;
-const server=require('../server/сервер').создатьСервер(),Б=require('../js/катан-бот');
+const server=require('../server/сервер').создатьСервер(),Б=require('../игры/катан/катан-бот');
 const {chromium,безTelegram}=require('./браузер-робот'),{ход}=require('./катан-действия-браузера');
 (async()=>{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const b=await chromium.launch({headless:true}),errors=[];
@@ -17,7 +17,7 @@ const {chromium,безTelegram}=require('./браузер-робот'),{ход}=
     await a.locator('#кат-число-онлайн').getByRole('radio',{name:'Трое'}).click();
     // С 26.09 «Дружелюбный разбойник», «Мягкий старт» и «Время на ход» спрятаны за
     // кнопку «Дополнительные настройки» — она уводит на отдельный экран #кат-доп-настройки,
-    // «Готово» возвращает на #экран-друга (см. js/катан-экран.js, back() и optionsReturn).
+    // «Готово» возвращает на #экран-друга (см. игры/катан/катан-экран.js, back() и optionsReturn).
     await a.locator('#экран-друга .кат-доп-настройки-кнопка').click();await a.locator('#кат-доп-настройки').waitFor();
     await a.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Дружелюбный/}).check();await a.locator('#кат-доп-настройки').getByRole('checkbox',{name:/Мягкий/}).check();await a.locator('#кат-доп-настройки').getByRole('combobox',{name:'Время на ход'}).selectOption('120');
     await a.locator('#кат-доп-настройки').getByRole('button',{name:'Готово'}).click();await a.locator('#экран-друга').waitFor();

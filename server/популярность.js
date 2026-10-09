@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path');
 // Список игр — из общего реестра (раньше свой список терял покер и бастион).
 // Гостей сюда не пускаем: учесть() принимает только числовой номер Telegram.
-const GAMES=require('../js/игры-реестр.js').все().map(запись=>запись.ключ);
+const GAMES=require('../общее/js/игры-реестр.js').все().map(запись=>запись.ключ);
 const DAY=86400000;
 function создать(file=null){
   let days={},actors={},timer;

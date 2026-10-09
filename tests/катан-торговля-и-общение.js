@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот');
 const path=require('node:path'),os=require('node:os');process.env.GAMES_DATA=path.join(os.tmpdir(),'catan-social-'+process.pid);
 function ready(){const g=P.создать(3,7,false,3);while(g.phase.startsWith('setup'))P.действие(g,g.turn,B.ход(P.вид(g,g.turn)));g.phase='main';g.turn=0;return g;}
 const g=ready();g.players[0].resources=[3,0,0,0,0];g.players[1].resources=[0,3,0,0,0];g.players[2].resources=[0,2,0,0,0];
@@ -18,7 +18,7 @@ assert(proposed);console.log('Торговля: встречное предло�
  assert((await req('ход',{...players[0],действие:'начать'})).принято);
  assert((await req('ход',{...players[0],действие:'эмоция',номер:0})).принято);
  for(let i=0;i<3;i++){const s=await req('состояние',players[i]),v=s.состояние||s;assert(v.знакиВниманияЕсть);assert.equal(v.знакВнимания.номер,0);assert.equal(v.знакВнимания.от,0);assert.equal(v.знакВнимания.этоЯ,i===0);}
- const Z=require('../js/деберц-знаки');assert((await req('ход',{...players[1],действие:'эмоция',номер:Z.ЭМОЦИИ.length+Z.ФРАЗЫ.length,цель:3})).принято);
+ const Z=require('../общее/js/деберц-знаки');assert((await req('ход',{...players[1],действие:'эмоция',номер:Z.ЭМОЦИИ.length+Z.ФРАЗЫ.length,цель:3})).принято);
  const s=await req('состояние',players[2]),v=s.состояние||s;assert.equal(v.знакВнимания.от,1);assert.equal(v.знакВнимания.кому,2);assert(v.знакВнимания.вМеня);
  for(const p of players)await req('выйти',p);console.log('Общение HTTP: три участника получают смайлик и адресный бросок с правильными отправителем и целью — OK');
  }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

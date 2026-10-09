@@ -15,7 +15,7 @@ const КОРЕНЬ = require('path').resolve(__dirname, '..');   // корень
 const сервер = require(path.join(КОРЕНЬ, 'server/сервер.js'));
 const комнаты = require(path.join(КОРЕНЬ, 'server/комнаты.js'));
 const партии = require(path.join(КОРЕНЬ, 'server/партия-по-сети.js'));
-const правила = require(path.join(КОРЕНЬ, 'js/game.js'));
+const правила = require(path.join(КОРЕНЬ, 'игры/дурак/game.js'));
 
 const ПОРТ = 8799;
 const АДРЕС = 'http://127.0.0.1:' + ПОРТ;

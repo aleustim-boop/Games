@@ -1,10 +1,10 @@
 'use strict';
-const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),Б=require('../js/катан-бот');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),Б=require('../игры/катан/катан-бот');
 const base=process.env.CATAN_BASE||'https://igra.medart.com.ua';
 const players=[];
 const req=async(p,body)=>{const r=await fetch(base+'/'+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(20000)});assert.equal(r.status,200,'Сервер: '+p+' → HTTP '+r.status);return r.json();};
 (async()=>{
-  for(const file of ['катан.html','style-катан.css','style-катан-стол.css','style-катан-настройки.css','js/катан-часы.js','js/катан-правила.js','js/катан-бот.js','js/катан-поле.js','js/катан-память.js','js/катан-экран.js','img/катан/обложка-v2.webp','img/катан/земли-v4.webp','img/катан/развитие-v2.webp','img/катан/ресурсы-v2.webp','img/катан/постройки-v2.webp','img/катан/материалы-v3.webp','img/катан/портреты-v3.webp','img/катан/фигуры-v4.webp','img/катан/карты-v4.webp','img/катан/окружение-v4.webp']){
+  for(const file of ['катан.html','игры/катан/style-катан.css','игры/катан/style-катан-стол.css','игры/катан/style-катан-настройки.css','игры/катан/катан-часы.js','игры/катан/катан-правила.js','игры/катан/катан-бот.js','игры/катан/катан-поле.js','игры/катан/катан-память.js','игры/катан/катан-экран.js','img/катан/обложка-v2.webp','img/катан/земли-v4.webp','img/катан/развитие-v2.webp','img/катан/ресурсы-v2.webp','img/катан/постройки-v2.webp','img/катан/материалы-v3.webp','img/катан/портреты-v3.webp','img/катан/фигуры-v4.webp','img/катан/карты-v4.webp','img/катан/окружение-v4.webp']){
     if(process.env.CATAN_TRACE)console.log('Проверяем',file);
     const response=await fetch(base+'/'+file.split('/').map(encodeURIComponent).join('/')+'?check='+Date.now(),{signal:AbortSignal.timeout(20000)});assert.equal(response.status,200,file);
     const actual=Buffer.from(await response.arrayBuffer()),expected=fs.readFileSync(path.join(__dirname,'..',file));

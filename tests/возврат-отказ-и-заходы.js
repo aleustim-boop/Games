@@ -69,7 +69,7 @@ function испорченнаяКопия(ломка) {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(ПРОЕКТ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(ПРОЕКТ, врем, 'js');
   const файл = path.join(врем, 'server', ломка.файл);
   const текст = fs.readFileSync(файл, 'utf8').replace(/\r\n/g, '\n');
   const сколько = текст.split(ломка.было).length - 1;

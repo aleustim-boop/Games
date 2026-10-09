@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const b=await chromium.launch();try{const p=await b.newPage();await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.POKER_TEST_URL||'http://127.0.0.1:8137/покер.html',{waitUntil:'domcontentloaded'});
 const g=P.create(6,79);g.phase='river';g.board=[9,23,37,48,10];g.players[0].hole=[49,50];const v=P.view(g,0);let version=0;
 for(const [width,height]of [[320,740],[390,844],[844,390],[1440,900]]){await p.setViewportSize({width,height});await p.evaluate(({v,version})=>ИграПоСети.показатьВид({код:'face-test',версия:version,покер:v}),{v,version:++version});await p.locator('#pk-hand .face').first().waitFor();await p.locator('#pk-hand .face img').first().evaluate(i=>i.decode());await p.waitForTimeout(500);

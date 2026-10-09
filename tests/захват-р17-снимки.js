@@ -113,7 +113,7 @@ async function страницаШириной(браузер, порт, ш, в, 
   await подготовитьПодделку(страница, {});
   if (ломаем) {
     // Порча: оформление без слова «ведёт» (копия во временной папке, страница получает её вместо настоящего файла).
-    const css = fs.readFileSync(path.join(КОРЕНЬ, 'style-захват.css'), 'utf8');
+    const css = fs.readFileSync(path.join(КОРЕНЬ, 'игры/захват/style-захват.css'), 'utf8');
     const было = 'content: "ведёт"; grid-area';
     if (css.split(было).length !== 2) throw new Error('--сломать: место порчи style-захват.css не найдено ровно один раз');
     const копия = path.join(ПАПКА, 'style-захват-без-ведёт.css');

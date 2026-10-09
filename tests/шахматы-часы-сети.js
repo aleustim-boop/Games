@@ -46,7 +46,7 @@ function загрузитьИгру() {
 }
 
 const Шахматы = загрузитьИгру();
-const Правила = require(path.join(__dirname, '..', 'js', 'шахматы-правила.js'));
+const Правила = require(path.join(__dirname, '..', 'игры', 'шахматы', 'шахматы-правила.js'));
 
 let проверок = 0;
 let провалов = 0;

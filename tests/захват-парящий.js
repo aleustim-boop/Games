@@ -52,7 +52,7 @@ function поднятьСервер() {
     let путь = '/';
     try { путь = decodeURIComponent(запрос.url.split('?')[0]); } catch (_) { /* как есть */ }
     let файл = path.join(КОРЕНЬ, путь === '/' ? 'index.html' : путь);
-    if (файлCss && путь === '/style-захват.css') файл = файлCss;
+    if (файлCss && путь === '/игры/захват/style-захват.css') файл = файлCss;
     const своя = файл === файлCss || !path.relative(КОРЕНЬ, файл).startsWith('..');
     if (своя && fs.existsSync(файл) && fs.statSync(файл).isFile()) {
       ответ.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл).toLowerCase()] || 'application/octet-stream' });
@@ -67,7 +67,7 @@ function поднятьСервер() {
 /* Копия style-захват.css во временной папке: высота карточек входов 40 px. */
 function сделатьИспорченныйCss() {
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-парящий-сломан-'));
-  const css = fs.readFileSync(path.join(КОРЕНЬ, 'style-захват.css'), 'utf8');
+  const css = fs.readFileSync(path.join(КОРЕНЬ, 'игры/захват/style-захват.css'), 'utf8');
   if (css.indexOf('.карточка-входа') === -1) { console.log('нет места для порчи: в style-захват.css не нашлось .карточка-входа'); process.exit(3); }
   const порча = '\nbody.захват #экран-лобби .карточка-входа, body.захват #экран-лобби .фото-лобби__входы .карточка-входа,'
     + ' body.захват #экран-лобби .фото-лобби .карточка-входа { min-height: 0 !important; height: 40px !important; padding-top: 0 !important; padding-bottom: 0 !important; }\n';

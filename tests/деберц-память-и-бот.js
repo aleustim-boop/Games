@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
-const П = require('../js/деберц-правила.js'), Б = require('../js/деберц-бот.js'), М = require('../js/деберц-память.js');
+const П = require('../игры/деберц/деберц-правила.js'), Б = require('../игры/деберц/деберц-бот.js'), М = require('../игры/деберц/деберц-память.js');
 let текст = null;
 const носитель = { getItem: () => текст, setItem: (_, v) => { текст = v; } };
 let память = М.открыть(носитель);

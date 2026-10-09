@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const browser=await chromium.launch();try{for(const [level,width,reduced,choice]of [[1,390,false],[2,1440,false],[2,390,true],[1,820,false,true]]){
  const g=P.создать(3,42,false,3);while(g.phase.startsWith('setup'))P.действие(g,g.turn,B.ход(P.вид(g,g.turn)));
  const dest=P.Г.hexes.find(h=>h.id!==g.robber&&h.vertices.some(id=>g.buildings[id]?.owner===0)&&!h.vertices.some(id=>g.buildings[id]?.owner===2));A(dest);

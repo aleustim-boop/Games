@@ -15,7 +15,7 @@ const path = require('path');
 
 const корень = path.join(__dirname, '..');
 const путьHtml = process.argv[2] ? path.resolve(process.argv[2]) : path.join(корень, 'шахматы.html');
-const путьJs = process.argv[3] ? path.resolve(process.argv[3]) : path.join(корень, 'js', 'шахматы-экран.js');
+const путьJs = process.argv[3] ? path.resolve(process.argv[3]) : path.join(корень, 'игры', 'шахматы', 'шахматы-экран.js');
 const html = fs.readFileSync(путьHtml, 'utf8');
 const код = fs.readFileSync(путьJs, 'utf8');
 

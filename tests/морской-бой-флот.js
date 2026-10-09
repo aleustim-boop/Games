@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),F=require('../js/морской-бой-флот');
+const assert=require('node:assert/strict'),F=require('../игры/морской-бой/морской-бой-флот');
 const marks=Array(100).fill('неизвестно');marks[0]='попадание';assert.deepEqual(F.потопленные(marks),[]);
 for(const n of [8,9,10,20,30]) marks[n]='потоплен';assert.deepEqual(F.потопленные(marks),[[8,9],[10,20,30]]);
 const {chromium,безTelegram}=require('./браузер-робот');

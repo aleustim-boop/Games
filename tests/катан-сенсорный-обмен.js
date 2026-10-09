@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,подготовитьПодделку}=require('./браузер-робот');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),{chromium,подготовитьПодделку}=require('./браузер-робот');
 const url=process.env.CATAN_TEST_URL||'http://127.0.0.1:8137/катан.html';
 (async()=>{const browser=await chromium.launch();try{
  const p=await browser.newPage({viewport:{width:390,height:844},hasTouch:true}),errors=[];p.on('pageerror',e=>errors.push(e.message));await подготовитьПодделку(p,{версия:'8.0',отступы:{системные:{top:24,bottom:24},содержимого:{top:56}}});await p.goto(url);

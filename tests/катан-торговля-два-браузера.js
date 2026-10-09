@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os');
 process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'catan-touch-trade-'+process.pid);
-const server=require('../server/сервер').создатьСервер(),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+const server=require('../server/сервер').создатьСервер(),B=require('../игры/катан/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch();let players=[];try{
  const req=async(route,body)=>{const r=await fetch(base+'/'+encodeURIComponent(route),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});assert.equal(r.status,200);return r.json();};
  const room=await req('создать',{игра:'катан',имя:'Участник 0',мест:3});players.push({код:room.код,пропуск:room.пропуск});for(let i=1;i<3;i++){const p=await req('войти',{код:room.код,имя:'Участник '+i});players.push({код:room.код,пропуск:p.пропуск});}assert((await req('ход',{...players[0],действие:'начать'})).принято);

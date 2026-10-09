@@ -38,8 +38,9 @@
 // --- Правка 23.09: три дыры ---
 // 1) Раньше хук вообще не смотрел на tool_name — только на tool_input.
 //    У Bash/PowerShell нет tool_input.file_path, поэтому команда вида
-//    «echo подмена > style.css», «sed -i ... style.css», «tee style.css»,
-//    «cp/mv … style.css», «Set-Content/Out-File style.css» проходила БЕЗ
+//    «echo подмена > общее/css/style.css», «sed -i ... общее/css/style.css»,
+//    «tee общее/css/style.css», «cp/mv … общее/css/style.css»,
+//    «Set-Content/Out-File общее/css/style.css» проходила БЕЗ
 //    единой проверки: хук выходил на «нечего проверять» до чтения прав.
 //    Теперь хук по tool_name различает Edit/Write/MultiEdit (путь берём как
 //    раньше) и Bash/PowerShell (пути ищем в тексте команды регулярками —

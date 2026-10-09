@@ -1,5 +1,5 @@
 "use strict";
-const D = require("../js/монополия-данные");
+const D = require("../игры/монополия/монополия-данные");
 async function move(p, v, a) {
   const modal = p.locator("#mono-modal");
   if (await modal.isVisible()) await p.locator("#mono-close").click();

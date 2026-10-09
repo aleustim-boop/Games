@@ -70,7 +70,7 @@ function приготовитьКопию(родитель, номер) {
     recursive: true,
     filter: function (откуда) { const имя = path.basename(откуда); return имя !== 'данные' && имя !== 'node_modules'; }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(папка, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, папка, 'js');
   const куда = path.join(папка, порча.файл);
   const текст = fs.readFileSync(куда, 'utf8');
   const нашлось = сколькоРаз(текст, порча.было);

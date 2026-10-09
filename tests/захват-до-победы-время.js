@@ -25,7 +25,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const КОРЕНЬ = path.resolve(__dirname, '..');
-const ФАЙЛ_ПРАВИЛ = path.join(КОРЕНЬ, 'js', 'захват-правила.js');
+const ФАЙЛ_ПРАВИЛ = path.join(КОРЕНЬ, 'игры', 'захват', 'захват-правила.js');
 const аргументы = process.argv.slice(2);
 const номерФайла = аргументы.indexOf('--файл');
 
@@ -48,7 +48,7 @@ function сломать() {
     if (мест !== 1) { console.log('  ПЛОХО — порча «' + п.имя + '»: образец найден ' + мест + ' раз, нужен ровно 1'); худшее = Math.max(худшее, 3); return; }
     const копия = path.join(папка, 'правила-' + н + '.js');
     // Правила подтягивают карты по соседнему пути — в копии даём абсолютный.
-    const карты = JSON.stringify(path.join(КОРЕНЬ, 'js', 'захват-карты.js'));
+    const карты = JSON.stringify(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-карты.js'));
     fs.writeFileSync(копия, исходник.replace(п.найти, () => п.на).replace("require('./захват-карты.js')", () => 'require(' + карты + ')'));
     const итог = spawnSync(process.execPath, [__filename, '--файл', копия], { encoding: 'utf8' });
     const красное = итог.status === 1;

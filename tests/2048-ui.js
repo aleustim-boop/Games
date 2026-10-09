@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),R=require('../js/2048-rules'),{chromium,подготовитьПодделку,безTelegram}=require('./браузер-робот');
+const assert=require('node:assert/strict'),R=require('../игры/2048/2048-rules'),{chromium,подготовитьПодделку,безTelegram}=require('./браузер-робот');
 const base=process.env.GAME2048_BASE||'http://127.0.0.1:8137';
 (async()=>{const browser=await chromium.launch();try{
  const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],missing=[];

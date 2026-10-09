@@ -58,8 +58,8 @@
 
 const путь = require('path');
 const КОРЕНЬ = путь.join(__dirname, '..');
-const Правила = require(путь.join(КОРЕНЬ, 'js', 'нарды-правила.js'));
-const Бот = require(путь.join(КОРЕНЬ, 'js', 'нарды-бот.js'));
+const Правила = require(путь.join(КОРЕНЬ, 'игры', 'нарды', 'нарды-правила.js'));
+const Бот = require(путь.join(КОРЕНЬ, 'игры', 'нарды', 'нарды-бот.js'));
 const Генератор = require(путь.join(КОРЕНЬ, 'tests', 'общий-генератор.js'));
 
 const слова = process.argv.slice(2);

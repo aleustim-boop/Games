@@ -116,7 +116,7 @@ const http = require('http');
 const { chromium, подготовитьПодделку } = require('./браузер-робот.js');
 
 const КОРЕНЬ = path.join(__dirname, '..');
-const ПУТЬ_СТИЛЯ = path.join(КОРЕНЬ, 'style.css');
+const ПУТЬ_СТИЛЯ = path.join(КОРЕНЬ, 'общее/css/style.css');
 const ПАПКА_СНИМКОВ = path.join(__dirname, 'снимки');
 const ШИРИНА = 390;
 const ВЫСОТА = 844;
@@ -202,7 +202,7 @@ function поднятьСервер(порт, подменаStyleCss) {
       if (адрес === '/') адрес = '/index.html';
       if (запрещённыйАдрес(адрес)) { ответ.writeHead(403); ответ.end('доступ закрыт'); return; }
 
-      if (подменаStyleCss !== null && адрес === '/style.css') {
+      if (подменаStyleCss !== null && адрес === '/общее/css/style.css') {
         ответ.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8', 'Cache-Control': 'no-store' });
         ответ.end(подменаStyleCss);
         return;

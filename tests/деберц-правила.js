@@ -5,7 +5,7 @@ if (process.argv[2] === '--самопроверка') {
   const fs = require('node:fs'), os = require('node:os'), { spawnSync } = require('node:child_process');
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'deberts-test-'));
   const копия = path.join(папка, 'broken-rules.js');
-  const исходник = fs.readFileSync(path.join(__dirname, '../js/деберц-правила.js'), 'utf8');
+  const исходник = fs.readFileSync(path.join(__dirname, '../игры/деберц/деберц-правила.js'), 'utf8');
   assert(исходник.includes('return 20;'));
   fs.writeFileSync(копия, исходник.replace('return 20;', 'return 2;'));
   const результат = spawnSync(process.execPath, [__filename, копия], { encoding: 'utf8' });
@@ -14,8 +14,8 @@ if (process.argv[2] === '--самопроверка') {
   console.log('Самопроверка: неверная цена козырного валета в временной копии обнаружена — OK');
   process.exit(0);
 }
-const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../js/деберц-правила.js');
-const Б = require('../js/деберц-бот.js');
+const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../игры/деберц/деберц-правила.js');
+const Б = require('../игры/деберц/деберц-бот.js');
 const к = (имя, масть = '♠') => ({ id: масть + имя, имя, масть });
 let зерно = 72031;
 const случайно = () => ((зерно = (Math.imul(зерно, 1664525) + 1013904223) >>> 0) / 4294967296);

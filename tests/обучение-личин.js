@@ -38,9 +38,9 @@ function загрузитьОбучение() {
 }
 let обучение = загрузитьОбучение();
 const Шашки = require(path.join(КОРЕНЬ, 'server', 'игры', 'шашки.js'));
-const ПравилаШашек = require(path.join(КОРЕНЬ, 'js', 'шашки-правила.js'));
+const ПравилаШашек = require(path.join(КОРЕНЬ, 'игры', 'шашки', 'шашки-правила.js'));
 const Шахматы = require(path.join(КОРЕНЬ, 'server', 'игры', 'шахматы.js'));
-const ПравилаШахмат = require(path.join(КОРЕНЬ, 'js', 'шахматы-правила.js'));
+const ПравилаШахмат = require(path.join(КОРЕНЬ, 'игры', 'шахматы', 'шахматы-правила.js'));
 
 let проверок = 0;
 const провалы = [];

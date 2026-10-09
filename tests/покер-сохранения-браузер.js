@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const browser=await chromium.launch();try{
  for(const rules of [1,2]){
   const g=P.create(4,8,false,rules),record={version:1,n:4,seed:8,actions:[],...(rules===2?{rules}: {})};

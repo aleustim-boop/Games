@@ -93,15 +93,15 @@ async function клик(страница, селектор, таймаутМс) 
     Настоящие файлы проекта не трогает — только читает. */
 function подготовитьВременнуюПапку() {
   const tmp = path.join(os.tmpdir(), 'шахматы-первый-взгляд-сломать-' + Date.now());
-  fs.mkdirSync(path.join(tmp, 'js'), { recursive: true });
+  require('./пути-проекта.js').создатьПапкиКода(tmp);
 
   fs.copyFileSync(path.join(КОРЕНЬ, 'шахматы.html'), path.join(tmp, 'шахматы.html'));
-  fs.copyFileSync(path.join(КОРЕНЬ, 'style.css'), path.join(tmp, 'style.css'));
-  fs.copyFileSync(path.join(КОРЕНЬ, 'style-шахматы.css'), path.join(tmp, 'style-шахматы.css'));
+  fs.copyFileSync(path.join(КОРЕНЬ, 'общее/css/style.css'), path.join(tmp, 'style.css'));
+  fs.copyFileSync(path.join(КОРЕНЬ, 'игры/шахматы/style-шахматы.css'), path.join(tmp, 'style-шахматы.css'));
 
   const jsПапка = path.join(КОРЕНЬ, 'js');
-  for (const файл of fs.readdirSync(jsПапка).filter((f) => f.endsWith('.js'))) {
-    fs.copyFileSync(path.join(jsПапка, файл), path.join(tmp, 'js', файл));
+  for (const файл of require('./пути-проекта.js').всеJsВПапке(jsПапка).filter((f) => f.endsWith('.js'))) {
+    fs.copyFileSync(require('./пути-проекта.js').вПапке(jsПапка, файл), require('./пути-проекта.js').путь(файл, tmp));
   }
 
   fs.cpSync(path.join(КОРЕНЬ, 'img', 'шахматы'), path.join(tmp, 'img', 'шахматы'), { recursive: true });
@@ -110,7 +110,7 @@ function подготовитьВременнуюПапку() {
   // этой папки браузер честно получает 404 на каждой странице копии, и это
   // ошибочно топит проверки «консоль чистая», которые к нашим 4 намеренным
   // поломкам отношения не имеют.
-  fs.cpSync(path.join(КОРЕНЬ, 'шрифты'), path.join(tmp, 'шрифты'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, tmp, 'шрифты');
 
   return tmp;
 }

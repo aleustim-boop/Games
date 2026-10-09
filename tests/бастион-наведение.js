@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {Weapons,angleTo,delta,pose}=require('../js/бастион-орудия.js');
+const {Weapons,angleTo,delta,pose}=require('../игры/бастион/бастион-орудия.js');
 const w=new Weapons(),t={pad:1,type:'mortar'},p={x:400,y:400};
 assert.equal(angleTo(p,{x:600,y:400}),0);
 assert.equal(angleTo(p,{x:400,y:600}),Math.PI/2);

@@ -2,7 +2,7 @@
 
 const названия = require('../server/названия.js');
 const билеты = require('../server/inline-столы.js');
-const языки = require('../js/языки.js');
+const языки = require('../общее/js/языки.js');
 
 const КАРТИНКИ = {
   durak: 'img/витрина/durak.jpg', shashki: 'img/витрина/checkers.jpg',

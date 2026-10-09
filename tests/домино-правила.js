@@ -1,8 +1,8 @@
 'use strict';
 const assert = require('node:assert/strict');
-const П = require('../js/домино-правила');
-const Б = require('../js/домино-бот');
-const М = require('../js/домино-память');
+const П = require('../игры/домино/домино-правила');
+const Б = require('../игры/домино/домино-бот');
+const М = require('../игры/домино/домино-память');
 const id = (a, b) => П.КОСТИ.findIndex(k => k[0] === Math.min(a, b) && k[1] === Math.max(a, b));
 function invariant(g) {
   const all = [...g.руки.flat(), ...g.базар, ...g.цепь.map(t => t.id)];

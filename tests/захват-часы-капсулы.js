@@ -11,9 +11,9 @@ const { spawnSync } = require('child_process');
 const КОРЕНЬ = path.resolve(__dirname, '..');
 const аргументы = process.argv.slice(2);
 const индексФайла = аргументы.indexOf('--файл');
-const путьСтола = индексФайла === -1 ? path.join(КОРЕНЬ, 'js', 'захват-стол.js') : аргументы[индексФайла + 1];
+const путьСтола = индексФайла === -1 ? path.join(КОРЕНЬ, 'игры', 'захват', 'захват-стол.js') : аргументы[индексФайла + 1];
 
-const Правила = require(path.join(КОРЕНЬ, 'js', 'захват-правила.js'));
+const Правила = require(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-правила.js'));
 const ЗахватСтол = require(путьСтола);
 
 let пройдено = 0;
@@ -211,11 +211,11 @@ function ломающий(название, изменить) {
     return;
   }
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-часы-'));
-  fs.mkdirSync(path.join(папка, 'js'));
-  fs.readdirSync(path.join(КОРЕНЬ, 'js')).forEach(function (имя) {
-    if (/\.js$/.test(имя)) fs.copyFileSync(path.join(КОРЕНЬ, 'js', имя), path.join(папка, 'js', имя));
+  require('./пути-проекта.js').создатьПапкиКода(папка);
+  require('./пути-проекта.js').всеJs(КОРЕНЬ).forEach(function (имя) {
+    if (/\.js$/.test(имя)) fs.copyFileSync(require('./пути-проекта.js').путь(имя, КОРЕНЬ), require('./пути-проекта.js').путь(имя, папка));
   });
-  const копия = path.join(папка, 'js', 'захват-стол.js');
+  const копия = path.join(папка, 'игры', 'захват', 'захват-стол.js');
   fs.writeFileSync(копия, испорчен);
   const итог = spawnSync(process.execPath, [__filename, '--файл', копия], { encoding: 'utf8' });
   проверка('ломающий запуск «' + название + '»: проверка краснеет', итог.status === 1, 'код выхода ' + итог.status);

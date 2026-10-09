@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),F=require('../js/2048-falling');
+const assert=require('node:assert/strict'),F=require('../игры/2048/2048-falling');
 function fixture(board={},active={x:2,y:0,value:2}){const s=F.create(15);s.board.fill(0);for(const [i,n]of Object.entries(board))s.board[i]=n;s.active=active;const {turnStart,previous,...start}=s;s.turnStart=JSON.parse(JSON.stringify(start));return s;}
 const original=F.create(123),down=F.action(original,'down');assert.equal(down.state.active.y,1);assert.equal(original.active.y,0);assert.equal(down.state.moves,0);
 const left=F.action(fixture({}, {x:0,y:0,value:2}),'left');assert(!left.changed);

@@ -109,7 +109,7 @@ function испортитьРазметку(папка) {
 
 // Порча копии style-домино.css: выкидываем правило про #экран-друга > .верх-игры.
 function испортитьВид(папка) {
-  const текст = fs.readFileSync(path.join(ПРОЕКТ, 'style-домино.css'), 'utf8');
+  const текст = fs.readFileSync(path.join(ПРОЕКТ, 'игры/домино/style-домино.css'), 'utf8');
   const строки = текст.split('\n');
   const оставить = строки.filter((с) => !с.includes('#экран-друга > .верх-игры'));
   if (оставить.length === строки.length) throw new Error('порча не удалась: правило #экран-друга > .верх-игры не нашлось в style-домино.css');

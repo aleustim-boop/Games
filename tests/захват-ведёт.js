@@ -13,8 +13,8 @@ const { spawnSync } = require('child_process');
 const КОРЕНЬ = path.join(__dirname, '..');
 const а = process.argv.slice(2);
 const довод = (имя) => { const и = а.indexOf(имя); return и === -1 ? null : а[и + 1]; };
-const путьСтола = довод('--файл') || path.join(КОРЕНЬ, 'js', 'захват-стол.js');
-const путьCss = довод('--css') || path.join(КОРЕНЬ, 'style-захват.css');
+const путьСтола = довод('--файл') || path.join(КОРЕНЬ, 'игры', 'захват', 'захват-стол.js');
+const путьCss = довод('--css') || path.join(КОРЕНЬ, 'игры/захват/style-захват.css');
 
 if (а.includes('--браузер')) {
   if (а.includes('--сломать')) браузерПорча();
@@ -100,8 +100,8 @@ function прогон() {
 
 function сломать() {
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-ведёт-'));
-  const стол = fs.readFileSync(path.join(КОРЕНЬ, 'js', 'захват-стол.js'), 'utf8');
-  const css = fs.readFileSync(path.join(КОРЕНЬ, 'style-захват.css'), 'utf8');
+  const стол = fs.readFileSync(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-стол.js'), 'utf8');
+  const css = fs.readFileSync(path.join(КОРЕНЬ, 'игры/захват/style-захват.css'), 'utf8');
   const порчи = [
     ['стол', 'при равенстве метка остаётся (>=)', 'if (лучший === null || очки > лучший.очки)', 'if (лучший === null || очки >= лучший.очки)'],
     ['стол', 'ведёт и тот, у кого ноль очков', 'лучший.очки > 0 ? лучший.ключ : null', 'лучший.очки >= 0 ? лучший.ключ : null'],
@@ -121,7 +121,7 @@ function сломать() {
     let порченое = исходник.replace(п[2], () => п[3]);
     const путь = path.join(папка, 'п' + н + (п[0] === 'стол' ? '.js' : '.css'));
     // Порченый стол берёт настоящие правила по полному пути: их очки подменяет сама проверка.
-    if (п[0] === 'стол') порченое = порченое.replace(/require\('\.\/(захват-[^']+)'\)/g, (_, имя) => 'require(' + JSON.stringify(path.join(КОРЕНЬ, 'js', имя)) + ')');
+    if (п[0] === 'стол') порченое = порченое.replace(/require\('\.\/(захват-[^']+)'\)/g, (_, имя) => 'require(' + JSON.stringify(require('./пути-проекта.js').путь(имя, КОРЕНЬ)) + ')');
     fs.writeFileSync(путь, порченое);
     const р = spawnSync(process.execPath, [__filename, п[0] === 'стол' ? '--файл' : '--css', путь], { encoding: 'utf8' });
     const красная = р.status === 1 && /ПРОВАЛ/.test(р.stdout);
@@ -177,7 +177,7 @@ async function браузерПрогон() {
     страница.on('pageerror', (е) => ошибки.push('необработанная ошибка: ' + е.message));
     if (подмена) {
       const тело = fs.readFileSync(подмена);
-      await перехватить(страница, /\/js\/захват-стол\.js(\?|$)/, (путь) => путь.fulfill({ status: 200, contentType: 'application/javascript; charset=utf-8', body: тело }));
+      await перехватить(страница, /\/игры\/захват\/захват-стол\.js(\?|$)/, (путь) => путь.fulfill({ status: 200, contentType: 'application/javascript; charset=utf-8', body: тело }));
     }
     await страница.addInitScript(() => { try { localStorage.setItem('zahvat-learned', '1'); } catch (_) { /* пусто */ } });
     await страница.goto('http://127.0.0.1:' + порт + '/захват.html', { waitUntil: 'load' });
@@ -252,7 +252,7 @@ async function браузерПрогон() {
 }
 
 // Порча КОПИИ стола во временной папке: верхКарты снова берёт рамку узла, а не окно карты (как до Р16).
-// Страница подгружает копию подменой ответа; настоящий js/захват-стол.js не трогается. Должно покраснеть.
+// Страница подгружает копию подменой ответа; настоящий игры/захват/захват-стол.js не трогается. Должно покраснеть.
 function браузерПорча() {
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-ведёт-браузер-'));
   const стол = fs.readFileSync(путьСтола, 'utf8');

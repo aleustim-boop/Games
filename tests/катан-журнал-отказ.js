@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const g=P.создать(3,42,false,3);while(g.phase.startsWith('setup'))P.действие(g,g.turn,B.ход(P.вид(g,g.turn)));g.phase='main';g.turn=1;g.players[1].resources=[3,0,0,0,0];g.players[0].resources=[0,3,0,0,0];
 P.действие(g,1,{type:'offer',to:-1,give:[1,0,0,0,0],want:[0,1,0,0,0]});const offer=g.offer.id;P.действие(g,0,{type:'reject',offer});const saved=JSON.stringify(g);A.throws(()=>P.действие(g,0,{type:'reject',offer}));A.equal(JSON.stringify(g),saved,'Повторный отказ не добавляет запись');
 const browser=await chromium.launch();try{const p=await browser.newPage({viewport:{width:390,height:844}});await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.CATAN_TEST_URL||'http://127.0.0.1:8137/катан.html',{waitUntil:'domcontentloaded'});

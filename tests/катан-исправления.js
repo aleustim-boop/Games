@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот'),М=require('../js/катан-память');
+const assert=require('node:assert/strict'),П=require('../игры/катан/катан-правила'),Б=require('../игры/катан/катан-бот'),М=require('../игры/катан/катан-память');
 const {chromium,безTelegram}=require('./браузер-робот');
 function exchangeFixture(){
   for(let seed=1;seed<100;seed++){
@@ -21,7 +21,7 @@ function exchangeFixture(){
   try{
     const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];
     await безTelegram(page);page.on('pageerror',e=>errors.push(e.message));await page.clock.install();
-    if(process.env.CATAN_OLD_UI){const old=require('node:child_process').execFileSync('git',['show','a7f0ff5:js/катан-экран.js'],{encoding:'utf8'});await page.route(url=>decodeURIComponent(url.pathname)==='/js/катан-экран.js',r=>r.fulfill({contentType:'text/javascript',body:old}));}
+    if(process.env.CATAN_OLD_UI){const old=require('node:child_process').execFileSync('git',['show','a7f0ff5:игры/катан/катан-экран.js'],{encoding:'utf8'});await page.route(url=>decodeURIComponent(url.pathname)==='/игры/катан/катан-экран.js',r=>r.fulfill({contentType:'text/javascript',body:old}));}
     await page.goto('http://127.0.0.1:8137/катан.html');await page.evaluate(d=>localStorage.setItem('catan-match-v1',JSON.stringify(d)),data);await page.reload();
     await page.locator('#кат-продолжить').click();await page.locator('#кат-обмен').click();
     const before=await page.evaluate(()=>localStorage.getItem('catan-match-v1'));await page.clock.fastForward(60000);

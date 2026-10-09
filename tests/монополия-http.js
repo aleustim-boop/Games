@@ -7,7 +7,7 @@ process.env.ДАННЫЕ_ИГРЫ = path.join(
   "monopoly-http-" + process.pid,
 );
 const server = require("../server/сервер").создатьСервер(),
-  B = require("../js/монополия-бот");
+  B = require("../игры/монополия/монополия-бот");
 (async () => {
   await new Promise((r) => server.listen(0, "127.0.0.1", r));
   const base = "http://127.0.0.1:" + server.address().port;

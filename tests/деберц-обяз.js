@@ -4,13 +4,13 @@ const path = require('node:path');
 if (process.argv[2] === '--самопроверка') {
   const fs = require('node:fs'), os = require('node:os'), { spawnSync } = require('node:child_process');
   const файл = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'deberts-obligation-')), 'rules.js');
-  const код = fs.readFileSync(path.join(__dirname, '../js/деберц-правила.js'), 'utf8');
+  const код = fs.readFileSync(path.join(__dirname, '../игры/деберц/деберц-правила.js'), 'utf8');
   fs.writeFileSync(файл, код.replace('if (обязанВыбрать(игра)) throw', 'if (false) throw'));
   const ответ = spawnSync(process.execPath, [__filename, файл], { encoding: 'utf8' });
   assert.equal(ответ.status, 1); assert.match(ответ.stderr, /Missing expected exception/);
   console.log('Самопроверка: разрешённый пас на обязе в копии обнаружен — OK'); process.exit(0);
 }
-const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../js/деберц-правила.js');
+const П = require(process.argv[2] ? path.resolve(process.argv[2]) : '../игры/деберц/деберц-правила.js');
 const И = require('../server/игры/деберц.js');
 for (const режим of ['2', '3', '4', '2x2']) {
   const n = режим === '2x2' ? 4 : +режим;

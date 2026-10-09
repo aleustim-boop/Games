@@ -19,13 +19,13 @@ const http = require('node:http');
 const { spawnSync } = require('node:child_process');
 
 const КОРЕНЬ = path.join(__dirname, '..');
-const ЭКРАН = path.join(КОРЕНЬ, 'js', 'деберц-экран.js');
+const ЭКРАН = path.join(КОРЕНЬ, 'игры', 'деберц', 'деберц-экран.js');
 function довод(имя) {
   const n = process.argv.indexOf(имя);
   return n > 0 ? path.resolve(process.argv[n + 1]) : null;
 }
 const ФАЙЛ_ЭКРАНА = довод('--экран') || ЭКРАН;
-const ФАЙЛ_СТИЛЯ = довод('--стиль') || path.join(КОРЕНЬ, 'style-деберц.css');
+const ФАЙЛ_СТИЛЯ = довод('--стиль') || path.join(КОРЕНЬ, 'игры/деберц/style-деберц.css');
 const ЗАПУСК_НА_КОПИИ = Boolean(довод('--экран') || довод('--стиль'));
 let проверок = 0;
 let провалов = 0;
@@ -66,7 +66,7 @@ function поднятьСерверФайлов() {
 function собратьВидТорговли(мест) {
   process.env.ДАННЫЕ_ИГРЫ = path.join(os.tmpdir(), 'деберц-выход-слова-данные-' + process.pid);
   const Д = require(path.join(КОРЕНЬ, 'server', 'игры', 'деберц.js'));
-  const ПРАВИЛА = require(path.join(КОРЕНЬ, 'js', 'game.js'));
+  const ПРАВИЛА = require(path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js'));
   const имена = ['Вы', 'Александра', 'Константин', 'Святослав'];
   const ключи = ПРАВИЛА.создатьПартию({ игроков: ПРАВИЛА.МАКС_ИГРОКОВ }).игроки.slice(0, мест);
   const п = Д.раздать(null, { игроки: ключи });
@@ -234,7 +234,7 @@ function ломатьБраузерную(папка) {
   console.log('Ломающие запуски браузерной части, копии в ' + папка);
   let покраснело = 0;
   ПОРЧИ_БРАУЗЕРА.forEach((порча, n) => {
-    const оригинал = порча.файл === 'экран' ? ЭКРАН : path.join(КОРЕНЬ, 'style-деберц.css');
+    const оригинал = порча.файл === 'экран' ? ЭКРАН : path.join(КОРЕНЬ, 'игры/деберц/style-деберц.css');
     const части = fs.readFileSync(оригинал, 'utf8').split(порча.было);
     if (части.length !== 2) { console.log('  НЕТ СТРОКИ ДЛЯ ПОРЧИ (' + (части.length - 1) + ' раз): ' + порча.что); process.exit(2); }
     const копия = path.join(папка, (порча.файл === 'экран' ? 'деберц-экран-' : 'style-деберц-') + (n + 1) + (порча.файл === 'экран' ? '.js' : '.css'));

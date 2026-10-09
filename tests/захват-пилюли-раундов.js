@@ -67,7 +67,7 @@ function поднятьСервер() {
     try { путь = decodeURIComponent(запрос.url.split('?')[0]); } catch (_) { /* как есть */ }
     let файл = path.join(КОРЕНЬ, путь === '/' ? 'index.html' : путь);
     // Подмена оформления «Захвата» копией — для ломающего запуска.
-    if (ФАЙЛ_CSS && путь === '/style-захват.css') файл = ФАЙЛ_CSS;
+    if (ФАЙЛ_CSS && путь === '/игры/захват/style-захват.css') файл = ФАЙЛ_CSS;
     if ((файл === ФАЙЛ_CSS || внутри(КОРЕНЬ, файл)) && fs.existsSync(файл) && fs.statSync(файл).isFile()) {
       ответ.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл).toLowerCase()] || 'application/octet-stream' });
       ответ.end(fs.readFileSync(файл));
@@ -166,7 +166,7 @@ async function снять() {
 
 function ломающийЗапуск(папка) {
   fs.mkdirSync(папка, { recursive: true });
-  const исходник = fs.readFileSync(path.join(КОРЕНЬ, 'style-захват.css'), 'utf8');
+  const исходник = fs.readFileSync(path.join(КОРЕНЬ, 'игры/захват/style-захват.css'), 'utf8');
   // Порча: к концу файла дописываются раздутые отступы и жёсткая ширина текста пилюль —
   // слово «До победы» обязано перестать влезать.
   const порча = '\n.захват-выбор-числа > button { padding-inline: 20px !important; flex: 1 1 0 !important; }\n';

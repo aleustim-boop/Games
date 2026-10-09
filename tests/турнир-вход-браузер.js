@@ -19,7 +19,7 @@
    Запуск:
        node tests/турнир-вход-браузер.js
        node tests/турнир-вход-браузер.js --index <путь> --файл <путь>
-         — ломающий запуск: index.html и/или js/game.js берутся из КОПИЙ
+         — ломающий запуск: index.html и/или игры/дурак/game.js берутся из КОПИЙ
            по указанным путям (файлы проекта не трогаем).
    ===================================================================== */
 
@@ -35,7 +35,7 @@ function аргумент(имя) {
 }
 
 const ПУТЬ_INDEX = аргумент('--index') || path.join(КОРЕНЬ, 'index.html');
-const ПУТЬ_GAME = аргумент('--файл') || path.join(КОРЕНЬ, 'js', 'game.js');
+const ПУТЬ_GAME = аргумент('--файл') || path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js');
 
 let проверок = 0;
 let провалов = 0;
@@ -50,12 +50,12 @@ function надо(условие, слова, подробности) {
 
 const ТЕКСТ_GAME = fs.readFileSync(ПУТЬ_GAME, 'utf8');
 
-/* id карточки читаем из js/game.js — того же места, что её слушает. */
+/* id карточки читаем из игры/дурак/game.js — того же места, что её слушает. */
 const найденId = /const КАРТОЧКА_ТУРНИРА = '([^']+)'/.exec(ТЕКСТ_GAME);
 const ID_КАРТОЧКИ = найденId ? найденId[1] : '';
 
 async function проверитьВБраузере() {
-  надо(ID_КАРТОЧКИ !== '', 'Г0) в js/game.js есть КАРТОЧКА_ТУРНИРА', 'нет строки const КАРТОЧКА_ТУРНИРА');
+  надо(ID_КАРТОЧКИ !== '', 'Г0) в игры/дурак/game.js есть КАРТОЧКА_ТУРНИРА', 'нет строки const КАРТОЧКА_ТУРНИРА');
   const { chromium, безTelegram, перехватить } = require(path.join(__dirname, 'браузер-робот.js'));
   const ПАПКА = path.join(__dirname, 'снимки');
   fs.mkdirSync(ПАПКА, { recursive: true });
@@ -68,7 +68,7 @@ async function проверитьВБраузере() {
       if (путь.slice(-1) === '/') путь += 'index.html';
       let файл = path.join(КОРЕНЬ, путь);
       if (путь === '/index.html') файл = ПУТЬ_INDEX;
-      else if (путь === '/js/game.js') файл = ПУТЬ_GAME;
+      else if (путь === '/игры/дурак/game.js') файл = ПУТЬ_GAME;
       if (!fs.existsSync(файл) || fs.statSync(файл).isDirectory()) { ответ.writeHead(404); ответ.end('нет'); return; }
       ответ.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл).toLowerCase()] || 'application/octet-stream' });
       ответ.end(fs.readFileSync(файл));
@@ -142,7 +142,7 @@ async function проверитьВБраузере() {
     await страница.evaluate(() => { if (window.ТурнирЭкран.закрыть) window.ТурнирЭкран.закрыть(); });
 
     /* Г6. Итог турнирной партии: подделываем вид стола той же дверью,
-       что и js/сеть.js (ИграПоСети.показатьВид). */
+       что и общее/js/сеть.js (ИграПоСети.показатьВид). */
     await страница.evaluate(() => {
       const база = {
         завершена: false, итог: null, соперникПришёл: true, соперникНаСвязи: true,

@@ -9,7 +9,7 @@ const { chromium } = require('./браузер-робот');
   try {
     for (const width of [390, 1280]) {
       const страница = await браузер.newPage({ viewport: { width, height: 900 }, javaScriptEnabled: false });
-      await страница.route(url => decodeURIComponent(url.pathname) === '/style-публичные.css', р => р.fulfill({ contentType: 'text/css', body: fs.readFileSync(path.join(__dirname, '..', 'style-публичные.css')) }));
+      await страница.route(url => decodeURIComponent(url.pathname) === '/общее/css/style-публичные.css', р => р.fulfill({ contentType: 'text/css', body: fs.readFileSync(path.join(__dirname, '..', 'общее/css/style-публичные.css')) }));
       const ответ = await страница.goto(стенд.url + '/top');
       assert.equal(ответ.status(), 200);
       assert.equal(await страница.locator('.лидеры__сетка section').count(), 17);

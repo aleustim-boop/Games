@@ -99,10 +99,10 @@ function сломанныйПрогон() {
 
   const врем = fs.mkdtempSync(path.join(os.tmpdir(), 'рейтинг-повтор-партии-сломать-'));
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(врем, 'server'), { recursive: true });
-  /* server/игры/умолчания.js берёт список игр из общего js/игры-реестр.js —
+  /* server/игры/умолчания.js берёт список игр из общего общее/js/игры-реестр.js —
      без него копия сервера не загрузится. */
-  fs.mkdirSync(path.join(врем, 'js'), { recursive: true });
-  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'игры-реестр.js'), path.join(врем, 'js', 'игры-реестр.js'));
+  require('./пути-проекта.js').создатьПапкиКода(врем);
+  fs.copyFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'игры-реестр.js'), path.join(врем, 'общее', 'js', 'игры-реестр.js'));
   const путьКРейтингу = path.join(врем, 'server', 'рейтинг.js');
 
   const исходник = fs.readFileSync(путьКРейтингу, 'utf8');
@@ -401,7 +401,7 @@ async function случайЕ() {
     return оригУчестьПартию(игра, застольем, ключ);
   };
 
-  const правила = require(path.join(КОРЕНЬ, 'js', 'game.js'));
+  const правила = require(path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js'));
   const сервера = require(path.join(КОРЕНЬ, 'server', 'сервер.js'));
 
   const ТОКЕН = '1234567:VYDUMANNYY-TOKEN-DLYA-POVTORA-PARTII';

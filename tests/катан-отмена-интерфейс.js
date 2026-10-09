@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот');
 const {chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const browser=await chromium.launch();try{
  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];

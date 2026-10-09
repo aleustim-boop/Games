@@ -4,7 +4,7 @@
    КНОПКА «СВЕРНУТЬ» — ПРОВЕРКА В НАСТОЯЩЕМ БРАУЗЕРЕ (и снимки для смотрителя).
    Что не проверить в node: где кнопка стоит на экране и не наезжает ли
    она на заголовок и кнопки страницы. Устройство кнопки (создаёт ли её
-   js/telegram.js, зовёт ли exitFullscreen) проверяет tests/свернуть-кнопка.js.
+   общее/js/telegram.js, зовёт ли exitFullscreen) проверяет tests/свернуть-кнопка.js.
 
    Пункты:
      1) Telegram 8.0, полный экран, система сверху 44, полоса Telegram 46:
@@ -27,7 +27,7 @@
 
    Запуск:           node tests/свернуть-снимки.js
    Ломающий запуск:  node tests/свернуть-снимки.js --сломать <временная папка>
-                     (кладёт в папку КОПИЮ js/telegram.js с переключателем
+                     (кладёт в папку КОПИЮ общее/js/telegram.js с переключателем
                      КНОПКА_СВЕРНУТЬ_ВКЛЮЧЕНА = false, в страницу подаётся
                      через перехват запроса; проект не трогается; пункт 1
                      обязан покраснеть: выход 1, иначе 3).
@@ -115,7 +115,7 @@ async function подмешатьПорчу(страница, порча) {
     let адрес = путь.request().url();
     try { адрес = decodeURIComponent(адрес); } catch (о) { /* как есть */ }
     if (порча.css && адрес.indexOf('style-свернуть.css') !== -1) путь.fulfill({ status: 200, contentType: 'text/css; charset=utf-8', body: порча.css });
-    else if (порча.telegram && /\/js\/telegram\.js/.test(адрес)) путь.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: порча.telegram });
+    else if (порча.telegram && /\/общее\/js\/telegram\.js/.test(адрес)) путь.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: порча.telegram });
     else if (адрес.indexOf('telegram-web-app.js') !== -1) путь.abort();
     else путь.continue();
   });
@@ -215,16 +215,16 @@ function m_есть(м) { return !!(м && м.есть); }
     if (!папка) { console.log('Укажи временную папку: --сломать <папка>'); process.exit(2); }
     fs.mkdirSync(папка, { recursive: true });
     if (аргументы[номерПорчи + 2] === 'css') {
-      текстПорчи = { css: fs.readFileSync(path.join(КОРЕНЬ, 'style-свернуть.css'), 'utf8') + '\n' + ПОРЧЕНОЕ_CSS };
+      текстПорчи = { css: fs.readFileSync(path.join(КОРЕНЬ, 'общее/css/style-свернуть.css'), 'utf8') + '\n' + ПОРЧЕНОЕ_CSS };
       fs.writeFileSync(path.join(папка, 'style-свернуть.css'), текстПорчи.css);
       console.log('РЕЖИМ ПОРЧИ: подана копия style-свернуть.css с кнопкой по центру (' + path.join(папка, 'style-свернуть.css') + ')');
     } else {
-      const настоящий = fs.readFileSync(path.join(КОРЕНЬ, 'js', 'telegram.js'), 'utf8');
+      const настоящий = fs.readFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'telegram.js'), 'utf8');
       const порченый = настоящий.replace('var КНОПКА_СВЕРНУТЬ_ВКЛЮЧЕНА = true;', 'var КНОПКА_СВЕРНУТЬ_ВКЛЮЧЕНА = false;');
-      if (порченый === настоящий) { console.log('НЕТ МЕСТА ДЛЯ ПОРЧИ: переключатель с true в js/telegram.js не найден — провал'); process.exit(3); }
+      if (порченый === настоящий) { console.log('НЕТ МЕСТА ДЛЯ ПОРЧИ: переключатель с true в общее/js/telegram.js не найден — провал'); process.exit(3); }
       текстПорчи = { telegram: порченый };
       fs.writeFileSync(path.join(папка, 'telegram.js'), порченый);
-      console.log('РЕЖИМ ПОРЧИ: подана копия js/telegram.js с переключателем false (' + path.join(папка, 'telegram.js') + ')');
+      console.log('РЕЖИМ ПОРЧИ: подана копия общее/js/telegram.js с переключателем false (' + path.join(папка, 'telegram.js') + ')');
     }
   }
 

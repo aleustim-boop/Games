@@ -5,7 +5,7 @@
    к уровню соперника добавился состав стола («обычный · вшестером»).
 
    ЗАЧЕМ ЭТОТ ФАЙЛ. В игре появилась подпись из двух частей: уровень плюс
-   стол. Хранилище (js/telegram.js) при этом не трогали — оно принимает
+   стол. Хранилище (общее/js/telegram.js) при этом не трогали — оно принимает
    любую строку. Но одно правило хранилища РАЗБИРАЕТ эту строку по словам:
    когда серия продолжается, а уровень соперника сменился, строка серии
    подписывается САМЫМ ЛЁГКИМ из сыгранных уровней. Так сделано нарочно,
@@ -34,7 +34,7 @@ const fs = require('fs');
 const vm = require('vm');
 const path = require('path');
 
-const ИСХОДНИК = fs.readFileSync(path.join(__dirname, '..', 'js', 'telegram.js'), 'utf8');
+const ИСХОДНИК = fs.readFileSync(path.join(__dirname, '..', 'общее', 'js', 'telegram.js'), 'utf8');
 
 const беды = [];
 const заметки = [];
@@ -58,7 +58,7 @@ function сделатьПамять() {
   };
 }
 
-/** Запустить js/telegram.js в поддельном браузере без Telegram (как на GitHub Pages). */
+/** Запустить общее/js/telegram.js в поддельном браузере без Telegram (как на GitHub Pages). */
 function завестиХранилище(память) {
   const окно = { localStorage: память, addEventListener: function () {} };
   const песочница = {
@@ -70,7 +70,7 @@ function завестиХранилище(память) {
   };
   песочница.globalThis = песочница;
   vm.createContext(песочница);
-  vm.runInContext(ИСХОДНИК, песочница, { filename: 'js/telegram.js' });
+  vm.runInContext(ИСХОДНИК, песочница, { filename: 'общее/js/telegram.js' });
   return { saveScore: окно.saveScore, loadScore: окно.loadScore, память: память };
 }
 

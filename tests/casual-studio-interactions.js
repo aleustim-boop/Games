@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),{chromium,подготовитьПодделку}=require('./браузер-робот'),G=require('../js/game-match3'),base=process.env.CASUAL_BASE||'http://127.0.0.1:8137';
+const assert=require('node:assert/strict'),{chromium,подготовитьПодделку}=require('./браузер-робот'),G=require('../игры/match3/game-match3'),base=process.env.CASUAL_BASE||'http://127.0.0.1:8137';
 (async()=>{const browser=await chromium.launch();try{
  const p=await browser.newPage({viewport:{width:390,height:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await подготовитьПодделку(p);await p.goto(base+'/match3.html');await p.locator('#play').click();
  const read=()=>p.evaluate(()=>JSON.parse(localStorage.getItem('casual-match3-v1')).state),before=await read(),m=G.swaps(before)[0],a=await p.locator(`[data-cell="${m.a}"]`).boundingBox(),b=await p.locator(`[data-cell="${m.b}"]`).boundingBox();

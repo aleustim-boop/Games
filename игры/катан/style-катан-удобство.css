@@ -1,0 +1,157 @@
+/* Readable island and touch-first trading. */
+.катан #экран-игры .кат-верх{position:static;min-height:30px;height:auto;margin:0 0 8px}
+.катан #экран-игры .кат-титул{padding:3px 0;line-height:1.4}
+.катан #экран-игры .кат-титул h1{display:none!important}
+.катан #экран-игры #кат-раунд{font-size:14px;color:#ecd2a2}
+.катан #экран-игры .кат-гекс[data-resource="0"] .кат-земля{filter:saturate(.86) brightness(.82);stroke:#4d6742}
+.катан #экран-игры .кат-гекс[data-resource="2"] .кат-земля{filter:saturate(.72) brightness(1.06);stroke:#afc882}
+.катан #экран-игры[data-terrain=soft] .кат-гекс[data-resource="2"] .кат-земля{filter:saturate(.55) brightness(.94)}
+.катан #экран-игры[data-terrain=bright] .кат-гекс[data-resource="0"] .кат-земля{filter:saturate(.95) brightness(.9)}
+.катан #экран-игры .кат-гекс.кат-приглушён .кат-земля{filter:saturate(.15) brightness(.42)}
+.кат-разбойник{filter:drop-shadow(0 0 2px #fff0be) drop-shadow(1px 4px 3px #000b)}
+.кат-разбойник-основание{fill:#201605b0;stroke:#f3cf79;stroke-width:3}
+.кат-разбойник-превью{opacity:.68}.кат-маршрут-разбойника{pointer-events:none}.кат-маршрут-разбойника>path{fill:none;stroke:#fff1a9;stroke-width:5;stroke-dasharray:10 8;filter:drop-shadow(0 2px 2px #201a0b)}
+.кат-под-угрозой{filter:drop-shadow(0 0 6px #ffbf54)}
+.кат-разбойник-прибыл .кат-земля{stroke:#ffd36e!important;stroke-width:8!important}
+.кат-разбойник-переезжает{will-change:transform}
+.кат-выбор-разбойника{position:relative;z-index:2;padding:12px;border:1px solid #dabc79;border-radius:15px;background:#152d2bea;color:#ffe6af;display:grid;gap:9px;margin:8px 0}
+.кат-выбор-разбойника[hidden]{display:none}.кат-выбор-разбойника p{margin:0;font-size:13px;line-height:1.5}.кат-выбор-разбойника button{width:100%;min-height:44px}
+.кат-ресурсы-обмена{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.кат-обмен-фишка{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;color:#f2dfb8;font-size:11px;line-height:1.2}
+.кат-обмен-фишка .кат-ресурс-карта{width:100%;height:auto;aspect-ratio:347/474;display:block}
+.кат-обмен-фишка strong{position:absolute;bottom:20px;right:1px;min-width:25px;padding:3px;border:1px solid #e3c77e;border-radius:8px;background:#102824;color:#fff5d9;text-align:center;font-size:17px}
+.кат-сделка{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;padding:14px;border:1px solid #bb9c5e66;background:#152924;border-radius:16px;margin:12px 0;align-items:center}
+.кат-сделка h3{font-size:14px;margin:0 0 9px;overflow-wrap:anywhere}.кат-сделка small{display:block;color:#c5cdbc;font-size:11px;margin-bottom:8px}.кат-сделка-стрелка{font-size:26px;color:#edca80}
+.кат-сделка .кат-ресурсы-обмена{justify-content:center}.кат-сделка>div{text-align:center;min-width:0}
+.кат-набор-ресурсов{margin:16px 0}.кат-набор-шапка{display:flex;justify-content:space-between;align-items:center;gap:8px}.кат-набор-шапка h3{margin:5px 0;font-size:18px}
+.кат-набор-шапка button{font-size:12px;padding:8px;min-height:40px;background:transparent;color:#ddc898;border:0}
+.кат-выбор-карт{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.кат-выбор-карт button{position:relative;min-width:0;padding:7px 3px;border:1px solid #c6ad6655;border-radius:11px;background:#122c28;color:#f4dfb4;display:grid;gap:4px;justify-items:center;cursor:pointer;touch-action:manipulation}
+.кат-выбор-карт .кат-ресурс-карта{display:block;width:100%;max-width:75px;aspect-ratio:347/474;height:auto}
+.кат-выбор-карт b{font-size:11px}.кат-выбор-карт small{font-size:11px;color:#c5d3c2}.кат-выбор-карт button:disabled{opacity:.28;filter:grayscale(.8);cursor:default}
+.кат-выбраны-карты{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:58px;padding:9px;border:1px dashed #c7aa6166;border-radius:11px;margin-top:8px;background:#091b1855}
+.кат-выбраны-карты>span{font-size:12px;color:#b9c7bb}.кат-выбраны-карты button{padding:4px;min-height:44px;min-width:44px;border:1px solid #dfc580;border-radius:8px;background:#293c2f;color:#f2dfb8}
+.кат-выбраны-карты .кат-обмен-фишка{width:45px}.кат-выбраны-карты .кат-обмен-фишка strong{bottom:17px;font-size:14px}.кат-обмен-инструкция{font-size:13px;line-height:1.5;color:#c9d4c6}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта .кат-ресурс-карта{width:100%;max-width:80px;height:auto;aspect-ratio:347/474}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта{padding:8px 3px}
+.кат-торговля-история{border-top:1px solid #cfb27966;margin-top:16px;padding-top:10px}.кат-торговля-история h3{font-size:15px}
+.кат-торговля-история .кат-обмен-фишка{width:40px;font-size:10px}.кат-торговля-история .кат-обмен-фишка strong{font-size:13px;bottom:16px}
+.кат-жертвы{display:grid;gap:10px}.кат-жертва{display:flex;align-items:center;gap:12px;min-height:70px;text-align:left}.кат-жертва span{display:grid;gap:5px}.кат-жертва small{color:#c7d4c7}.кат-жертва .кат-портрет{width:48px;height:48px;flex:none}
+@media(max-width:450px){.кат-выбор-карт{gap:4px}.кат-сделка{gap:6px;padding:10px}.кат-обмен-фишка{width:49px}.кат-сделка h3{font-size:13px}.кат-набор-ресурсов{margin:12px 0}.кат-выбор-карт b{font-size:10px}}
+.катан #кат-диалог .кат-набор-шапка .кнопка{width:auto;padding:5px 10px;min-height:36px;font-size:12px;background:transparent;border:0;flex:none}
+.катан #кат-диалог .кат-выбор-карт .кнопка{padding:5px 2px;min-width:0;min-height:88px;font-size:11px;line-height:1.2;gap:3px}
+.катан #кат-диалог .кат-выбор-карт .кат-ресурс-карта{width:38px;max-width:100%;height:52px;aspect-ratio:auto}
+.катан #кат-диалог .кат-выбраны-карты{min-height:48px;padding:5px;margin-top:5px}
+.катан #кат-диалог .кат-выбраны-карты .кнопка{width:auto;padding:3px 7px;min-height:44px}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка{display:grid;grid-template-columns:24px auto;width:auto;gap:5px;align-items:center}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка .кат-ресурс-карта{width:24px;height:33px}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка>span{display:none}
+.катан #кат-диалог .кат-выбраны-карты .кат-обмен-фишка strong{position:static;min-width:20px;padding:2px;font-size:16px}
+.катан #кат-диалог .кат-набор-ресурсов{min-width:0;margin:4px 0}
+.катан #кат-диалог[data-kind=trade] #кат-диалог-тело{min-width:0;gap:10px}
+.катан #кат-диалог[data-kind=trade] .кат-форма-обмена{min-width:0;gap:8px}
+.катан #кат-диалог[data-kind=trade] select{width:100%;min-width:0;max-width:100%}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-история{min-width:0}
+.катан #кат-диалог .кат-сделка{min-width:0}.катан #кат-диалог .кат-сделка>div{min-width:0}
+.катан #кат-диалог .кат-подтвердить-обмен{position:sticky;bottom:0;z-index:4;box-shadow:0 -8px 16px #17221df2;margin-top:4px}
+.катан #экран-игры .кат-выбор-разбойника .кнопка--главная{background:linear-gradient(#e1c487,#b58d46);border-color:#f3d699;color:#221a10}
+.катан #кат-диалог[data-kind=trade] .кат-переключатель button[aria-pressed=true]{background:linear-gradient(#e1c487,#b58d46);color:#221a10;border-color:#e7c985}
+.катан #кат-диалог .кат-выбор-карт button[aria-pressed=true]{border-color:#e7c985;box-shadow:inset 0 0 9px #d9ad5740}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-карта[aria-pressed=true]{border-color:#e7c985;background:#51462a;box-shadow:0 0 9px #d9ad5730}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-запас{padding:5px 8px;position:static}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-запас>b{display:none}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-ресурсы .кат-рисунок{width:22px;height:22px}
+.катан #кат-диалог[data-kind=trade] .кат-торговля-ресурсы strong{font-size:16px}
+.катан #кат-диалог[data-kind=trade] .кат-обмен-инструкция{margin:0;font-size:12px;line-height:1.4}
+.катан #кат-диалог[data-kind=trade] .кат-выбор-карт .кнопка{min-height:76px}
+.катан #кат-диалог[data-kind=trade] .кат-выбор-карт .кат-ресурс-карта{height:43px;width:32px}
+.кат-заблокирован .кат-земля{stroke:#d6af69!important;stroke-width:3!important}
+.катан #кат-диалог[data-kind=trade]{padding:14px}
+.катан #кат-диалог[data-kind=trade] header{margin-bottom:10px}
+.катан #кат-диалог[data-kind=trade] #кат-диалог-тело{gap:7px}
+.катан #кат-диалог[data-kind=trade] .кат-форма-обмена{gap:5px}
+.катан #кат-диалог .кат-подтвердить-обмен{position:static;box-shadow:none}
+
+/* Песчаные дорожки без сплошной светлой обводки гексов. */
+.катан #экран-игры .кат-гекс:not([role=button]):not(.кат-выбрано):not(.кат-заблокирован):not(.кат-разбойник-прибыл) .кат-земля{stroke:#805d3538;stroke-width:1}
+/* На планшете ширину острова задаёт экран, а не оставшаяся высота. */
+@media(min-width:700px) and (min-height:600px){
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден{
+  grid-template-columns:minmax(0,min(960px,calc(100vw - 48px)));
+ }
+}
+/* Большой остров и расположенная рядом панель действий. */
+@media(min-width:1000px) and (min-height:600px) and (orientation:landscape){
+ .катан #экран-игры.экран--виден,.катан #экран-игры.расстановка.экран--виден{
+  grid-template-columns:minmax(0,min(1040px,calc(100vw - 360px),max(540px,calc((100dvh - var(--отступ-сверху,0px) - var(--отступ-снизу,0px) - 242px)*1.07143)))) 300px;
+  column-gap:20px;
+ }
+ .катан #экран-игры .кат-сцена{padding-top:calc(93.333333% + 206px)}
+ .кат-сцена .кат-карта:not(.увеличена){inset:76px 0 130px}
+ .кат-сцена .кат-карта:not(.увеличена) .кат-карта-низ{bottom:-36px}
+}
+
+.кат-кандидат-обмена{width:100%;margin:4px 0;text-align:left}.кат-кандидат-обмена[aria-pressed=true]{background:#67502b!important;border-color:#f1cd80!important;color:#fff1cc!important}
+
+.катан #кат-диалог[data-kind=offer]{padding:16px}
+.катан #кат-диалог[data-kind=offer] header{margin-bottom:10px}
+.катан #кат-диалог[data-kind=offer] #кат-диалог-тело{gap:8px}
+.катан #кат-диалог[data-kind=offer] h3,.катан #кат-диалог[data-kind=offer] p{margin:3px 0}
+.катан #кат-диалог[data-kind=offer] .кат-статус-торгов{padding:6px 8px}
+.катан #кат-диалог[data-kind=offer] .кат-сделка{margin:6px 0;padding:8px;gap:6px}
+.катан #кат-диалог[data-kind=offer] .кат-сделка h3{font-size:13px}
+.катан #кат-диалог[data-kind=offer] .кат-обмен-фишка{width:40px;font-size:10px}
+.катан #кат-диалог[data-kind=offer] .кат-обмен-фишка strong{font-size:14px;bottom:16px;min-width:20px}
+.катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы{gap:4px}
+.катан #кат-диалог[data-kind=offer] .кат-торговля-ресурсы .кат-рисунок{width:22px;height:22px}
+
+/* Комната ожидания: код, состояние и выход идут последовательно, без липких перекрытий. */
+.катан #комната>.комната__начать,.катан #комната>#кнопка-комната-отмена{position:static;flex-shrink:0;margin-top:0;box-shadow:none}
+.катан #комната>.комната__начать:disabled{opacity:1;color:#bfc5c9;box-shadow:none}
+.катан #комната>.комната__код{position:static;flex-shrink:0;margin-block:8px}
+.катан #комната>.комната__подсказка{margin-top:0}
+
+/* Выбор соты для разбойника остаётся заметным поверх любой текстуры. */
+.кат-разбойник-доступный-контур{fill:#f6d88916;stroke:#ffe4a0;stroke-width:4;stroke-linejoin:round;pointer-events:none;filter:drop-shadow(0 1px 2px #000)}
+.кат-разбойник-цель{fill:#173d36;stroke:#ffe4a0;stroke-width:2;pointer-events:none}.кат-разбойник-плюс{fill:#fff1c7;font:bold 19px sans-serif;text-anchor:middle;pointer-events:none}
+.кат-выбор-разбойника-активен .кат-гекс:not(.кат-разбойник-доступно){opacity:.42}.кат-выбор-разбойника-активен .кат-разбойник-доступно{opacity:1;cursor:pointer}
+.кат-разбойник-выбран .кат-разбойник-доступный-контур{stroke:#fff9dc;stroke-width:7;fill:#ffe1a044}.кат-разбойник-доступно:focus .кат-разбойник-доступный-контур{stroke:#fff;stroke-width:7}
+.кат-сброс-прогресс{font-size:20px;font-weight:700;color:#f4d48e}.кат-сброс-карты{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:20px 0}.кат-выбор-карт-ресурс{min-width:0;text-align:center;display:grid;gap:6px}.кат-выбор-карт-ресурс>b{font-size:13px}.кат-выбор-карт-ресурс>small{font-size:11px;color:#c0c9c0}.кат-выбор-карты{position:relative;padding:0;background:none;border:2px solid #ba9658;border-radius:10px;overflow:hidden;min-height:80px;cursor:pointer}.кат-выбор-карты .кат-ресурс-карта{width:100%;height:auto;aspect-ratio:2/3;display:block}.кат-выбор-карты strong{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:#102b26ed;color:#ffe1a0;border-radius:20px;min-width:28px;font-size:22px}.кат-выбор-минус{min-height:44px;border:1px solid #9b8551;border-radius:10px;background:#25362c;color:#f4d48e;font-size:26px}.кат-выбор-минус:disabled{opacity:.35}.кат-выбор-карты:disabled{opacity:.8;filter:none}.кат-выбор-карты:active{transform:scale(.95)}
+@media(max-width:360px){.кат-сброс-карты{gap:4px}.кат-выбор-карт-ресурс>b{font-size:11px}.кат-выбор-карт-ресурс>small{font-size:10px}}
+
+.катан #кат-диалог .кат-выбор-карты{padding:0;background:#142720;min-width:0}.катан #кат-диалог .кат-выбор-минус{padding:0}.кат-сброс-карты .кат-ресурс-карта{max-width:none}
+.катан #кат-диалог .кат-выбор-минус{font-size:clamp(10px,2.7vw,14px);line-height:1.2;white-space:normal;padding:4px 2px}
+.кат-выпавшая-сота .кат-производство-ореол{stroke:#ffc847;stroke-width:17;stroke-linejoin:round;opacity:.65;filter:drop-shadow(0 0 12px #ffcc49);pointer-events:none;animation:кат-сота-свечение 1.6s ease-in-out 3}
+.кат-выпавшая-сота .кат-производство{fill:#ffd454;fill-opacity:.13;stroke:#fff5b2;stroke-width:8;stroke-linejoin:round;filter:drop-shadow(0 0 4px #fff4b3);pointer-events:none}
+.кат-выпавшая-сота .кат-номер-фон{fill:#ffdb69;stroke:#fffbe6;stroke-width:4;filter:drop-shadow(0 0 7px #ffca39)}
+.кат-выпавшая-сота .кат-номер,.кат-выпавшая-сота .кат-вероятность{fill:#34200b}
+@keyframes кат-сота-свечение{0%,100%{opacity:.65}50%{opacity:.95}}
+.без-анимации .кат-производство-ореол{animation:none}
+@media(prefers-reduced-motion:reduce){.кат-производство-ореол{animation:none!important}}
+/* Один зелёный акцент для доступного подтверждения во всех игровых окнах. */
+.катан .кнопка.кнопка--главная:not(#экран-друзей *):not(#экран-добавить-друга *):not(:disabled){background:linear-gradient(#9edf40,#4f8b27 45%,#286414);color:#fff8e2;border:1px solid #cbff89;box-shadow:inset 0 2px 4px #e8ff91aa,0 2px 10px #85b33b55;text-shadow:0 1px 2px #284011}
+.катан .кнопка.кнопка--главная:not(#экран-друзей *):not(#экран-добавить-друга *):disabled{opacity:1;background:linear-gradient(#414343,#242727);color:#a9b1ad;border-color:#737a73;box-shadow:inset 0 1px 2px #ffffff30;text-shadow:none}
+.кат-монополия-ресурс{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0;padding:12px;border:1px solid #b99a5b;border-radius:14px;background:#172c26}.кат-монополия-ресурс svg{flex:none;width:70px;height:100px}.кат-монополия-ресурс h3{margin:0;color:#f5d69a;font-size:20px}
+.кат-обмен-выполнен button{pointer-events:auto;display:block;margin:10px 0 0 auto;padding:7px 16px;min-height:44px;border:1px solid #e7c77e;border-radius:10px;background:#234b3d;color:#ffe0a0;font:inherit;cursor:pointer}
+.кат-кража-маршрут{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0 18px}.кат-кража-маршрут>div{display:grid;justify-items:center;gap:6px;min-width:0;flex:1;text-align:center}.кат-кража-маршрут .кат-аватар{width:46px;height:46px;flex:none}.кат-кража-маршрут b{max-width:100%;overflow-wrap:anywhere}.кат-кража-маршрут small{color:#c4cbbc}.кат-кража-маршрут>strong{font-size:30px;color:#e7c77e}
+
+.кат-обмен-выполнен{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(90vw,420px);max-height:80dvh;overflow:auto;box-sizing:border-box;padding:16px 20px;margin:0;border:1px solid #e7c77e;border-radius:18px;background:#173b30;color:#f7e6c2;box-shadow:0 10px 40px #0009;z-index:10000;pointer-events:auto;font:15px/1.5 sans-serif}.кат-обмен-выполнен b,.кат-обмен-выполнен span{display:block}.кат-обмен-выполнен b{font-size:19px;color:#ffe0a0}
+
+.кат-скрытые-очки{font:700 .7em sans-serif;color:#f2dfa9}.кат-игрок:has(>strong[data-hidden-points]){grid-template-columns:30px minmax(0,1fr) auto}.кат-игрок>strong[data-hidden-points]{white-space:nowrap;font-size:26px!important}.кат-бонус-очки{font:700 10px sans-serif;color:#251c0a;background:#e6c479;border-radius:5px;padding:2px 3px;white-space:nowrap}.кат-бонус-рисунок{display:block;width:96px;height:96px;margin:20px auto;color:#e7c57e}#кат-диалог[data-kind=award] h3{text-align:center;color:#f3d491}
+
+.катан .кат-кража-маршрут .кат-аватар,.катан .кат-жертва .кат-аватар{display:block;grid-row:auto;overflow:hidden;border:1px solid #d6b974;border-radius:50%;background-image:url("../../img/катан/портреты-v3.webp");background-size:200% 200%;width:46px;height:46px}
+
+/* Атака выделяет владельца, но не разрушает его постройку. */
+.кат-атака{pointer-events:none}.кат-цель-атаки{filter:drop-shadow(0 0 9px #ffbc63) drop-shadow(0 0 3px #fff2c4)}.кат-атака-кольцо{fill:#ffd57933;stroke:#ffcf81;stroke-width:5}.кат-атака-путь{fill:none;stroke:#f5c76c;stroke-width:4;stroke-dasharray:7 8;opacity:.7}.кат-атака-удар{fill:none;stroke:#fff4ce;stroke-width:9;stroke-linecap:round;stroke-dasharray:150;filter:drop-shadow(0 0 7px #ffae4c)}.кат-атака-подпись rect{fill:#162c27;stroke:#e4bd77;stroke-width:2}.кат-атака-подпись text{fill:#ffe2a1;font:700 27px Arial,sans-serif;text-anchor:middle}.кат-атака-карта rect{fill:#173e36;stroke:#f1ce8b;stroke-width:3}.кат-атака-карта text{fill:#fff0cc;font:700 20px Arial,sans-serif;text-anchor:middle}
+
+/* Награда: читаемый рыцарь и заголовок, который помещается даже с длинным именем. */
+.катан #кат-диалог[data-kind=award]{box-sizing:border-box;width:min(560px,calc(100vw - 24px));min-width:0;margin:auto;padding:22px;overflow-x:hidden}
+.катан #кат-диалог[data-kind=award] header{min-width:0;align-items:flex-start}
+.катан #кат-диалог[data-kind=award] header h2{flex:1;min-width:0;margin:0;overflow-wrap:anywhere;font-size:clamp(20px,5vw,28px);line-height:1.25}
+.катан #кат-диалог[data-kind=award] header button{flex:0 0 42px;padding:0}
+.катан #кат-диалог[data-kind=award] #кат-диалог-тело{min-width:0;grid-template-columns:minmax(0,1fr);gap:18px;overflow-wrap:anywhere}
+.катан #кат-диалог[data-kind=award] .кат-бонус-рисунок{width:128px;height:150px;max-width:100%;object-fit:contain;margin:2px auto 0;filter:drop-shadow(0 7px 12px #0008);background:radial-gradient(ellipse at 50% 65%,#d8b96d29,transparent 70%)}
+.катан #кат-диалог[data-kind=award] svg.кат-бонус-рисунок{height:112px;padding:16px;fill:none;stroke:#e7c57e;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.катан #кат-диалог[data-kind=award] h3{margin:0;font-size:21px;line-height:1.3}
+.катан #кат-диалог[data-kind=award] p{margin:0;text-align:center}
+.катан #кат-диалог[data-kind=award] .кнопка{min-width:0;white-space:normal;height:auto;min-height:48px}

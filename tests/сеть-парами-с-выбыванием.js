@@ -32,7 +32,7 @@
 
 const http = require('http');
 const path = require('path');
-const правила = require(path.join(__dirname, '..', 'js', 'game.js'));
+const правила = require(path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 const ПОРТ = Number(process.argv[2]);
 if (isNaN(ПОРТ)) {

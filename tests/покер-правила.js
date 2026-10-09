@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила'),B=require('../js/покер-бот');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила'),B=require('../игры/покер/покер-бот');
 const card=s=>'23456789TJQKA'.indexOf(s[0])+13*'cdhs'.indexOf(s[1]);
 const hand=s=>s.split(' ').map(card),score=s=>P.evaluate(hand(s));
 const fixtures=[['Ac Kd 9h 7s 3c',0],['Ac Ad 9h 7s 3c',1],['Ac Ad 9h 9s 3c',2],['Ac Ad Ah 7s 3c',3],['Ac 2d 3h 4s 5c',4],['Ac Jc 9c 7c 3c',5],['Ac Ad Ah 7s 7c',6],['Ac Ad Ah As 3c',7],['Ac Kc Qc Jc Tc',8]];

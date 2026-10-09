@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),R=require('../js/nonogram-rules'),bank=require('../js/nonogram-puzzles'),{chromium,подготовитьПодделку,безTelegram}=require('./браузер-робот');
+const assert=require('node:assert/strict'),R=require('../игры/nonogram/nonogram-rules'),bank=require('../игры/nonogram/nonogram-puzzles'),{chromium,подготовитьПодделку,безTelegram}=require('./браузер-робот');
 const base=process.env.NONOGRAM_BASE||'http://127.0.0.1:8137';
 (async()=>{const browser=await chromium.launch();try{
  const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],missing=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.url().startsWith(base)&&r.status()===404)missing.push(r.url());});

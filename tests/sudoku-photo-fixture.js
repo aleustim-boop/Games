@@ -1,5 +1,5 @@
 'use strict';
-const R=require('../js/sudoku-rules'),bank=require('../js/sudoku-puzzles');
+const R=require('../игры/sudoku/sudoku-rules'),bank=require('../игры/sudoku/sudoku-puzzles');
 // Recovered from the supplied 27 September screenshot. The clue pattern and
 // digit mapping match expert[0] exactly; teal entries are not original clues.
 const puzzle='040006000000000042800007650460000000000001000508700004710805000000003010920070500'.split('').map(Number);

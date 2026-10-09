@@ -202,7 +202,7 @@ if (гдеСломать !== -1) {
       return имя !== 'данные' && имя !== 'node_modules';
     }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(ПАПКА, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, ПАПКА, 'js');
 
   const куда = path.join(ПАПКА, поломка.файл);
   let текст = fs.readFileSync(куда, 'utf8');
@@ -227,7 +227,7 @@ process.env.GAMES_DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'досрочны
 
 const комнаты = require(path.join(ПАПКА, 'server', 'комнаты.js'));
 const рейтинг = require(path.join(ПАПКА, 'server', 'рейтинг.js'));
-const ПравилаДеберца = require(path.join(ПАПКА, 'js', 'деберц-правила.js'));
+const ПравилаДеберца = require(path.join(ПАПКА, 'игры', 'деберц', 'деберц-правила.js'));
 
 let проверок = 0;
 let провалов = 0;

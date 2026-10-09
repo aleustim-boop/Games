@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), vm = require('node:vm'), { spawnSync } = require('node:child_process');
-const файл = require.resolve('../js/морской-бой-правила.js');
+const файл = require.resolve('../игры/морской-бой/морской-бой-правила.js');
 let П = require(файл);
 const мутация = process.argv.find(s => s.startsWith('--мутация='));
 if (мутация) {

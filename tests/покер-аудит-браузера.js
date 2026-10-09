@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила'),{chromium,безTelegram}=require('./браузер-робот');
 const URL=process.env.POKER_TEST_URL||'http://127.0.0.1:8137/покер.html';
 (async()=>{const browser=await chromium.launch();try{
  const p=await browser.newPage({viewport:{width:390,height:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await безTelegram(p);await p.goto(URL);

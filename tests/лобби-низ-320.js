@@ -165,7 +165,7 @@ function сделатьИспорченные(папка) {
   const общееПросто = /(#экран-лобби\s*\{[^}]*?)padding-bottom\s*:[^;}]*вт-панель-низ[^;}]*;?/g;
   const своё =/padding-bottom\s*:[^;}]*вт-панель-низ[^;}]*;?/g;
   const счёт = {};
-  const общийТекст = fs.readFileSync(path.join(КОРЕНЬ, 'style.css'), 'utf8');
+  const общийТекст = fs.readFileSync(path.join(КОРЕНЬ, 'общее/css/style.css'), 'utf8');
   const общихПорч = (общийТекст.match(общее) || []).length + (общийТекст.match(общееПросто) || []).length;
   fs.writeFileSync(path.join(папка, 'style.css'), общийТекст.replace(общее, '').replace(общееПросто, '$1'));
   ИГРЫ.forEach(function (игра) {

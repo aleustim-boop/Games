@@ -73,7 +73,7 @@ function подготовитьСломаннуюКопию(номер) {
   const порча = ПОРЧИ[номер];
   const врем = fs.mkdtempSync(path.join(os.tmpdir(), 'дурак-согласие-вид-'));
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(врем, 'server'), { recursive: true });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   const путь = path.join(врем, 'server', 'партия-по-сети.js');
   const исходник = fs.readFileSync(путь, 'utf8');
   if (!порча.шаблон.test(исходник)) {

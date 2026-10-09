@@ -78,7 +78,7 @@ function доводКомандной(имя) {
 /** Параметры: вывод — куда писать (по умолчанию корень проекта), реестр — откуда читать «спрятана».
  *  Страницы rules/<игра>/ пишутся для всех игр, в том числе спрятанных: старые ссылки живут.
  *  Спрятанные не попадают только в обзор rules/index.html и в sitemap.xml. */
-function построить({ вывод = корень, реестр = path.join(корень, 'js/игры-реестр.js') } = {}) {
+function построить({ вывод = корень, реестр = path.join(корень, 'общее/js/игры-реестр.js') } = {}) {
   const спрятаны = спрятанныеСтраницы(реестр);
   const показанные = игры.filter(([, файл]) => !спрятаны.has(файл));
   for (const [метка, файл, заголовок, описание, ...абзацы] of игры) {
@@ -89,14 +89,14 @@ function построить({ вывод = корень, реестр = path.joi
     const кнопки = `<nav class="действия" aria-label="Начать игру"><a class="главная" href="/${encodeURI(файл)}${метка === 'durak' ? '?game=durak' : ''}">Сыграть сейчас</a><a href="https://t.me/BoardingGames_bot?start=src_rules_${метка}">Открыть в Telegram</a></nav>`;
     const статья = головоломки.статьи.get(метка) || `<h2>Цель и подготовка</h2><p>${абзацы[0]}</p><h2>Как проходит ход</h2><p>${абзацы[1]}</p><h2>Особенности и результат</h2><p>${абзацы[2]}</p>${вопросы}`;
     const текст = `<p class="метка">Игры с друзьями · Правила</p><h1>${заголовок}</h1><p class="вступление">${описание}</p>${кнопки}<img class="обложка" src="${изображение}" alt="Игровой стол" width="1200" height="630"><article>${статья}</article>${кнопки}`;
-    const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${заголовок} — Игры с друзьями</title><meta name="description" content="${описание}"><link rel="canonical" href="${адрес}"><meta property="og:type" content="article"><meta property="og:title" content="${заголовок}"><meta property="og:description" content="${описание}"><meta property="og:image" content="${изображение}"><meta property="og:url" content="${адрес}"><link rel="stylesheet" href="/style-публичные.css?v=2"></head><body><main>${текст}<footer><a href="/rules/">Все правила</a> · <a href="/index.html">Все игры</a></footer></main></body></html>\n`;
+    const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${заголовок} — Игры с друзьями</title><meta name="description" content="${описание}"><link rel="canonical" href="${адрес}"><meta property="og:type" content="article"><meta property="og:title" content="${заголовок}"><meta property="og:description" content="${описание}"><meta property="og:image" content="${изображение}"><meta property="og:url" content="${адрес}"><link rel="stylesheet" href="/общее/css/style-публичные.css?v=2"></head><body><main>${текст}<footer><a href="/rules/">Все правила</a> · <a href="/index.html">Все игры</a></footer></main></body></html>\n`;
     const папка = path.join(вывод, 'rules', метка);
     fs.mkdirSync(папка, { recursive: true });
     fs.writeFileSync(path.join(папка, 'index.html'), html);
   }
   const список = показанные.map(([метка,, имя]) => `<li><a href="/rules/${метка}/">${имя}</a></li>`).join('');
   fs.mkdirSync(path.join(вывод, 'rules'), { recursive: true });
-  fs.writeFileSync(path.join(вывод, 'rules/index.html'), `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Правила настольных игр — Игры с друзьями</title><meta name="description" content="Правила дурака, нард, шахмат, шашек, домино, морского боя, монополии, деберца, Катана, покера и Захвата."><link rel="stylesheet" href="/style-публичные.css?v=2"></head><body><main><p class="метка">Игры с друзьями</p><h1>Во что сыграем?</h1><p>Выберите игру: разберитесь в правилах и переходите за стол.</p><ul class="список">${список}</ul><footer><a href="/index.html">Все игры</a></footer></main></body></html>`);
+  fs.writeFileSync(path.join(вывод, 'rules/index.html'), `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Правила настольных игр — Игры с друзьями</title><meta name="description" content="Правила дурака, нард, шахмат, шашек, домино, морского боя, монополии, деберца, Катана, покера и Захвата."><link rel="stylesheet" href="/общее/css/style-публичные.css?v=2"></head><body><main><p class="метка">Игры с друзьями</p><h1>Во что сыграем?</h1><p>Выберите игру: разберитесь в правилах и переходите за стол.</p><ul class="список">${список}</ul><footer><a href="/index.html">Все игры</a></footer></main></body></html>`);
   const путьКарты = path.join(корень, 'sitemap.xml');
   let карта = fs.readFileSync(путьКарты, 'utf8').replace(/\s*<url><loc>https:\/\/igra.medart.com.ua\/rules\/[^<]*<\/loc><\/url>/g, '');
   карта = карта.replace('</urlset>', ['  <url><loc>https://igra.medart.com.ua/rules/</loc></url>', ...показанные.map(([метка]) => `  <url><loc>https://igra.medart.com.ua/rules/${метка}/</loc></url>`)].join('\n') + '\n</urlset>');
@@ -107,7 +107,7 @@ const головоломки = require('./правила-головоломок'
 if (require.main === module) {
   построить({
     вывод: доводКомандной('вывод') ? path.resolve(доводКомандной('вывод')) : корень,
-    реестр: доводКомандной('реестр') || path.join(корень, 'js/игры-реестр.js')
+    реестр: доводКомандной('реестр') || path.join(корень, 'общее/js/игры-реестр.js')
   });
 }
 module.exports = { игры, построить, спрятанныеСтраницы };

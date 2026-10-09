@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
-const П = require('../js/деберц-правила.js');
+const П = require('../игры/деберц/деберц-правила.js');
 const И = require('../server/игры/деберц.js');
 const к = (имя, масть = '♠') => ({ id: масть + имя, имя, масть });
 for (const режим of ['2', '3', '4', '2x2']) for (const первая of ['Д', 'К']) {

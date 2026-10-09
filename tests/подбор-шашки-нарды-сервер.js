@@ -139,7 +139,7 @@ const ПОРЧИ = [
 
 /** Скопировать server/ и js/ во временную папку (без данных игроков). */
 function сделатьКопию(папка) {
-  for (const часть of ['server', 'js']) {
+  for (const часть of ['server', ...require('./пути-проекта.js').папкиКода()]) {
     fs.cpSync(path.join(ПРОЕКТ, часть), path.join(папка, часть), {
       recursive: true,
       filter: function (откуда) {

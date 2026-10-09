@@ -29,7 +29,7 @@ const путьКСломанномуCSS = сломатьArg ? decodeURIComponent
       const сломанныйCSS = fs.readFileSync(путьКСломанномуCSS, 'utf8');
       await p.route((url) => {
         // Функция совпадения: проверяем pathname без хвоста ?v=N
-        return decodeURIComponent(new URL(url).pathname).endsWith('/style.css');
+        return decodeURIComponent(new URL(url).pathname).endsWith('/общее/css/style.css');
       }, async (route) => {
         await route.fulfill({
           status: 200,

@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict');
 const path=require('node:path');
-const R=require(process.argv[2]?path.resolve(process.argv[2]):'../js/бастион-правила.js');
+const R=require(process.argv[2]?path.resolve(process.argv[2]):'../игры/бастион/бастион-правила.js');
 function run(name,fn){fn();console.log('✓ '+name);}
 function enemy(type='raider',d=300,hp=100){return {id:1,type,d,hp,maxHp:hp,slow:0,slowPower:0,wet:0,burn:0,burnDamage:0,broken:0,heal:2};}
 run('Покупка, двойное нажатие, запрет кредита и незаконной башни',()=>{const s=R.create();assert(R.build(s,0,'ballista'));const gold=s.gold;assert(!R.build(s,0,'ballista'));assert.equal(s.gold,gold);assert(!R.build(s,1,'storm'));assert(!R.build(s,-1,'ballista'));s.gold=0;assert(!R.upgrade(s,0));assert.equal(s.towers[0].level,1);});

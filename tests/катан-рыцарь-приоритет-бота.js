@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот'),S=require('../server/игры/катан');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот'),S=require('../server/игры/катан');
 let checked=0;
 for(let seed=1;seed<=30;seed++)for(const botTarget of [0,2])for(const level of ['лёгкий','обычный','сложный']){
   const g=P.создать(3,seed,false,3);while(g.phase.startsWith('setup'))P.действие(g,P.кто(g),B.ход(P.вид(g,P.кто(g))));

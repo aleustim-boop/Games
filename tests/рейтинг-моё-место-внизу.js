@@ -63,7 +63,7 @@ const КОРЕНЬ = path.join(__dirname, '..');
 const ПАПКА_СНИМКОВ = path.join(__dirname, 'снимки');
 const АДРЕС_ХОЗЯИНА = '127.0.0.1';
 const ЗАПРЕЩЁННЫЕ_ПОРТЫ = [8790, 8791, 8080, 8765];
-const ПУТЬ_СТИЛЯ = path.join(КОРЕНЬ, 'style.css');
+const ПУТЬ_СТИЛЯ = path.join(КОРЕНЬ, 'общее/css/style.css');
 const сломать = process.argv.indexOf('--сломать') !== -1;
 
 let провалов = 0;

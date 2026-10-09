@@ -75,7 +75,7 @@ function поднятьСтатику(корень, порт) {
 /* Копия нужных частей проекта — тот же список, что и в
    tests/монополия-как-дурак-браузер.js (без него js/картинки/css не найдутся). */
 function копияПроекта(папка) {
-  for (const часть of ['server', 'js', 'img', 'шрифты']) {
+  for (const часть of ['server', ...require('./пути-проекта.js').папкиКода(), 'img']) {
     const откуда = path.join(ПРОЕКТ, часть);
     if (!fs.existsSync(откуда)) continue;
     fs.cpSync(откуда, path.join(папка, часть), { recursive: true, filter: (ф) => path.basename(ф) !== 'данные' && path.basename(ф) !== 'node_modules' });
@@ -99,7 +99,7 @@ function испортитьШапкуПартии(файлHtml) {
 
 async function прогнать(корень) {
   const { chromium, безTelegram } = require(path.join(ПРОЕКТ, 'tests', 'браузер-робот.js'));
-  const P = require(path.join(корень, 'js', 'монополия-правила'));
+  const P = require(path.join(корень, 'игры', 'монополия', 'монополия-правила'));
   const ПОРТ = 8934;
   const АДРЕС = 'http://127.0.0.1:' + ПОРТ + '/монополия.html';
   const сервер = await поднятьСтатику(корень, ПОРТ);
@@ -126,7 +126,7 @@ async function прогнать(корень) {
     await кнопкаЛобби.click();
     /* Лист — оверлей на position:fixed: offsetParent у таких узлов всегда
        null в Chromium, даже когда узел на экране. Открытость меряем тем же
-       способом, что и сам js/лист-ещё.js (функция «открыт») — по классу. */
+       способом, что и сам общее/js/лист-ещё.js (функция «открыт») — по классу. */
     const листОткрытЛобби = await p.locator('#лист-игры').evaluate((e) => !e.classList.contains('скрыт'));
     проверить(листОткрытЛобби, 'лобби: клик по «⋯» открыл #лист-игры');
     await p.locator('#кнопка-лист-игры-закрыть').click();

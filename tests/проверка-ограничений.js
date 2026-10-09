@@ -19,7 +19,7 @@
 
 'use strict';
 
-const игра = require(require('path').join(__dirname, '..', 'js', 'game.js'));
+const игра = require(require('path').join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 const ПАРТИЙ = Number(process.argv[2]) || 1500;
 const ПРЕДЕЛ_ХОДОВ = 500;

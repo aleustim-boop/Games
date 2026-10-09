@@ -3,7 +3,7 @@ const assert = require('node:assert/strict'), { execFileSync } = require('node:c
 const commit = process.argv[2] || 'HEAD';
 const site = 'https://igra.medart.com.ua/', backend = 'https://igra.medart.com.ua';
 (async () => {
-  const paths = ['домино.html','style-домино.css','js/домино-правила.js','js/домино-бот.js','js/домино-память.js','js/домино-кости.js','js/домино-экран.js','index.html','js/сеть.js','js/game.js','js/telegram.js','js/дурак-комната.js','js/рейтинг-экран.js'];
+  const paths = ['домино.html','игры/домино/style-домино.css','игры/домино/домино-правила.js','игры/домино/домино-бот.js','игры/домино/домино-память.js','игры/домино/домино-кости.js','игры/домино/домино-экран.js','index.html','общее/js/сеть.js','игры/дурак/game.js','общее/js/telegram.js','общее/js/дурак-комната.js','общее/js/рейтинг-экран.js'];
   for (const file of paths) {
     const r = await fetch(site + file.split('/').map(encodeURIComponent).join('/') + '?audit=' + commit); assert.equal(r.status, 200, file);
     const text = await r.text(), expected = execFileSync('git', ['show', commit + ':' + file], { encoding: 'utf8', maxBuffer: 8e6 });

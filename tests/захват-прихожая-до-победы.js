@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Путь к файлу: из доводов или по умолчанию
-const путьКФайлу = process.argv[2] || path.join(__dirname, '..', 'js', 'дурак-комната.js');
+const путьКФайлу = process.argv[2] || path.join(__dirname, '..', 'общее', 'js', 'дурак-комната.js');
 
 // Прочитаем файл
 const исходник = fs.readFileSync(путьКФайлу, 'utf8');

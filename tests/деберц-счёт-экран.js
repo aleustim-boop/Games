@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const { chromium, безTelegram } = require('./браузер-робот.js');
 const И = require('../server/игры/деберц.js');
-const П = require('../js/деберц-правила.js');
+const П = require('../игры/деберц/деберц-правила.js');
 (async () => {
   const b = await chromium.launch({ headless: true });
   try {

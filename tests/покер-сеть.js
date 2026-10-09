@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),S=require('../server/сервер').создатьСервер(),P=require('../js/покер-правила'),G=require('../server/игры/покер');
+const A=require('node:assert/strict'),S=require('../server/сервер').создатьСервер(),P=require('../игры/покер/покер-правила'),G=require('../server/игры/покер');
 (async()=>{await new Promise(r=>S.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+S.address().port;
 const req=async(path,body)=>{const r=await fetch(base+'/'+encodeURIComponent(path),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const x=await r.json();A.equal(r.status,200,JSON.stringify(x));return x;};
 try{

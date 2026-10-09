@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/покер-правила');
+const A=require('node:assert/strict'),P=require('../игры/покер/покер-правила');
 const c=s=>'23456789TJQKA'.indexOf(s[0])+13*'cdhs'.indexOf(s[1]);
 const cards=s=>s.split(' ').map(c);
 // Независимый оценщик: анализирует все ранги и масти сразу, без перебора пятёрок.

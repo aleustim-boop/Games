@@ -46,7 +46,7 @@ const os = require('node:os');
 const path = require('node:path');
 
 const КОРЕНЬ = path.join(__dirname, '..');
-const ПРАВИЛА_ПРОЕКТА = path.join(КОРЕНЬ, 'js', 'монополия-правила.js');
+const ПРАВИЛА_ПРОЕКТА = path.join(КОРЕНЬ, 'игры', 'монополия', 'монополия-правила.js');
 const ИСПОЛЬЗУЕТСЯ_КОПИЯ = process.argv.includes('--сломать');
 
 /* Старое поведение: сдача не откладывает торги за здание, и они
@@ -64,7 +64,7 @@ function сделатьЛомающуюКопию(папкаКопии) {
   if (внутри(папка, КОРЕНЬ)) throw new Error('копию нельзя класть внутрь проекта: ' + папка);
   if (!внутри(папка, os.tmpdir())) throw new Error('копия — только во временной папке системы (' + os.tmpdir() + '): ' + папка);
   fs.mkdirSync(папка, { recursive: true });
-  fs.copyFileSync(path.join(КОРЕНЬ, 'js', 'монополия-данные.js'), path.join(папка, 'монополия-данные.js'));
+  fs.copyFileSync(path.join(КОРЕНЬ, 'игры', 'монополия', 'монополия-данные.js'), path.join(папка, 'монополия-данные.js'));
   const копия = path.join(папка, 'монополия-правила.js');
   fs.writeFileSync(копия, текст.replace(ПОРЧА_БЫЛО, ''), 'utf8');
   return копия;

@@ -26,7 +26,7 @@ for (let i = 2; i < process.argv.length; i++) {
     break;
   }
 }
-const originalPath = pathArg || path.join(__dirname, '..', 'style.css');
+const originalPath = pathArg || path.join(__dirname, '..', 'общее/css/style.css');
 
 let styleCss = fs.readFileSync(originalPath, 'utf8');
 

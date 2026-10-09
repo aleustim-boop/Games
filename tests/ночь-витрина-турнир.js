@@ -2,14 +2,14 @@
    Этап «Ночь-Витрина», без браузера (песочница vm, поддельный браузер).
 
    Что проверяем:
-     А) js/game.js: пометка «турнир в 20:00» на плитке дурака освежается по
+     А) игры/дурак/game.js: пометка «турнир в 20:00» на плитке дурака освежается по
         часам, из уже полученного вида турнира, БЕЗ нового запроса к серверу:
           - до начала (19:59:30) пометка прежняя;
           - к 20:00:30 — «турнир идёт»;
           - после конца пар (20:30:30) — пометки нет;
           - вопросов серверу за всё это время ровно один;
           - таймер заведён только пока витрина видна: ушла с экрана — таймер снят.
-     Б) js/telegram.js: подписчик «перед-закрытием», бросающий ошибку, не
+     Б) общее/js/telegram.js: подписчик «перед-закрытием», бросающий ошибку, не
         доходит до window.onerror (и до слушателей «error»), ошибка пишется в
         console.warn, close() всё равно зовётся, прежний window.onerror на месте.
 
@@ -40,8 +40,8 @@ function аргумент(имя) {
   return i !== -1 ? process.argv[i + 1] : null;
 }
 
-const ПУТЬ_GAME = аргумент('--game') || path.join(КОРЕНЬ, 'js', 'game.js');
-const ПУТЬ_TELEGRAM = аргумент('--telegram') || path.join(КОРЕНЬ, 'js', 'telegram.js');
+const ПУТЬ_GAME = аргумент('--game') || path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js');
+const ПУТЬ_TELEGRAM = аргумент('--telegram') || path.join(КОРЕНЬ, 'общее', 'js', 'telegram.js');
 
 let проверок = 0;
 let провалов = 0;
@@ -289,8 +289,8 @@ function сломать(папка) {
   fs.mkdirSync(папка, { recursive: true });
   const исходники = {
     // Переводы строк приводим к одному виду, чтобы многострочные куски находились и в CRLF-файле.
-    game: fs.readFileSync(path.join(КОРЕНЬ, 'js', 'game.js'), 'utf8').replace(/\r\n/g, '\n'),
-    telegram: fs.readFileSync(path.join(КОРЕНЬ, 'js', 'telegram.js'), 'utf8').replace(/\r\n/g, '\n')
+    game: fs.readFileSync(path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js'), 'utf8').replace(/\r\n/g, '\n'),
+    telegram: fs.readFileSync(path.join(КОРЕНЬ, 'общее', 'js', 'telegram.js'), 'utf8').replace(/\r\n/g, '\n')
   };
   let непокраснело = 0;
   ПОРЧИ.forEach(function (порча, i) {

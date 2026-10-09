@@ -159,7 +159,7 @@ if (гдеСломать !== -1) {
       return имя !== 'данные' && имя !== 'node_modules';
     }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(ПАПКА, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, ПАПКА, 'js');
   const куда = path.join(ПАПКА, ПОРЧА.файл);
   const текст = fs.readFileSync(куда, 'utf8');
   const нашлось = сколькоРаз(текст, ПОРЧА.было);

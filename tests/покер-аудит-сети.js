@@ -2,7 +2,7 @@
 const A=require('node:assert/strict'),path=require('node:path'),os=require('node:os');
 process.env.ДАННЫЕ_ИГРЫ=path.join(os.tmpdir(),'poker-audit-'+process.pid);
 const serverModule=require('../server/сервер');serverModule.оснасткаДляПроверки('poker-local-test-only',()=>({ok:true}));
-const S=serverModule.создатьСервер(),G=require('../server/игры/покер'),P=require('../js/покер-правила');
+const S=serverModule.создатьСервер(),G=require('../server/игры/покер'),P=require('../игры/покер/покер-правила');
 (async()=>{await new Promise(r=>S.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+S.address().port;
 const req=async(route,body,expected=200)=>{const r=await fetch(base+'/'+encodeURIComponent(route),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}),data=await r.json();A.equal(r.status,expected,JSON.stringify(data));return data;};
 const view=async key=>{const r=await req('состояние',key);return r.состояние||r;};

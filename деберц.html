@@ -15,16 +15,16 @@
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E♠%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="style.css?v=118">
-  <link rel="stylesheet" href="style-деберц.css?v=29">
+  <link rel="stylesheet" href="общее/css/style.css?v=118">
+  <link rel="stylesheet" href="игры/деберц/style-деберц.css?v=29">
   <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
-<link rel="stylesheet" href="style-коллекция.css?v=2">
-<link rel="stylesheet" href="style-аватар.css?v=2">
-<link rel="stylesheet" href="style-языки.css?v=3">
-<script defer src="js/языки.js?v=4"></script>
-<script defer src="js/языки-общие.js?v=3"></script>
-<script defer src="js/языки-деберц.js?v=1"></script>
-<script defer src="js/язык-интерфейса.js?v=2"></script>
+<link rel="stylesheet" href="общее/css/style-коллекция.css?v=2">
+<link rel="stylesheet" href="общее/css/style-аватар.css?v=2">
+<link rel="stylesheet" href="общее/css/style-языки.css?v=3">
+<script defer src="общее/js/языки.js?v=4"></script>
+<script defer src="общее/js/языки-общие.js?v=3"></script>
+<script defer src="игры/деберц/языки-деберц.js?v=1"></script>
+<script defer src="общее/js/язык-интерфейса.js?v=2"></script>
 </head>
 <body class="деберц">
 <noscript>
@@ -162,7 +162,7 @@
   <section id="экран-результата" class="экран" role="region" aria-label="Результат">
     <h2 id="текст-результата" class="заголовок"></h2>
     <p id="пояснение-результата" class="подпись"></p>
-    <!-- «+N к рейтингу» после партии с ботом, как у дурака: пишет и прячет js/деберц-экран.js -->
+    <!-- «+N к рейтингу» после партии с ботом, как у дурака: пишет и прячет игры/деберц/деберц-экран.js -->
     <p id="итог-рейтинга" class="подпись скрыт"></p>
     <div id="деберц-итог-таблица"></div>
     <div id="деберц-итог-действия"></div>
@@ -191,8 +191,8 @@
       <p class="деберц-после-создания">Стол появится в списке онлайн-игр. Друзей можно пригласить по коду.</p>
     </div>
     <!-- Общий узел «плашка-возврата» (как у дурака/нард): переносит её в лобби
-         js/деберц-экран.js (см. «эл('экран-лобби').insertBefore(...)»), модуль
-         js/онлайн-лобби.js при подключении находит уже готовый узел и второй
+         игры/деберц/деберц-экран.js (см. «эл('экран-лобби').insertBefore(...)»), модуль
+         общее/js/онлайн-лобби.js при подключении находит уже готовый узел и второй
          не создаёт. -->
     <button id="кнопка-вернуться-в-игру" type="button" class="плашка-возврата скрыт">Вас ждёт партия с другом — вернуться</button>
     <div class="деберц-пригласили"><div><strong>Уже пригласили?</strong><p>Присоединитесь к столу друзей</p></div><button id="кнопка-войти-по-коду" class="кнопка">Ввести код <span aria-hidden="true">↗</span></button></div>
@@ -211,8 +211,8 @@
     <button id="кнопка-друг-назад" class="кнопка">Назад</button>
   </section>
   <!-- Комната-05 (места, «Позвать», код, «Начать» у хозяина) больше не своя
-       копия: разметку сюда ставит js/онлайн-лобби.js при вызове
-       ОнлайнЛобби.подключить() из js/деберц-экран.js — как в нардах и
+       копия: разметку сюда ставит общее/js/онлайн-лобби.js при вызове
+       ОнлайнЛобби.подключить() из игры/деберц/деберц-экран.js — как в нардах и
        шахматах. Здесь остаётся только верхняя строка «‹ ⋯», её модуль
        находит по классу «верх-игры» и переиспользует, второй не создаёт. -->
   <section id="экран-комнаты" class="экран">
@@ -283,33 +283,33 @@
     </div>
   </div>
 </main>
-<script src="js/telegram.js?v=40"></script><script src="js/возврат-после-свернуть.js?v=1"></script><script src="js/мой-аватар.js?v=avatars-20260929"></script>
-<script src="js/колода-рисунок.js?v=5"></script>
-<script src="js/лист-ещё.js?v=16"></script>
-<script src="js/нижние-вкладки.js?v=10"></script>
-<script src="js/мост-в-телеграм.js?v=1"></script>
-<script src="js/игры-реестр.js?v=20261006"></script><script src="js/рейтинг-экран.js?v=47"></script>
-<script src="js/награды.js?v=1"></script>
-<script src="js/профиль-экран.js?v=4"></script>
-<script src="js/друзья-экран.js?v=4"></script>
-<script src="js/деберц-правила.js?v=10"></script>
-<script src="js/деберц-бот.js?v=3"></script>
-<script src="js/деберц-память.js?v=6"></script>
-<script src="js/деберц-звук.js?v=1"></script>
-<script src="js/движение-карт.js?v=3"></script>
-<script src="js/деберц-знаки.js?v=1"></script>
-<script src="js/деберц-сказать.js?v=9"></script>
+<script src="общее/js/telegram.js?v=40"></script><script src="общее/js/возврат-после-свернуть.js?v=1"></script><script src="общее/js/мой-аватар.js?v=avatars-20260929"></script>
+<script src="общее/js/колода-рисунок.js?v=5"></script>
+<script src="общее/js/лист-ещё.js?v=16"></script>
+<script src="общее/js/нижние-вкладки.js?v=10"></script>
+<script src="общее/js/мост-в-телеграм.js?v=1"></script>
+<script src="общее/js/игры-реестр.js?v=20261006"></script><script src="общее/js/рейтинг-экран.js?v=47"></script>
+<script src="общее/js/награды.js?v=1"></script>
+<script src="общее/js/профиль-экран.js?v=4"></script>
+<script src="общее/js/друзья-экран.js?v=4"></script>
+<script src="игры/деберц/деберц-правила.js?v=10"></script>
+<script src="игры/деберц/деберц-бот.js?v=3"></script>
+<script src="игры/деберц/деберц-память.js?v=6"></script>
+<script src="игры/деберц/деберц-звук.js?v=1"></script>
+<script src="общее/js/движение-карт.js?v=3"></script>
+<script src="общее/js/деберц-знаки.js?v=1"></script>
+<script src="общее/js/деберц-сказать.js?v=9"></script>
 <!-- Онлайн как у дурака (штаб/план-онлайн-как-дурак.md, Э9): модуль ставит
      разметку комнаты-05 и переносит плашку возврата, вызов — в самом
-     js/деберц-экран.js. Обязательно ДО него, иначе window.ОнлайнЛобби ещё
+     игры/деберц/деберц-экран.js. Обязательно ДО него, иначе window.ОнлайнЛобби ещё
      не существует в момент вызова. -->
-<!-- Дверь «Похвастаться» (Сеть.похвастаться): общий файл, строго до js/сеть.js, как в шашках. -->
-<script src="js/похвастаться.js?v=13"></script>
-<script src="js/онлайн-лобби.js?v=1"></script>
-<script src="js/очки-рейтинга.js?v=3"></script><script src="js/ярлык.js?v=1"></script><script src="js/деберц-экран.js?v=37"></script>
-<script src="js/дурак-комната.js?v=zahvat-20261002"></script>
-<script src="js/сеть.js?v=inline-20261004"></script>
-<script src="js/открытые-столы.js?v=litsa-20261003"></script>
-<script src="js/подбор-экран.js?v=5"></script>
-<script src="js/популярность.js?v=2" data-game="деберц"></script></body>
+<!-- Дверь «Похвастаться» (Сеть.похвастаться): общий файл, строго до общее/js/сеть.js, как в шашках. -->
+<script src="общее/js/похвастаться.js?v=13"></script>
+<script src="общее/js/онлайн-лобби.js?v=1"></script>
+<script src="общее/js/очки-рейтинга.js?v=3"></script><script src="общее/js/ярлык.js?v=1"></script><script src="игры/деберц/деберц-экран.js?v=37"></script>
+<script src="общее/js/дурак-комната.js?v=zahvat-20261002"></script>
+<script src="общее/js/сеть.js?v=inline-20261004"></script>
+<script src="общее/js/открытые-столы.js?v=litsa-20261003"></script>
+<script src="общее/js/подбор-экран.js?v=5"></script>
+<script src="общее/js/популярность.js?v=2" data-game="деберц"></script></body>
 </html>

@@ -51,8 +51,8 @@ const комнаты = require(path.join(ПАПКА, 'server', 'комнаты.j
 const партии = require(path.join(ПАПКА, 'server', 'партия-по-сети.js'));
 const рейтинг = require(path.join(ПАПКА, 'server', 'рейтинг.js'));
 const реестр = require(path.join(ПАПКА, 'server', 'игры', 'реестр.js'));
-const ПравилаШашек = require(path.join(ПАПКА, 'js', 'шашки-правила.js'));
-const БотНард = require(path.join(ПАПКА, 'js', 'нарды-бот.js'));
+const ПравилаШашек = require(path.join(ПАПКА, 'игры', 'шашки', 'шашки-правила.js'));
+const БотНард = require(path.join(ПАПКА, 'игры', 'нарды', 'нарды-бот.js'));
 
 console.log('Папка с сервером: ' + ПАПКА);
 

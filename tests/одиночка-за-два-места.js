@@ -35,7 +35,7 @@
 const path = require('path');
 const ПАРТИЙ = Number(process.argv[2]) || 200;
 const ПУТЬ_СВОЙ = process.argv[3] && process.argv[3] !== '-' ? path.resolve(process.argv[3]) : '';
-const игра = require(ПУТЬ_СВОЙ || path.join(__dirname, '..', 'js', 'game.js'));
+const игра = require(ПУТЬ_СВОЙ || path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
 
 const генератор = require(path.join(__dirname, 'общий-генератор.js'));
 генератор.захватитьСлучайность();

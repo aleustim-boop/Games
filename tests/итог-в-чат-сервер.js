@@ -145,7 +145,7 @@ function папкаСервера() {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   if (ЛОМАТЬ_ИТОГ) {
     испортить(path.join(врем, 'server', 'комнаты.js'),
       "      чат: комната.чатСтола || null,   // группа, куда писать итог (server/итог-в-чат.js); у прочих столов null\n", '',

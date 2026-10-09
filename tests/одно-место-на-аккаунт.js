@@ -86,7 +86,7 @@ function собратьКопию() {
     // Настоящие данные игроков копии не нужны.
     filter: function (откуда) { return откуда !== ПАПКА_ДАННЫХ && !откуда.startsWith(ПАПКА_ДАННЫХ + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   if (КОПИЯ_КОМНАТ) fs.copyFileSync(КОПИЯ_КОМНАТ, path.join(врем, 'server', 'комнаты.js'));
   if (КОПИЯ_РЕЙТИНГА) fs.copyFileSync(КОПИЯ_РЕЙТИНГА, path.join(врем, 'server', 'рейтинг.js'));
   if (КОПИЯ_СЕРВЕРА) fs.copyFileSync(КОПИЯ_СЕРВЕРА, path.join(врем, 'server', 'сервер.js'));

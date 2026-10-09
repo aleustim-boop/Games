@@ -204,8 +204,7 @@ function копияСПоломкой(имяПоломки, что, чем) {
   };
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(корниКопии, 'server'),
     { recursive: true, filter: безДанных });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(корниКопии, 'js'),
-    { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, корниКопии, 'js');
 
   const файлРейтинга = path.join(корниКопии, 'server', 'рейтинг.js');
   const было = fs.readFileSync(файлРейтинга, 'utf8');

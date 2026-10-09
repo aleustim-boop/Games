@@ -6,7 +6,7 @@ const { игры } = require('../штаб/скрипты/страницы-пра
 const корень = path.join(__dirname, '..');
 // --карта=<файл> и --реестр=<файл>: испорченные копии для ломающих запусков
 let путьКарты = path.join(корень, 'sitemap.xml');
-let путьРеестра = path.join(корень, 'js', 'игры-реестр.js');
+let путьРеестра = path.join(корень, 'общее', 'js', 'игры-реестр.js');
 for (const довод of process.argv.slice(2)) {
   if (довод.startsWith('--карта=')) путьКарты = path.resolve(довод.substring('--карта='.length));
   if (довод.startsWith('--реестр=')) путьРеестра = path.resolve(довод.substring('--реестр='.length));

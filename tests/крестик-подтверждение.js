@@ -1,7 +1,7 @@
 /*
  * Проверка: крестик в шапке Telegram больше не закрывает игру без вопроса.
  *
- * Сторожит четыре двери в js/telegram.js — спрашиватьПриЗакрытии() и
+ * Сторожит четыре двери в общее/js/telegram.js — спрашиватьПриЗакрытии() и
  * неСпрашиватьПриЗакрытии() (родные enableClosingConfirmation /
  * disableClosingConfirmation у Telegram) — и то, что подключение общее
  * для index.html, шашки.html, шахматы.html и нарды.html.
@@ -23,7 +23,7 @@ const os = require('os');
 const vm = require('vm');
 
 const КОРЕНЬ = path.resolve(__dirname, '..');
-const ПУТЬ_TELEGRAM = path.join(КОРЕНЬ, 'js', 'telegram.js');
+const ПУТЬ_TELEGRAM = path.join(КОРЕНЬ, 'общее', 'js', 'telegram.js');
 const СТРАНИЦЫ = ['index.html', 'шашки.html', 'шахматы.html', 'нарды.html'];
 
 // ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ function запуститьВПесочнице(текстTelegram, подста
     clearTimeout: clearTimeout
   };
   vm.createContext(песочница);
-  vm.runInContext(текстTelegram, песочница, { filename: 'js/telegram.js (песочница проверки)' });
+  vm.runInContext(текстTelegram, песочница, { filename: 'общее/js/telegram.js (песочница проверки)' });
   return песочница.window;
 }
 
@@ -136,7 +136,7 @@ function прочитатьВерсииСтраниц() {
   const версии = {};
   СТРАНИЦЫ.forEach(function (имяФайла) {
     const текст = fs.readFileSync(path.join(КОРЕНЬ, имяФайла), 'utf8');
-    const совпадение = текст.match(/<script\s+src=["']js\/telegram\.js\?v=([^"']+)["']/);
+    const совпадение = текст.match(/<script\s+src=["']общее\/js\/telegram\.js\?v=([^"']+)["']/);
     версии[имяФайла] = совпадение ? совпадение[1] : null;
   });
   return версии;
@@ -205,12 +205,12 @@ function проверитьВсё(текстTelegram, версииСтраниц
     return 'обе двери защищены как положено';
   });
 
-  // 4. Все четыре страницы просят js/telegram.js с ОДНИМ номером ?v=
-  добавить('4. index/шашки/шахматы/нарды подключают js/telegram.js с одинаковым ?v=', function () {
+  // 4. Все четыре страницы просят общее/js/telegram.js с ОДНИМ номером ?v=
+  добавить('4. index/шашки/шахматы/нарды подключают общее/js/telegram.js с одинаковым ?v=', function () {
     const номера = {};
     СТРАНИЦЫ.forEach(function (имяФайла) {
       const версия = версииСтраниц[имяФайла];
-      if (!версия) throw new ПроваленаПроверка(имяФайла + ' не подключает js/telegram.js?v=... вовсе (совпадений: 0)');
+      if (!версия) throw new ПроваленаПроверка(имяФайла + ' не подключает общее/js/telegram.js?v=... вовсе (совпадений: 0)');
       номера[имяФайла] = версия;
     });
     const значения = Object.keys(номера).map(function (к) { return номера[к]; });
@@ -264,7 +264,7 @@ function обычныйПрогон() {
   const текст = fs.readFileSync(ПУТЬ_TELEGRAM, 'utf8');
   const версии = прочитатьВерсииСтраниц();
   const результаты = проверитьВсё(текст, версии);
-  const всёХорошо = напечатать(результаты, 'js/telegram.js: подтверждение при закрытии крестиком');
+  const всёХорошо = напечатать(результаты, 'общее/js/telegram.js: подтверждение при закрытии крестиком');
   process.exit(всёХорошо ? 0 : 1);
 }
 

@@ -76,7 +76,7 @@ function испортитьКопию(путьККомнатам) {
 function подготовитьСломаннуюКопию() {
   const врем = fs.mkdtempSync(path.join(os.tmpdir(), 'все-пропали-разом-'));
   fs.cpSync(path.join(КОРЕНЬ, 'server'), path.join(врем, 'server'), { recursive: true });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   испортитьКопию(path.join(врем, 'server', 'комнаты.js'));
   return врем;
 }

@@ -57,7 +57,7 @@ if (аргументы.includes('--сделать-копию')) {
   const куда = аргументы[аргументы.indexOf('--сделать-копию') + 1];
   const порча = ПОРЧИ[довод('порча')];
   if (!куда || !порча) { console.log('Нужно: --сделать-копию <путь> --порча=' + Object.keys(ПОРЧИ).join('|')); process.exit(1); }
-  const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'style-захват.css'), 'utf8');
+  const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'игры/захват/style-захват.css'), 'utf8');
   if (исходник.split(порча.якорь).length !== 2) { console.log('Якорь порчи не найден ровно один раз — копию не делаю: ' + порча.якорь); process.exit(1); }
   fs.mkdirSync(path.dirname(куда), { recursive: true });
   fs.writeFileSync(куда, исходник.replace(порча.якорь, () => порча.замена));

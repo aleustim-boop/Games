@@ -18,8 +18,8 @@
    ===================================================================== */
 const path = require('path');
 const комнаты = require(path.join(__dirname, '..', 'server', 'комнаты.js'));
-const правила = require(path.join(__dirname, '..', 'js', 'game.js'));
-const модель = require(path.join(__dirname, '..', 'js', 'дурак-комната.js')).создать({ правила: правила });
+const правила = require(path.join(__dirname, '..', 'игры', 'дурак', 'game.js'));
+const модель = require(path.join(__dirname, '..', 'общее', 'js', 'дурак-комната.js')).создать({ правила: правила });
 
 const ЛОМАТЬ = process.argv.indexOf('--сломать') !== -1;
 if (ЛОМАТЬ) {

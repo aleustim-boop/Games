@@ -13,7 +13,7 @@ const { spawnSync } = require('child_process');
 const КОРЕНЬ = path.join(__dirname, '..');
 const а = process.argv.slice(2);
 const довод = (имя) => { const и = а.indexOf(имя); return и === -1 ? null : а[и + 1]; };
-const путьСтола = довод('--файл') || path.join(КОРЕНЬ, 'js', 'захват-стол.js');
+const путьСтола = довод('--файл') || path.join(КОРЕНЬ, 'игры', 'захват', 'захват-стол.js');
 const путьСтраницы = довод('--html') || path.join(КОРЕНЬ, 'захват.html');
 
 if (а.includes('--сломать')) {
@@ -23,7 +23,7 @@ if (а.includes('--сломать')) {
 }
 
 function прогон() {
-  const Правила = require(path.join(КОРЕНЬ, 'js', 'захват-правила.js'));
+  const Правила = require(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-правила.js'));
   const Стол = require(путьСтола);
   const записи = {};   // id -> сколько раз писали textContent
   function сделатьУзел(id) {
@@ -106,7 +106,7 @@ function прогон() {
 
 function сломать() {
   const папка = fs.mkdtempSync(path.join(os.tmpdir(), 'захват-как-ходить-'));
-  const стол = fs.readFileSync(path.join(КОРЕНЬ, 'js', 'захват-стол.js'), 'utf8');
+  const стол = fs.readFileSync(path.join(КОРЕНЬ, 'игры', 'захват', 'захват-стол.js'), 'utf8');
   const страница = fs.readFileSync(path.join(КОРЕНЬ, 'захват.html'), 'utf8');
   const порчи = [
     ['стол', 'строка всегда первая', "return стоит ? 'Долгое касание своей области — сразу несколько' : 'Касание своей области — +1 войско';", "return 'Касание своей области — +1 войско';"],
@@ -127,7 +127,7 @@ function сломать() {
     fs.mkdirSync(под);
     let путь;
     if (п[0] === 'стол') {
-      for (const ф of ['захват-правила.js', 'захват-карта-вид.js', 'захват-карты.js']) fs.copyFileSync(path.join(КОРЕНЬ, 'js', ф), path.join(под, ф));
+      for (const ф of ['захват-правила.js', 'захват-карта-вид.js', 'захват-карты.js']) fs.copyFileSync(require('./пути-проекта.js').путь(ф, КОРЕНЬ), path.join(под, ф));
       путь = path.join(под, 'захват-стол.js');
     } else {
       путь = path.join(под, 'захват.html');

@@ -119,7 +119,7 @@ if (ЛОМАТЬ) {
   рейтинг.учестьПартию = function () { return {}; };
 }
 
-const правила = require(path.join(КОРЕНЬ, 'js', 'game.js'));
+const правила = require(path.join(КОРЕНЬ, 'игры', 'дурак', 'game.js'));
 const сервера = require(path.join(КОРЕНЬ, 'server', 'сервер.js'));
 
 const ПОТОЛОК_ДЕЙСТВИЙ = 1500;

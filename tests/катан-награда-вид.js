@@ -1,5 +1,5 @@
 'use strict';
-const A=require('node:assert/strict'),P=require('../js/катан-правила'),{chromium,безTelegram}=require('./браузер-робот');
+const A=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),{chromium,безTelegram}=require('./браузер-робот');
 (async()=>{const b=await chromium.launch();try{const p=await b.newPage();await безTelegram(p);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.CATAN_TEST_URL||'http://127.0.0.1:8137/катан.html',{waitUntil:'domcontentloaded'});
 for(const kind of ['army','road'])for(const [width,height]of [[320,740],[390,844],[844,390],[1440,900]]){
  await p.setViewportSize({width,height});await p.goto(process.env.CATAN_TEST_URL||'http://127.0.0.1:8137/катан.html',{waitUntil:'domcontentloaded'});const v=P.вид(P.создать(3,42,false,3),0);v.names=['Вы','АлександрОченьДлинноеИмяБезПробеловДляПроверкиПереноса','Друг'];v.phase='main';v.actor=1;v.turn=1;

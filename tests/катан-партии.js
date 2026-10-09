@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),П=require('../js/катан-правила'),Б=require('../js/катан-бот');
+const assert=require('node:assert/strict'),П=require('../игры/катан/катан-правила'),Б=require('../игры/катан/катан-бот');
 assert.equal(П.Г.vertices.length,54);assert.equal(П.Г.edges.length,72);
 for(let seed=1;seed<=24;seed++){
   const g=П.создать(seed%2?3:4,seed,false,2);let steps=0;

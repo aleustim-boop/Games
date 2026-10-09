@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),P=require('../js/катан-правила'),B=require('../js/катан-бот');
+const assert=require('node:assert/strict'),P=require('../игры/катан/катан-правила'),B=require('../игры/катан/катан-бот');
 const fresh=()=>{const g=P.создать(4,1,false,3);g.phase='main';g.turn=0;g.players.forEach(p=>p.resources=[4,4,4,4,4]);return g;};
 const proposal={type:'offer',to:-1,give:[1,0,0,0,0],want:[0,1,0,0,0],confirmation:true};
 const g=fresh();P.действие(g,0,proposal);const id=g.offer.id,before=g.players.map(p=>p.resources.slice());

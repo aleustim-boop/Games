@@ -19,7 +19,7 @@
 
    Запуск:
        node tests/дурак-бито-снимок.js
-   Ломающий запуск (портит КОПИЮ js/game.js во временной папке — класс
+   Ломающий запуск (портит КОПИЮ игры/дурак/game.js во временной папке — класс
    не ставится — и требует провала):
        node tests/дурак-бито-снимок.js --сломать <путь к временной папке>
    ===================================================================== */
@@ -49,7 +49,7 @@ function проверить(условие, слова) {
   return Boolean(условие);
 }
 
-/* ---------- Свой сервер файлов (можно подменить js/game.js копией) ---------- */
+/* ---------- Свой сервер файлов (можно подменить игры/дурак/game.js копией) ---------- */
 const ТИПЫ = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp',
   '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg' };
@@ -61,7 +61,7 @@ function поднятьСервер(подменаИгры) {
     const файл = п === '/' ? path.join(ПРОЕКТ, 'index.html') : path.join(ПРОЕКТ, п);
     if (path.relative(ПРОЕКТ, файл).startsWith('..')) { ответ.writeHead(403); ответ.end(); return; }
     const отн = path.relative(ПРОЕКТ, файл).split(path.sep).join('/');
-    const отдать = подменаИгры && отн === 'js/game.js' ? подменаИгры : файл;
+    const отдать = подменаИгры && отн === 'игры/дурак/game.js' ? подменаИгры : файл;
     fs.readFile(отдать, function (ош, данные) {
       if (ош) { ответ.writeHead(404); ответ.end('нет файла'); return; }
       ответ.writeHead(200, { 'Content-Type': ТИПЫ[path.extname(файл).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
@@ -190,9 +190,9 @@ async function прогон(адрес) {
     const папка = арги[иСломать + 1];
     if (!папка) { console.log('нужен путь к временной папке: --сломать <папка>'); process.exit(2); }
     fs.mkdirSync(папка, { recursive: true });
-    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'js', 'game.js'), 'utf8');
+    const исходник = fs.readFileSync(path.join(ПРОЕКТ, 'игры', 'дурак', 'game.js'), 'utf8');
     const испорчено = исходник.replace("classList.toggle('кнопка--ждут', ждутТолькоБито())", "classList.toggle('кнопка--ждут', false)");
-    if (испорчено === исходник) { console.log('ПЛОХО — в js/game.js не нашлось строки, которую портим: ломающий запуск ничего не сломал'); process.exit(2); }
+    if (испорчено === исходник) { console.log('ПЛОХО — в игры/дурак/game.js не нашлось строки, которую портим: ломающий запуск ничего не сломал'); process.exit(2); }
     const копия = path.join(папка, 'game.js');
     fs.writeFileSync(копия, испорчено);
     console.log('Ломающий запуск: копия ' + копия + ', класс не ставится — ждём провал.');

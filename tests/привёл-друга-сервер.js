@@ -122,7 +122,7 @@ function сделатьКопиюДляПорчи() {
     recursive: true,
     filter: function (откуда) { return откуда !== данныеПроекта && !откуда.startsWith(данныеПроекта + path.sep); }
   });
-  fs.cpSync(path.join(КОРЕНЬ, 'js'), path.join(врем, 'js'), { recursive: true });
+  require('./пути-проекта.js').скопироватьКод(КОРЕНЬ, врем, 'js');
   const файл = path.join(врем, 'server', 'сервер.js');
   const текст = fs.readFileSync(файл, 'utf8');
   const найдено = текст.split(ПОРЧА.было).length - 1;
