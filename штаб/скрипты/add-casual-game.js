@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('node:fs'),path=require('node:path'),id=process.argv[2],G=require('../js/game-'+id);
+const fs=require('node:fs'),path=require('node:path'),id=process.argv[2],G=require('../../js/game-'+id);
 if(typeof G.key!=='string'||!G.key)throw Error('Game registry key must be a nonempty string');
 const html=`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1919"><title>${G.title} — Игры с друзьями</title><link rel="stylesheet" href="style-casual.css?v=${id}-1"><link rel="stylesheet" href="style-casual-premium.css?v=1"><link rel="stylesheet" href="style-casual-studio.css?v=1">${(G.styles||[]).map(s=>`<link rel="stylesheet" href="${s}?v=1">`).join('')}<script>window.ИграСтраницы='${G.key}';</script><script src="https://telegram.org/js/telegram-web-app.js" defer></script></head><body data-game="${id}"><main class="sudoku-app casual-app">
 <header class="topbar"><a id="back" href="index.html" aria-label="Назад">‹</a><span>ИГРЫ С ДРУЗЬЯМИ</span><button id="help" aria-label="Как играть">?</button></header>

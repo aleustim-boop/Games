@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { игры } = require('../scripts/страницы-правил');
+const { игры } = require('../штаб/скрипты/страницы-правил');
 const корень = path.join(__dirname, '..');
 // --карта=<файл> и --реестр=<файл>: испорченные копии для ломающих запусков
 let путьКарты = path.join(корень, 'sitemap.xml');

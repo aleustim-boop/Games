@@ -27,7 +27,7 @@ const { chromium, безTelegram } = require('./браузер-робот');
     }
     const всеПравила = await браузер.newPage({ viewport: { width: 390, height: 844 }, javaScriptEnabled: false });
     await всеПравила.route('https://igra.medart.com.ua/img/**', маршрут => маршрут.fulfill({ path: path.join(__dirname, '..', decodeURIComponent(new URL(маршрут.request().url()).pathname)) }));
-    for (const [метка, , заголовок] of require('../scripts/страницы-правил').игры) {
+    for (const [метка, , заголовок] of require('../штаб/скрипты/страницы-правил').игры) {
       assert.equal((await всеПравила.goto(стенд.url + '/rules/' + метка + '/index.html')).status(), 200);
       assert.equal(await всеПравила.locator('h1').textContent(), заголовок);
       assert.ok(await всеПравила.locator('.обложка').evaluate(э => э.complete && э.naturalWidth > 0), метка + ': обложка');
